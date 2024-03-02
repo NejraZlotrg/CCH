@@ -3,6 +3,7 @@ using CarCareHub.Services;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace CarCareHub_.Controllers
 {
@@ -19,9 +20,9 @@ namespace CarCareHub_.Controllers
         }
 
         [HttpGet()]
-        public async Task<IEnumerable<T>> Get([FromQuery]TSearch search)
+        public  async Task<IEnumerable<T>> Get([FromQuery]TSearch search)
         {
-
+            
             return await _service.Get(search);
         }
 

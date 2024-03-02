@@ -21,16 +21,15 @@ namespace CarCareHub.Services
            
         }
 
-        public override async Task<List<Model.Grad>> Get(GradSearchObject search)
+        public override IQueryable<Database.Grad> AddFilter(IQueryable<Database.Grad> query, GradSearchObject? search = null)
         {
-            var query = _dbContext.Set<Database.Grad>().AsQueryable();
+  
 
-            if (!string.IsNullOrWhiteSpace(search.Naziv))
+            if (!string.IsNullOrWhiteSpace(search?.Naziv))
             {
                 query = query.Where(x => x.NazivGrada.StartsWith(search.Naziv));
             }
-            var list = await query.ToListAsync();
-            return _mapper.Map<List<Model.Grad>>(list);
+            return base.AddFilter(query, search);
         }
     }
 }

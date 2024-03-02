@@ -1,3 +1,4 @@
+using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services;
 //using CarCareHub.Model;
 
@@ -13,8 +14,8 @@ builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
 builder.Services.AddTransient<IGradService, GradService>();
 //builder.Services.AddTransient<  IService<CarCareHub.Model.Grad>, GradService>();
-builder.Services.AddTransient <IService<CarCareHub.Model.Zaposlenik, object>, BaseService<CarCareHub.Model.Zaposlenik, 
-    CarCareHub.Services.Database.Zaposlenik, object>>();
+builder.Services.AddTransient <IService<CarCareHub.Model.Zaposlenik, BaseSearchObject>, BaseService<CarCareHub.Model.Zaposlenik, 
+    CarCareHub.Services.Database.Zaposlenik, BaseSearchObject>>();
 
 
 

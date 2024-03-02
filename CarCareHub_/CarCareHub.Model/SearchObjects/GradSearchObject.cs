@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model.SearchObjects
 {
-    public class GradSearchObject
+    public class GradSearchObject: BaseSearchObject
     {
         public string? Naziv { get; set; }
     }

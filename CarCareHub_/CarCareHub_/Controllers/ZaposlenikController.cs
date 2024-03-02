@@ -8,10 +8,10 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
    [Route("api/zaposlenici")]
-    public class ZaposleniciController : BaseController<Zaposlenik, object>
+    public class ZaposleniciController : BaseController<Zaposlenik, BaseSearchObject>
     {
-        public ZaposleniciController(ILogger<BaseController<Zaposlenik, object>> logger,
-            IService<Zaposlenik, object> service)
+        public ZaposleniciController(ILogger<BaseController<Zaposlenik, BaseSearchObject>> logger,
+            IService<Zaposlenik, BaseSearchObject> service)
             : base(logger, service)
         {
         }
