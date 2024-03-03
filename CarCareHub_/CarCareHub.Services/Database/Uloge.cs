@@ -14,4 +14,6 @@ public partial class Uloge
     public virtual ICollection<FirmaAutodijelova> FirmaAutodijelovas { get; set; } = new List<FirmaAutodijelova>();
 
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
+//public virtual Zaposlenik Zaposlenik { get; set; } 
+
 }

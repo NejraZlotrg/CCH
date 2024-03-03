@@ -19,13 +19,17 @@ namespace CarCareHub.Model
             public string? Email { get; set; }
 
             public string? Username { get; set; }
+            public virtual Uloge? Uloga { get; set; }
 
-         //  public int? UlogaId { get; set; }
-         //
-         //  public int? AutoservisId { get; set; }
-         //
-         //  public int? FirmaAutodijelovaId { get; set; }
+         //   public virtual ICollection<Uloge> Uloges { get; set; } = new List<Uloge>();
 
-        }
+
+        //  public int? UlogaId { get; set; }
+        //
+        //  public int? AutoservisId { get; set; }
+        //
+        //  public int? FirmaAutodijelovaId { get; set; }
 
     }
+
+}

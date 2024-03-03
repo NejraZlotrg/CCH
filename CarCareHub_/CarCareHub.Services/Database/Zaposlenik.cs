@@ -32,6 +32,7 @@ public partial class Zaposlenik
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 
     public virtual Uloge? Uloga { get; set; }
+   // public virtual ICollection<Uloge> Uloges { get; set; } = new List<Uloge>();
 
     public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
 }

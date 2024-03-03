@@ -24,9 +24,9 @@ namespace CarCareHub.Services
         {
             var query = _dbContext.Set<TDb>().AsQueryable();
             query = AddFilter(query, search);
+            query = AddInclude(query, search);
 
-
-            if(search?.Page.HasValue==true && search?.PageSize.HasValue == true)
+            if (search?.Page.HasValue==true && search?.PageSize.HasValue == true)
             {
                 query=query.Take(search.PageSize.Value).Skip(search.Page.Value * search.PageSize.Value);
             }
@@ -34,6 +34,11 @@ namespace CarCareHub.Services
             var list = await query.ToListAsync();
 
             return _mapper.Map<List<T>>(list);
+        }
+
+        public virtual IQueryable<TDb> AddInclude(IQueryable<TDb> query, TSearch? search = null)
+        {
+            return query;
         }
 
         public virtual IQueryable<TDb> AddFilter(IQueryable<TDb> query, TSearch? search = null)

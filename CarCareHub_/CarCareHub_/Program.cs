@@ -14,8 +14,10 @@ builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
 builder.Services.AddTransient<IGradService, GradService>();
 //builder.Services.AddTransient<  IService<CarCareHub.Model.Grad>, GradService>();
-builder.Services.AddTransient <IService<CarCareHub.Model.Zaposlenik, BaseSearchObject>, BaseService<CarCareHub.Model.Zaposlenik, 
-    CarCareHub.Services.Database.Zaposlenik, BaseSearchObject>>();
+//builder.Services.AddTransient <IService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject>, BaseService<CarCareHub.Model.Zaposlenik, 
+//    CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject>>();
+
+builder.Services.AddTransient<IZaposlenikService, ZaposlenikService>();
 
 
 
