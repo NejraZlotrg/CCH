@@ -25,6 +25,7 @@ namespace CarCareHub.Services
             CreateMap<Database.Uloge, Model.Uloge>();
 
 
+
         }
     }
 }

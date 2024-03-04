@@ -8,27 +8,15 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
    [Route("api/zaposlenici")]
-    public class ZaposleniciController : BaseController<Zaposlenik, ZaposlenikSearchObject>
+    public class ZaposleniciController : BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>
     {
-        protected IZaposlenikService _zaposlenikService;
 
-        public ZaposleniciController(ILogger<BaseController<Zaposlenik, ZaposlenikSearchObject>> logger,
+        public ZaposleniciController(ILogger<BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>> logger,
             IZaposlenikService service)
             : base(logger, service)
         {
-            _zaposlenikService = service;
         }
 
-        [HttpPost]
-        public Zaposlenik Insert(ZaposlenikInsert insert)
-        {
-            return _zaposlenikService.Insert(insert);
-        }
-        [HttpPut("{id}")]
-        public Zaposlenik Update(int id, ZaposlenikUpdate update)
-        {
-            return _zaposlenikService.Update(id, update);
-
-        }
+       
     }
 }

@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public interface IZaposlenikService : IService<Model.Zaposlenik, ZaposlenikSearchObject>
+    public interface IZaposlenikService : ICRUDService<Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>
     {
-        public Model.Zaposlenik Update(int id, ZaposlenikUpdate update);
-        public Model.Zaposlenik Insert(ZaposlenikInsert insert);
+       
+
 
     }
 }
