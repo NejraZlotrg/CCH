@@ -1,26 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CarCareHub.Services;
 using CarCareHub.Services.Database;
+using CarCareHub.Model.SearchObjects;
+using CarCareHub.Model;
 
 namespace CarCareHub_.Controllers
 {
-    //    [ApiController]
-    //    [Route("[Controller]")]
-    //    public class ProizvodiController : ControllerBase
-    //    {
-    //        private readonly IProizvodiService _proizvodiService;
-    //        private readonly ILogger<WeatherForecastController> _logger;
+    [ApiController]
+    [Route("api/proizvodi")]
+    public class ProizvodiController : BaseCRUDController<CarCareHub.Model.Proizvod, ProizvodiSearchObject, ProizvodiInsert, ProizvodiUpdate>
+    {
 
-    //        public ProizvodiController(ILogger<WeatherForecastController> logger, IProizvodiService proizvodiService)
-    //        {
-    //            _logger = logger;
-    //            _proizvodiService = proizvodiService;
-    //        }
-    //        [HttpGet()]
-    //        public IEnumerable<Proizvod> Get()
-    //        {
-    //            return _proizvodiService.Get();
-    //        }
+        public ProizvodiController(ILogger<BaseCRUDController<CarCareHub.Model.Proizvod, ProizvodiSearchObject, ProizvodiInsert, ProizvodiUpdate>> logger,
+            IProizvodiService service)
+            : base(logger, service)
+        {
+        }
 
-    //    }
+
+    }
 }

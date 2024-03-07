@@ -1,4 +1,7 @@
-﻿using CarCareHub.Services.Database;
+﻿using AutoMapper;
+using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
+using CarCareHub.Services.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,28 +10,11 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public class ProizvodiService: IProizvodiService
+    public class ProizvodiService : BaseCRUDService<Model.Proizvod, Database.Proizvod, ProizvodiSearchObject, ProizvodiInsert, ProizvodiUpdate>,  IProizvodiService
     {
-        CchV2AliContext dbContext;
-
-        public ProizvodiService(CchV2AliContext dbContext)
+        public ProizvodiService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
-            this.dbContext = dbContext;
-        }
-        List<Proizvod> proizvods = new List<Proizvod>()
-        {
-            new Proizvod()
-            {
-                ProizvodId=1,
-                Naziv="llll"
-            }
 
-        };
-
-        public IList<Proizvod> Get()
-        {
-            var list = dbContext.Proizvods.ToList();
-            return proizvods;
         }
     }
 }

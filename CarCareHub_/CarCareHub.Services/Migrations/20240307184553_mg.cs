@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class mig1 : Migration
+    public partial class mg : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -137,7 +137,9 @@ namespace CarCareHub.Services.Migrations
                     model = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     opis = table.Column<string>(type: "text", nullable: true),
                     kategorijaID = table.Column<int>(type: "int", nullable: true),
-                    proizvodjacID = table.Column<int>(type: "int", nullable: true)
+                    proizvodjacID = table.Column<int>(type: "int", nullable: true),
+                    Slika = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    SlikaThumb = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -364,6 +366,8 @@ namespace CarCareHub.Services.Migrations
                     email = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
                     username = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     password_ = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    LozinkaSalt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LozinkaHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ulogaID = table.Column<int>(type: "int", nullable: true),
                     autoservisID = table.Column<int>(type: "int", nullable: true),
                     firma_autodijelovaID = table.Column<int>(type: "int", nullable: true)

@@ -22,6 +22,11 @@ namespace CarCareHub.Services
             CreateMap<Model.FirmaAutodijelovaUpdate, CarCareHub.Services.Database.FirmaAutodijelova>();
             CreateMap<Model.ZaposlenikUpdate, CarCareHub.Services.Database.Zaposlenik>();
             CreateMap<Model.ZaposlenikInsert, CarCareHub.Services.Database.Zaposlenik>();
+
+            CreateMap<Model.ProizvodiInsert, CarCareHub.Services.Database.Proizvod>();
+            CreateMap<Model.ProizvodiUpdate, CarCareHub.Services.Database.Proizvod>();
+            CreateMap<Database.Proizvod, Model.Proizvod>();
+
             CreateMap<Database.Uloge, Model.Uloge>();
 
 
