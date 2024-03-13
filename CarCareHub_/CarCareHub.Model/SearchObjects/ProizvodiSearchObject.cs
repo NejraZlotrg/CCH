@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarCareHub.Services
+namespace CarCareHub.Model.SearchObjects
 {
-    internal class Class1
+    public class ProizvodiSearchObject:BaseSearchObject
     {
     }
 }

@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
+
    [Route("api/zaposlenici")]
+
     public class ZaposleniciController : BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>
     {
 
@@ -17,6 +19,5 @@ namespace CarCareHub_.Controllers
         {
         }
 
-       
     }
 }

@@ -22,7 +22,9 @@ public partial class Proizvod
     public int? KategorijaId { get; set; }
 
     public int? ProizvodjacId { get; set; }
-
+    public byte[]? Slika { get; set; }
+    public byte[]? SlikaThumb { get; set; }
+    public string? StateMachine { get; set; }
     public virtual Kategorija? Kategorija { get; set; }
 
     public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
