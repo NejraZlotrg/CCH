@@ -11,7 +11,14 @@ namespace CarCareHub_.Controllers
     {
         public ProizvodiController(ILogger<BaseController<CarCareHub.Model.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject>> logger, 
             IProizvodiService service) : base(logger, service)
+        { }
+
+
+        [HttpPut("{id}/activate")]
+        public virtual async Task<CarCareHub.Model.Proizvod> Activate(int id)
         {
+
+            return await (_service as IProizvodiService).Activate(id);
         }
     }
 }

@@ -1,9 +1,11 @@
+using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services;
 //using CarCareHub.Model;
 
 
 using CarCareHub.Services.Database;
+using CarCareHub.Services.ProizvodiStateMachine;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,12 +16,21 @@ builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
 builder.Services.AddTransient<IGradService, GradService>();
 //builder.Services.AddTransient<  IService<CarCareHub.Model.Grad>, GradService>();
-//builder.Services.AddTransient <IService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject>, BaseService<CarCareHub.Model.Zaposlenik, 
+//builder.Services.AddTransient<IService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject>, BaseService<CarCareHub.Model.Zaposlenik,
 //    CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject>>();
 
-builder.Services.AddTransient<IZaposlenikService, ZaposlenikService>();
+//RADIbuilder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, ZaposlenikService>();
+builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, BaseCRUDService<CarCareHub.Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>>();
 
 
+
+// Ostali servisi
+//builder.Services.AddTransient<IZaposlenikService, ZaposlenikService>();
+
+builder.Services.AddTransient<BaseState>();
+builder.Services.AddTransient<InitialProductState>();
+builder.Services.AddTransient<DraftProductState>();
+builder.Services.AddTransient<ActiveProductState>();
 
 
 builder.Services.AddControllers();

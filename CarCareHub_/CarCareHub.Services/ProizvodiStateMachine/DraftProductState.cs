@@ -38,5 +38,6 @@ namespace CarCareHub.Services.ProizvodiStateMachine
             return _mapper.Map<Model.Proizvod>(set);
 
         }
+          
     }
 }
