@@ -50,6 +50,7 @@ namespace CarCareHub.Services.ProizvodiStateMachine
             switch (stateName)
             {
                 case "initial":
+                case null:
                     return _serviceProvider.GetService<InitialProductState>();
                     break;
                 case "draft":
@@ -61,6 +62,11 @@ namespace CarCareHub.Services.ProizvodiStateMachine
                 default:
                     throw new Exception("not allowed");
             }
+        }
+
+        public virtual async Task<List<string>> AllowedActions(int id)
+        {
+            return new List<string>();
         }
     }
 }

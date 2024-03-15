@@ -6,6 +6,7 @@ using CarCareHub.Services;
 
 using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
+using CarCareHub_.Errors;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +34,7 @@ builder.Services.AddTransient<DraftProductState>();
 builder.Services.AddTransient<ActiveProductState>();
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers( x => { x.Filters.Add<ErrorFilter>(); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

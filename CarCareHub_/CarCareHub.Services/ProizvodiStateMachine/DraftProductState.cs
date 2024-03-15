@@ -38,6 +38,15 @@ namespace CarCareHub.Services.ProizvodiStateMachine
             return _mapper.Map<Model.Proizvod>(set);
 
         }
-          
+
+        public override async Task<List<string>> AllowedActions(int id)
+        {
+            var list = await base.AllowedActions(id);
+            list.Add("update");
+            list.Add("activate");
+
+
+            return list;
+        }
     }
 }

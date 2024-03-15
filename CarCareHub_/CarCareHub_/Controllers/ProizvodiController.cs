@@ -20,5 +20,19 @@ namespace CarCareHub_.Controllers
 
             return await (_service as IProizvodiService).Activate(id);
         }
+
+        [HttpPut("{id}/hide")]
+        public virtual async Task<CarCareHub.Model.Proizvod> Hide(int id)
+        {
+
+            return await (_service as IProizvodiService).Hide(id);
+        }
+
+        [HttpGet("allowedActions")]
+        public virtual async Task<List<string>> AllowedActions (int id)
+        {
+
+            return await (_service as IProizvodiService).AllowedActions(id);
+        }
     }
 }
