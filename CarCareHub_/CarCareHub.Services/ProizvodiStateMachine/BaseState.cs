@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CarCareHub.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -23,26 +24,26 @@ namespace CarCareHub.Services.ProizvodiStateMachine
 
         public virtual Task<Model.Proizvod> Insert(CarCareHub.Model.ProizvodiInsert insert)
         {
-            throw new Exception("not allowed");
+            throw new UserException("not allowed");
         }
 
         public virtual Task<Model.Proizvod> Update(int id, CarCareHub.Model.ProizvodiUpdate insert)
         {
-            throw new Exception("not allowed");
+            throw new UserException("not allowed");
         }
 
         public virtual Task<Model.Proizvod> Activate(int id)
         {
-            throw new Exception("not allowed");
+            throw new UserException("not allowed");
         }
 
         public virtual Task<Model.Proizvod> Hide(int id)
         {
-            throw new Exception("not allowed");
+            throw new UserException("not allowed");
         }
         public virtual Task<Model.Proizvod> Delete(int id)
         {
-            throw new Exception("not allowed");
+            throw new UserException("not allowed");
         }
 
         public BaseState CreateState(string stateName)
@@ -60,7 +61,7 @@ namespace CarCareHub.Services.ProizvodiStateMachine
                     return _serviceProvider.GetService<ActiveProductState>();
                     break;
                 default:
-                    throw new Exception("not allowed");
+                    throw new UserException("not allowed");
             }
         }
 

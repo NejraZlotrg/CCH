@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,12 @@ using System.Threading.Tasks;
 namespace CarCareHub.Services.ProizvodiStateMachine
 {
     public class DraftProductState : BaseState
+
     {
-        public DraftProductState(Database.CchV2AliContext dbContext, IMapper mapper, IServiceProvider serviceProvider) : base(dbContext, mapper, serviceProvider)
+        protected ILogger<DraftProductState> _logger;
+        public DraftProductState(ILogger<DraftProductState> logger , Database.CchV2AliContext dbContext, IMapper mapper, IServiceProvider serviceProvider) : base(dbContext, mapper, serviceProvider)
         {
+            _logger = logger;
         }
 
         public override async Task<Proizvod> Update(int id, ProizvodiUpdate insert)
@@ -22,6 +26,12 @@ namespace CarCareHub.Services.ProizvodiStateMachine
 
             _mapper.Map(insert, set);
 
+            if (set.Cijena < 0)
+                throw new UserException("Cijena ne može biti u minusu");
+
+            if (set.Cijena < 1)
+                throw new UserException("Cijena ispod min");
+
             await _dbContext.SaveChangesAsync();
 
 
@@ -29,9 +39,15 @@ namespace CarCareHub.Services.ProizvodiStateMachine
         }
         public override async Task<Proizvod> Activate(int id)
         {
+            _logger.LogInformation($"Aktivacija proizvoda {id}");
+            _logger.LogWarning($"Aktivacija proizvoda {id}");
+            _logger.LogError($"Aktivacija proizvoda {id}");
+
             var set = await _dbContext.Set<Database.Proizvod>().FindAsync(id);
 
             set.StateMachine = "active";
+         
+            
             await _dbContext.SaveChangesAsync();
 
 
