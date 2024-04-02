@@ -578,6 +578,15 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("sifra");
 
+                    b.Property<byte[]>("Slika")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("SlikaThumb")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("StateMachine")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ProizvodId")
                         .HasName("pk_proizvod");
 
@@ -726,6 +735,12 @@ namespace CarCareHub.Services.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("ime");
+
+                    b.Property<string>("LozinkaHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LozinkaSalt")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .HasMaxLength(20)

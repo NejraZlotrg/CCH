@@ -1,30 +1,20 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using CarCareHub.Services;
-using CarCareHub.Services.Database;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using CarCareHub.Model;
-using CarCareHub;
 using CarCareHub.Model.SearchObjects;
+using CarCareHub.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarCareHub_.Controllers
-
-
 {
     [ApiController]
-   [Route("controllerGrad")]
-    public class GradController:BaseController<CarCareHub.Model.Grad, GradSearchObject>
+    [AllowAnonymous]
+    [Route("api/[controller]")]
+    public class GradController : BaseCRUDController<Grad, GradSearchObject, GradInsert, GradUpdate>
     {
-      
-
-        public GradController(ILogger<BaseController<CarCareHub.Model.Grad, GradSearchObject>> logger, IGradService service):base(logger, service)
+        public GradController(ILogger<BaseController<CarCareHub.Model.Grad, GradSearchObject>> logger,
+             ICRUDService<Grad, GradSearchObject, GradInsert, GradUpdate> service) : base(logger, service)
         {
-            
         }
-
-       
     }
 }
-
-
-
-

@@ -2,33 +2,19 @@
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-   [Route("api/zaposlenici")]
-    public class ZaposleniciController : BaseController<Zaposlenik, ZaposlenikSearchObject>
+    [Route("api/zaposlenici")]
+    public class ZaposleniciController : BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>
     {
-        protected IZaposlenikService _zaposlenikService;
-
-        public ZaposleniciController(ILogger<BaseController<Zaposlenik, ZaposlenikSearchObject>> logger,
-            IZaposlenikService service)
+        public ZaposleniciController(ILogger<BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>> logger,
+            ICRUDService<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate> service)
             : base(logger, service)
         {
-            _zaposlenikService = service;
-        }
-
-        [HttpPost]
-        public Zaposlenik Insert(ZaposlenikInsert insert)
-        {
-            return _zaposlenikService.Insert(insert);
-        }
-        [HttpPut("{id}")]
-        public Zaposlenik Update(int id, ZaposlenikUpdate update)
-        {
-            return _zaposlenikService.Update(id, update);
-
         }
     }
 }
+

@@ -11,14 +11,10 @@ using CarCareHub.Model.SearchObjects;
 
 namespace CarCareHub.Services
 {
-    public class GradService : BaseService <Model.Grad, Database.Grad, CarCareHub.Model.SearchObjects.GradSearchObject>, IGradService
-
+    public class GradService : BaseCRUDService<Model.Grad, Database.Grad, GradSearchObject, GradInsert, GradUpdate>, IGradService
     {
-
-
-        public GradService(Database.CchV2AliContext dbContext, IMapper mapper): base(dbContext, mapper)
+        public GradService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
-           
         }
 
         public override IQueryable<Database.Grad> AddFilter(IQueryable<Database.Grad> query, GradSearchObject? search = null)
