@@ -32,5 +32,11 @@ namespace CarCareHub_.Controllers
 
             return await _service.Update(id, update);
         }
+
+        [HttpDelete("delete/{id}")]
+        public virtual async Task<T> Delete(int id)
+        {
+            return await _service.Delete(id);
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CarCareHub.Model.SearchObjects;
+using CarCareHub.Model;
 using CarCareHub.Services.Database;
 using System;
 using System.Collections.Generic;
@@ -12,72 +14,34 @@ namespace CarCareHub.Services
 {
 
 
-    public class FirmaAutodijelovaService : IFirmaAutodijelovaService
+    public class FirmaAutodijelovaService : BaseCRUDService<Model.FirmaAutodijelova, Database.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>, IFirmaAutodijelovaService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
 
-        public FirmaAutodijelovaService(CchV2AliContext dbContext, IMapper mapper)
+        public FirmaAutodijelovaService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
-
-        List<FirmaAutodijelova> proizvods = new List<FirmaAutodijelova>()
+        public override Task<Model.FirmaAutodijelova> Insert(Model.FirmaAutodijelovaInsert insert)
         {
-            new FirmaAutodijelova()
-            {
-                 NazivFirme="nn",
-                 Telefon="6858n"
-
-            }
-
-        };
-
-        public List<Model.FirmaAutodijelova> Get()
-        {
-
-            var list = _dbContext.FirmaAutodijelovas.ToList();
-
-            var newList = new List<CarCareHub.Model.FirmaAutodijelova>();
-            foreach (var item in list)
-            {
-                newList.Add(new Model.FirmaAutodijelova()
-                {
-                    NazivFirme = item.NazivFirme,
-                    Telefon = item.Telefon,
-                    Adresa = item.Adresa,
-                    Email = item.Email,
-                    FirmaId = item.FirmaId,
-                    GradId = item.GradId,
-                    Password = item.Password,
-                    SlikaProfila = item.SlikaProfila
-                });
-
-            }
-            return newList;
+            return base.Insert(insert);
         }
 
-        public Model.FirmaAutodijelova Add(Model.FirmaAutodijelovaInsert insert)
+        public override async Task<Model.FirmaAutodijelova> Update(int id, Model.FirmaAutodijelovaUpdate update)
         {
-            var firma = new FirmaAutodijelova();
-            _mapper.Map(insert,firma);
-
-            _dbContext.Add(firma);
-            _dbContext.SaveChanges();
-
-            return _mapper.Map<Model.FirmaAutodijelova>(firma);
+            var entity = await _dbContext.Proizvods.FindAsync(id);
+            return await base.Update(id, update);
         }
 
-        public Model.FirmaAutodijelova Update(int id, Model.FirmaAutodijelovaUpdate update)
+        public override async Task<Model.FirmaAutodijelova> Delete(int id)
         {
-            var temp = _dbContext.FirmaAutodijelovas.Find(id);
-            _mapper.Map(update,temp);
-
-            _dbContext.SaveChanges();
-            return _mapper.Map<Model.FirmaAutodijelova>(temp);
-           
+            var entity = await _dbContext.Proizvods.FindAsync(id);
+            return await base.Delete(id);
         }
+
+
 
 
         //public static string GenerateSalt()

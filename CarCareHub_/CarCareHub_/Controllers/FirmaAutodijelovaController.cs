@@ -1,38 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CarCareHub.Services;
 using CarCareHub.Services.Database;
+using CarCareHub.Model.SearchObjects;
+using CarCareHub.Model;
 
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("controllerFM")]
-    public class FirmaAutodijelovaController : ControllerBase
+    [Route("api/[controller]")]
+    public class FirmaAutodijelovaController : BaseCRUDController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>
     {
-      
-        private readonly IFirmaAutodijelovaService _service;
-        private readonly ILogger< WeatherForecastController> _logger ;
 
-        public FirmaAutodijelovaController (ILogger<WeatherForecastController> logger, IFirmaAutodijelovaService service)
+
+        public FirmaAutodijelovaController(ILogger<BaseController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject>> logger,
+            ICRUDService< CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate> service) : base(logger, service)
         {
-            _logger = logger;   
-            _service = service;
+           
         }
-       
-        [HttpGet]
-        [Route("/FirmaAutodijelova/get")]
-        public IEnumerable<CarCareHub.Model.FirmaAutodijelova> Get()
-        {
-            return _service.Get();
-        }
-        [HttpPost]
-      public  CarCareHub.Model.FirmaAutodijelova Add(CarCareHub.Model.FirmaAutodijelovaInsert insert)
-        {
-            return _service.Add(insert);
-        }
-        [HttpPut]
-        public CarCareHub.Model.FirmaAutodijelova Update(int id, CarCareHub.Model.FirmaAutodijelovaUpdate update)
-        {
-            return _service.Update(id, update);
-        }
+     
     }
 }

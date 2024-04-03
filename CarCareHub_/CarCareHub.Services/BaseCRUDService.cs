@@ -45,5 +45,17 @@ namespace CarCareHub.Services
 
             return _mapper.Map<T>(set);
         }
+
+        public virtual async Task<T> Delete(int id)
+        {
+            var set = await _dbContext.Set<TDb>().FindAsync(id);
+            if (set == null)
+                throw new Exception("ne postoji id");
+
+            _dbContext.Set<TDb>().Remove(set);
+            await _dbContext.SaveChangesAsync();
+            return _mapper.Map<T>(set);
+
+        }
     }
 }

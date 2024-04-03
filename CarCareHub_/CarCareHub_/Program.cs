@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 
-builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
+//builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
 //builder.Services.AddTransient<IGradService, GradService>();
 //builder.Services.AddTransient<  IService<CarCareHub.Model.Grad>, GradService>();
 //builder.Services.AddTransient<IService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject>, BaseService<CarCareHub.Model.Zaposlenik,
@@ -25,6 +25,7 @@ builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaServic
 
 //RADIbuilder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, ZaposlenikService>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Grad, GradSearchObject, GradInsert, GradUpdate>, BaseCRUDService<CarCareHub.Model.Grad, CarCareHub.Services.Database.Grad, GradSearchObject, GradInsert, GradUpdate>>();
+builder.Services.AddTransient<ICRUDService<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>, BaseCRUDService<CarCareHub.Model.FirmaAutodijelova, CarCareHub.Services.Database.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>, BaseCRUDService<CarCareHub.Model.Drzava, CarCareHub.Services.Database.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, BaseCRUDService<CarCareHub.Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>, BaseCRUDService<CarCareHub.Model.Kategorija, CarCareHub.Services.Database.Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>>();
@@ -43,7 +44,7 @@ builder.Services.AddTransient<DraftProductState>();
 builder.Services.AddTransient<ActiveProductState>();
 
 
-builder.Services.AddControllers( x => { x.Filters.Add<ErrorFilter>(); });
+builder.Services.AddControllers(/* x => {  x.Filters.Add<ErrorFilter>(); }*/);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
