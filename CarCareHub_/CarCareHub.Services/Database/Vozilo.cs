@@ -13,5 +13,5 @@ public partial class Vozilo
 
     public string? VrstaVozila { get; set; }
 
-    public virtual ICollection<Autoservi> Autoservis { get; set; } = new List<Autoservi>();
+    public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
 }

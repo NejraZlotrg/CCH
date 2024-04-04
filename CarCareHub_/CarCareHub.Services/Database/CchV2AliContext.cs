@@ -15,9 +15,9 @@ public partial class CchV2AliContext : DbContext
     {
     }
 
-    public virtual DbSet<Autoservi> Autoservis { get; set; }
+    public virtual DbSet<Autoservis> Autoservis { get; set; }
 
-    public virtual DbSet<ChatKlijentServi> ChatKlijentServis { get; set; }
+    public virtual DbSet<ChatKlijentServis> ChatKlijentServiss { get; set; }
 
     public virtual DbSet<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; }
 
@@ -59,7 +59,7 @@ public partial class CchV2AliContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Autoservi>(entity =>
+        modelBuilder.Entity<Autoservis>(entity =>
         {
             entity.HasKey(e => e.AutoservisId).HasName("PK_autoservis");
 
@@ -118,7 +118,7 @@ public partial class CchV2AliContext : DbContext
                 .HasConstraintName("fk_v_a");
         });
 
-        modelBuilder.Entity<ChatKlijentServi>(entity =>
+        modelBuilder.Entity<ChatKlijentServis>(entity =>
         {
             entity.HasKey(e => e.ChatKlijentServisId).HasName("pk_chat");
 
@@ -134,7 +134,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnType("text")
                 .HasColumnName("sadrzaj");
 
-            entity.HasOne(d => d.Autoservis).WithMany(p => p.ChatKlijentServis)
+            entity.HasOne(d => d.Autoservis).WithMany(p => p.ChatKlijentServiss)
                 .HasForeignKey(d => d.AutoservisId)
                 .HasConstraintName("fk_autoservis_chat");
 
@@ -553,7 +553,6 @@ public partial class CchV2AliContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("prezime");
-            entity.Property(e => e.UlogaId).HasColumnName("ulogaID");
             entity.Property(e => e.Username)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -567,9 +566,9 @@ public partial class CchV2AliContext : DbContext
                 .HasForeignKey(d => d.FirmaAutodijelovaId)
                 .HasConstraintName("fk_firma_zaposlenik");
 
-            entity.HasOne(d => d.Uloga).WithMany(p => p.Zaposleniks)
-                .HasForeignKey(d => d.UlogaId)
-                .HasConstraintName("fk_uloga_zaposlenik");
+            //entity.HasOne(d => d.Uloga).WithMany(p => p.Zaposleniks)
+            //    .HasForeignKey(d => d.UlogaId)
+            //    .HasConstraintName("fk_uloga_zaposlenik");
 
             entity.HasMany(d => d.Proizvods).WithMany(p => p.Zaposleniks)
                 .UsingEntity<Dictionary<string, object>>(

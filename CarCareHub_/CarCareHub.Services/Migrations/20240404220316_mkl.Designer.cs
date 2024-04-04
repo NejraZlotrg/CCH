@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20240303231453_mig1")]
-    partial class mig1
+    [Migration("20240404220316_mkl")]
+    partial class mkl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -581,6 +581,15 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("sifra");
 
+                    b.Property<byte[]>("Slika")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("SlikaThumb")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("StateMachine")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ProizvodId")
                         .HasName("pk_proizvod");
 
@@ -730,6 +739,12 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("ime");
 
+                    b.Property<string>("LozinkaHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LozinkaSalt")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .HasMaxLength(20)
                         .IsUnicode(false)
@@ -759,8 +774,6 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasIndex("FirmaAutodijelovaId");
 
-                    b.HasIndex("UlogaId");
-
                     b.ToTable("Zaposlenik", (string)null);
                 });
 
@@ -780,6 +793,21 @@ namespace CarCareHub.Services.Migrations
                     b.HasIndex("ProizvodId");
 
                     b.ToTable("FirmaAutodijelova_Proizvod", (string)null);
+                });
+
+            modelBuilder.Entity("UlogeZaposlenik", b =>
+                {
+                    b.Property<int>("UlogesUlogaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ZaposleniksZaposlenikId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UlogesUlogaId", "ZaposleniksZaposlenikId");
+
+                    b.HasIndex("ZaposleniksZaposlenikId");
+
+                    b.ToTable("UlogeZaposlenik");
                 });
 
             modelBuilder.Entity("ZaposlenikProizvod", b =>
@@ -999,16 +1027,9 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("FirmaAutodijelovaId")
                         .HasConstraintName("fk_firma_zaposlenik");
 
-                    b.HasOne("CarCareHub.Services.Database.Uloge", "Uloga")
-                        .WithMany("Zaposleniks")
-                        .HasForeignKey("UlogaId")
-                        .HasConstraintName("fk_uloga_zaposlenik");
-
                     b.Navigation("Autoservis");
 
                     b.Navigation("FirmaAutodijelova");
-
-                    b.Navigation("Uloga");
                 });
 
             modelBuilder.Entity("FirmaAutodijelovaProizvod", b =>
@@ -1024,6 +1045,21 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("ProizvodId")
                         .IsRequired()
                         .HasConstraintName("FK__FirmaAuto__proiz__00200768");
+                });
+
+            modelBuilder.Entity("UlogeZaposlenik", b =>
+                {
+                    b.HasOne("CarCareHub.Services.Database.Uloge", null)
+                        .WithMany()
+                        .HasForeignKey("UlogesUlogaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarCareHub.Services.Database.Zaposlenik", null)
+                        .WithMany()
+                        .HasForeignKey("ZaposleniksZaposlenikId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ZaposlenikProizvod", b =>
@@ -1117,8 +1153,6 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Autoservis");
 
                     b.Navigation("FirmaAutodijelovas");
-
-                    b.Navigation("Zaposleniks");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Usluge", b =>

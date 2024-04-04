@@ -15,7 +15,7 @@ public partial class PlacanjeAutoservisDijelovi
 
     public int? Primalac { get; set; }
 
-    public virtual Autoservi? PosiljaocNavigation { get; set; }
+    public virtual Autoservis? PosiljaocNavigation { get; set; }
 
     public virtual FirmaAutodijelova? PrimalacNavigation { get; set; }
 }

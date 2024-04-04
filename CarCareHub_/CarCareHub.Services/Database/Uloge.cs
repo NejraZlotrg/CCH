@@ -9,7 +9,7 @@ public partial class Uloge
 
     public string? NazivUloge { get; set; }
 
-    public virtual ICollection<Autoservi> Autoservis { get; set; } = new List<Autoservi>();
+    public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
 
     public virtual ICollection<FirmaAutodijelova> FirmaAutodijelovas { get; set; } = new List<FirmaAutodijelova>();
 

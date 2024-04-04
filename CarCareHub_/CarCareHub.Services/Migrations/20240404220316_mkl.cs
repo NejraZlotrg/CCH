@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class mg : Migration
+    public partial class mkl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -382,11 +382,6 @@ namespace CarCareHub.Services.Migrations
                         principalTable: "Firma_autodijelova",
                         principalColumn: "FirmaID");
                     table.ForeignKey(
-                        name: "fk_uloga_zaposlenik",
-                        column: x => x.ulogaID,
-                        principalTable: "Uloge",
-                        principalColumn: "UlogaID");
-                    table.ForeignKey(
                         name: "fk_zaposlenik_autoservis",
                         column: x => x.autoservisID,
                         principalTable: "Autoservis",
@@ -470,6 +465,30 @@ namespace CarCareHub.Services.Migrations
                         column: x => x.zaposlenik_id,
                         principalTable: "Zaposlenik",
                         principalColumn: "ZaposlenikID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UlogeZaposlenik",
+                columns: table => new
+                {
+                    UlogesUlogaId = table.Column<int>(type: "int", nullable: false),
+                    ZaposleniksZaposlenikId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UlogeZaposlenik", x => new { x.UlogesUlogaId, x.ZaposleniksZaposlenikId });
+                    table.ForeignKey(
+                        name: "FK_UlogeZaposlenik_Uloge_UlogesUlogaId",
+                        column: x => x.UlogesUlogaId,
+                        principalTable: "Uloge",
+                        principalColumn: "UlogaID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UlogeZaposlenik_Zaposlenik_ZaposleniksZaposlenikId",
+                        column: x => x.ZaposleniksZaposlenikId,
+                        principalTable: "Zaposlenik",
+                        principalColumn: "ZaposlenikID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -610,6 +629,11 @@ namespace CarCareHub.Services.Migrations
                 column: "proizvodjacID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UlogeZaposlenik_ZaposleniksZaposlenikId",
+                table: "UlogeZaposlenik",
+                column: "ZaposleniksZaposlenikId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Zaposlenik_autoservisID",
                 table: "Zaposlenik",
                 column: "autoservisID");
@@ -618,11 +642,6 @@ namespace CarCareHub.Services.Migrations
                 name: "IX_Zaposlenik_firma_autodijelovaID",
                 table: "Zaposlenik",
                 column: "firma_autodijelovaID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Zaposlenik_ulogaID",
-                table: "Zaposlenik",
-                column: "ulogaID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Zaposlenik_Proizvod_proizvodID",
@@ -647,6 +666,9 @@ namespace CarCareHub.Services.Migrations
 
             migrationBuilder.DropTable(
                 name: "placanje_autoservis_dijelovi");
+
+            migrationBuilder.DropTable(
+                name: "UlogeZaposlenik");
 
             migrationBuilder.DropTable(
                 name: "Zaposlenik_Proizvod");

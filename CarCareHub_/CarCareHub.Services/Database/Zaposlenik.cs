@@ -23,20 +23,20 @@ public partial class Zaposlenik
 
 
 
-    public int? UlogaId { get; set; }
 
     public int? AutoservisId { get; set; }
 
     public int? FirmaAutodijelovaId { get; set; }
 
-    public virtual Autoservi? Autoservis { get; set; }
+    public virtual Autoservis? Autoservis { get; set; }
 
     public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; } = new List<ChatKlijentZaposlenik>();
 
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
+   // public int? UlogaId { get; set; }
 
-    public virtual Uloge? Uloga { get; set; }
-   // public virtual ICollection<Uloge> Uloges { get; set; } = new List<Uloge>();
+    //public virtual Uloge? Uloga { get; set; }s
+    public virtual ICollection<Uloge> Uloges { get; set; } = new List<Uloge>();
 
     public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
 }

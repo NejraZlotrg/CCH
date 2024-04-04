@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CarCareHub.Services.Database;
 
-public partial class Autoservi
+public partial class Autoservis
 {
     public int AutoservisId { get; set; }
 
@@ -32,7 +32,7 @@ public partial class Autoservi
 
     public int? VoziloId { get; set; }
 
-    public virtual ICollection<ChatKlijentServi> ChatKlijentServis { get; set; } = new List<ChatKlijentServi>();
+    public virtual ICollection<ChatKlijentServis> ChatKlijentServiss { get; set; } = new List<ChatKlijentServis>();
 
     public virtual Grad? Grad { get; set; }
 

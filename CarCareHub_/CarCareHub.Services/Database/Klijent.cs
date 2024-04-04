@@ -23,7 +23,7 @@ public partial class Klijent
 
     public int? GradId { get; set; }
 
-    public virtual ICollection<ChatKlijentServi> ChatKlijentServis { get; set; } = new List<ChatKlijentServi>();
+    public virtual ICollection<ChatKlijentServis> ChatKlijentServis { get; set; } = new List<ChatKlijentServis>();
 
     public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; } = new List<ChatKlijentZaposlenik>();
 

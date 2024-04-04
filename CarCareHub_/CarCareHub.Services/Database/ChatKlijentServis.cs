@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace CarCareHub.Services.Database;
 
-public partial class ChatKlijentServi
+public partial class ChatKlijentServis
+
 {
     public int ChatKlijentServisId { get; set; }
 
@@ -15,7 +16,7 @@ public partial class ChatKlijentServi
 
     public int? KlijentId { get; set; }
 
-    public virtual Autoservi? Autoservis { get; set; }
+    public virtual Autoservis? Autoservis { get; set; }
 
     public virtual Klijent? Klijent { get; set; }
 }

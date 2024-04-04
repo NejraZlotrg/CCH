@@ -11,7 +11,7 @@ public partial class Grad
 
     public int? DrzavaId { get; set; }
 
-    public virtual ICollection<Autoservi> Autoservis { get; set; } = new List<Autoservi>();
+    public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
 
     public virtual Drzava? Drzava { get; set; }
 

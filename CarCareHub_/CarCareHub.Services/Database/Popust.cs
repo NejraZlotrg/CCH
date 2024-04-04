@@ -13,7 +13,7 @@ public partial class Popust
 
     public double? VrijednostPopusta { get; set; }
 
-    public virtual Autoservi? Autoservis { get; set; }
+    public virtual Autoservis? Autoservis { get; set; }
 
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 

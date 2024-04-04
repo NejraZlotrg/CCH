@@ -13,9 +13,9 @@ namespace CarCareHub.Services
         public MappingProfile()
         {
 
-            CreateMap<CarCareHub.Services.Database.Autoservi, Model.Autoservis>();
-            CreateMap<Model.AutoservisUpdate, CarCareHub.Services.Database.Autoservi>();
-            CreateMap<Model.AutoservisInsert, CarCareHub.Services.Database.Autoservi>();
+            CreateMap<CarCareHub.Services.Database.Autoservis, Model.Autoservis>();
+            CreateMap<Model.AutoservisUpdate, CarCareHub.Services.Database.Autoservis>();
+            CreateMap<Model.AutoservisInsert, CarCareHub.Services.Database.Autoservis>();
             
             CreateMap<CarCareHub.Services.Database.Drzava, Model.Drzava>();
             CreateMap<Model.DrzavaUpdate, CarCareHub.Services.Database.Drzava>();

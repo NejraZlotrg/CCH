@@ -39,7 +39,6 @@ namespace CarCareHub.Model
 
         //public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 
-        //public virtual Uloge? Uloga { get; set; }
 
         //public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
     }

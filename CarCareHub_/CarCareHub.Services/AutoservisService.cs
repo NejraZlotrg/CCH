@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarCareHub.Services
 {
-    public class AutoservisService : BaseCRUDService<Model.Autoservis, Database.Autoservi, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, IAutoservisService
+    public class AutoservisService : BaseCRUDService<Model.Autoservis, Database.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, IAutoservisService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
@@ -36,7 +36,7 @@ namespace CarCareHub.Services
             return await base.Delete(id);
         }
 
-        public override IQueryable<Database.Autoservi> AddInclude(IQueryable<Database.Autoservi> query, AutoservisSearchObject? search = null)
+        public override IQueryable<Database.Autoservis> AddInclude(IQueryable<Database.Autoservis> query, AutoservisSearchObject? search = null)
         {
             if (search?.IsAllIncluded == true)
             {
