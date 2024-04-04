@@ -8,6 +8,7 @@ namespace CarCareHub.Model
 {
     public class Usluge
     {
+        public int UslugeId { get; set; }
 
         public string? NazivUsluge { get; set; }
 

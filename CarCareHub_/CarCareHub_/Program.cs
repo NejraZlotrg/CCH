@@ -32,6 +32,8 @@ builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Kategorija, Kategori
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>, BaseCRUDService<CarCareHub.Model.Proizvodjac, CarCareHub.Services.Database.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>, BaseCRUDService<CarCareHub.Model.Uloge, CarCareHub.Services.Database.Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>, BaseCRUDService<CarCareHub.Model.Usluge, CarCareHub.Services.Database.Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>>();
+builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>, BaseCRUDService<CarCareHub.Model.Vozilo, CarCareHub.Services.Database.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>>();
+builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, BaseCRUDService<CarCareHub.Model.Autoservis, CarCareHub.Services.Database.Autoservi, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>>();
 
 
 

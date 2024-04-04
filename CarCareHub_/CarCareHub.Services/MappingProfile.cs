@@ -13,6 +13,10 @@ namespace CarCareHub.Services
         public MappingProfile()
         {
 
+            CreateMap<CarCareHub.Services.Database.Autoservi, Model.Autoservis>();
+            CreateMap<Model.AutoservisUpdate, CarCareHub.Services.Database.Autoservi>();
+            CreateMap<Model.AutoservisInsert, CarCareHub.Services.Database.Autoservi>();
+            
             CreateMap<CarCareHub.Services.Database.Drzava, Model.Drzava>();
             CreateMap<Model.DrzavaUpdate, CarCareHub.Services.Database.Drzava>();
             CreateMap<Model.DrzavaInsert, CarCareHub.Services.Database.Drzava>();
@@ -50,6 +54,12 @@ namespace CarCareHub.Services
             CreateMap<CarCareHub.Services.Database.Proizvodjac, Model.Proizvodjac>();
             CreateMap<Model.ProizvodjacUpdate, CarCareHub.Services.Database.Proizvodjac>();
             CreateMap<Model.ProizvodjacInsert, CarCareHub.Services.Database.Proizvodjac>();
+            
+            
+            
+            CreateMap<CarCareHub.Services.Database.Vozilo, Model.Vozilo>();
+            CreateMap<Model.VoziloUpdate, CarCareHub.Services.Database.Vozilo>();
+            CreateMap<Model.VoziloInsert, CarCareHub.Services.Database.Vozilo>();
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

@@ -31,13 +31,11 @@ namespace CarCareHub.Services
 
         public override async Task<Model.FirmaAutodijelova> Update(int id, Model.FirmaAutodijelovaUpdate update)
         {
-            var entity = await _dbContext.Proizvods.FindAsync(id);
             return await base.Update(id, update);
         }
 
         public override async Task<Model.FirmaAutodijelova> Delete(int id)
         {
-            var entity = await _dbContext.Proizvods.FindAsync(id);
             return await base.Delete(id);
         }
 
