@@ -12,8 +12,8 @@ namespace CarCareHub_.Controllers
     [Route("api/[controller]")]
     public class GradController : BaseCRUDController<Grad, GradSearchObject, GradInsert, GradUpdate>
     {
-        public GradController(ILogger<BaseController<CarCareHub.Model.Grad, GradSearchObject>> logger,
-             ICRUDService<Grad, GradSearchObject, GradInsert, GradUpdate> service) : base(logger, service)
+        public GradController(ILogger<BaseController<Grad, GradSearchObject>> logger,
+             IGradService gradService) : base(logger, gradService)
         {
         }
     }

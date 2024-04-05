@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20240405202317_tt")]
+    partial class tt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -754,9 +757,6 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("prezime");
 
-                    b.Property<int?>("UlogaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .HasMaxLength(20)
                         .IsUnicode(false)
@@ -769,8 +769,6 @@ namespace CarCareHub.Services.Migrations
                     b.HasIndex("AutoservisId");
 
                     b.HasIndex("FirmaAutodijelovaId");
-
-                    b.HasIndex("UlogaId");
 
                     b.ToTable("Zaposlenik", (string)null);
                 });
@@ -791,6 +789,21 @@ namespace CarCareHub.Services.Migrations
                     b.HasIndex("ProizvodId");
 
                     b.ToTable("FirmaAutodijelova_Proizvod", (string)null);
+                });
+
+            modelBuilder.Entity("UlogeZaposlenik", b =>
+                {
+                    b.Property<int>("UlogesUlogaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ZaposleniksZaposlenikId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UlogesUlogaId", "ZaposleniksZaposlenikId");
+
+                    b.HasIndex("ZaposleniksZaposlenikId");
+
+                    b.ToTable("UlogeZaposlenik");
                 });
 
             modelBuilder.Entity("ZaposlenikProizvod", b =>
@@ -1010,15 +1023,9 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("FirmaAutodijelovaId")
                         .HasConstraintName("fk_firma_zaposlenik");
 
-                    b.HasOne("CarCareHub.Services.Database.Uloge", "Uloga")
-                        .WithMany("Zaposleniks")
-                        .HasForeignKey("UlogaId");
-
                     b.Navigation("Autoservis");
 
                     b.Navigation("FirmaAutodijelova");
-
-                    b.Navigation("Uloga");
                 });
 
             modelBuilder.Entity("FirmaAutodijelovaProizvod", b =>
@@ -1034,6 +1041,21 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("ProizvodId")
                         .IsRequired()
                         .HasConstraintName("FK__FirmaAuto__proiz__00200768");
+                });
+
+            modelBuilder.Entity("UlogeZaposlenik", b =>
+                {
+                    b.HasOne("CarCareHub.Services.Database.Uloge", null)
+                        .WithMany()
+                        .HasForeignKey("UlogesUlogaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarCareHub.Services.Database.Zaposlenik", null)
+                        .WithMany()
+                        .HasForeignKey("ZaposleniksZaposlenikId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ZaposlenikProizvod", b =>
@@ -1127,8 +1149,6 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Autoservis");
 
                     b.Navigation("FirmaAutodijelovas");
-
-                    b.Navigation("Zaposleniks");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Usluge", b =>

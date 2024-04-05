@@ -1,14 +1,10 @@
-﻿using CarCareHub.Model.SearchObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
 
 namespace CarCareHub.Services
 {
-    public interface IGradService:IService<Model.Grad, GradSearchObject>
+    public interface IGradService : ICRUDService<Grad, GradSearchObject, GradInsert, GradUpdate>
     {
-        
+
     }
 }

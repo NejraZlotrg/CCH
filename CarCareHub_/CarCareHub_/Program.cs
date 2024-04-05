@@ -24,7 +24,7 @@ builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 //    CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject>>();
 
 //RADIbuilder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, ZaposlenikService>();
-builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Grad, GradSearchObject, GradInsert, GradUpdate>, BaseCRUDService<CarCareHub.Model.Grad, CarCareHub.Services.Database.Grad, GradSearchObject, GradInsert, GradUpdate>>();
+//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Grad, GradSearchObject, GradInsert, GradUpdate>, BaseCRUDService<CarCareHub.Model.Grad, CarCareHub.Services.Database.Grad, GradSearchObject, GradInsert, GradUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>, BaseCRUDService<CarCareHub.Model.FirmaAutodijelova, CarCareHub.Services.Database.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>, BaseCRUDService<CarCareHub.Model.Drzava, CarCareHub.Services.Database.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, BaseCRUDService<CarCareHub.Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>>();
@@ -35,6 +35,7 @@ builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Usluge, UslugeSearch
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>, BaseCRUDService<CarCareHub.Model.Vozilo, CarCareHub.Services.Database.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>>();
 builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, BaseCRUDService<CarCareHub.Model.Autoservis, CarCareHub.Services.Database.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>>();
 
+builder.Services.AddTransient<IGradService, GradService>();
 
 
 // Ostali servisi

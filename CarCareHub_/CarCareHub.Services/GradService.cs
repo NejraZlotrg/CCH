@@ -27,5 +27,15 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
+
+        public override IQueryable<Database.Grad> AddInclude(IQueryable<Database.Grad> query, GradSearchObject? search = null)
+        {
+            // Uključujemo samo entitet Uloge
+            if (search?.IsDrzavaIncluded == true)
+            {
+                query = query.Include(z => z.Drzava);
+            }
+            return base.AddInclude(query, search);
+        }
     }
 }

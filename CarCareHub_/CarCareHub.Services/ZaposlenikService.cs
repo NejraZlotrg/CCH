@@ -46,8 +46,10 @@ namespace CarCareHub.Services
         public override IQueryable<Database.Zaposlenik> AddInclude(IQueryable<Database.Zaposlenik> query, ZaposlenikSearchObject? search = null)
         {
             // Uključujemo samo entitet Uloge
-            query = query.Include(zaposlenik => zaposlenik.Uloges);
-
+            if (search?.IsUlogeIncluded == true)
+            {
+                query = query.Include(z => z.Uloga);
+            }
             return base.AddInclude(query, search);
         }
 

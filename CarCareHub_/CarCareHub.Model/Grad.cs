@@ -12,6 +12,7 @@ namespace CarCareHub.Model
 
         public string? NazivGrada { get; set; }
 
-        public int? DrzavaId { get; set; }
+        public int DrzavaId { get; set; }
+        public virtual Drzava Drzava { get; set; }
     }
 }

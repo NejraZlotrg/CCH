@@ -9,5 +9,7 @@ namespace CarCareHub.Model.SearchObjects
     public class GradSearchObject: BaseSearchObject
     {
         public string? Naziv { get; set; }
+        public bool IsDrzavaIncluded { get; set; }
+
     }
 }
