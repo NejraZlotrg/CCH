@@ -24,8 +24,12 @@ namespace CarCareHub.Model
 
         public string? SlikaProfila { get; set; }
 
-        //public int? UlogaId { get; set; }
+        public int? UlogaId { get; set; }
+        public virtual Grad? Grad { get; set; }
+        public virtual Uloge? Uloga { get; set; }
+        //public virtual Drzava? Drzava { get; set; }
 
-       // public int? IzvjestajId { get; set; }
+
+        // public int? IzvjestajId { get; set; }
     }
 }

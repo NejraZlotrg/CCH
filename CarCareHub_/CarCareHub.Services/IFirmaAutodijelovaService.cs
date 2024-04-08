@@ -1,4 +1,5 @@
-﻿using CarCareHub.Model.SearchObjects;
+﻿using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public interface IFirmaAutodijelovaService : IService<Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject>
+    public interface IFirmaAutodijelovaService : ICRUDService<Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject,FirmaAutodijelovaInsert,FirmaAutodijelovaUpdate>
     {
      
     }

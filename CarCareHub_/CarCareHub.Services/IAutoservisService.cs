@@ -1,6 +1,10 @@
-﻿namespace CarCareHub.Services
+﻿using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
+
+namespace CarCareHub.Services
 {
-    internal interface IAutoservisService
+    public interface IAutoservisService : ICRUDService<Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>
     {
+
     }
 }

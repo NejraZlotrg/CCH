@@ -13,7 +13,7 @@ namespace CarCareHub_.Controllers
 
 
         public FirmaAutodijelovaController(ILogger<BaseController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject>> logger,
-            ICRUDService< CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate> service) : base(logger, service)
+            IFirmaAutodijelovaService firmaAutodijelovaService) : base(logger, firmaAutodijelovaService)
         {
            
         }

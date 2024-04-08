@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +56,16 @@ namespace CarCareHub.Services
             return await state.AllowedActions(id);
         }
 
-       
+        public override IQueryable<Database.Proizvod> AddInclude(IQueryable<Database.Proizvod> query, ProizvodiSearchObject? search = null)
+        {
+            // Uključujemo samo entitet Uloge
+            if (search?.IsAllIncluded == true)
+            {
+                query = query.Include(z => z.Kategorija);
+                query = query.Include(z => z.Proizvodjac);
+            }
+            return base.AddInclude(query, search);
+        }
+
     }
 }

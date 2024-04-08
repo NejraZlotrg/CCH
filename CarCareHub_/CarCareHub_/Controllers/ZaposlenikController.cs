@@ -11,8 +11,7 @@ namespace CarCareHub_.Controllers
     public class ZaposleniciController : BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>
     {
         public ZaposleniciController(ILogger<BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>> logger,
-            ICRUDService<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate> service)
-            : base(logger, service)
+            IZaposlenikService zaposlenikService ) : base(logger, zaposlenikService)
         {
         }
     }

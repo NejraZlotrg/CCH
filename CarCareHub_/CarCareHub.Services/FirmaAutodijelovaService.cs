@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace CarCareHub.Services
 {
@@ -40,7 +40,17 @@ namespace CarCareHub.Services
         }
 
 
-
+        public override IQueryable<Database.FirmaAutodijelova> AddInclude(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search = null)
+        {
+            // Uključujemo samo entitet Uloge
+            if (search?.IsAllncluded == true)
+            {
+                query = query.Include(z => z.Grad);
+                query = query.Include(z => z.Grad.Drzava);
+                query = query.Include(z => z.Uloga);
+            }
+            return base.AddInclude(query, search);
+        }
 
         //public static string GenerateSalt()
         //{

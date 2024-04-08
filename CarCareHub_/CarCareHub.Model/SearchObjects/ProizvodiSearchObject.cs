@@ -8,5 +8,6 @@ namespace CarCareHub.Model.SearchObjects
 {
     public class ProizvodiSearchObject:BaseSearchObject
     {
+        public bool? IsAllIncluded { get; set; }
     }
 }

@@ -9,5 +9,8 @@ namespace CarCareHub.Model.SearchObjects
     public class FirmaAutodijelovaSearchObject : BaseSearchObject
     {
         public string? NazivFirme { get; set; }
+
+        public bool IsAllncluded { get; set; }
+
     }
 }

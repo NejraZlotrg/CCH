@@ -12,11 +12,13 @@ namespace CarCareHub.Services.Database; public partial class Zaposlenik
     public string? Password { get; set; }
     public string? LozinkaSalt { get; set; }
     public string? LozinkaHash { get; set; }
-    public int? AutoservisId { get; set; }
-    public int? FirmaAutodijelovaId { get; set; }
 
+    public int? AutoservisId { get; set; }
     public virtual Autoservis? Autoservis { get; set; }
+
+    public int? FirmaAutodijelovaId { get; set; }
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
+
     public int? UlogaId { get; set; }
     public virtual Uloge? Uloga { get; set; }
 

@@ -12,7 +12,7 @@ namespace CarCareHub_.Controllers
 
 
         public AutoservisController(ILogger<BaseController<CarCareHub.Model.Autoservis, AutoservisSearchObject>> logger,
-            ICRUDService<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate> service) : base(logger, service)
+            IAutoservisService autoservisService) : base(logger, autoservisService)
         {
 
         }

@@ -15,7 +15,7 @@ namespace CarCareHub.Model
 
         public string? Adresa { get; set; }
 
-      //  public int? GradId { get; set; }
+        public int? GradId { get; set; }
 
         public string? Telefon { get; set; }
 
@@ -29,11 +29,11 @@ namespace CarCareHub.Model
 
         public string? SlikaProfila { get; set; }
 
-     //   public int? UlogaId { get; set; }
+        public int? UlogaId { get; set; }
 
-      //  public int? UslugeId { get; set; }
+        public int? UslugeId { get; set; }
 
-       // public int? VoziloId { get; set; }
+        public int? VoziloId { get; set; }
 
         public virtual Grad? Grad { get; set; }
 
@@ -42,6 +42,7 @@ namespace CarCareHub.Model
         public virtual Usluge? Usluge { get; set; }
 
         public virtual Vozilo? Vozilo { get; set; }
+        public virtual Drzava? Drzava { get; set; }
 
     }
 }

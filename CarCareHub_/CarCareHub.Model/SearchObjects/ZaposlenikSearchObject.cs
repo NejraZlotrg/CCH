@@ -8,6 +8,6 @@ namespace CarCareHub.Model.SearchObjects
 {
     public class ZaposlenikSearchObject:BaseSearchObject
     {
-        public bool? IsUlogeIncluded { get; set; }
+        public bool? IsAllIncluded { get; set; }
     }
 }

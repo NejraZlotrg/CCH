@@ -15,5 +15,7 @@ namespace CarCareHub.Model
         public string? Telefon { get; set; }
 
         public string? Email { get; set; }
+        public int? GradId { get; set; }
+
     }
 }

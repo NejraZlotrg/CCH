@@ -19,7 +19,6 @@ namespace CarCareHub.Model
             public string? Email { get; set; }
 
             public string? Username { get; set; }
-            public virtual Uloge? Uloga { get; set; }
             public string? LozinkaSalt { get; set; }
             public string? LozinkaHash { get; set; }
 
@@ -28,10 +27,16 @@ namespace CarCareHub.Model
      
 
         public int? UlogaId { get; set; }
-        //
-        //  public int? AutoservisId { get; set; }
-        //
-        //  public int? FirmaAutodijelovaId { get; set; }
+        public virtual Uloge? Uloga { get; set; }
+
+      
+        public int? AutoservisId { get; set; }
+        public virtual Autoservis? Autoservis { get; set; }
+
+        
+        public int? FirmaAutodijelovaId { get; set; }
+        public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
+
 
     }
 
