@@ -39,6 +39,10 @@ builder.Services.AddTransient<IGradService, GradService>();
 builder.Services.AddTransient<IZaposlenikService, ZaposlenikService>();
 builder.Services.AddTransient<IAutoservisService, AutoservisService>();
 builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
+builder.Services.AddTransient<IKlijentService, KlijentService>();
+builder.Services.AddTransient<INarudzbaStavkaService, NarudzbaStavkaService>();
+builder.Services.AddTransient<IPopustService, PopustService>();
+builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
 
 
 

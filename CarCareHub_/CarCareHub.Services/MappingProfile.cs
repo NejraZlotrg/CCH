@@ -60,6 +60,22 @@ namespace CarCareHub.Services
             CreateMap<CarCareHub.Services.Database.Vozilo, Model.Vozilo>();
             CreateMap<Model.VoziloUpdate, CarCareHub.Services.Database.Vozilo>();
             CreateMap<Model.VoziloInsert, CarCareHub.Services.Database.Vozilo>();
+            
+            CreateMap<CarCareHub.Services.Database.Klijent, Model.Klijent>();
+            CreateMap<Model.KlijentUpdate, CarCareHub.Services.Database.Klijent>();
+            CreateMap<Model.KlijentInsert, CarCareHub.Services.Database.Klijent>();  
+            
+            CreateMap<CarCareHub.Services.Database.NarudzbaStavka, Model.NarudzbaStavka>();
+            CreateMap<Model.NarudzbaStavkaUpdate, CarCareHub.Services.Database.NarudzbaStavka>();
+            CreateMap<Model.NarudzbaStavkaInsert, CarCareHub.Services.Database.NarudzbaStavka>();
+
+            CreateMap<CarCareHub.Services.Database.Popust, Model.Popust>();
+            CreateMap<Model.PopustUpdate, CarCareHub.Services.Database.Popust>();
+            CreateMap<Model.PopustInsert, CarCareHub.Services.Database.Popust>();
+
+            CreateMap<CarCareHub.Services.Database.Narudzba, Model.Narudzba>();
+            CreateMap<Model.NarudzbaUpdate, CarCareHub.Services.Database.Narudzba>();
+            CreateMap<Model.NarudzbaInsert, CarCareHub.Services.Database.Narudzba>();
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

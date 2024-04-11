@@ -42,7 +42,7 @@ namespace CarCareHub.Model
         public virtual Usluge? Usluge { get; set; }
 
         public virtual Vozilo? Vozilo { get; set; }
-        public virtual Drzava? Drzava { get; set; }
+        //public virtual Drzava? Drzava { get; set; }
 
     }
 }
