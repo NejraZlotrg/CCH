@@ -14,7 +14,9 @@ namespace CarCareHub.Model
 
         public int? GradId { get; set; }
         public int? UlogaId { get; set; }
-
+        public int? JIB { get; set; }
+        public int? MBS { get; set; }
+        public int? ProizvodId { get; set; }
         public string? Telefon { get; set; }
 
         public string? Email { get; set; }
@@ -22,5 +24,7 @@ namespace CarCareHub.Model
         public string? Password { get; set; }
 
         public string? SlikaProfila { get; set; }
+        //public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
+
     }
 }

@@ -561,24 +561,7 @@ public partial class CchV2AliContext : DbContext
             //    .HasForeignKey(d => d.UlogaId)
             //    .HasConstraintName("fk_uloga_zaposlenik");
 
-            entity.HasMany(d => d.Proizvods).WithMany(p => p.Zaposleniks)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ZaposlenikProizvod",
-                    r => r.HasOne<Proizvod>().WithMany()
-                        .HasForeignKey("ProizvodId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Zaposleni__proiz__7C4F7684"),
-                    l => l.HasOne<Zaposlenik>().WithMany()
-                        .HasForeignKey("ZaposlenikId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Zaposleni__zapos__7B5B524B"),
-                    j =>
-                    {
-                        j.HasKey("ZaposlenikId", "ProizvodId").HasName("PK__Zaposlen__50FD668EDF7047CD");
-                        j.ToTable("Zaposlenik_Proizvod");
-                        j.IndexerProperty<int>("ZaposlenikId").HasColumnName("zaposlenikID");
-                        j.IndexerProperty<int>("ProizvodId").HasColumnName("proizvodID");
-                    });
+           
         });
 
         OnModelCreatingPartial(modelBuilder);

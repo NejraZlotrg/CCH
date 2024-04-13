@@ -27,6 +27,10 @@ namespace CarCareHub.Model
         public int? UlogaId { get; set; }
         public virtual Grad? Grad { get; set; }
         public virtual Uloge? Uloga { get; set; }
+        public int? JIB { get; set; }
+        public int? MBS { get; set; }
+        public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
+
         //public virtual Drzava? Drzava { get; set; }
 
 

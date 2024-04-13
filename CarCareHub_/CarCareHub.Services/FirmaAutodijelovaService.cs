@@ -39,6 +39,44 @@ namespace CarCareHub.Services
             return await base.Delete(id);
         }
 
+        public override IQueryable<Database.FirmaAutodijelova> AddFilter(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search = null)
+        {
+
+
+            if (search?.JIB.HasValue==true)
+            {
+                query = query.Where(x => (x.JIB.ToString()).StartsWith ((search.JIB.ToString())));
+            }
+            if (search?.MBS.HasValue == true)
+            {
+                query = query.Where(x => (x.MBS.ToString()).StartsWith((search.MBS.ToString())));
+            }
+            if (search?.NazivFirme!=null)
+            {
+                query = query.Where(x => (x.NazivFirme).StartsWith(search.NazivFirme));
+            }
+            if (search?.Adresa != null)
+            {
+                query = query.Where(x => (x.Adresa).StartsWith(search.Adresa));
+            }
+            if (search?.MarkaVozila != null)
+            {
+                query = query.Where(m => m.Proizvods.Any(u => u.Vozilo.MarkaVozila.StartsWith(search.MarkaVozila)));
+
+            }
+            if (search?.ModelVozila != null)
+            {
+                query = query.Where(m => m.Proizvods.Any(u => u.Vozilo.ModelVozila.StartsWith(search.ModelVozila)));
+
+            }
+            if (search?.GodisteVozila.HasValue == true)
+            {
+                query = query.Where(m => m.Proizvods.Any(u => u.Vozilo.GodisteVozila.ToString().StartsWith(search.GodisteVozila.ToString())));
+
+            }
+
+            return base.AddFilter(query, search);
+        }
 
         public override IQueryable<Database.FirmaAutodijelova> AddInclude(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search = null)
         {
@@ -48,7 +86,9 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.Grad);
                 query = query.Include(z => z.Grad.Drzava);
                 query = query.Include(z => z.Uloga);
+                query = query.Include(z => z.Proizvods);
             }
+
             return base.AddInclude(query, search);
         }
 

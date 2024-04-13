@@ -13,6 +13,9 @@ public partial class FirmaAutodijelova
 
     public int? GradId { get; set; }
 
+    public int? JIB { get; set; }
+    public int? MBS { get; set; }
+
     public string? Telefon { get; set; }
 
     public string? Email { get; set; }
@@ -30,6 +33,8 @@ public partial class FirmaAutodijelova
     public virtual Izvjestaj? Izvjestaj { get; set; }
 
     public virtual ICollection<PlacanjeAutoservisDijelovi> PlacanjeAutoservisDijelovis { get; set; } = new List<PlacanjeAutoservisDijelovi>();
+    public virtual ICollection<Autoservis> Autoserviss { get; set; } = new List<Autoservis>();
+
 
     public virtual ICollection<Popust> Popusts { get; set; } = new List<Popust>();
 

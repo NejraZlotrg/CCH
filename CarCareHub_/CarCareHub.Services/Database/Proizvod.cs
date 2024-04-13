@@ -22,6 +22,7 @@ public partial class Proizvod
     public int? KategorijaId { get; set; }
 
     public int? ProizvodjacId { get; set; }
+    public int? VoziloId { get; set; }
     public byte[]? Slika { get; set; }
     public byte[]? SlikaThumb { get; set; }
     public string? StateMachine { get; set; }
@@ -34,4 +35,7 @@ public partial class Proizvod
     public virtual ICollection<FirmaAutodijelova> Firmas { get; set; } = new List<FirmaAutodijelova>();
 
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
+
+    public virtual Vozilo? Vozilo { get; set; }
+
 }
