@@ -7,7 +7,7 @@ using CarCareHub.Model;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/popust")]
     public class PopustController : BaseCRUDController<CarCareHub.Model.Popust, PopustSearchObject, PopustInsert, PopustUpdate>
     {
 

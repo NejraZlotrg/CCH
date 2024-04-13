@@ -43,6 +43,7 @@ builder.Services.AddTransient<IKlijentService, KlijentService>();
 builder.Services.AddTransient<INarudzbaStavkaService, NarudzbaStavkaService>();
 builder.Services.AddTransient<IPopustService, PopustService>();
 builder.Services.AddTransient<INarudzbaService, NarudzbaService>();
+builder.Services.AddTransient<IPlacanjeAutoservisDijeloviService, PlacanjeAutoservisDijeloviService>();
 
 
 

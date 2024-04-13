@@ -20,6 +20,8 @@ namespace CarCareHub.Services
             return base.Insert(insert);
         }
 
+        
+
         public override async Task<Model.Vozilo> Update(int id, Model.VoziloUpdate update)
         {
             return await base.Update(id, update);

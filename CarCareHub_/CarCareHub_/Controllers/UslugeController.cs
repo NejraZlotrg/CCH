@@ -8,7 +8,7 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/usluge")]
     public class UslugeController : BaseCRUDController<Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>
     {
         public UslugeController(ILogger<BaseController<CarCareHub.Model.Usluge, UslugeSearchObject>> logger,

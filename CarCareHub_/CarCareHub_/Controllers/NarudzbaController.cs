@@ -7,7 +7,7 @@ using CarCareHub.Model;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/narudzba")]
     public class NarudzbaController : BaseCRUDController<CarCareHub.Model.Narudzba, NarudzbaSearchObject, NarudzbaInsert, NarudzbaUpdate>
     {
 

@@ -19,7 +19,7 @@ namespace CarCareHub_.Controllers
             _service = service;
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public virtual async Task<T> Insert([FromBody] TInsert insert)
         {
             

@@ -10,7 +10,7 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/kategorija")]
     public class KategorijaController : BaseCRUDController<Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>
     {
         public KategorijaController(ILogger<BaseController<CarCareHub.Model.Kategorija, KategorijaSearchObject>> logger,

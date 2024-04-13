@@ -7,7 +7,7 @@ using CarCareHub.Model;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/firmaAutodijelova")]
     public class FirmaAutodijelovaController : BaseCRUDController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>
     {
 

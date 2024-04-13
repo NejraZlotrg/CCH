@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20240405203010_mhk")]
-    partial class mhk
+    [Migration("20240413115208_mgu")]
+    partial class mgu
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -475,28 +475,32 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlacanjeId"));
 
+                    b.Property<int?>("AutoservisId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("Datum")
                         .HasColumnType("datetime")
                         .HasColumnName("datum");
+
+                    b.Property<int?>("FirmaAutodijelovaFirmaId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Iznos")
                         .HasColumnType("float")
                         .HasColumnName("iznos");
 
-                    b.Property<int?>("Posiljaoc")
-                        .HasColumnType("int")
-                        .HasColumnName("posiljaoc");
+                    b.Property<int?>("PosiljaocAutoservisID")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("Primalac")
-                        .HasColumnType("int")
-                        .HasColumnName("primalac");
+                    b.Property<int?>("PrimalacFirmaAutodijelovaID")
+                        .HasColumnType("int");
 
                     b.HasKey("PlacanjeId")
                         .HasName("pk_pl");
 
-                    b.HasIndex("Posiljaoc");
+                    b.HasIndex("AutoservisId");
 
-                    b.HasIndex("Primalac");
+                    b.HasIndex("FirmaAutodijelovaFirmaId");
 
                     b.ToTable("placanje_autoservis_dijelovi", (string)null);
                 });
@@ -952,19 +956,17 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.PlacanjeAutoservisDijelovi", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.Autoservis", "PosiljaocNavigation")
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
                         .WithMany("PlacanjeAutoservisDijelovis")
-                        .HasForeignKey("Posiljaoc")
-                        .HasConstraintName("fk_plad");
+                        .HasForeignKey("AutoservisId");
 
-                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "PrimalacNavigation")
+                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "FirmaAutodijelova")
                         .WithMany("PlacanjeAutoservisDijelovis")
-                        .HasForeignKey("Primalac")
-                        .HasConstraintName("fk_primad");
+                        .HasForeignKey("FirmaAutodijelovaFirmaId");
 
-                    b.Navigation("PosiljaocNavigation");
+                    b.Navigation("Autoservis");
 
-                    b.Navigation("PrimalacNavigation");
+                    b.Navigation("FirmaAutodijelova");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Popust", b =>

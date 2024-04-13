@@ -9,7 +9,7 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/uloge")]
     public class UlogeController : BaseCRUDController<Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>
     {
         public UlogeController(ILogger<BaseController<CarCareHub.Model.Uloge, UlogeSearchObject>> logger,

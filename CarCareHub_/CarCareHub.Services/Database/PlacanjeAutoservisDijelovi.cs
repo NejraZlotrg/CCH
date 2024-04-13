@@ -11,11 +11,11 @@ public partial class PlacanjeAutoservisDijelovi
 
     public double? Iznos { get; set; }
 
-    public int? Posiljaoc { get; set; }
+    public int? AutoservisId { get; set; }
 
-    public int? Primalac { get; set; }
+    public int? FirmaAutodijelovaID { get; set; }
 
-    public virtual Autoservis? PosiljaocNavigation { get; set; }
+    public virtual Autoservis? Autoservis { get; set; }
 
-    public virtual FirmaAutodijelova? PrimalacNavigation { get; set; }
+    public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 }

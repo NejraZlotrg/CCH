@@ -6,7 +6,7 @@ using CarCareHub;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/proizvodi")]
     public class ProizvodiController : BaseCRUDController<CarCareHub.Model.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject, CarCareHub.Model.ProizvodiInsert, CarCareHub.Model.ProizvodiUpdate>
     {
         public ProizvodiController(ILogger<BaseController<CarCareHub.Model.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject>> logger, 

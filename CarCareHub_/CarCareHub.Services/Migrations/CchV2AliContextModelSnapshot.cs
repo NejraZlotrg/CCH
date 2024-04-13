@@ -202,12 +202,12 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.FirmaAutodijelova", b =>
                 {
-                    b.Property<int>("FirmaId")
+                    b.Property<int>("FirmaAutodijelovaID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("FirmaID");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FirmaId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FirmaAutodijelovaID"));
 
                     b.Property<string>("Adresa")
                         .HasMaxLength(50)
@@ -257,7 +257,7 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("int")
                         .HasColumnName("ulogaID");
 
-                    b.HasKey("FirmaId")
+                    b.HasKey("FirmaAutodijelovaID")
                         .HasName("PK_firma");
 
                     b.HasIndex("GradId");
@@ -472,28 +472,26 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlacanjeId"));
 
+                    b.Property<int?>("AutoservisID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("Datum")
                         .HasColumnType("datetime")
                         .HasColumnName("datum");
+
+                    b.Property<int?>("FirmaAutodijelovaID")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Iznos")
                         .HasColumnType("float")
                         .HasColumnName("iznos");
 
-                    b.Property<int?>("Posiljaoc")
-                        .HasColumnType("int")
-                        .HasColumnName("posiljaoc");
-
-                    b.Property<int?>("Primalac")
-                        .HasColumnType("int")
-                        .HasColumnName("primalac");
-
                     b.HasKey("PlacanjeId")
                         .HasName("pk_pl");
 
-                    b.HasIndex("Posiljaoc");
+                    b.HasIndex("AutoservisID");
 
-                    b.HasIndex("Primalac");
+                    b.HasIndex("FirmaAutodijelovaID");
 
                     b.ToTable("placanje_autoservis_dijelovi", (string)null);
                 });
@@ -949,19 +947,17 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.PlacanjeAutoservisDijelovi", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.Autoservis", "PosiljaocNavigation")
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
                         .WithMany("PlacanjeAutoservisDijelovis")
-                        .HasForeignKey("Posiljaoc")
-                        .HasConstraintName("fk_plad");
+                        .HasForeignKey("AutoservisID");
 
-                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "PrimalacNavigation")
+                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "FirmaAutodijelova")
                         .WithMany("PlacanjeAutoservisDijelovis")
-                        .HasForeignKey("Primalac")
-                        .HasConstraintName("fk_primad");
+                        .HasForeignKey("FirmaAutodijelovaID");
 
-                    b.Navigation("PosiljaocNavigation");
+                    b.Navigation("Autoservis");
 
-                    b.Navigation("PrimalacNavigation");
+                    b.Navigation("FirmaAutodijelova");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Popust", b =>

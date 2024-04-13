@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/vozilo")]
     public class VoziloController : BaseCRUDController<CarCareHub.Model.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>
     {
 

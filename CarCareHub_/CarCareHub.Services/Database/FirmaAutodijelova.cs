@@ -5,7 +5,7 @@ namespace CarCareHub.Services.Database;
 
 public partial class FirmaAutodijelova
 {
-    public int FirmaId { get; set; }
+    public int FirmaAutodijelovaID { get; set; }
 
     public string? NazivFirme { get; set; }
 

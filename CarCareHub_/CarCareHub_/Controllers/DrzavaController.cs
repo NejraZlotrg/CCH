@@ -10,7 +10,7 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/drzava")]
     public class DrzavaController : BaseCRUDController<Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>
     {
         public DrzavaController(ILogger<BaseController<CarCareHub.Model.Drzava, DrzavaSearchObject>> logger,

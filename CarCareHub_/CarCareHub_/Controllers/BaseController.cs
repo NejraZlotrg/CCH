@@ -21,7 +21,7 @@ namespace CarCareHub_.Controllers
             _service = service;
         }
 
-        [HttpGet()]
+        [HttpGet("[controller]GetAll")]
         public  async Task<IEnumerable<T>> Get([FromQuery]TSearch search)
         {
             
@@ -30,7 +30,7 @@ namespace CarCareHub_.Controllers
 
         
 
-        [HttpGet("{id}")]
+        [HttpGet("[controller]GetByID/{id}")]
         public async Task<T> GetByID(int id)
         {
             return await _service.GetByID(id);

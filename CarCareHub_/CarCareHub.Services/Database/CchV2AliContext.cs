@@ -183,11 +183,11 @@ public partial class CchV2AliContext : DbContext
 
         modelBuilder.Entity<FirmaAutodijelova>(entity =>
         {
-            entity.HasKey(e => e.FirmaId).HasName("PK_firma");
+            entity.HasKey(e => e.FirmaAutodijelovaID).HasName("PK_firma");
 
             entity.ToTable("Firma_autodijelova");
 
-            entity.Property(e => e.FirmaId).HasColumnName("FirmaID");
+            entity.Property(e => e.FirmaAutodijelovaID).HasColumnName("FirmaID");
             entity.Property(e => e.Adresa)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -385,16 +385,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("datum");
             entity.Property(e => e.Iznos).HasColumnName("iznos");
-            entity.Property(e => e.Posiljaoc).HasColumnName("posiljaoc");
-            entity.Property(e => e.Primalac).HasColumnName("primalac");
-
-            entity.HasOne(d => d.PosiljaocNavigation).WithMany(p => p.PlacanjeAutoservisDijelovis)
-                .HasForeignKey(d => d.Posiljaoc)
-                .HasConstraintName("fk_plad");
-
-            entity.HasOne(d => d.PrimalacNavigation).WithMany(p => p.PlacanjeAutoservisDijelovis)
-                .HasForeignKey(d => d.Primalac)
-                .HasConstraintName("fk_primad");
+           
         });
 
         modelBuilder.Entity<Popust>(entity =>

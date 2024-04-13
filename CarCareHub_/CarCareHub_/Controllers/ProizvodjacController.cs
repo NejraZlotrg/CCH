@@ -10,7 +10,7 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/proizvodjac")]
     public class ProizvodjacController : BaseCRUDController<Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>
     {
         public ProizvodjacController(ILogger<BaseController<CarCareHub.Model.Proizvodjac, ProizvodjacSearchObject>> logger,

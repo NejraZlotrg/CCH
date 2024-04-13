@@ -9,7 +9,7 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/grad")]
     public class GradController : BaseCRUDController<Grad, GradSearchObject, GradInsert, GradUpdate>
     {
         public GradController(ILogger<BaseController<Grad, GradSearchObject>> logger,
