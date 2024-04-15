@@ -66,6 +66,18 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
+        public override IQueryable<Database.Proizvod> AddFilter(IQueryable<Database.Proizvod> query, ProizvodiSearchObject search = null)
+        {
+            query = base.AddFilter(query, search);
+
+            // Primijeni dodatni filter po nazivu proizvoda
+            if (!string.IsNullOrWhiteSpace(search?.Naziv))
+            {
+                query = query.Where(x => x.Naziv.Contains(search.Naziv));
+            }
+
+            return query;
+        }
 
     }
 }
