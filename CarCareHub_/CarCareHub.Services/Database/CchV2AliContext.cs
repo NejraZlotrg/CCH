@@ -499,7 +499,7 @@ public partial class CchV2AliContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("marka_vozila");
-            entity.Property(e => e.VrstaVozila)
+            entity.Property(e => e.ModelVozila)
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("vrsta_vozila");

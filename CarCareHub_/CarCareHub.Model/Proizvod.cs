@@ -13,6 +13,8 @@ namespace CarCareHub.Model
         public string? Naziv { get; set; }
 
         public decimal? Cijena { get; set; }
+        public decimal? CijenaSaPopustom { get; set; }
+        public int? Popust { get; set; }
 
         public string? Sifra { get; set; }
 
@@ -29,6 +31,9 @@ namespace CarCareHub.Model
         public int FirmaAutodijelovaID { get; set; }
         public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 
+
+        public int? VoziloId { get; set; }
+        public virtual Vozilo? Vozilo { get; set; }
 
         public int? ProizvodjacId { get; set; }
         public virtual Proizvodjac Proizvodjac { get; set; }

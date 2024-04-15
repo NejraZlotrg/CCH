@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CarCareHub.Model
@@ -15,6 +17,11 @@ namespace CarCareHub.Model
         [Required]
         [Range(0,10000)]
         public decimal? Cijena { get; set; }
+        public int? Popust { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public decimal? CijenaSaPopustom { get; set; }
 
         [MinLength(0)]
         [MaxLength(5)]
@@ -31,6 +38,7 @@ namespace CarCareHub.Model
         /// 
         /// </summary>
         public int? FirmaAutoDijelovaID { get; set; }
+        public int? VoziloId { get; set; }
 
         public int? ProizvodjacId { get; set; }
         public byte[]? Slika { get; set; }

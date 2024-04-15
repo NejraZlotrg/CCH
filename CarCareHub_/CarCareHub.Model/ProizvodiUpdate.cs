@@ -13,8 +13,10 @@ namespace CarCareHub.Model
         public string? Naziv { get; set; }
 
         public decimal? Cijena { get; set; }
+        public int? Popust { get; set; }
 
-       // public string? Sifra { get; set; }
+
+        // public string? Sifra { get; set; }
 
         //public string? OriginalniBroj { get; set; }
 
@@ -24,7 +26,9 @@ namespace CarCareHub.Model
 
         //public int? KategorijaId { get; set; }
 
-       // public int? ProizvodjacId { get; set; }
+        // public int? ProizvodjacId { get; set; }
+        public int? VoziloId { get; set; }
+
         public byte[]? Slika { get; set; }
         public byte[]? SlikaThumb { get; set; }
       

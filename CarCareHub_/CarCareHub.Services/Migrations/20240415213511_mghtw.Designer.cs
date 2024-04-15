@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20240415213511_mghtw")]
+    partial class mghtw
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -546,9 +549,6 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("money")
                         .HasColumnName("cijena");
 
-                    b.Property<decimal?>("CijenaSaPopustom")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("FirmaAutodijelovaID")
                         .HasColumnType("int");
 
@@ -577,9 +577,6 @@ namespace CarCareHub.Services.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("originalni_broj");
-
-                    b.Property<int?>("Popust")
-                        .HasColumnType("int");
 
                     b.Property<int?>("ProizvodjacId")
                         .HasColumnType("int")

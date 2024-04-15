@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20240415201542_mght")]
+    partial class mght
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -546,9 +549,6 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("money")
                         .HasColumnName("cijena");
 
-                    b.Property<decimal?>("CijenaSaPopustom")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("FirmaAutodijelovaID")
                         .HasColumnType("int");
 
@@ -578,9 +578,6 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("originalni_broj");
 
-                    b.Property<int?>("Popust")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ProizvodjacId")
                         .HasColumnType("int")
                         .HasColumnName("proizvodjacID");
@@ -600,9 +597,6 @@ namespace CarCareHub.Services.Migrations
                     b.Property<string>("StateMachine")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("VoziloId")
-                        .HasColumnType("int");
-
                     b.HasKey("ProizvodId")
                         .HasName("pk_proizvod");
 
@@ -611,8 +605,6 @@ namespace CarCareHub.Services.Migrations
                     b.HasIndex("KategorijaId");
 
                     b.HasIndex("ProizvodjacId");
-
-                    b.HasIndex("VoziloId");
 
                     b.ToTable("Proizvod", (string)null);
                 });
@@ -711,7 +703,7 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("marka_vozila");
 
-                    b.Property<string>("ModelVozila")
+                    b.Property<string>("VrstaVozila")
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
@@ -998,17 +990,11 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("ProizvodjacId")
                         .HasConstraintName("fk_proizvodjac_proizvod");
 
-                    b.HasOne("CarCareHub.Services.Database.Vozilo", "Vozilo")
-                        .WithMany("Proizvods")
-                        .HasForeignKey("VoziloId");
-
                     b.Navigation("FirmaAutodijelova");
 
                     b.Navigation("Kategorija");
 
                     b.Navigation("Proizvodjac");
-
-                    b.Navigation("Vozilo");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Zaposlenik", b =>
@@ -1139,8 +1125,6 @@ namespace CarCareHub.Services.Migrations
             modelBuilder.Entity("CarCareHub.Services.Database.Vozilo", b =>
                 {
                     b.Navigation("Autoservis");
-
-                    b.Navigation("Proizvods");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Zaposlenik", b =>

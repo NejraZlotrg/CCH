@@ -15,8 +15,12 @@ namespace CarCareHub.Model.SearchObjects
 
         public string? NazivFirme { get; set; }
         public string? JIB_MBS { get; set; }
-        public string? NazivGrad { get; set; } // Novo svojstvo za pretragu po gradu firme
+        public string? NazivGrada { get; set; }// Novo svojstvo za pretragu po gradu firme
 
-
+        public string? MarkaVozila { get; set; }  //Njera dodala za nove 3 vrste pretrage
+                                                  //Njera dodala za nove 3 vrste pretrage
+        public string? GodisteVozila { get; set; }//Njera dodala za nove 3 vrste pretrage
+                                                  //Njera dodala za nove 3 vrste pretrage
+        public string? ModelVozila { get; set; }  //Njera dodala za nove 3 vrste pretrage
     }
 }

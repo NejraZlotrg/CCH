@@ -14,6 +14,7 @@ namespace CarCareHub.Model
 
         public string? GodisteVozila { get; set; }
 
-        public string? VrstaVozila { get; set; }
+        public string? ModelVozila { get; set; }
+
     }
 }
