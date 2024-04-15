@@ -13,5 +13,10 @@ namespace CarCareHub.Model.SearchObjects
         //Ali dodao
         public string? Naziv { get; set; } // Dodano svojstvo za pretragu po nazivu proizvoda
 
+        public string? NazivFirme { get; set; }
+        public string? JIB_MBS { get; set; }
+        public string? NazivGrad { get; set; } // Novo svojstvo za pretragu po gradu firme
+
+
     }
 }

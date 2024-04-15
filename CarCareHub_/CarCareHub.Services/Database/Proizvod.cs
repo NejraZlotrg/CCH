@@ -27,11 +27,18 @@ public partial class Proizvod
     public string? StateMachine { get; set; }
     public virtual Kategorija? Kategorija { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public int? FirmaAutodijelovaID { get; set; }
+    public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
+
+
     public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
 
     public virtual Proizvodjac? Proizvodjac { get; set; }
 
-    public virtual ICollection<FirmaAutodijelova> Firmas { get; set; } = new List<FirmaAutodijelova>();
+    //public virtual ICollection<FirmaAutodijelova> Firmas { get; set; } = new List<FirmaAutodijelova>();
 
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
 }

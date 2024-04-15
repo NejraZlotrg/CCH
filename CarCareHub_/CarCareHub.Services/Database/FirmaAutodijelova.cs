@@ -22,6 +22,8 @@ public partial class FirmaAutodijelova
     public string? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }
+    public int? JIB { get; set; }
+    public int? MBS { get; set; }
 
     public int? IzvjestajId { get; set; }
 

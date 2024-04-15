@@ -63,6 +63,10 @@ namespace CarCareHub.Services
             {
                 query = query.Include(z => z.Kategorija);
                 query = query.Include(z => z.Proizvodjac);
+                query = query.Include(z => z.FirmaAutodijelova);
+                query = query.Include(z => z.FirmaAutodijelova.Grad);
+                query = query.Include(z => z.FirmaAutodijelova.Grad.Drzava);
+                query = query.Include(z => z.FirmaAutodijelova.Uloga);
             }
             return base.AddInclude(query, search);
         }
@@ -75,6 +79,27 @@ namespace CarCareHub.Services
             {
                 query = query.Where(x => x.Naziv.Contains(search.Naziv));
             }
+
+            // Primijeni dodatni filter po nazivu firme
+            if (!string.IsNullOrWhiteSpace(search?.NazivFirme))
+            {
+                query = query.Where(x => x.FirmaAutodijelova.NazivFirme.Contains(search.NazivFirme));
+            }
+
+            // Primijeni dodatni filter po JIB-u ili MBS-u firme
+            if (!string.IsNullOrWhiteSpace(search?.JIB_MBS) && int.TryParse(search.JIB_MBS, out int jibMbsInt))
+            {
+                query = query.Where(x => x.FirmaAutodijelova.JIB == jibMbsInt || x.FirmaAutodijelova.MBS == jibMbsInt);
+            }
+
+            // Primijeni dodatni filter po gradu firme
+            if (!string.IsNullOrWhiteSpace(search?.NazivGrad))
+            {
+                query = query.Where(x => x.FirmaAutodijelova != null &&
+                                          x.FirmaAutodijelova.Grad != null &&
+                                          x.FirmaAutodijelova.Grad.NazivGrada.Contains(search.Naziv));
+            }
+
 
             return query;
         }

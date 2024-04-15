@@ -13,6 +13,8 @@ namespace CarCareHub.Model
         public string? Adresa { get; set; }
 
         public int? GradId { get; set; }
+        public int? JIB { get; set; }
+        public int? MBS { get; set; }
         public int? UlogaId { get; set; }
 
         public string? Telefon { get; set; }

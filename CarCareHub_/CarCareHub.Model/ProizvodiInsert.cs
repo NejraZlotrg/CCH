@@ -27,6 +27,10 @@ namespace CarCareHub.Model
         public string? Opis { get; set; }
 
         public int? KategorijaId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? FirmaAutoDijelovaID { get; set; }
 
         public int? ProizvodjacId { get; set; }
         public byte[]? Slika { get; set; }

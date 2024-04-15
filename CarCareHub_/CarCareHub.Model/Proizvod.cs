@@ -25,6 +25,10 @@ namespace CarCareHub.Model
         public int? KategorijaId { get; set; }
         public virtual Kategorija Kategorija { get; set; }
 
+        ///
+        public int FirmaAutodijelovaID { get; set; }
+        public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
+
 
         public int? ProizvodjacId { get; set; }
         public virtual Proizvodjac Proizvodjac { get; set; }

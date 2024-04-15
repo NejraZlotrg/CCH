@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -228,24 +229,12 @@ public partial class CchV2AliContext : DbContext
                 .HasForeignKey(d => d.UlogaId)
                 .HasConstraintName("fk_uloga_firmaautodijelova");
 
-            entity.HasMany(d => d.Proizvods).WithMany(p => p.Firmas)
-                .UsingEntity<Dictionary<string, object>>(
-                    "FirmaAutodijelovaProizvod",
-                    r => r.HasOne<Proizvod>().WithMany()
-                        .HasForeignKey("ProizvodId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__FirmaAuto__proiz__00200768"),
-                    l => l.HasOne<FirmaAutodijelova>().WithMany()
-                        .HasForeignKey("FirmaId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__FirmaAuto__firma__7F2BE32F"),
-                    j =>
-                    {
-                        j.HasKey("FirmaId", "ProizvodId").HasName("PK__FirmaAut__4F1EF5F45990B64A");
-                        j.ToTable("FirmaAutodijelova_Proizvod");
-                        j.IndexerProperty<int>("FirmaId").HasColumnName("firmaID");
-                        j.IndexerProperty<int>("ProizvodId").HasColumnName("proizvodID");
-                    });
+            entity.HasMany(d => d.Proizvods)
+      .WithOne(p => p.FirmaAutodijelova) // One-to-many relacija
+      .HasForeignKey(p => p.FirmaAutodijelovaID) // Strani ključ u modelu Proizvod
+      .OnDelete(DeleteBehavior.ClientSetNull) // Ponašanje brisanja
+      .HasConstraintName("FK__Proizvod__FirmaAutodijelova"); // Opciono: Ime ograničenja
+
         });
 
         modelBuilder.Entity<Grad>(entity =>
@@ -385,7 +374,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("datum");
             entity.Property(e => e.Iznos).HasColumnName("iznos");
-           
+
         });
 
         modelBuilder.Entity<Popust>(entity =>

@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20240415162532_lldf")]
+    partial class lldf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,12 +231,6 @@ namespace CarCareHub.Services.Migrations
                     b.Property<int?>("IzvjestajId")
                         .HasColumnType("int")
                         .HasColumnName("izvjestajID");
-
-                    b.Property<int?>("JIB")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MBS")
-                        .HasColumnType("int");
 
                     b.Property<string>("NazivFirme")
                         .HasMaxLength(50)
@@ -972,7 +969,7 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Proizvod", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "FirmaAutodijelova")
+                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "Firma")
                         .WithMany("Proizvods")
                         .HasForeignKey("FirmaAutodijelovaID")
                         .HasConstraintName("FK__Proizvod__FirmaAutodijelova");
@@ -987,7 +984,7 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("ProizvodjacId")
                         .HasConstraintName("fk_proizvodjac_proizvod");
 
-                    b.Navigation("FirmaAutodijelova");
+                    b.Navigation("Firma");
 
                     b.Navigation("Kategorija");
 
