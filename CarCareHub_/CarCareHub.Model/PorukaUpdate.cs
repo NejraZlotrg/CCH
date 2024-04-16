@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
-    public class VoziloUpdate
+    public class PorukaUpdate
     {
-        public string? MarkaVozila { get; set; }
 
-
+        public string Sadrzaj { get; set; }
+        //istp update uraditi 
+        public DateTime VrijemeSlanja { get; set; }
     }
 }

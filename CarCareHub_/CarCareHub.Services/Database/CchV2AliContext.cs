@@ -125,15 +125,7 @@ public partial class CchV2AliContext : DbContext
 
             entity.ToTable("Chat_klijent_servis");
 
-            entity.Property(e => e.ChatKlijentServisId).HasColumnName("ChatKlijentServisID");
-            entity.Property(e => e.AutoservisId).HasColumnName("autoservis_id");
-            entity.Property(e => e.Datum)
-                .HasColumnType("datetime")
-                .HasColumnName("datum");
-            entity.Property(e => e.KlijentId).HasColumnName("klijent_id");
-            entity.Property(e => e.Sadrzaj)
-                .HasColumnType("text")
-                .HasColumnName("sadrzaj");
+            
 
             entity.HasOne(d => d.Autoservis).WithMany(p => p.ChatKlijentServiss)
                 .HasForeignKey(d => d.AutoservisId)
@@ -150,15 +142,7 @@ public partial class CchV2AliContext : DbContext
 
             entity.ToTable("Chat_klijent_zaposlenik");
 
-            entity.Property(e => e.ChatKlijentZaposlenikId).HasColumnName("ChatKlijentZaposlenikID");
-            entity.Property(e => e.Datum)
-                .HasColumnType("datetime")
-                .HasColumnName("datum");
-            entity.Property(e => e.KlijentId).HasColumnName("klijent_id");
-            entity.Property(e => e.Sadrzaj)
-                .HasColumnType("text")
-                .HasColumnName("sadrzaj");
-            entity.Property(e => e.ZaposlenikId).HasColumnName("zaposlenik_id");
+          
 
             entity.HasOne(d => d.Klijent).WithMany(p => p.ChatKlijentZaposleniks)
                 .HasForeignKey(d => d.KlijentId)
@@ -484,26 +468,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnName("opis");
         });
 
-        modelBuilder.Entity<Vozilo>(entity =>
-        {
-            entity.HasKey(e => e.VoziloId).HasName("PK_vozilo");
-
-            entity.ToTable("Vozilo");
-
-            entity.Property(e => e.VoziloId).HasColumnName("VoziloID");
-            entity.Property(e => e.GodisteVozila)
-                .HasMaxLength(4)
-                .IsUnicode(false)
-                .HasColumnName("godiste_vozila");
-            entity.Property(e => e.MarkaVozila)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("marka_vozila");
-            entity.Property(e => e.ModelVozila)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("vrsta_vozila");
-        });
+      
 
         modelBuilder.Entity<Zaposlenik>(entity =>
         {

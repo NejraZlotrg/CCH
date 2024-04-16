@@ -1,0 +1,47 @@
+﻿using AutoMapper;
+using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CarCareHub.Services
+{
+    public class GodisteService : BaseCRUDService<Model.Godiste, Database.Godiste, GodisteSearchObject, GodisteInsert, GodisteUpdate>, IGodisteService
+    {
+        public GodisteService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        {
+        }
+
+        public override IQueryable<Database.Godiste> AddFilter(IQueryable<Database.Godiste> query, GodisteSearchObject? search = null)
+        {
+
+            
+            if (search?.Godiste_!=null)
+            {
+                query = query.Where(x => x.Godiste_==search.Godiste_);
+            }
+            if (!string.IsNullOrWhiteSpace(search?.NazivModela))
+            {
+                query = query.Where(x => x.Model.NazivModela.StartsWith(search.NazivModela));
+            }
+            return base.AddFilter(query, search);
+        }
+
+        public override IQueryable<Database.Godiste> AddInclude(IQueryable<Database.Godiste> query, GodisteSearchObject? search = null)
+        {
+            // Uključujemo samo entitet Uloge
+            if (search?.IsAllIncluded == true)
+            {
+                query = query.Include(z => z.Model);
+                query = query.Include(z => z.Model.Vozilo);
+            }
+            return base.AddInclude(query, search);
+        }
+    }
+
+
+}

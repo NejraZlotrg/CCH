@@ -15,22 +15,20 @@ namespace CarCareHub.Services
         public VoziloService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
-        public override Task<Model.Vozilo> Insert(Model.VoziloInsert insert)
+      
+
+
+        public override IQueryable<Database.Vozilo> AddFilter(IQueryable<Database.Vozilo> query, VoziloSearchObject? search = null)
         {
-            return base.Insert(insert);
+
+
+            if (!string.IsNullOrWhiteSpace(search?.MarkaVozila))
+            {
+                query = query.Where(x => x.MarkaVozila.StartsWith(search.MarkaVozila));
+            }
+            return base.AddFilter(query, search);
         }
 
-        
-
-        public override async Task<Model.Vozilo> Update(int id, Model.VoziloUpdate update)
-        {
-            return await base.Update(id, update);
-        }
-
-        public override async Task<Model.Vozilo> Delete(int id)
-        {
-            return await base.Delete(id);
-        }
-
+     
     }
 }

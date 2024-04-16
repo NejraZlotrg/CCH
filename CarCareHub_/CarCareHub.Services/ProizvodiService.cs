@@ -117,12 +117,12 @@ namespace CarCareHub.Services
 
             if (!string.IsNullOrWhiteSpace(search?.ModelVozila))
             {
-                query = query.Where(x => x.Vozilo.ModelVozila.StartsWith(search.ModelVozila));
+                query = query.Where(x => x.Vozilo.Models.Any(x=> x.NazivModela.StartsWith(search.ModelVozila)));
             }
 
-            if (!string.IsNullOrWhiteSpace(search?.GodisteVozila))
+            if (search?.GodisteVozila!=null)
             {
-                query = query.Where(x => x.Vozilo.GodisteVozila.StartsWith(search.GodisteVozila));
+                query = query.Where(x => x.Vozilo.Models.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
             }
 
             return query;

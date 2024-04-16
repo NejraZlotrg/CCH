@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
-    public class VoziloUpdate
+    public class ChatKlijentServisUpdate
     {
-        public string? MarkaVozila { get; set; }
-
+        public DateTime VrijemeZadnjePoruke { get; set; }
 
     }
 }

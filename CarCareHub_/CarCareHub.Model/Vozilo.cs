@@ -9,12 +9,7 @@ namespace CarCareHub.Model
     public class Vozilo
     {
         public int VoziloId { get; set; }
-
         public string? MarkaVozila { get; set; }
-
-        public string? GodisteVozila { get; set; }
-
-        public string? ModelVozila { get; set; }
 
     }
 }

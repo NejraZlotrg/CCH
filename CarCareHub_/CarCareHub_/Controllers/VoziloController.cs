@@ -12,7 +12,7 @@ namespace CarCareHub_.Controllers
 
 
         public VoziloController(ILogger<BaseController<CarCareHub.Model.Vozilo, VoziloSearchObject>> logger,
-            ICRUDService<CarCareHub.Model.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate> service) : base(logger, service)
+            IVoziloService service) : base(logger, service)
         {
 
         }

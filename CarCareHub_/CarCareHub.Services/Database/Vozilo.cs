@@ -7,10 +7,10 @@ namespace CarCareHub.Services.Database;
     {
         public int VoziloId { get; set; }
         public string? MarkaVozila { get; set; }
-        public string? GodisteVozila { get; set; }
-        public string? ModelVozila { get; set; }
 
-        // Navigation properties
-        public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
+
+    public virtual ICollection<Model> Models { get; set; } = new List<Model>(); //Njera dodala za vozila
+
+    public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
         public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
     }

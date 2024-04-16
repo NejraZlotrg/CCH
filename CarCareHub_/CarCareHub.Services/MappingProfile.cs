@@ -60,7 +60,11 @@ namespace CarCareHub.Services
             CreateMap<CarCareHub.Services.Database.Vozilo, Model.Vozilo>();
             CreateMap<Model.VoziloUpdate, CarCareHub.Services.Database.Vozilo>();
             CreateMap<Model.VoziloInsert, CarCareHub.Services.Database.Vozilo>();
-            
+
+            CreateMap<CarCareHub.Services.Database.Model, Model.Model>();
+            CreateMap<Model.ModelUpdate, CarCareHub.Services.Database.Model>();
+            CreateMap<Model.ModelInsert, CarCareHub.Services.Database.Model>();
+
             CreateMap<CarCareHub.Services.Database.Klijent, Model.Klijent>();
             CreateMap<Model.KlijentUpdate, CarCareHub.Services.Database.Klijent>();
             CreateMap<Model.KlijentInsert, CarCareHub.Services.Database.Klijent>();  
@@ -73,9 +77,22 @@ namespace CarCareHub.Services
             CreateMap<Model.PopustUpdate, CarCareHub.Services.Database.Popust>();
             CreateMap<Model.PopustInsert, CarCareHub.Services.Database.Popust>();
 
+
+            CreateMap<CarCareHub.Services.Database.Poruka, Model.Poruka>();
+            CreateMap<Model.PorukaUpdate, CarCareHub.Services.Database.Poruka>();
+            CreateMap<Model.PorukaInsert, CarCareHub.Services.Database.Poruka>();
+
+            CreateMap<CarCareHub.Services.Database.Godiste, Model.Godiste>();
+            CreateMap<Model.GodisteUpdate, CarCareHub.Services.Database.Godiste>();
+            CreateMap<Model.GodisteInsert, CarCareHub.Services.Database.Godiste>();
+
             CreateMap<CarCareHub.Services.Database.Narudzba, Model.Narudzba>();
             CreateMap<Model.NarudzbaUpdate, CarCareHub.Services.Database.Narudzba>();
             CreateMap<Model.NarudzbaInsert, CarCareHub.Services.Database.Narudzba>();
+
+            CreateMap<CarCareHub.Services.Database.ChatKlijentServis, Model.ChatKlijentServis>();
+            CreateMap<Model.ChatKlijentServisUpdate, CarCareHub.Services.Database.ChatKlijentServis>();
+            CreateMap<Model.ChatKlijentServisInsert, CarCareHub.Services.Database.ChatKlijentServis>();
 
             CreateMap<CarCareHub.Services.Database.PlacanjeAutoservisDijelovi, Model.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviUpdate, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();

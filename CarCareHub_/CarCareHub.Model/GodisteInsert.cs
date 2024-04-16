@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
-    public class VoziloUpdate
+    public class GodisteInsert
     {
-        public string? MarkaVozila { get; set; }
-
-
+//public int GodisteId { get; set; }
+        public int? Godiste_ { get; set; }
+        public int? ModelId { get; set; }
     }
 }
