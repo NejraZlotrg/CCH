@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CarCareHub.Model
@@ -10,7 +11,7 @@ namespace CarCareHub.Model
     {
         public int NarudzbaId { get; set; }
 
-        public int? NarudzbaStavkeId { get; set; }
+      //  public int? NarudzbaStavkeId { get; set; }
 
         public DateTime? DatumNarudzbe { get; set; }
 
@@ -19,9 +20,6 @@ namespace CarCareHub.Model
         public bool? ZavrsenaNarudzba { get; set; }
 
         public int? PopustId { get; set; }
-
-        public virtual NarudzbaStavka? NarudzbaStavke { get; set; }
-
-        public virtual Popust? Popust { get; set; }
+        public decimal? UkupnaCijenaNarudzbe { get; set; }
     }
 }

@@ -20,6 +20,8 @@ namespace CarCareHub.Services
         }
         public virtual async Task<T> Insert(TInsert insert)
         {
+
+            
             var set = _dbContext.Set<TDb>();
 
             TDb entity=_mapper.Map<TDb>(insert);

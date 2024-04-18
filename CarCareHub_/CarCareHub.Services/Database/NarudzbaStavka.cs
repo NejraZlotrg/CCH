@@ -11,9 +11,13 @@ public partial class NarudzbaStavka
 
     public int? Kolicina { get; set; }
 
-    public decimal? Cijena { get; set; }
+    public decimal? UkupnaCijenaProizvoda { get; set; }
 
-    public virtual ICollection<Narudzba> Narudzbas { get; set; } = new List<Narudzba>();
+    //public virtual ICollection<Narudzba> Narudzbas { get; set; } = new List<Narudzba>();
 
     public virtual Proizvod? Proizvod { get; set; }
+    //dodala
+    public virtual Narudzba? Narudzba { get; set; }
+    public int? NarudzbaId { get; set; }
+
 }

@@ -73,9 +73,6 @@ namespace CarCareHub.Services
             CreateMap<Model.NarudzbaStavkaUpdate, CarCareHub.Services.Database.NarudzbaStavka>();
             CreateMap<Model.NarudzbaStavkaInsert, CarCareHub.Services.Database.NarudzbaStavka>();
 
-            CreateMap<CarCareHub.Services.Database.Popust, Model.Popust>();
-            CreateMap<Model.PopustUpdate, CarCareHub.Services.Database.Popust>();
-            CreateMap<Model.PopustInsert, CarCareHub.Services.Database.Popust>();
 
 
             CreateMap<CarCareHub.Services.Database.Poruka, Model.Poruka>();

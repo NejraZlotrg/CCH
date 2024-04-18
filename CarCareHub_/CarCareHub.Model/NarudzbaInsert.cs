@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CarCareHub.Model
@@ -18,5 +19,8 @@ namespace CarCareHub.Model
         public bool? ZavrsenaNarudzba { get; set; }
 
         public int? PopustId { get; set; }
+        [JsonIgnore]
+        public decimal? UkupnaCijenaNarudzbe { get; set; }
+
     }
 }

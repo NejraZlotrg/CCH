@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class mhi : Migration
+    public partial class ms2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,6 +47,22 @@ namespace CarCareHub.Services.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_kategorija", x => x.KategorijaID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Narudzbas",
+                columns: table => new
+                {
+                    NarudzbaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DatumNarudzbe = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DatumIsporuke = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ZavrsenaNarudzba = table.Column<bool>(type: "bit", nullable: true),
+                    UkupnaCijenaNarudzbe = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Narudzbas", x => x.NarudzbaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -295,31 +311,6 @@ namespace CarCareHub.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Popust",
-                columns: table => new
-                {
-                    PopustID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    autoservis_id = table.Column<int>(type: "int", nullable: true),
-                    firma_autodijelovaID = table.Column<int>(type: "int", nullable: true),
-                    vrijednost_popusta = table.Column<double>(type: "float", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_popust", x => x.PopustID);
-                    table.ForeignKey(
-                        name: "fk_autoservis_popust",
-                        column: x => x.autoservis_id,
-                        principalTable: "Autoservis",
-                        principalColumn: "AutoservisID");
-                    table.ForeignKey(
-                        name: "fk_firma_Popust",
-                        column: x => x.firma_autodijelovaID,
-                        principalTable: "Firma_autodijelova",
-                        principalColumn: "FirmaID");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Proizvod",
                 columns: table => new
                 {
@@ -408,44 +399,49 @@ namespace CarCareHub.Services.Migrations
                 name: "Chat_klijent_servis",
                 columns: table => new
                 {
-                    ChatKlijentServisID = table.Column<int>(type: "int", nullable: false)
+                    ChatKlijentServisId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    datum = table.Column<DateTime>(type: "datetime", nullable: true),
-                    sadrzaj = table.Column<string>(type: "text", nullable: true),
-                    autoservis_id = table.Column<int>(type: "int", nullable: true),
-                    klijent_id = table.Column<int>(type: "int", nullable: true)
+                    VrijemeZadnjePoruke = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AutoservisId = table.Column<int>(type: "int", nullable: true),
+                    KlijentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_chat", x => x.ChatKlijentServisID);
+                    table.PrimaryKey("pk_chat", x => x.ChatKlijentServisId);
                     table.ForeignKey(
                         name: "fk_autoservis_chat",
-                        column: x => x.autoservis_id,
+                        column: x => x.AutoservisId,
                         principalTable: "Autoservis",
                         principalColumn: "AutoservisID");
                     table.ForeignKey(
                         name: "fk_klijent_chat",
-                        column: x => x.klijent_id,
+                        column: x => x.KlijentId,
                         principalTable: "Klijent",
                         principalColumn: "KlijentID");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Narudzba_Stavka",
+                name: "NarudzbaStavkas",
                 columns: table => new
                 {
-                    Narudzba_stavkaID = table.Column<int>(type: "int", nullable: false)
+                    NarudzbaStavkaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    proizvodID = table.Column<int>(type: "int", nullable: true),
-                    kolicina = table.Column<int>(type: "int", nullable: true),
-                    cijena = table.Column<decimal>(type: "decimal(8,2)", nullable: true)
+                    ProizvodId = table.Column<int>(type: "int", nullable: true),
+                    Kolicina = table.Column<int>(type: "int", nullable: true),
+                    UkupnaCijenaProizvoda = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    NarudzbaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_ns", x => x.Narudzba_stavkaID);
+                    table.PrimaryKey("PK_NarudzbaStavkas", x => x.NarudzbaStavkaId);
                     table.ForeignKey(
-                        name: "fk_ns_p",
-                        column: x => x.proizvodID,
+                        name: "FK_NarudzbaStavkas_Narudzbas_NarudzbaId",
+                        column: x => x.NarudzbaId,
+                        principalTable: "Narudzbas",
+                        principalColumn: "NarudzbaId");
+                    table.ForeignKey(
+                        name: "FK_NarudzbaStavkas_Proizvod_ProizvodId",
+                        column: x => x.ProizvodId,
                         principalTable: "Proizvod",
                         principalColumn: "ProizvodID");
                 });
@@ -454,24 +450,23 @@ namespace CarCareHub.Services.Migrations
                 name: "Chat_klijent_zaposlenik",
                 columns: table => new
                 {
-                    ChatKlijentZaposlenikID = table.Column<int>(type: "int", nullable: false)
+                    ChatKlijentZaposlenikId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    datum = table.Column<DateTime>(type: "datetime", nullable: true),
-                    sadrzaj = table.Column<string>(type: "text", nullable: true),
-                    zaposlenik_id = table.Column<int>(type: "int", nullable: true),
-                    klijent_id = table.Column<int>(type: "int", nullable: true)
+                    VrijemeZadnjePoruke = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ZaposlenikId = table.Column<int>(type: "int", nullable: true),
+                    KlijentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_chat2", x => x.ChatKlijentZaposlenikID);
+                    table.PrimaryKey("pk_chat2", x => x.ChatKlijentZaposlenikId);
                     table.ForeignKey(
                         name: "fk_klijent_chat2",
-                        column: x => x.klijent_id,
+                        column: x => x.KlijentId,
                         principalTable: "Klijent",
                         principalColumn: "KlijentID");
                     table.ForeignKey(
                         name: "fk_zaposlenik_chat2",
-                        column: x => x.zaposlenik_id,
+                        column: x => x.ZaposlenikId,
                         principalTable: "Zaposlenik",
                         principalColumn: "ZaposlenikID");
                 });
@@ -499,30 +494,29 @@ namespace CarCareHub.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Narudzba",
+                name: "Poruka",
                 columns: table => new
                 {
-                    NarudzbaID = table.Column<int>(type: "int", nullable: false)
+                    PorukaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    narudzbaStavkeID = table.Column<int>(type: "int", nullable: true),
-                    datum_narudzbe = table.Column<DateTime>(type: "date", nullable: true),
-                    datum_isporuke = table.Column<DateTime>(type: "date", nullable: true),
-                    zavrsena_narudzba = table.Column<bool>(type: "bit", nullable: true),
-                    popustID = table.Column<int>(type: "int", nullable: true)
+                    Sadrzaj = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VrijemeSlanja = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ChatKlijentServisId = table.Column<int>(type: "int", nullable: true),
+                    ChatKlijentZaposlenikId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_n", x => x.NarudzbaID);
+                    table.PrimaryKey("PK_Poruka", x => x.PorukaId);
                     table.ForeignKey(
-                        name: "fk_n_p",
-                        column: x => x.popustID,
-                        principalTable: "Popust",
-                        principalColumn: "PopustID");
+                        name: "FK_Poruka_Chat_klijent_servis_ChatKlijentServisId",
+                        column: x => x.ChatKlijentServisId,
+                        principalTable: "Chat_klijent_servis",
+                        principalColumn: "ChatKlijentServisId");
                     table.ForeignKey(
-                        name: "fk_ns_n",
-                        column: x => x.narudzbaStavkeID,
-                        principalTable: "Narudzba_Stavka",
-                        principalColumn: "Narudzba_stavkaID");
+                        name: "FK_Poruka_Chat_klijent_zaposlenik_ChatKlijentZaposlenikId",
+                        column: x => x.ChatKlijentZaposlenikId,
+                        principalTable: "Chat_klijent_zaposlenik",
+                        principalColumn: "ChatKlijentZaposlenikId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -546,24 +540,24 @@ namespace CarCareHub.Services.Migrations
                 column: "voziloID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chat_klijent_servis_autoservis_id",
+                name: "IX_Chat_klijent_servis_AutoservisId",
                 table: "Chat_klijent_servis",
-                column: "autoservis_id");
+                column: "AutoservisId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chat_klijent_servis_klijent_id",
+                name: "IX_Chat_klijent_servis_KlijentId",
                 table: "Chat_klijent_servis",
-                column: "klijent_id");
+                column: "KlijentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chat_klijent_zaposlenik_klijent_id",
+                name: "IX_Chat_klijent_zaposlenik_KlijentId",
                 table: "Chat_klijent_zaposlenik",
-                column: "klijent_id");
+                column: "KlijentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chat_klijent_zaposlenik_zaposlenik_id",
+                name: "IX_Chat_klijent_zaposlenik_ZaposlenikId",
                 table: "Chat_klijent_zaposlenik",
-                column: "zaposlenik_id");
+                column: "ZaposlenikId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Firma_autodijelova_gradID",
@@ -601,19 +595,14 @@ namespace CarCareHub.Services.Migrations
                 column: "VoziloId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Narudzba_narudzbaStavkeID",
-                table: "Narudzba",
-                column: "narudzbaStavkeID");
+                name: "IX_NarudzbaStavkas_NarudzbaId",
+                table: "NarudzbaStavkas",
+                column: "NarudzbaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Narudzba_popustID",
-                table: "Narudzba",
-                column: "popustID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Narudzba_Stavka_proizvodID",
-                table: "Narudzba_Stavka",
-                column: "proizvodID");
+                name: "IX_NarudzbaStavkas_ProizvodId",
+                table: "NarudzbaStavkas",
+                column: "ProizvodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_placanje_autoservis_dijelovi_AutoservisId",
@@ -626,14 +615,14 @@ namespace CarCareHub.Services.Migrations
                 column: "FirmaAutodijelovaID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Popust_autoservis_id",
-                table: "Popust",
-                column: "autoservis_id");
+                name: "IX_Poruka_ChatKlijentServisId",
+                table: "Poruka",
+                column: "ChatKlijentServisId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Popust_firma_autodijelovaID",
-                table: "Popust",
-                column: "firma_autodijelovaID");
+                name: "IX_Poruka_ChatKlijentZaposlenikId",
+                table: "Poruka",
+                column: "ChatKlijentZaposlenikId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Proizvod_FirmaAutodijelovaID",
@@ -680,46 +669,40 @@ namespace CarCareHub.Services.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Godiste");
+
+            migrationBuilder.DropTable(
+                name: "NarudzbaStavkas");
+
+            migrationBuilder.DropTable(
+                name: "placanje_autoservis_dijelovi");
+
+            migrationBuilder.DropTable(
+                name: "Poruka");
+
+            migrationBuilder.DropTable(
+                name: "Zaposlenik_Proizvod");
+
+            migrationBuilder.DropTable(
+                name: "Model");
+
+            migrationBuilder.DropTable(
+                name: "Narudzbas");
+
+            migrationBuilder.DropTable(
                 name: "Chat_klijent_servis");
 
             migrationBuilder.DropTable(
                 name: "Chat_klijent_zaposlenik");
 
             migrationBuilder.DropTable(
-                name: "Godiste");
-
-            migrationBuilder.DropTable(
-                name: "Narudzba");
-
-            migrationBuilder.DropTable(
-                name: "placanje_autoservis_dijelovi");
-
-            migrationBuilder.DropTable(
-                name: "Zaposlenik_Proizvod");
+                name: "Proizvod");
 
             migrationBuilder.DropTable(
                 name: "Klijent");
 
             migrationBuilder.DropTable(
-                name: "Model");
-
-            migrationBuilder.DropTable(
-                name: "Popust");
-
-            migrationBuilder.DropTable(
-                name: "Narudzba_Stavka");
-
-            migrationBuilder.DropTable(
                 name: "Zaposlenik");
-
-            migrationBuilder.DropTable(
-                name: "Proizvod");
-
-            migrationBuilder.DropTable(
-                name: "Autoservis");
-
-            migrationBuilder.DropTable(
-                name: "Firma_autodijelova");
 
             migrationBuilder.DropTable(
                 name: "Kategorija");
@@ -728,19 +711,25 @@ namespace CarCareHub.Services.Migrations
                 name: "Proizvodjac");
 
             migrationBuilder.DropTable(
-                name: "Usluge");
+                name: "Firma_autodijelova");
 
             migrationBuilder.DropTable(
-                name: "Vozilos");
-
-            migrationBuilder.DropTable(
-                name: "Grad");
+                name: "Autoservis");
 
             migrationBuilder.DropTable(
                 name: "Izvjestaj");
 
             migrationBuilder.DropTable(
+                name: "Grad");
+
+            migrationBuilder.DropTable(
+                name: "Usluge");
+
+            migrationBuilder.DropTable(
                 name: "Uloge");
+
+            migrationBuilder.DropTable(
+                name: "Vozilos");
 
             migrationBuilder.DropTable(
                 name: "Drzava");

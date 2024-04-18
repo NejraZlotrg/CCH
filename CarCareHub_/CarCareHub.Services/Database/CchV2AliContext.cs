@@ -40,7 +40,6 @@ public partial class CchV2AliContext : DbContext
 
     public virtual DbSet<PlacanjeAutoservisDijelovi> PlacanjeAutoservisDijelovis { get; set; }
 
-    public virtual DbSet<Popust> Popusts { get; set; }
 
     public virtual DbSet<Proizvod> Proizvods { get; set; }
 
@@ -303,49 +302,9 @@ public partial class CchV2AliContext : DbContext
                 .HasConstraintName("fk_klijent_grad");
         });
 
-        modelBuilder.Entity<Narudzba>(entity =>
-        {
-            entity.HasKey(e => e.NarudzbaId).HasName("pk_n");
+     
 
-            entity.ToTable("Narudzba");
-
-            entity.Property(e => e.NarudzbaId).HasColumnName("NarudzbaID");
-            entity.Property(e => e.DatumIsporuke)
-                .HasColumnType("date")
-                .HasColumnName("datum_isporuke");
-            entity.Property(e => e.DatumNarudzbe)
-                .HasColumnType("date")
-                .HasColumnName("datum_narudzbe");
-            entity.Property(e => e.NarudzbaStavkeId).HasColumnName("narudzbaStavkeID");
-            entity.Property(e => e.PopustId).HasColumnName("popustID");
-            entity.Property(e => e.ZavrsenaNarudzba).HasColumnName("zavrsena_narudzba");
-
-            entity.HasOne(d => d.NarudzbaStavke).WithMany(p => p.Narudzbas)
-                .HasForeignKey(d => d.NarudzbaStavkeId)
-                .HasConstraintName("fk_ns_n");
-
-            entity.HasOne(d => d.Popust).WithMany(p => p.Narudzbas)
-                .HasForeignKey(d => d.PopustId)
-                .HasConstraintName("fk_n_p");
-        });
-
-        modelBuilder.Entity<NarudzbaStavka>(entity =>
-        {
-            entity.HasKey(e => e.NarudzbaStavkaId).HasName("pk_ns");
-
-            entity.ToTable("Narudzba_Stavka");
-
-            entity.Property(e => e.NarudzbaStavkaId).HasColumnName("Narudzba_stavkaID");
-            entity.Property(e => e.Cijena)
-                .HasColumnType("decimal(8, 2)")
-                .HasColumnName("cijena");
-            entity.Property(e => e.Kolicina).HasColumnName("kolicina");
-            entity.Property(e => e.ProizvodId).HasColumnName("proizvodID");
-
-            entity.HasOne(d => d.Proizvod).WithMany(p => p.NarudzbaStavkas)
-                .HasForeignKey(d => d.ProizvodId)
-                .HasConstraintName("fk_ns_p");
-        });
+      
 
         modelBuilder.Entity<PlacanjeAutoservisDijelovi>(entity =>
         {
@@ -361,26 +320,7 @@ public partial class CchV2AliContext : DbContext
 
         });
 
-        modelBuilder.Entity<Popust>(entity =>
-        {
-            entity.HasKey(e => e.PopustId).HasName("pk_popust");
-
-            entity.ToTable("Popust");
-
-            entity.Property(e => e.PopustId).HasColumnName("PopustID");
-            entity.Property(e => e.AutoservisId).HasColumnName("autoservis_id");
-            entity.Property(e => e.FirmaAutodijelovaId).HasColumnName("firma_autodijelovaID");
-            entity.Property(e => e.VrijednostPopusta).HasColumnName("vrijednost_popusta");
-
-            entity.HasOne(d => d.Autoservis).WithMany(p => p.Popusts)
-                .HasForeignKey(d => d.AutoservisId)
-                .HasConstraintName("fk_autoservis_popust");
-
-            entity.HasOne(d => d.FirmaAutodijelova).WithMany(p => p.Popusts)
-                .HasForeignKey(d => d.FirmaAutodijelovaId)
-                .HasConstraintName("fk_firma_Popust");
-        });
-
+      
         modelBuilder.Entity<Proizvod>(entity =>
         {
             entity.HasKey(e => e.ProizvodId).HasName("pk_proizvod");

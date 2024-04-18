@@ -26,6 +26,8 @@ namespace CarCareHub.Services
         }
         public override Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
         {
+          //  insert.UkupnaCijenaNarudzbe=insert.NarudzbaStavkas
+          //uraditi zbir svih ukuonih cijena proizvoda 
             return base.Insert(insert);
         }
 
@@ -45,20 +47,20 @@ namespace CarCareHub.Services
             // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
-                query = query.Include(z => z.NarudzbaStavke);
-                query = query.Include(z => z.NarudzbaStavke.Proizvod);
-                query = query.Include(z => z.NarudzbaStavke.Proizvod.Proizvodjac);
-                query = query.Include(z => z.NarudzbaStavke.Proizvod.Kategorija);
-                query = query.Include(z => z.Popust.Autoservis);
-                query = query.Include(z => z.Popust.Autoservis.Grad);
-                query = query.Include(z => z.Popust.Autoservis.Grad.Drzava);
-                query = query.Include(z => z.Popust.Autoservis.Uloga);
-                query = query.Include(z => z.Popust.Autoservis.Usluge);
-                query = query.Include(z => z.Popust.Autoservis.Vozilo);
-                query = query.Include(z => z.Popust.FirmaAutodijelova);
-                query = query.Include(z => z.Popust.FirmaAutodijelova.Grad);
-                query = query.Include(z => z.Popust.FirmaAutodijelova.Izvjestaj);
-                query = query.Include(z => z.Popust.FirmaAutodijelova.Uloga);
+                //query = query.Include(z => z.NarudzbaStavke);
+                //query = query.Include(z => z.NarudzbaStavke.Proizvod);
+                //query = query.Include(z => z.NarudzbaStavke.Proizvod.Proizvodjac);
+                //query = query.Include(z => z.NarudzbaStavke.Proizvod.Kategorija);
+                //query = query.Include(z => z.Popust.Autoservis);
+                //query = query.Include(z => z.Popust.Autoservis.Grad);
+                //query = query.Include(z => z.Popust.Autoservis.Grad.Drzava);
+                //query = query.Include(z => z.Popust.Autoservis.Uloga);
+                //query = query.Include(z => z.Popust.Autoservis.Usluge);
+                //query = query.Include(z => z.Popust.Autoservis.Vozilo);
+                //query = query.Include(z => z.Popust.FirmaAutodijelova);
+                //query = query.Include(z => z.Popust.FirmaAutodijelova.Grad);
+                //query = query.Include(z => z.Popust.FirmaAutodijelova.Izvjestaj);
+                //query = query.Include(z => z.Popust.FirmaAutodijelova.Uloga);
             }
             return base.AddInclude(query, search);
         }

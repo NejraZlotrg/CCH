@@ -25,6 +25,7 @@ namespace CarCareHub.Services
             var query = _dbContext.Set<TDb>().AsQueryable();
             query = AddFilter(query, search);
             query = AddInclude(query, search);
+          //  query = proizvodCijena(query, search);
             //query = IncludeMessages(query, search);
 
             if (search?.Page.HasValue==true && search?.PageSize.HasValue == true)
@@ -45,6 +46,7 @@ namespace CarCareHub.Services
             
         //    return query;
         //}
+
         public virtual IQueryable<TDb> AddInclude(IQueryable<TDb> query, TSearch? search = null)
         {
             return query;

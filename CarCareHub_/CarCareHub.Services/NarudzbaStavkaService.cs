@@ -22,10 +22,38 @@ namespace CarCareHub.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public override Task<Model.NarudzbaStavka> Insert(Model.NarudzbaStavkaInsert insert)
+        public override async Task<Model.NarudzbaStavka> Insert(Model.NarudzbaStavkaInsert insert)
         {
-            return base.Insert(insert);
+            var narudzbaStavka = _mapper.Map<Database.NarudzbaStavka>(insert);
+
+            // Dobavljanje cijene proizvoda iz baze podataka
+            var proizvod = await _dbContext.Proizvods.FindAsync(insert.ProizvodId);
+
+            // Provjera da li je pronađen proizvod
+            if (proizvod != null)
+            {
+                // Izračunavanje UkupneCijene
+                narudzbaStavka.UkupnaCijenaProizvoda = proizvod.CijenaSaPopustom != null ? proizvod.CijenaSaPopustom * insert.Kolicina : proizvod.Cijena * insert.Kolicina;
+
+                // Postavljanje navigacionog property-ja Proizvod
+                narudzbaStavka.Proizvod = proizvod;
+            }
+            else
+            {
+                throw new Exception("Proizvod nije pronađen.");
+            }
+
+            // Spremanje u bazu podataka
+            await _dbContext.NarudzbaStavkas.AddAsync(narudzbaStavka);
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<Model.NarudzbaStavka>(narudzbaStavka);
+
         }
+
+
+
+
 
         public override async Task<Model.NarudzbaStavka> Update(int id, Model.NarudzbaStavkaUpdate update)
         {
@@ -35,8 +63,10 @@ namespace CarCareHub.Services
         public override async Task<Model.NarudzbaStavka> Delete(int id)
         {
             return await base.Delete(id);
-        }
-
+        } 
+        
+        
+      
 
         public override IQueryable<Database.NarudzbaStavka> AddInclude(IQueryable<Database.NarudzbaStavka> query, NarudzbaStavkaSearchObject? search = null)
         {
@@ -44,6 +74,7 @@ namespace CarCareHub.Services
             if (search?.IsAllncluded == true)
             {
                 query = query.Include(z => z.Proizvod);
+                query = query.Include(z => z.Narudzba);
                 query = query.Include(z => z.Proizvod.Proizvodjac);
                 query = query.Include(z => z.Proizvod.Kategorija);
             }

@@ -38,7 +38,6 @@ public partial class Autoservis
 
     public virtual ICollection<PlacanjeAutoservisDijelovi> PlacanjeAutoservisDijelovis { get; set; } = new List<PlacanjeAutoservisDijelovi>();
 
-    public virtual ICollection<Popust> Popusts { get; set; } = new List<Popust>();
 
     public virtual Uloge? Uloga { get; set; }
 
