@@ -18,4 +18,6 @@ public partial class Grad
     public virtual ICollection<FirmaAutodijelova> FirmaAutodijelovas { get; set; } = new List<FirmaAutodijelova>();
 
     public virtual ICollection<Klijent> Klijents { get; set; } = new List<Klijent>();
+    public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
+
 }

@@ -34,6 +34,8 @@ namespace CarCareHub.Services
             if (search?.IsDrzavaIncluded == true)
             {
                 query = query.Include(z => z.Drzava);
+             
+
             }
             return base.AddInclude(query, search);
         }

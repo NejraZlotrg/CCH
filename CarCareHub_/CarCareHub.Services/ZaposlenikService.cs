@@ -51,11 +51,32 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.Uloga);
                 query = query.Include(z => z.FirmaAutodijelova);
                 query = query.Include(z => z.Autoservis);
+                query = query.Include(z => z.Grad);
 
             }
             return base.AddInclude(query, search);
         }
 
 
+
+        public async Task<CarCareHub.Model.Zaposlenik> GetByGrad(int id)
+        {
+            var temp = await _dbContext.Set<CarCareHub.Services.Database.Grad>()
+                                        .Include(g => g.Zaposleniks) // Uključujemo Zaposlenike koji pripadaju tom gradu
+                                        .FirstOrDefaultAsync(g => g.GradId == id);
+
+            if (temp == null || temp.Zaposleniks == null || !temp.Zaposleniks.Any())
+            {
+                return null; // ili neki drugi odgovor koji je prikladan za vaš slučaj
+            }
+
+            // Mapiramo svakog zaposlenika pojedinačno
+            var mappedZaposlenici = temp.Zaposleniks.Select(z => _mapper.Map<CarCareHub.Model.Zaposlenik>(z)).ToList();
+
+            // Ako želite vratiti samo jednog zaposlenika, možete vratiti prvi ili specifičan
+            return mappedZaposlenici.FirstOrDefault();
+        }
+
     }
+    
 }

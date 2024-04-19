@@ -11,6 +11,8 @@ using CarCareHub_.Errors;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,8 +52,17 @@ builder.Services.AddTransient<IPorukaService, PorukaService>();
 builder.Services.AddTransient<IChatKlijentServisService, ChatKlijentServisService>();
 
 
+//-------------------------------------------------------------------
+var options = new JsonSerializerOptions
+{
+    ReferenceHandler = ReferenceHandler.Preserve
+};
 
+// Serializacija objekta s postavljenim opcijama
+var grad = new CarCareHub.Services.Database.Grad(); // Stvaranje instance objekta klase Grad
+var json = JsonSerializer.Serialize(grad, options); // Serializacija instance objekta
 
+//-----------------------------------------------------------------------------------------------------------------------------------
 
 
 // Ostali servisi

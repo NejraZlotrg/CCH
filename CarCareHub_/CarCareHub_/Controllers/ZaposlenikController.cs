@@ -14,6 +14,12 @@ namespace CarCareHub_.Controllers
             IZaposlenikService zaposlenikService ) : base(logger, zaposlenikService)
         {
         }
+        [HttpGet("GetByGrad")]
+        public async Task<CarCareHub.Model.Zaposlenik> GetByGrad(int id)
+        {
+            return await (_service as IZaposlenikService).GetByGrad(id);
+
+        }
     }
 }
 
