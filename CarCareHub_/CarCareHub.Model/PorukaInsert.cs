@@ -13,7 +13,11 @@ namespace CarCareHub.Model
 
         //ovdje trenutno vrijeme postaviti 
         public DateTime VrijemeSlanja { get; set; }
-        public int? ChatKlijentServisId { get; set; } // ID razgovora kojem poruka pripada
+        public int? ChatKlijentAutoservisId { get; set; } // ID razgovora kojem poruka pripada
+
+
+        public int? ChatKlijentZaposlenikId { get; set; } // ID razgovora kojem poruka pripada
+
 
     }
 }

@@ -49,7 +49,9 @@ builder.Services.AddTransient<IModelService, ModelService>();
 builder.Services.AddTransient<IGodisteService, GodisteService>();
 builder.Services.AddTransient<IVoziloService, VoziloService>();
 builder.Services.AddTransient<IPorukaService, PorukaService>();
-builder.Services.AddTransient<IChatKlijentServisService, ChatKlijentServisService>();
+builder.Services.AddTransient<IChatKlijentZaposlenikService, ChatKlijentZaposlenikService>();
+builder.Services.AddTransient<IAutoservisUslugeServices, AutoservisUslugeServices>();
+builder.Services.AddTransient<IChatKlijentAutoservisService, ChatKlijentAutoservisService>();
 
 
 //-------------------------------------------------------------------

@@ -18,7 +18,7 @@ public partial class CchV2AliContext : DbContext
 
     public virtual DbSet<Autoservis> Autoservis { get; set; }
 
-    public virtual DbSet<ChatKlijentServis> ChatKlijentServiss { get; set; }
+    public virtual DbSet<ChatKlijentAutoservis> ChatKlijentAutoserviss { get; set; }
 
     public virtual DbSet<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; }
 
@@ -98,7 +98,6 @@ public partial class CchV2AliContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("telefon");
             entity.Property(e => e.UlogaId).HasColumnName("ulogaID");
-            entity.Property(e => e.UslugeId).HasColumnName("uslugeID");
             entity.Property(e => e.VoziloId).HasColumnName("voziloID");
 
             entity.HasOne(d => d.Grad).WithMany(p => p.Autoservis)
@@ -109,30 +108,11 @@ public partial class CchV2AliContext : DbContext
                 .HasForeignKey(d => d.UlogaId)
                 .HasConstraintName("fk_uloga_autoservis");
 
-            entity.HasOne(d => d.Usluge).WithMany(p => p.Autoservis)
-                .HasForeignKey(d => d.UslugeId)
-                .HasConstraintName("fk_u_a");
+            
 
             entity.HasOne(d => d.Vozilo).WithMany(p => p.Autoservis)
                 .HasForeignKey(d => d.VoziloId)
                 .HasConstraintName("fk_v_a");
-        });
-
-        modelBuilder.Entity<ChatKlijentServis>(entity =>
-        {
-            entity.HasKey(e => e.ChatKlijentServisId).HasName("pk_chat");
-
-            entity.ToTable("Chat_klijent_servis");
-
-            
-
-            entity.HasOne(d => d.Autoservis).WithMany(p => p.ChatKlijentServiss)
-                .HasForeignKey(d => d.AutoservisId)
-                .HasConstraintName("fk_autoservis_chat");
-
-            entity.HasOne(d => d.Klijent).WithMany(p => p.ChatKlijentServis)
-                .HasForeignKey(d => d.KlijentId)
-                .HasConstraintName("fk_klijent_chat");
         });
 
         modelBuilder.Entity<ChatKlijentZaposlenik>(entity =>
@@ -141,9 +121,9 @@ public partial class CchV2AliContext : DbContext
 
             entity.ToTable("Chat_klijent_zaposlenik");
 
-          
 
-            entity.HasOne(d => d.Klijent).WithMany(p => p.ChatKlijentZaposleniks)
+
+            entity.HasOne(d => d.Klijent).WithMany(p => p.ChatKlijentZaposlenik)
                 .HasForeignKey(d => d.KlijentId)
                 .HasConstraintName("fk_klijent_chat2");
 
@@ -302,9 +282,9 @@ public partial class CchV2AliContext : DbContext
                 .HasConstraintName("fk_klijent_grad");
         });
 
-     
 
-      
+
+
 
         modelBuilder.Entity<PlacanjeAutoservisDijelovi>(entity =>
         {
@@ -320,7 +300,7 @@ public partial class CchV2AliContext : DbContext
 
         });
 
-      
+
         modelBuilder.Entity<Proizvod>(entity =>
         {
             entity.HasKey(e => e.ProizvodId).HasName("pk_proizvod");
@@ -408,7 +388,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnName("opis");
         });
 
-      
+
 
         modelBuilder.Entity<Zaposlenik>(entity =>
         {

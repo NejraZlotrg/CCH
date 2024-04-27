@@ -12,6 +12,7 @@ public partial class Usluge
     public string? Opis { get; set; }
 
     public decimal? Cijena { get; set; }
+    public virtual ICollection<AutoservisUsluge> AutoservisUsluges { get; set; } = new List<AutoservisUsluge>();
 
-    public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
+
 }

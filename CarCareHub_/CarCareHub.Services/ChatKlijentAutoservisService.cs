@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public class ChatKlijentServisService: BaseCRUDService<Model.ChatKlijentServis, Database.ChatKlijentServis, ChatKlijentServisSearchObject,
-        ChatKlijentServisInsert, ChatKlijentServisUpdate>, IChatKlijentServisService
+    public class ChatKlijentAutoservisService : BaseCRUDService<Model.ChatKlijentAutoservis, Database.ChatKlijentAutoservis,
+        ChatKlijentAutoservisSearchObject,
+       ChatKlijentAutoservisInsert, ChatKlijentAutoservisUpdate>, IChatKlijentAutoservisService
     {
         //private readonly ChatKlijentServis _chatKlijentServis;
 
-        public ChatKlijentServisService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public ChatKlijentAutoservisService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
             //_chatKlijentServis = chatKlijentServis;
         }
@@ -67,18 +68,17 @@ namespace CarCareHub.Services
         //    return chat.Poruka.ToList();
         //}
 
-        public override IQueryable<Database.ChatKlijentServis> AddInclude(IQueryable<Database.ChatKlijentServis> query, ChatKlijentServisSearchObject? search = null)
+        public override IQueryable<Database.ChatKlijentAutoservis> AddInclude(IQueryable<Database.ChatKlijentAutoservis> query, ChatKlijentAutoservisSearchObject? search = null)
         {
             // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.Autoservis);
                 query = query.Include(z => z.Klijent);
-                query = query.Include(z => z.Poruka);
             }
+
             return base.AddInclude(query, search);
         }
 
     }
-
 }

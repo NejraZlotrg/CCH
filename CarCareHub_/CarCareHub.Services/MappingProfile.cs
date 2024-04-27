@@ -87,13 +87,21 @@ namespace CarCareHub.Services
             CreateMap<Model.NarudzbaUpdate, CarCareHub.Services.Database.Narudzba>();
             CreateMap<Model.NarudzbaInsert, CarCareHub.Services.Database.Narudzba>();
 
-            CreateMap<CarCareHub.Services.Database.ChatKlijentServis, Model.ChatKlijentServis>();
-            CreateMap<Model.ChatKlijentServisUpdate, CarCareHub.Services.Database.ChatKlijentServis>();
-            CreateMap<Model.ChatKlijentServisInsert, CarCareHub.Services.Database.ChatKlijentServis>();
+            CreateMap<CarCareHub.Services.Database.ChatKlijentZaposlenik, Model.ChatKlijentZaposlenik>();
+            CreateMap<Model.ChatKlijentZaposlenikUpdate, CarCareHub.Services.Database.ChatKlijentZaposlenik>();
+            CreateMap<Model.ChatKlijentZaposlenikInsert, CarCareHub.Services.Database.ChatKlijentZaposlenik>();
+
+            CreateMap<CarCareHub.Services.Database.ChatKlijentAutoservis, Model.ChatKlijentAutoservis>();
+            CreateMap<Model.ChatKlijentAutoservisUpdate, CarCareHub.Services.Database.ChatKlijentAutoservis>();
+            CreateMap<Model.ChatKlijentAutoservisInsert, CarCareHub.Services.Database.ChatKlijentAutoservis>();
 
             CreateMap<CarCareHub.Services.Database.PlacanjeAutoservisDijelovi, Model.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviUpdate, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviInsert, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
+
+            CreateMap<CarCareHub.Services.Database.AutoservisUsluge, Model.AutoservisUsluge>();
+            CreateMap<Model.AutoservisUslugeUpdate, CarCareHub.Services.Database.AutoservisUsluge>();
+            CreateMap<Model.AutoservisUslugeInsert, CarCareHub.Services.Database.AutoservisUsluge>();
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

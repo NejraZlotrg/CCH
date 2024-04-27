@@ -27,5 +27,10 @@ namespace CarCareHub.Model
         public int? GradId { get; set; }
 
         public virtual Grad? Grad { get; set; }
+
+
+        //public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentZaposlenik { get; set; } = new List<ChatKlijentZaposlenik>();
+        //public virtual ICollection<ChatKlijentAutoservis> ChatKlijentAutoserviss { get; set; } = new List<ChatKlijentAutoservis>();
+
     }
 }

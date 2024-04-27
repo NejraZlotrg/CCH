@@ -124,6 +124,19 @@ namespace CarCareHub.Services
             {
                 query = query.Where(x => x.Vozilo.Models.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
             }
+            if (search?.KategorijaId!=null)
+            {
+                query = query.Where(x => x.KategorijaId==search.KategorijaId);
+            }
+            if (search.CijenaOpadajuca == true)
+            {
+                query = query.OrderByDescending(h => h.Cijena);
+            }
+            if (search.CijenaRastuca == true)
+            {
+                query = query.OrderBy(h => h.Cijena);
+            }
+            
 
             return query;
 

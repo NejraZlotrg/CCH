@@ -12,6 +12,9 @@ public partial class Autoservis
 
     public string? Adresa { get; set; }
 
+    public string? VlasnikFirme { get; set; }
+    public string? KorisnickoIme { get; set; }
+
     public int? GradId { get; set; }
 
     public string? Telefon { get; set; }
@@ -27,12 +30,13 @@ public partial class Autoservis
     public string? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }
+    public virtual ICollection<AutoservisUsluge> AutoservisUsluges { get; set; } = new List<AutoservisUsluge>();
 
-    public int? UslugeId { get; set; }
+
 
     public int? VoziloId { get; set; }
 
-    public virtual ICollection<ChatKlijentServis> ChatKlijentServiss { get; set; } = new List<ChatKlijentServis>();
+    public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentServiss { get; set; } = new List<ChatKlijentZaposlenik>();
 
     public virtual Grad? Grad { get; set; }
 
@@ -41,7 +45,6 @@ public partial class Autoservis
 
     public virtual Uloge? Uloga { get; set; }
 
-    public virtual Usluge? Usluge { get; set; }
 
     public virtual Vozilo? Vozilo { get; set; }
 

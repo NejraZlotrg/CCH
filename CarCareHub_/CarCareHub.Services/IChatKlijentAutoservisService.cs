@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public interface IChatKlijentServisService : ICRUDService<ChatKlijentServis, ChatKlijentServisSearchObject, ChatKlijentServisInsert, ChatKlijentServisUpdate>
+    public interface IChatKlijentAutoservisService : ICRUDService<ChatKlijentAutoservis, ChatKlijentAutoservisSearchObject,
+        ChatKlijentAutoservisInsert, ChatKlijentAutoservisUpdate>
     {
     }
 }

@@ -24,9 +24,13 @@ namespace CarCareHub.Services
             {
                 query = query.Where(x => x.Sadrzaj.Contains(search.Sadrzaj));
             }
-            if (search?.ChatKlijentServisId != null)
+            if (search?.ChatKlijentZaposlenikId != null)
             {
-                query = query.Where(x => x.ChatKlijentServisId==search.ChatKlijentServisId);
+                query = query.Where(x => x.ChatKlijentZaposlenikId==search.ChatKlijentZaposlenikId);
+            }
+            if (search?.ChatKlijentAutoservisId != null)
+            {
+                query = query.Where(x => x.ChatKlijentAutoservisId ==search.ChatKlijentAutoservisId);
             }
 
 
@@ -38,9 +42,8 @@ namespace CarCareHub.Services
             // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
-                query = query.Include(z => z.ChatKlijentServis);
-                query = query.Include(z => z.ChatKlijentServis.Autoservis);
-                query = query.Include(z => z.ChatKlijentServis.Klijent);
+                query = query.Include(z => z.ChatKlijentZaposlenik);
+                query = query.Include(z => z.ChatKlijentAutoservis);
             }
             return base.AddInclude(query, search);
         }

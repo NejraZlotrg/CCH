@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20240427122628_mgjmlkgerl")]
+    partial class mgjmlkgerl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,8 +181,7 @@ namespace CarCareHub.Services.Migrations
                     b.Property<int?>("ZaposlenikId")
                         .HasColumnType("int");
 
-                    b.HasKey("ChatKlijentZaposlenikId")
-                        .HasName("pk_chat2");
+                    b.HasKey("ChatKlijentZaposlenikId");
 
                     b.HasIndex("AutoservisId");
 
@@ -187,28 +189,23 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasIndex("ZaposlenikId");
 
-                    b.ToTable("Chat_klijent_zaposlenik", (string)null);
+                    b.ToTable("ChatKlijentZaposleniks");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Drzava", b =>
                 {
                     b.Property<int>("DrzavaId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("DrzavaID");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DrzavaId"));
 
                     b.Property<string>("NazivDrzave")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("naziv_drzave");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("DrzavaId")
-                        .HasName("PK_drzava");
+                    b.HasKey("DrzavaId");
 
-                    b.ToTable("Drzava", (string)null);
+                    b.ToTable("Drzavas");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.FirmaAutodijelova", b =>
@@ -907,13 +904,11 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasOne("CarCareHub.Services.Database.Klijent", "Klijent")
                         .WithMany("ChatKlijentZaposlenik")
-                        .HasForeignKey("KlijentId")
-                        .HasConstraintName("fk_klijent_chat2");
+                        .HasForeignKey("KlijentId");
 
                     b.HasOne("CarCareHub.Services.Database.Zaposlenik", "Zaposlenik")
                         .WithMany("ChatKlijentZaposleniks")
-                        .HasForeignKey("ZaposlenikId")
-                        .HasConstraintName("fk_zaposlenik_chat2");
+                        .HasForeignKey("ZaposlenikId");
 
                     b.Navigation("Klijent");
 

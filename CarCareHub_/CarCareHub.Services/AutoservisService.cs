@@ -43,7 +43,6 @@ namespace CarCareHub.Services
                 query = query.Include(entity => entity.Grad);
                 query = query.Include(entity => entity.Grad.Drzava);
                 query = query.Include(entity => entity.Uloga);
-                query = query.Include(entity => entity.Usluge);
                 query = query.Include(entity => entity.Vozilo);
             }
             return base.AddInclude(query, search);

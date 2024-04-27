@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
-    public class ChatKlijentServisInsert
+    public class ChatKlijentAutoservisInsert
     {
-       //automatski
+       
         public DateTime VrijemeZadnjePoruke { get; set; }
 
+        public virtual int? KlijentId { get; set; }
 
         public int? AutoservisId { get; set; }
-        public int? KlijentId { get; set; }
-       // public virtual ICollection<Poruka> Poruka { get; set; }
     }
 }

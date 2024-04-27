@@ -10,7 +10,8 @@ namespace CarCareHub.Model.SearchObjects
     {
         public bool? IsAllIncluded { get; set; }
         public string? Sadrzaj { get; set; }
-        public int? ChatKlijentServisId { get; set; } // ID razgovora kojem poruka pripada
+        public int? ChatKlijentZaposlenikId { get; set; } // ID razgovora kojem poruka pripada
+        public int? ChatKlijentAutoservisId { get; set; } // ID razgovora kojem poruka pripada
 
 
     }
