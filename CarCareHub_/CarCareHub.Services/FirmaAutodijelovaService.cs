@@ -39,6 +39,23 @@ namespace CarCareHub.Services
             return await base.Delete(id);
         }
 
+        //public override async Task<Model.FirmaAutodijelova> GetByID(int id)
+        //{
+        //    var temp = await _dbContext.FirmaAutodijelovas
+        //        .Include(f => f.BPAutodijeloviAutoservis)
+        //            .ThenInclude(bp => bp.Autoservis.Naziv)
+        //        .FirstOrDefaultAsync(f => f.FirmaAutodijelovaID == id);
+
+        //    // Ovdje ograničavamo broj podataka u kolekciji na primjer 10
+        //    if (temp.BPAutodijeloviAutoservis != null)
+        //    {
+        //        temp.BPAutodijeloviAutoservis = temp.BPAutodijeloviAutoservis.Take(10).ToList();
+        //    }
+
+        //    return _mapper.Map<Model.FirmaAutodijelova>(temp);
+        //}
+
+
 
         public override IQueryable<Database.FirmaAutodijelova> AddInclude(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search = null)
         {
@@ -48,10 +65,21 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.Grad);
                 query = query.Include(z => z.Grad.Drzava);
                 query = query.Include(z => z.Uloga);
+               
+                query=query.AsQueryable();
+
             }
             return base.AddInclude(query, search);
         }
+       
+        //protected override IQueryable<Database.FirmaAutodijelova> GetCollection(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search)
+        //{
+        //    // Ako želite uključiti kolekciju 'BPAutodijeloviAutoservis' unutar 'FirmaAutodijelova'
 
+        //    query = query.Include(firma => firma.BPAutodijeloviAutoservis).Where(k=>k.FirmaAutodijelovaID==2);
+
+        //    return base.GetCollection(query, search);
+        //}
         //public static string GenerateSalt()
         //{
         //    RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();

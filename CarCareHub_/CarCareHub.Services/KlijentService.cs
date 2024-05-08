@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CarCareHub.Services.Database;
+using System.Security.Cryptography;
 
 namespace CarCareHub.Services
 {
@@ -20,6 +21,12 @@ namespace CarCareHub.Services
         {
             _dbContext = dbContext;
             _mapper = mapper;
+        }
+
+        public override async Task BeforeInsert(Database.Klijent tdb,KlijentInsert insert)
+        {
+            tdb.LozinkaSalt = GenerateSalt();
+            tdb.LozinkaHash = GenerateHash(tdb.LozinkaSalt, insert.Password);
         }
         public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
         {
@@ -36,7 +43,7 @@ namespace CarCareHub.Services
             return await base.Delete(id);
         }
 
-
+       
         public override IQueryable<Database.Klijent> AddInclude(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
         {
             // Uključujemo samo entitet Uloge
@@ -49,6 +56,38 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
+        public static string GenerateSalt()
+        {
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            byte[] byteArray = new byte[16];
+            provider.GetBytes(byteArray);
+            return Convert.ToBase64String(byteArray);
+        }
 
+        public static string GenerateHash(string salt, string password)
+        {
+            byte[] src = Convert.FromBase64String(salt);
+            byte[] bytes = Encoding.Unicode.GetBytes(password);
+            byte[] dst = new byte[src.Length + bytes.Length];
+            System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
+            System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
+            HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
+            byte[] inArray = algorithm.ComputeHash(dst);
+
+            return Convert.ToBase64String(inArray);
+        }
+
+        public Model.Klijent Login(string username, string password)
+        {
+           var entity = _dbContext.Klijents.FirstOrDefault(x => x.Username == username);
+            if (entity == null)
+                return null;
+            var hash = GenerateHash(entity.LozinkaSalt, password);
+
+            if (hash != entity.LozinkaHash)
+                return null;
+          
+            return this._mapper.Map<Model.Klijent>(entity);
+        }
     }
 }

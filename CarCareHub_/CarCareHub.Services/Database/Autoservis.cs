@@ -32,6 +32,7 @@ public partial class Autoservis
     public int? UlogaId { get; set; }
     public virtual ICollection<AutoservisUsluge> AutoservisUsluges { get; set; } = new List<AutoservisUsluge>();
 
+    public virtual ICollection<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; } = new List<BPAutodijeloviAutoservis>();
 
 
     public int? VoziloId { get; set; }

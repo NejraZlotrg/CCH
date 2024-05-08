@@ -52,17 +52,12 @@ builder.Services.AddTransient<IPorukaService, PorukaService>();
 builder.Services.AddTransient<IChatKlijentZaposlenikService, ChatKlijentZaposlenikService>();
 builder.Services.AddTransient<IAutoservisUslugeServices, AutoservisUslugeServices>();
 builder.Services.AddTransient<IChatKlijentAutoservisService, ChatKlijentAutoservisService>();
+builder.Services.AddTransient<IBPAutodijeloviAutoservisService, BPAutodijeloviAutoservisService>();
 
 
 //-------------------------------------------------------------------
-var options = new JsonSerializerOptions
-{
-    ReferenceHandler = ReferenceHandler.Preserve
-};
 
 // Serializacija objekta s postavljenim opcijama
-var grad = new CarCareHub.Services.Database.Grad(); // Stvaranje instance objekta klase Grad
-var json = JsonSerializer.Serialize(grad, options); // Serializacija instance objekta
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -102,11 +97,12 @@ c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
 builder.Services.AddAutoMapper(typeof(IGradService));
 builder.Services.AddAutoMapper(typeof(IFirmaAutodijelovaService));
 builder.Services.AddAutoMapper(typeof(IZaposlenikService));
-builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CchV2AliContext>(options =>
 options.UseSqlServer(connectionString));
+builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

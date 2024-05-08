@@ -5,6 +5,6 @@ namespace CarCareHub.Services
 {
     public interface IKlijentService : ICRUDService<Model.Klijent, KlijentSearchObject, KlijentInsert, KlijentUpdate>
     {
-
+        Model.Klijent Login(string username, string password);
     }
 }

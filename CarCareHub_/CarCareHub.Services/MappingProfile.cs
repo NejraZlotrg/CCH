@@ -99,6 +99,10 @@ namespace CarCareHub.Services
             CreateMap<Model.PlacanjeAutoservisDijeloviUpdate, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviInsert, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
 
+            CreateMap<CarCareHub.Services.Database.BPAutodijeloviAutoservis, Model.BPAutodijeloviAutoservis>();
+            CreateMap<Model.BPAutodijeloviAutoservisUpdate, CarCareHub.Services.Database.BPAutodijeloviAutoservis>();
+            CreateMap<Model.BPAutodijeloviAutoservisInsert, CarCareHub.Services.Database.BPAutodijeloviAutoservis>();
+
             CreateMap<CarCareHub.Services.Database.AutoservisUsluge, Model.AutoservisUsluge>();
             CreateMap<Model.AutoservisUslugeUpdate, CarCareHub.Services.Database.AutoservisUsluge>();
             CreateMap<Model.AutoservisUslugeInsert, CarCareHub.Services.Database.AutoservisUsluge>();

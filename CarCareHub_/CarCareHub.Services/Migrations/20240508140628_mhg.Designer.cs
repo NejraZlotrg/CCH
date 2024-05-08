@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20240508140628_mhg")]
+    partial class mhg
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -423,12 +426,6 @@ namespace CarCareHub.Services.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("ime");
-
-                    b.Property<string>("LozinkaHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LozinkaSalt")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .HasMaxLength(20)

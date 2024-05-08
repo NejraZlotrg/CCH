@@ -30,6 +30,7 @@ namespace CarCareHub.Model
         public virtual Grad? Grad { get; set; }
         public virtual Uloge? Uloga { get; set; }
         //public virtual Drzava? Drzava { get; set; }
+        //public virtual ICollection<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; } = new List<BPAutodijeloviAutoservis>();
 
 
         // public int? IzvjestajId { get; set; }

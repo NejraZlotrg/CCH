@@ -32,6 +32,7 @@ public partial class FirmaAutodijelova
     public virtual Izvjestaj? Izvjestaj { get; set; }
 
     public virtual ICollection<PlacanjeAutoservisDijelovi> PlacanjeAutoservisDijelovis { get; set; } = new List<PlacanjeAutoservisDijelovi>();
+    public virtual ICollection<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; } = new List<BPAutodijeloviAutoservis>();
 
 
     public virtual Uloge? Uloga { get; set; }

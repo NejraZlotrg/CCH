@@ -4,10 +4,15 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarCareHub_.Controllers
 {
+    [ApiController]
+
     [Route("controllerCRUD")]
+    [Authorize]
+
     public class BaseCRUDController<T, TSearch, TInsert, TUpdate>:  BaseController<T, TSearch> where T : class where TSearch : class
     {
         protected new readonly ICRUDService<T, TSearch, TInsert, TUpdate> _service;
