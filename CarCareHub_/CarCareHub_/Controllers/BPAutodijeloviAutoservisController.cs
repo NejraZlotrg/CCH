@@ -8,7 +8,7 @@ namespace CarCareHub_.Controllers
 {
   
     [ApiController]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     [Route("api/BPAutodijeloviAutoservis")]
     public class BPAutodijeloviAutoservisController : BaseCRUDController<BPAutodijeloviAutoservis, BPAutodijeloviAutoservisSearchObject, BPAutodijeloviAutoservisInsert, BPAutodijeloviAutoservisUpdate>
     {

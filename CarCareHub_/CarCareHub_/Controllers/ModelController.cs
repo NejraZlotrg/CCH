@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     [Route("api/model")]
     public class ModelController : BaseCRUDController<Model, ModelSearchObject, ModelInsert, ModelUpdate>
     {

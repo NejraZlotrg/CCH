@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     [Route("api/uloge")]
     public class UlogeController : BaseCRUDController<Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>
     {

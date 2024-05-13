@@ -15,6 +15,8 @@ namespace CarCareHub.Services
     public class KlijentService : BaseCRUDService<Model.Klijent, Database.Klijent, KlijentSearchObject, KlijentInsert, KlijentUpdate>, IKlijentService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
+
+
         IMapper _mapper { get; set; }
 
         public KlijentService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
@@ -23,25 +25,51 @@ namespace CarCareHub.Services
             _mapper = mapper;
         }
 
-        public override async Task BeforeInsert(Database.Klijent tdb,KlijentInsert insert)
+        public override async Task BeforeInsert(CarCareHub.Services.Database.Klijent entity, KlijentInsert insert)
         {
-            tdb.LozinkaSalt = GenerateSalt();
-            tdb.LozinkaHash = GenerateHash(tdb.LozinkaSalt, insert.Password);
-        }
-        public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
-        {
-            return base.Insert(insert);
+            entity.LozinkaSalt = GenerateSalt(); 
+            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
         }
 
-        public override async Task<Model.Klijent> Update(int id, Model.KlijentUpdate update)
+
+        public static string GenerateSalt()
         {
-            return await base.Update(id, update);
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            var byteArray = new byte[16];
+            provider.GetBytes(byteArray);
+
+
+            return Convert.ToBase64String(byteArray);
+        }
+        public static string GenerateHash(string salt, string password)
+        {
+            byte[] src = Convert.FromBase64String(salt);
+            byte[] bytes = Encoding.Unicode.GetBytes(password);
+            byte[] dst = new byte[src.Length + bytes.Length];
+
+            System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
+            System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
+
+            HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
+            byte[] inArray = algorithm.ComputeHash(dst);
+            return Convert.ToBase64String(inArray);
         }
 
-        public override async Task<Model.Klijent> Delete(int id)
-        {
-            return await base.Delete(id);
-        }
+
+        //public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
+        //{
+        //    return base.Insert(insert);
+        //}
+
+        //public override async Task<Model.Klijent> Update(int id, Model.KlijentUpdate update)
+        //{
+        //    return await base.Update(id, update);
+        //}
+
+        //public override async Task<Model.Klijent> Delete(int id)
+        //{
+        //    return await base.Delete(id);
+        //}
 
        
         public override IQueryable<Database.Klijent> AddInclude(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
@@ -56,38 +84,27 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
-        public static string GenerateSalt()
-        {
-            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-            byte[] byteArray = new byte[16];
-            provider.GetBytes(byteArray);
-            return Convert.ToBase64String(byteArray);
-        }
 
-        public static string GenerateHash(string salt, string password)
-        {
-            byte[] src = Convert.FromBase64String(salt);
-            byte[] bytes = Encoding.Unicode.GetBytes(password);
-            byte[] dst = new byte[src.Length + bytes.Length];
-            System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
-            System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
-            HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
-            byte[] inArray = algorithm.ComputeHash(dst);
 
-            return Convert.ToBase64String(inArray);
-        }
 
-        public Model.Klijent Login(string username, string password)
+
+        public async Task<Model.Klijent> Login(string username, string password)
         {
-           var entity = _dbContext.Klijents.FirstOrDefault(x => x.Username == username);
+            var entity = await _dbContext.Klijents.FirstOrDefaultAsync(x => x.Username == username);
+
             if (entity == null)
+            {
                 return null;
+            }
+
             var hash = GenerateHash(entity.LozinkaSalt, password);
 
             if (hash != entity.LozinkaHash)
+            {
                 return null;
-          
-            return this._mapper.Map<Model.Klijent>(entity);
+            }
+
+            return _mapper.Map<Model.Klijent>(entity);
         }
     }
 }

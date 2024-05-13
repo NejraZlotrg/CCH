@@ -2,11 +2,13 @@
 using CarCareHub.Model;
 using CarCareHub.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarCareHub_.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AutoservisController : BaseCRUDController<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>
     {
 

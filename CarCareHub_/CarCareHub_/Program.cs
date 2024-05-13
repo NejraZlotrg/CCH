@@ -8,7 +8,9 @@ using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
 using CarCareHub_;
 using CarCareHub_.Errors;
+using eProdaja;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json;
@@ -80,19 +82,22 @@ builder.Services.AddSwaggerGen(c =>
     {
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         Scheme = "basic"
-});
-c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement() {
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement()
+    {
         {
             new OpenApiSecurityScheme
             {
-                Reference=new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme, Id="basicAuth"
-                }
+                Reference = new OpenApiReference{Type = ReferenceType.SecurityScheme, Id = "basicAuth"}
             },
-            new string []{}
-        } });
+            new string[]{}
+    } });
+
 });
+
+
+
 
 builder.Services.AddAutoMapper(typeof(IGradService));
 builder.Services.AddAutoMapper(typeof(IFirmaAutodijelovaService));
@@ -101,8 +106,18 @@ builder.Services.AddAutoMapper(typeof(IZaposlenikService));
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CchV2AliContext>(options =>
 options.UseSqlServer(connectionString));
-builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
+
+
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+}); 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
