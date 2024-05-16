@@ -8,7 +8,7 @@ using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
 using CarCareHub_;
 using CarCareHub_.Errors;
-using eProdaja;
+//using eProdaja;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -99,49 +99,41 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
-builder.Services.AddAutoMapper(typeof(IGradService));
-builder.Services.AddAutoMapper(typeof(IFirmaAutodijelovaService));
-builder.Services.AddAutoMapper(typeof(IZaposlenikService));
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CchV2AliContext>(options =>
 options.UseSqlServer(connectionString));
 
+builder.Services.AddAutoMapper(typeof(IGradService));
+builder.Services.AddAutoMapper(typeof(IFirmaAutodijelovaService));
+builder.Services.AddAutoMapper(typeof(IZaposlenikService));
+builder.Services.AddAutoMapper(typeof(IKlijentService));
 
+builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
-builder.Services.AddAuthentication("BasicAuthentication")
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-}); 
+ 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = "swagger"; // Postavite rutu za Swagger UI
+    });
+    //}
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI(c =>
-//    {
-//        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-//        c.RoutePrefix = "swagger"; // Postavite rutu za Swagger UI
-//    });
-//}
+    app.UseHttpsRedirection();
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseAuthentication();
 
 
 app.MapControllers();
@@ -156,3 +148,4 @@ app.MapControllers();
 //    dataContext.Database.Migrate();
 //}
 app.Run();
+}

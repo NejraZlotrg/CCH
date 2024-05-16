@@ -5,7 +5,7 @@
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class mgjmlkgerlg : Migration
+    public partial class mghkkssal : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

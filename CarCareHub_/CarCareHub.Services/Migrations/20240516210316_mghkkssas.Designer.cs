@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20240427113029_mgjmlkge")]
-    partial class mgjmlkge
+    [Migration("20240516210316_mghkkssas")]
+    partial class mghkkssas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,13 +135,36 @@ namespace CarCareHub.Services.Migrations
                     b.ToTable("AutoservisUsluge");
                 });
 
-            modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentServis", b =>
+            modelBuilder.Entity("CarCareHub.Services.Database.BPAutodijeloviAutoservis", b =>
                 {
-                    b.Property<int>("ChatKlijentServisId")
+                    b.Property<int?>("BPAutodijeloviAutoservisId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatKlijentServisId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("BPAutodijeloviAutoservisId"));
+
+                    b.Property<int?>("AutoservisId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FirmaAutodijelovaID")
+                        .HasColumnType("int");
+
+                    b.HasKey("BPAutodijeloviAutoservisId");
+
+                    b.HasIndex("AutoservisId");
+
+                    b.HasIndex("FirmaAutodijelovaID");
+
+                    b.ToTable("BPAutodijeloviAutoservis");
+                });
+
+            modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentAutoservis", b =>
+                {
+                    b.Property<int>("ChatKlijentAutoservisId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatKlijentAutoservisId"));
 
                     b.Property<int?>("AutoservisId")
                         .HasColumnType("int");
@@ -152,14 +175,13 @@ namespace CarCareHub.Services.Migrations
                     b.Property<DateTime>("VrijemeZadnjePoruke")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ChatKlijentServisId")
-                        .HasName("pk_chat");
+                    b.HasKey("ChatKlijentAutoservisId");
 
                     b.HasIndex("AutoservisId");
 
                     b.HasIndex("KlijentId");
 
-                    b.ToTable("Chat_klijent_servis", (string)null);
+                    b.ToTable("ChatKlijentAutoserviss");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentZaposlenik", b =>
@@ -169,6 +191,9 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatKlijentZaposlenikId"));
+
+                    b.Property<int?>("AutoservisId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("KlijentId")
                         .HasColumnType("int");
@@ -181,6 +206,8 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasKey("ChatKlijentZaposlenikId")
                         .HasName("pk_chat2");
+
+                    b.HasIndex("AutoservisId");
 
                     b.HasIndex("KlijentId");
 
@@ -400,6 +427,12 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("ime");
 
+                    b.Property<string>("LozinkaHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LozinkaSalt")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .HasMaxLength(20)
                         .IsUnicode(false)
@@ -548,7 +581,7 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PorukaId"));
 
-                    b.Property<int?>("ChatKlijentServisId")
+                    b.Property<int?>("ChatKlijentAutoservisId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ChatKlijentZaposlenikId")
@@ -563,7 +596,7 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasKey("PorukaId");
 
-                    b.HasIndex("ChatKlijentServisId");
+                    b.HasIndex("ChatKlijentAutoservisId");
 
                     b.HasIndex("ChatKlijentZaposlenikId");
 
@@ -803,7 +836,7 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("prezime");
 
-                    b.Property<int?>("UlogaId")
+                    b.Property<int>("UlogaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -883,17 +916,30 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Usluge");
                 });
 
-            modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentServis", b =>
+            modelBuilder.Entity("CarCareHub.Services.Database.BPAutodijeloviAutoservis", b =>
                 {
                     b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
-                        .WithMany("ChatKlijentServiss")
-                        .HasForeignKey("AutoservisId")
-                        .HasConstraintName("fk_autoservis_chat");
+                        .WithMany("BPAutodijeloviAutoservis")
+                        .HasForeignKey("AutoservisId");
+
+                    b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "FirmaAutodijelova")
+                        .WithMany("BPAutodijeloviAutoservis")
+                        .HasForeignKey("FirmaAutodijelovaID");
+
+                    b.Navigation("Autoservis");
+
+                    b.Navigation("FirmaAutodijelova");
+                });
+
+            modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentAutoservis", b =>
+                {
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
+                        .WithMany()
+                        .HasForeignKey("AutoservisId");
 
                     b.HasOne("CarCareHub.Services.Database.Klijent", "Klijent")
-                        .WithMany("ChatKlijentServis")
-                        .HasForeignKey("KlijentId")
-                        .HasConstraintName("fk_klijent_chat");
+                        .WithMany("ChatKlijentAutoserviss")
+                        .HasForeignKey("KlijentId");
 
                     b.Navigation("Autoservis");
 
@@ -902,8 +948,12 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentZaposlenik", b =>
                 {
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", null)
+                        .WithMany("ChatKlijentServiss")
+                        .HasForeignKey("AutoservisId");
+
                     b.HasOne("CarCareHub.Services.Database.Klijent", "Klijent")
-                        .WithMany("ChatKlijentZaposleniks")
+                        .WithMany("ChatKlijentZaposlenik")
                         .HasForeignKey("KlijentId")
                         .HasConstraintName("fk_klijent_chat2");
 
@@ -1013,15 +1063,17 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Poruka", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.ChatKlijentServis", "ChatKlijentServis")
+                    b.HasOne("CarCareHub.Services.Database.ChatKlijentAutoservis", "ChatKlijentAutoservis")
                         .WithMany("Poruka")
-                        .HasForeignKey("ChatKlijentServisId");
+                        .HasForeignKey("ChatKlijentAutoservisId");
 
-                    b.HasOne("CarCareHub.Services.Database.ChatKlijentZaposlenik", null)
+                    b.HasOne("CarCareHub.Services.Database.ChatKlijentZaposlenik", "ChatKlijentZaposlenik")
                         .WithMany("Poruka")
                         .HasForeignKey("ChatKlijentZaposlenikId");
 
-                    b.Navigation("ChatKlijentServis");
+                    b.Navigation("ChatKlijentAutoservis");
+
+                    b.Navigation("ChatKlijentZaposlenik");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Proizvod", b =>
@@ -1072,7 +1124,9 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasOne("CarCareHub.Services.Database.Uloge", "Uloga")
                         .WithMany("Zaposleniks")
-                        .HasForeignKey("UlogaId");
+                        .HasForeignKey("UlogaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Autoservis");
 
@@ -1102,6 +1156,8 @@ namespace CarCareHub.Services.Migrations
                 {
                     b.Navigation("AutoservisUsluges");
 
+                    b.Navigation("BPAutodijeloviAutoservis");
+
                     b.Navigation("ChatKlijentServiss");
 
                     b.Navigation("PlacanjeAutoservisDijelovis");
@@ -1109,7 +1165,7 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Zaposleniks");
                 });
 
-            modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentServis", b =>
+            modelBuilder.Entity("CarCareHub.Services.Database.ChatKlijentAutoservis", b =>
                 {
                     b.Navigation("Poruka");
                 });
@@ -1126,6 +1182,8 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.FirmaAutodijelova", b =>
                 {
+                    b.Navigation("BPAutodijeloviAutoservis");
+
                     b.Navigation("PlacanjeAutoservisDijelovis");
 
                     b.Navigation("Proizvods");
@@ -1156,9 +1214,9 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Klijent", b =>
                 {
-                    b.Navigation("ChatKlijentServis");
+                    b.Navigation("ChatKlijentAutoserviss");
 
-                    b.Navigation("ChatKlijentZaposleniks");
+                    b.Navigation("ChatKlijentZaposlenik");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>

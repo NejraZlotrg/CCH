@@ -1,27 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using CarCareHub.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using CarCareHub.Services; // Dodan import
-using System.Net.Http.Headers;
 
-namespace eProdaja
+namespace CarCareHub_
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly IKlijentService _korisniciService;
-
-        public BasicAuthenticationHandler(
-            IKlijentService korisniciService,
-            IOptionsMonitor<AuthenticationSchemeOptions> options,
-            ILoggerFactory logger,
-            UrlEncoder encoder,
-            ISystemClock clock)
-            : base(options, logger, encoder, clock)
+        IZaposlenikService _korisniciService;
+        public BasicAuthenticationHandler(IZaposlenikService korisniciService, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {
             _korisniciService = korisniciService;
         }
@@ -48,10 +38,18 @@ namespace eProdaja
             }
             else
             {
-                var claims = new List<Claim>
-                    {
-                  new Claim(ClaimTypes.NameIdentifier, user.Username)
-};
+
+
+                var claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.NameIdentifier, user.Username)
+                };
+
+              
+              
+                claims.Add(new Claim(ClaimTypes.Role, user.Uloga.NazivUloge));
+               
 
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
 
@@ -59,7 +57,6 @@ namespace eProdaja
 
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
-
             }
         }
     }

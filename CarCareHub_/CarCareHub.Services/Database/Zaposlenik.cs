@@ -25,8 +25,8 @@ namespace CarCareHub.Services.Database; public partial class Zaposlenik
     public int? FirmaAutodijelovaId { get; set; }
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 
-    public int? UlogaId { get; set; }
-    public virtual Uloge? Uloga { get; set; }
+    public int UlogaId { get; set; }
+    public virtual Uloge Uloga { get; set; }
 
     public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; } = new List<ChatKlijentZaposlenik>();
     public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();

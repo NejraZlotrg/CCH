@@ -833,7 +833,7 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("prezime");
 
-                    b.Property<int?>("UlogaId")
+                    b.Property<int>("UlogaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -1121,7 +1121,9 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasOne("CarCareHub.Services.Database.Uloge", "Uloga")
                         .WithMany("Zaposleniks")
-                        .HasForeignKey("UlogaId");
+                        .HasForeignKey("UlogaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Autoservis");
 
