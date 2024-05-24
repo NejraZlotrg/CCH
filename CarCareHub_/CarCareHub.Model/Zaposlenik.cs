@@ -28,7 +28,8 @@ namespace CarCareHub.Model
 
         // public virtual ICollection<Uloge> Uloges { get; set; } = new List<Uloge>();
 
-     
+        public string? Password { get; set; }
+
 
         public int? UlogaId { get; set; }
         public virtual Uloge? Uloga { get; set; }

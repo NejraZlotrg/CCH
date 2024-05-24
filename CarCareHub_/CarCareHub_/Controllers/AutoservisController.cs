@@ -8,7 +8,6 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class AutoservisController : BaseCRUDController<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>
     {
 

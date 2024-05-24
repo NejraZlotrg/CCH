@@ -3,6 +3,8 @@ using CarCareHub.Services;
 using CarCareHub.Services.Database;
 using CarCareHub.Model;
 using CarCareHub;
+using Microsoft.AspNetCore.Authorization;
+
 namespace CarCareHub_.Controllers
 {
     [ApiController]
@@ -13,8 +15,16 @@ namespace CarCareHub_.Controllers
             IProizvodiService service) : base(logger, service)
         { }
 
+        [AllowAnonymous]
+        [HttpGet("[controller]GetAllAnonymous")]
+        public async Task<IEnumerable<CarCareHub.Model.Proizvod>> Get([FromQuery] CarCareHub.Model.SearchObjects.ProizvodiSearchObject search)
+        {
+
+            return await _service.Get(search);
+        }
 
         [HttpPut("{id}/activate")]
+
         public virtual async Task<CarCareHub.Model.Proizvod> Activate(int id)
         {
 
@@ -27,12 +37,12 @@ namespace CarCareHub_.Controllers
 
             return await (_service as IProizvodiService).Hide(id);
         }
-
         [HttpGet("allowedActions")]
         public virtual async Task<List<string>> AllowedActions (int id)
         {
 
             return await (_service as IProizvodiService).AllowedActions(id);
         }
+
     }
 }

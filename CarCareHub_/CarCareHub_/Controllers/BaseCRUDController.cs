@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    [Route("controllerCRUD")]
+    [Route("api/controllerCRUD")]
     //[Authorize]
 
     public class BaseCRUDController<T, TSearch, TInsert, TUpdate>:  BaseController<T, TSearch> where T : class where TSearch : class

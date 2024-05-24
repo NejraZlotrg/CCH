@@ -87,7 +87,7 @@ namespace CarCareHub.Services
 
         public async Task<Model.Zaposlenik> Login(string username, string password)
         {
-            var entity = await _dbContext.Zaposleniks.Include("Uloga").FirstOrDefaultAsync(x => x.Username == username);
+            var entity = await _dbContext.Zaposleniks.Include(x=>x.Uloga).FirstOrDefaultAsync(x => x.Username == username);
 
             if (entity == null)
             {
