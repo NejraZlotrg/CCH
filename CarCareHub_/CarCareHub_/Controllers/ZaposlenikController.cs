@@ -26,6 +26,16 @@ namespace CarCareHub_.Controllers
             return await (_service as IZaposlenikService).GetByGrad(id);
 
         }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+
+        public async Task<CarCareHub.Model.Zaposlenik> Login(string username, string password)
+        {
+            return await (_service as IZaposlenikService).Login(username, password);
+
+        }
+
     }
 }
 

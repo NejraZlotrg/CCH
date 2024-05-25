@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
+using CarCareHub.Model.Messages;
+using EasyNetQ;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -39,9 +41,9 @@ namespace CarCareHub.Services.ProizvodiStateMachine
         }
         public override async Task<Proizvod> Activate(int id)
         {
-            _logger.LogInformation($"Aktivacija proizvoda {id}");
-            _logger.LogWarning($"Aktivacija proizvoda {id}");
-            _logger.LogError($"Aktivacija proizvoda {id}");
+            //_logger.LogInformation($"Aktivacija proizvoda {id}");
+            //_logger.LogWarning($"Aktivacija proizvoda {id}");
+            //_logger.LogError($"Aktivacija proizvoda {id}");
 
             var set = await _dbContext.Set<Database.Proizvod>().FindAsync(id);
 
@@ -50,8 +52,11 @@ namespace CarCareHub.Services.ProizvodiStateMachine
             
             await _dbContext.SaveChangesAsync();
 
-
-            return _mapper.Map<Model.Proizvod>(set);
+            var bus = RabbitHutch.CreateBus("host=localhost:5673");
+            var MappedEntity = _mapper.Map<Model.Proizvod>(set);
+            ProizvodiActivated message = new ProizvodiActivated { Proizvod = MappedEntity };
+            bus.PubSub.Publish(message);
+            return MappedEntity;
 
         }
 
