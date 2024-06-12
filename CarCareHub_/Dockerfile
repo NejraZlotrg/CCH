@@ -9,10 +9,10 @@ WORKDIR /src
 COPY . .
 
 FROM build AS publish
-RUN dotnet publish "CarCareHub_/CarCareHub_.API.csproj" -c Release -o /app
+RUN dotnet publish "CarCareHub_/CarCareHub_.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 
-ENTRYPOINT ["dotnet", "CarCareHub_.API.dll"]
+ENTRYPOINT ["dotnet", "CarCareHub_.dll"]

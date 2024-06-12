@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarCareHub_.API", "CarCareHub_\CarCareHub_.API.csproj", "{4FDF2EA2-D2C6-44E5-9674-A7C03FF08B4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarCareHub_", "CarCareHub_\CarCareHub_.csproj", "{4FDF2EA2-D2C6-44E5-9674-A7C03FF08B4C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarCareHub.Model", "CarCareHub.Model\CarCareHub.Model.csproj", "{6A4AC0DC-D41A-4A43-8093-CAAAF9902502}"
 EndProject
