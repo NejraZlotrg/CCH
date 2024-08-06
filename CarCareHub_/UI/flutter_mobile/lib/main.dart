@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,10 +29,85 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, primary: Colors.pink),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LogInPage(),
+    );
+  }
+}
+
+class LogInPage extends StatelessWidget {
+  const LogInPage({super.key});
+
+   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 400, maxWidth: 400),
+          child: Card(
+            child: Column(
+              children: [
+               Image.file(
+                  File('C:/Users/Lenovo/Desktop/Ne znam gdje pa ovdje/AirBrush_20200331095843.jpg'), // Podesite ispravnu putanju do slike
+                  height: 100,
+                ),
+                const TextField(
+                  decoration: InputDecoration(labelText: "Username", prefixIcon: Icon(Icons.email)),
+                ),
+                const TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: "Password", prefixIcon: Icon(Icons.password)),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("Login"),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LayoutExamples extends StatelessWidget {
+  const LayoutExamples({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children:[
+        Container(
+          height: 200,
+          color: Colors.red,
+          child: Center(
+            child: Container(
+              height: 100,
+              width: 700,
+              color: Colors.blue,
+              child: const Text('simple text'), 
+            ),
+          ),
+        ),
+        Row( mainAxisAlignment: MainAxisAlignment.spaceAround, 
+        children: [
+          Text("1"), 
+          Text("2"),
+          Text("3")],
+        ),
+        Container(height: 150,
+        color: Colors.pink, 
+        child: Center(child: Text("Ali nešša"),),
+        )
+        
+      ],
     );
   }
 }
