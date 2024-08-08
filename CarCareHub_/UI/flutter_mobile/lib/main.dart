@@ -38,44 +38,187 @@ class MyApp extends StatelessWidget {
 }
 
 class LogInPage extends StatelessWidget {
-  const LogInPage({super.key});
+ LogInPage({super.key});
 
-   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 400, maxWidth: 400),
-          child: Card(
-            child: Column(
-              children: [
-               Image.file(
-                  File('C:/Users/Lenovo/Desktop/Ne znam gdje pa ovdje/AirBrush_20200331095843.jpg'), // Podesite ispravnu putanju do slike
-                  height: 100,
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.grey[300], // Svjetlija siva pozadina
+    body: Center(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[400], // Tamnija siva pozadina za centralni dio
+            borderRadius: BorderRadius.circular(8.0), // Zaobljeni uglovi
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 260.0), // Sužavanje centralnog dijela
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.file(
+                File('C:/Users/alika/Desktop/cch.transparent.png'),
+                height: 100,
+              ),
+              SizedBox(height: 30.0),
+              SizedBox(
+                width: 500.0, // Postavite željenu širinu
+                child: TextField(
+                  controller: usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Korisničko ime',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white, // Bijela pozadina za polje unosa
+                  ),
                 ),
-                const TextField(
-                  decoration: InputDecoration(labelText: "Username", prefixIcon: Icon(Icons.email)),
-                ),
-                const TextField(
+              ),
+              SizedBox(height: 20.0),
+              SizedBox(
+                width: 500.0, // Postavite željenu širinu
+                child: TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Lozinka',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   obscureText: true,
-                  decoration: InputDecoration(labelText: "Password", prefixIcon: Icon(Icons.password)),
                 ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text("Login"),
-                ),
-              ],
-            ),
+              ),
+              SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      String username = usernameController.text;
+                      String password = passwordController.text;
+                      print('Prijava: $username, $password');
+                    },
+                    child: Text('Prijavi se'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegistrationPage(),
+                        ),
+                      );
+                    },
+                    child: Text('Registruj se'),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
+}
+
+class RegistrationPage extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.grey[300], // Svjetlija siva pozadina
+       appBar: AppBar(
+        title: Text('Registracija'),
+      ),
+    body: Center(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[400], // Tamnija siva pozadina za centralni dio
+            borderRadius: BorderRadius.circular(8.0), // Zaobljeni uglovi
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 260.0), // Sužavanje centralnog dijela
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.file(
+                File('C:/Users/alika/Desktop/cch.transparent.png'),
+                height: 100,
+              ),
+              SizedBox(height: 30.0),
+              SizedBox(
+                width: 500.0, // Postavite željenu širinu
+                child: TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white, // Bijela pozadina za polje unosa
+                  ),
+                ),
+              ),
+              SizedBox(height: 30.0),
+              SizedBox(
+                width: 500.0, // Postavite željenu širinu
+                child: TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Lozinka',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white, // Bijela pozadina za polje unosa
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              SizedBox(
+                width: 500.0, // Postavite željenu širinu
+                child: TextField(
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Potvrdi lozinku',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegistrationPage(),
+                        ),
+                      );
+                    },
+                    child: Text('Registruj se'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+}
+               
 
 class LayoutExamples extends StatelessWidget {
   const LayoutExamples({super.key});
