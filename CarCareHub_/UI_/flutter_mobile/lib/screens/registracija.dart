@@ -1,6 +1,7 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:flutter_mobile/screens/product.dart';
+//import 'package:flutter_mobile/widgets/master_screen.dart';
 
 
 class RegistrationPage extends StatelessWidget {
@@ -13,8 +14,13 @@ class RegistrationPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width; // Širina ekrana
     double containerWidth = screenWidth * 0.8; // 80% širine ekrana
 
-    return MasterScreenWidget(
-      child:  Center(
+        return Scaffold(
+      appBar: AppBar(
+        title: Text('Registracija'), 
+        backgroundColor: Colors.grey[400]
+      ),
+      body:  Center(
+
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(16.0),
@@ -73,9 +79,12 @@ class RegistrationPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     ElevatedButton(
-                      onPressed: () {
-                        // Handle registration logic here
-                        print('Registracija: ${emailController.text}');
+                       onPressed: () {
+                        print("Proizvodi proceed"); // dio sto pise u terminalu
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                        ),
+                        );
                       },
                       child: Text('Registruj se'),
                     ),

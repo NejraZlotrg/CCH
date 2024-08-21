@@ -1,5 +1,6 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/screens/product.dart';
 import 'package:flutter_mobile/screens/registracija.dart';
 
 void main() {
@@ -104,6 +105,10 @@ class LogInPage extends StatelessWidget {
                         String username = usernameController.text;
                         String password = passwordController.text;
                         print('Prijava: $username, $password');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                        ),
+                        );
                       },
                       child: Text('Prijavi se'),
                     ),
