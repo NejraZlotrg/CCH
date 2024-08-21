@@ -29,7 +29,11 @@ late ProductProvider _productProvider;
               onPressed: () async {
               print("podaci proceed");
               var data = await _productProvider.get();
-              print("data:$data");
+                if (data is List && data.isNotEmpty) {
+                    print("data: ${data[0]['naziv']}");
+                     } else {
+                   print("No data found or data is not a list");
+                     }
               },
               child: Text("podaci")),
           Padding(

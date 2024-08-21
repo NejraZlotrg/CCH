@@ -1,6 +1,6 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/screens/product.dart';
+import 'package:flutter_mobile/screens/product_screen.dart';
 //import 'package:flutter_mobile/widgets/master_screen.dart';
 
 
@@ -16,7 +16,7 @@ class RegistrationPage extends StatelessWidget {
 
         return Scaffold(
       appBar: AppBar(
-        title: Text('Registracija'), 
+        title: Text('Registration'), 
         backgroundColor: Colors.grey[400]
       ),
       body:  Center(

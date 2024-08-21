@@ -1,10 +1,16 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/screens/product.dart';
-import 'package:flutter_mobile/screens/registracija.dart';
+import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/screens/product_screen.dart';
+import 'package:flutter_mobile/screens/registration_page.dart';
+import 'package:flutter_mobile/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => ProductProvider())
+  ],
+  child: const MyApp(),));
 }
 
 class MyApp extends StatelessWidget {
@@ -39,14 +45,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class LogInPage extends StatelessWidget {
   LogInPage({super.key});
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  late ProductProvider _productProvider;
+
   @override
   Widget build(BuildContext context) {
+    _productProvider = context.read<ProductProvider>();
     double screenWidth = MediaQuery.of(context).size.width; // Širina ekrana
     double containerWidth = screenWidth * 0.8; // 80% širine ekrana
 
@@ -101,16 +111,35 @@ class LogInPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     ElevatedButton(
-                      onPressed: () {
-                        String username = usernameController.text;
-                        String password = passwordController.text;
-                        print('Prijava: $username, $password');
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
-                        ),
-                        );
+                      onPressed: () async {
+                        var username = usernameController.text;
+                        var password = passwordController.text;
+                       // passwordController.text = username;
+                        
+                        print('Login: $username, $password');
+
+                        Authorization.username = username;
+                        Authorization.password = password;
+
+                        try {
+                          await _productProvider.get();
+  
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                          ),
+                          );
+                        } on Exception catch (e) {
+                          showDialog(context: context, 
+                          builder: (BuildContext context) => AlertDialog(
+                            title: Text("error"),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(onPressed: () => Navigator.pop(context), child: Text("OK"))
+                            ],
+                          ));
+                        }
                       },
-                      child: Text('Prijavi se'),
+                      child: Text('Login'),
                     ),
                     ElevatedButton(
                       onPressed: () {
