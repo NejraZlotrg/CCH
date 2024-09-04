@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
+using CarCareHub.Model.SearchObjects;
 
 namespace CarCareHub_.Controllers
 {
@@ -23,13 +24,12 @@ namespace CarCareHub_.Controllers
         }
 
         [HttpGet("[controller]GetAll")]
-        public  async Task<IEnumerable<T>> Get([FromQuery]TSearch search)
+        public async Task<PagedResult<T>> Get([FromQuery] TSearch? search = null)
         {
-            
             return await _service.Get(search);
         }
+     
 
-        
 
         [HttpGet("[controller]GetByID/{id}")]
         public async Task<T> GetByID(int id)

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_mobile/models/product.dart';
+import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ class ProductProvider with ChangeNotifier {
                   defaultValue: "https://localhost:7209/");
   }
 
-  Future<dynamic> get() async {
+  Future<SearchResult<Product>> get() async {
     var url = "$_baseURL$_endpoint";
     var uri = Uri.parse(url);
 
@@ -26,7 +28,15 @@ class ProductProvider with ChangeNotifier {
     if(isValidResponse(response)){
       var data = jsonDecode(response.body);
 
-      return data;
+      var result = new SearchResult<Product>();
+
+      result.count = data['count'];
+
+      for ( var item in data['result']) {
+        result.result.add(Product.fromJson(item));
+      }
+
+      return result;
     } else {
               throw new Exception("Unknown error");
     }

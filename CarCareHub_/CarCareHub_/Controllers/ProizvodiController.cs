@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using CarCareHub.Model;
 using CarCareHub;
 using Microsoft.AspNetCore.Authorization;
+using CarCareHub.Model.SearchObjects;
 
 namespace CarCareHub_.Controllers
 {
@@ -17,11 +18,12 @@ namespace CarCareHub_.Controllers
 
         [AllowAnonymous]
         [HttpGet("[controller]GetAllAnonymous")]
-        public async Task<IEnumerable<CarCareHub.Model.Proizvod>> Get([FromQuery] CarCareHub.Model.SearchObjects.ProizvodiSearchObject search)
+        public async Task<PagedResult<CarCareHub.Model.Proizvod>> Get([FromQuery] CarCareHub.Model.SearchObjects.ProizvodiSearchObject search)
         {
 
             return await _service.Get(search);
         }
+    
 
         [HttpPut("{id}/activate")]
 
