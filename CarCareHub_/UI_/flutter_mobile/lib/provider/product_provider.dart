@@ -15,10 +15,10 @@ class ProductProvider with ChangeNotifier {
                   defaultValue: "https://localhost:7209/");
   }
 
-  Future<SearchResult<Product>> get() async {
+  Future<SearchResult<Product>> get({dynamic filter}) async {
     var url = "$_baseURL$_endpoint";
-    var uri = Uri.parse(url);
 
+    var uri = Uri.parse(url);
     var headers = createHeaders();
     var response = await http.get(uri, headers: headers);
 
