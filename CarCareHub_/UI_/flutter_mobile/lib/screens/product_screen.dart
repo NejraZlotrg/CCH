@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +16,7 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   late ProductProvider _productProvider;
   SearchResult<Product>? result;
-  final TextEditingController _nazivController = new TextEditingController();
-
+  final TextEditingController _nazivController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -43,71 +43,64 @@ class _ProductScreenState extends State<ProductScreen> {
       child: Row(
         children: [
           Expanded(
-              child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Korisničko ime',
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
-
-                      
-                        ),
-                        controller:_nazivController,
-                      ),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Korisničko ime',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivController,
+            ),
           ),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "Naziv proizvoda",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: "Naziv proizvoda",
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "Lokacija",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: "Lokacija",
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "JIB ili MB",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: "JIB ili MB",
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  print("podaci proceed");
-                  var data = await _productProvider.get(filter: {
-                    'naziv': _nazivController.text,
-                  });
-            
-                  setState(() {
-                    result = data;
-                  });
-                  if (data.result.isNotEmpty) {
-                    print("data: ${data.result[0].naziv}");
-                  } else {
-                    print("No data found");
-                  }
-                },
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
-              ),
-            ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: () async {
+              print("podaci proceed");
+              var data = await _productProvider.get(filter: {
+                'naziv': _nazivController.text,
+              });
+
+              setState(() {
+                result = data;
+              });
+            },
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.search),
+                SizedBox(width: 8.0),
+                Text('Pretraga'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -125,7 +118,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
             const DataColumn(
               label: Text(
-                'Sifra',
+                'Šifra',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
@@ -135,16 +128,48 @@ class _ProductScreenState extends State<ProductScreen> {
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
+            const DataColumn(
+              label: Text(
+                'Slika',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+            const DataColumn(
+              label: Text(
+                'Cijena',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
           ],
-          rows: result?.result.map((Product e) {
-            return DataRow(
-              cells: [
-                DataCell(Text(e.proizvodId?.toString() ?? "")),
-                DataCell(Text(e.sifra ?? "")),
-                DataCell(Text(e.naziv ?? "")),
-              ],
-            );
-          }).toList() ?? [],
+          rows: result?.result
+                  .map(
+                    (Product e) => DataRow(
+                      onSelectChanged: (selected) {
+                        if(selected == true) {
+                          print('selected: ${e.proizvodId}');
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                          ), );
+                        }
+///////////////////////////////////////////////
+                      },
+                      cells: [
+                        DataCell(Text(e.proizvodId?.toString() ?? "")),
+                        DataCell(Text(e.sifra ?? "")),
+                        DataCell(Text(e.naziv ?? "")),
+                        DataCell(e.slika != null
+                            ? Container(
+                                width: 100,
+                                height: 100,
+                                child: imageFromBase64String(e.slika!),
+                              )
+                            : const Text("")),
+                        DataCell(Text(formatNumber(e.cijena))),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
     );
