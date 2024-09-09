@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/screens/product_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +45,7 @@ class _ProductScreenState extends State<ProductScreen> {
         children: [
           Expanded(
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Korisničko ime',
                 border: OutlineInputBorder(),
                 filled: true,
@@ -53,7 +54,7 @@ class _ProductScreenState extends State<ProductScreen> {
               controller: _nazivController,
             ),
           ),
-          Expanded(
+          const Expanded(
             child: TextField(
               decoration: InputDecoration(
                 labelText: "Naziv proizvoda",
@@ -62,7 +63,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
+          const Expanded(
             child: TextField(
               decoration: InputDecoration(
                 labelText: "Lokacija",
@@ -71,7 +72,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
+          const Expanded(
             child: TextField(
               decoration: InputDecoration(
                 labelText: "JIB ili MB",
@@ -109,32 +110,32 @@ class _ProductScreenState extends State<ProductScreen> {
     return Expanded(
       child: SingleChildScrollView(
         child: DataTable(
-          columns: [
-            const DataColumn(
+          columns: const [
+            DataColumn(
               label: Text(
                 'ID',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text(
                 'Šifra',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text(
                 'Naziv',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text(
                 'Slika',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            const DataColumn(
+            DataColumn(
               label: Text(
                 'Cijena',
                 style: TextStyle(fontStyle: FontStyle.italic),
@@ -148,10 +149,10 @@ class _ProductScreenState extends State<ProductScreen> {
                         if(selected == true) {
                           print('selected: ${e.proizvodId}');
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                            MaterialPageRoute(builder: (context)=> ProductDetailScreen(product: e,) // poziv na drugi screen
                           ), );
                         }
-///////////////////////////////////////////////
+
                       },
                       cells: [
                         DataCell(Text(e.proizvodId?.toString() ?? "")),

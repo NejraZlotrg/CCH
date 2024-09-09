@@ -22,7 +22,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         title: widget.title_widget ?? Text(widget.title ?? ""),
         actions: [
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
             onPressed: () {},
           ),
         ],
@@ -36,7 +36,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               decoration: BoxDecoration(
                 color: Colors.grey[800],
               ),
-              child: Text(
+              child: const Text(
                 'CarCareHub',
                 style: TextStyle(
                   color: Colors.white,
@@ -45,8 +45,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.directions_car),
-              title: Text('Autodijelovi'),
+              leading: const Icon(Icons.directions_car),
+              title: const Text('Autodijelovi'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -56,13 +56,13 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               }
             ),
             ListTile(
-              leading: Icon(Icons.build),
-              title: Text('Autoservisi'),
+              leading: const Icon(Icons.build),
+              title: const Text('Autoservisi'),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Odjava'),
+              leading: const Icon(Icons.logout),
+              title: const Text('Odjava'),
               onTap: () {},
             ),
           ],
