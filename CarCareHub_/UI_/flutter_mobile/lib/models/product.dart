@@ -10,12 +10,15 @@ class Product {
   double? cijena;
   double? popust;
   String? slika;
+  double? cijenaSaPopustom;
+  String? originalniBroj;
+  String? model;
+  String? opis;
 
-  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika);
+  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.model,this.opis);
 
   factory Product.fromJson(Map<String,dynamic> json) => _$ProductFromJson(json);
 
 
   Map<String,dynamic> toJson() => _$ProductToJson(this);
 }
-

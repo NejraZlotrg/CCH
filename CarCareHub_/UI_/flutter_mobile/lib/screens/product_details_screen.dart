@@ -21,7 +21,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   
   void initState(){
     super.initState();
-    _initialValues = { 'sifra': widget.product?.sifra};
+    _initialValues = { 'sifra': widget.product?.sifra,
+    'naziv': widget.product?.naziv,
+    'cijena': widget.product?.cijena,
+    'popust': widget.product?.popust,
+    'originalniBroj': widget.product?.originalniBroj,
+    'cijenaSaPopustom': widget.product?.cijenaSaPopustom,
+    'model': widget.product?.model,
+    'opis': widget.product?.opis,
+
+    };
   }
 
   @override
@@ -49,9 +58,54 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return FormBuilder(
         key: _formKey,
         initialValue: _initialValues,
-        child: FormBuilderTextField(
-          name: 'sifra'
-          ),
+        child: Column(children: [
+           Row(
+             children: [
+               Expanded(
+                 child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "sifra"),
+                  name: "sifra",
+                  ),
+               ),
+               const SizedBox(width: 10,),
+                 Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "naziv"),
+                  name: "naziv",
+                  ),
+                 ),
+             ],
+           ),
+    
+           Row(
+             children: [
+               Expanded(
+                 child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "originalniBroj"),
+                  name: "originalniBroj",
+                  ),
+               ),
+               
+             ],
+           ),
+           Row(
+             children: [
+               Expanded(
+                 child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "model"),
+                  name: "model",
+                  ),
+               ),
+               const SizedBox(width: 10,),
+                 Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "opis"),
+                  name: "opis",
+                  ),
+                 ),
+             ],
+           ),
+        ], ),
         );
       }
 }
