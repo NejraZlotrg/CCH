@@ -1,6 +1,8 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/provider/vozilo.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/utils/utils.dart';
@@ -8,7 +10,9 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => ProductProvider())
+    ChangeNotifierProvider(create: (_) => ProductProvider()),
+    ChangeNotifierProvider(create: (_) => KategorijaProvider()),
+    ChangeNotifierProvider(create: (_) => VoziloProvider())
   ],
   child: const MyApp(),));
 }

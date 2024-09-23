@@ -23,7 +23,7 @@ namespace CarCareHub_.Controllers
             _service = service;
         }
 
-        [HttpGet("[controller]GetAll")]
+        [HttpGet()]
         public async Task<PagedResult<T>> Get([FromQuery] TSearch? search = null)
         {
             return await _service.Get(search);

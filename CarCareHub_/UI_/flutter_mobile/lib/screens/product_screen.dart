@@ -23,6 +23,7 @@ class _ProductScreenState extends State<ProductScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _productProvider = context.read<ProductProvider>();
+    
   }
 
   @override

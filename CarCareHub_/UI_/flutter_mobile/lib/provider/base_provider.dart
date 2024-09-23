@@ -114,6 +114,38 @@ abstract class BaseProvider<T> with ChangeNotifier {
   });
   return query;
 }
+
+Future<T> insert(dynamic request) async {
+  var url = "$_baseURL$_endpoint";
+  var uri = Uri.parse(url);
+  var headers = createHeaders();
+
+  var jsonRequest = jsonEncode(request);
+  var response = await http.post(uri, headers: headers, body: jsonRequest);
+
+  if(isValidResponse(response)){
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+              throw new Exception("Unknown error");
+    }
+}
+
+Future<T> update(int id, [dynamic request]) async {
+  var url = "$_baseURL$_endpoint/$id";
+  var uri = Uri.parse(url);
+  var headers = createHeaders();
+
+  var jsonRequest = jsonEncode(request);
+  var response = await http.put(uri, headers: headers, body: jsonRequest);
+
+  if(isValidResponse(response)){
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+              throw new Exception("Unknown error");
+    }
+}
 T fromJson(data){
   throw Exception("Method not implemented");
 }
