@@ -1,14 +1,12 @@
 using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services;
-//using CarCareHub.Model;
 
 
 using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
 using CarCareHub_;
 using CarCareHub_.Errors;
-//using eProdaja;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +14,60 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+
+
+
+//////////////////////////////////////////////////////// Facebook SDK
+//using Microsoft.AspNetCore.Authentication.Facebook;
+//using Microsoft.AspNetCore.Authentication.Cookies;
+
+//////////////////////////////////////////////////////// Facebook SDK
+
+
+
+
+
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+//////////////////////////////////////////////////////// Facebook SDK
+///
+// Konfiguracija CORS-a
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(builder =>
+//    {
+//        builder.AllowAnyOrigin()
+//               .AllowAnyMethod()
+//               .AllowAnyHeader();
+//    });
+//});
+
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
+//})
+//.AddCookie() // Omogucuje koristenje cookie-based autentifikacije
+//.AddFacebook(facebookOptions =>
+//{
+//    // Postavljanje AppId i AppSecret iz appsettings
+//    facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+//    facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+//});
+//builder.Services.AddControllersWithViews();
+
+//////////////////////////////////////////////////////// Facebook SDK
+
+
+
+
+
 
 // Add services to the container.
 builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
@@ -127,6 +178,15 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger"; // Postavite rutu za Swagger UI
     });
     //}
+
+
+    //////////////////////////////////////////////////////// Facebook SDK
+    //app.UseCors();
+    //app.UseStaticFiles();
+
+    //app.UseRouting();
+    //////////////////////////////////////////////////////// Facebook SDK
+
 
     app.UseHttpsRedirection();
 

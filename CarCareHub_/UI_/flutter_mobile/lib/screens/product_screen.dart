@@ -82,6 +82,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
           ),
           const SizedBox(width: 10),
+
           ElevatedButton(
             onPressed: () async {
               print("podaci proceed");
@@ -99,6 +100,24 @@ class _ProductScreenState extends State<ProductScreen> {
                 Icon(Icons.search),
                 SizedBox(width: 8.0),
                 Text('Pretraga'),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          ElevatedButton(
+            onPressed: () async {
+
+                     Navigator.of(context).push(
+                     MaterialPageRoute(builder: (context)=> ProductDetailScreen(product: null,) // poziv na drugi screen
+                     ), );
+            },
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.search),
+                SizedBox(width: 8.0),
+                Text('Dodaj'),
               ],
             ),
           ),

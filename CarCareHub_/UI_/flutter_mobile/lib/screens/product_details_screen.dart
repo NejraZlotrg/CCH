@@ -1,5 +1,9 @@
 // ignore_for_file: sort_child_properties_last
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/kategorija.dart';
@@ -40,7 +44,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     _initialValues = {
       'sifra': widget.product?.sifra,
       'naziv': widget.product?.naziv,
-      'cijena': widget.product?.cijena,
+      'cijena': widget.product?.cijena.toString(),
       'popust': widget.product?.popust,
       'originalniBroj': widget.product?.originalniBroj,
       'cijenaSaPopustom': widget.product?.cijenaSaPopustom,
@@ -95,9 +99,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       print(_formKey.currentState?.value);
                       print(_formKey.currentState?.value['naziv']);
 
+                      var request = new Map.from(_formKey.currentState!.value);
+
+                      request['slika'] = _base64Image;
+
+                      print(request['slika']);
                       try {
                         if (widget.product == null) {
-                          await _productProvider.insert(_formKey.currentState?.value);
+                          await _productProvider.insert(request);
                         } else {
                           await _productProvider.update(
                               widget.product!.proizvodId!, _formKey.currentState?.value);
@@ -237,11 +246,50 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           .toList() ??
                       [],
                 ),
-              )
+              ),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "cijena"),
+                  name: "cijena",
+                ),
+              ),
             ],
+          ),
+          Row(
+            children: [
+              Expanded( child:
+              FormBuilderField(
+                name: 'imageId',
+                builder: ((field) {
+                  return InputDecorator(
+                    decoration: InputDecoration(
+                      label: const Text('odaberi sliku'),
+                       errorText: field.errorText),
+                  child: ListTile(
+                    leading: const Icon(Icons.photo),
+                    title: const Text("oznaci sliku"),
+                    trailing: const Icon(Icons.file_upload),
+                    onTap: getImage,
+                  ), 
+                  );
+                }),)
+              )
+            ]
           )
         ],
       ),
     );
   }
+
+ File? _image;
+ String? _base64Image;
+ Future getImage() async {
+  var result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+  if(result != null && result.files.single.path != null){
+    _image = File(result.files.single.path!);
+    _base64Image = base64Encode(_image!.readAsBytesSync());
+  }
+
+ }
 }
