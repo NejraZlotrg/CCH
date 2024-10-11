@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
-import 'package:flutter_mobile/utils/utils.dart';
+import 'package:flutter_mobile/screens/klijent_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -70,8 +70,8 @@ class _KlijentScreenState extends State<KlijentScreen> {
             onPressed: () async {
               print("podaci proceed");
              var data = await _klijentProvider.get(filter: {
-  'Ime': _imeController.text,
-  'Prezime': _prezimeController.text,
+  'ime': _imeController.text,
+  'prezime': _prezimeController.text,
 });
 print("Preuzeti podaci: $data");
 
@@ -97,8 +97,9 @@ print("Preuzeti podaci: $data");
   }
 
   Widget _buildDataListView() {
-    return Expanded(
-      child: SingleChildScrollView(
+  return Expanded(
+    child: SingleChildScrollView(
+      scrollDirection: Axis.vertical, // Vertikalni pomak
         child: DataTable(
           columns: const [
             DataColumn(
@@ -119,7 +120,7 @@ print("Preuzeti podaci: $data");
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-           /* DataColumn(
+            DataColumn(
               label: Text(
                 'Username',
                 style: TextStyle(fontStyle: FontStyle.italic),
@@ -131,7 +132,7 @@ print("Preuzeti podaci: $data");
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            DataColumn(
+            /*DataColumn(
               label: Text(
                 'Password',
                 style: TextStyle(fontStyle: FontStyle.italic),
@@ -173,19 +174,31 @@ print("Preuzeti podaci: $data");
                   (Klijent e) => DataRow(
                     onSelectChanged: (selected) {
                       if (selected == true) {
-                        print('Selected: ${e.KlijentId}');
+                        print('Selected: ${e.klijentId}');
                         // Ovdje možeš dodati navigaciju ili akciju za detalje
+                        Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context)=> KlijentDetailsScreen(klijent: e,) // poziv na drugi screen
+                         ), );
                       }
                     },
                     cells: [
-                      DataCell(Text(e.KlijentId?.toString() ?? "")),
-                      DataCell(Text(e.Ime ?? "")),
-                      DataCell(Text(e.Prezime ?? "")),
+                      DataCell(Text(e.klijentId?.toString() ?? "")),
+                      DataCell(Text(e.ime ?? "")),
+                      DataCell(Text(e.prezime ?? "")),
+                      DataCell(Text(e.username ?? "")),
+                      DataCell(Text(e.email ?? "")),
+                   /*   DataCell(Text(e.password ?? "")),
+                      DataCell(Text(e.lozinkaSalt ?? "")),
+                      DataCell(Text(e.lozinkaHash ?? "")),
+                      DataCell(Text(e.spol ?? "")),
+                      DataCell(Text(e.brojTelefona ?? "")),
+                      DataCell(Text(formatNumber(e.gradId))),*/
                     ],
                   ),
                 )
-                .toList() ??
-            [],
+                .toList() ?? [],
+        ),
+
      /*     rows: result?.result
                   .map(
                     (Klijent e) => DataRow(
@@ -216,7 +229,6 @@ print("Preuzeti podaci: $data");
                   .toList() ??
               [],*/
         ),
-      ),
     );
   }
 }

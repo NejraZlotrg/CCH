@@ -3,20 +3,20 @@ part 'klijent.g.dart';
 
 @JsonSerializable()
 class Klijent {
-  int? KlijentId;
-  String? Ime;
-  String? Prezime;
-  String? Username;
-  String? Email;
-  String? Password;
-  String? LozinkaSalt;
-  String? LozinkaHash;
-  String? Spol;
-  String? BrojTelefona;
-  int? GradId;
+  int? klijentId;
+  String? ime;
+  String? prezime;
+  String? username;
+  String? email;
+  String? password;
+  String? lozinkaSalt;
+  String? lozinkaHash;
+  String? spol;
+  String? brojTelefona;
+  int? gradId;
 
 
-  Klijent(this.KlijentId, this.Ime,this.Prezime,this.Username,this.Email,this.Password,this.LozinkaSalt,this.LozinkaHash,this.Spol,this.BrojTelefona,this.GradId);
+  Klijent(this.klijentId, this.ime,this.prezime,this.username,this.email,this.password,this.lozinkaSalt,this.lozinkaHash,this.spol,this.brojTelefona,this.gradId);
 
   
   factory Klijent.fromJson(Map<String,dynamic> json) => _$KlijentFromJson(json);
