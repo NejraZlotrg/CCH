@@ -8,7 +8,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({Key? key}) : super(key: key);
+  const ProductScreen({super.key});
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -18,6 +18,7 @@ class _ProductScreenState extends State<ProductScreen> {
   late ProductProvider _productProvider;
   SearchResult<Product>? result;
   final TextEditingController _nazivController = TextEditingController();
+  final TextEditingController _modelController= TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -47,7 +48,7 @@ class _ProductScreenState extends State<ProductScreen> {
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: 'Korisničko ime',
+                labelText: 'Naziv proizvoda',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
@@ -55,21 +56,16 @@ class _ProductScreenState extends State<ProductScreen> {
               controller: _nazivController,
             ),
           ),
-          const Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: "Naziv proizvoda",
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
+          
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: TextField(
-              decoration: InputDecoration(
-                labelText: "Lokacija",
+              decoration: const InputDecoration(
+                labelText: "model",
                 border: OutlineInputBorder(),
               ),
+               controller: _modelController,
+
             ),
           ),
           const SizedBox(width: 10),
@@ -88,6 +84,7 @@ class _ProductScreenState extends State<ProductScreen> {
               print("podaci proceed");
               var data = await _productProvider.get(filter: {
                 'naziv': _nazivController.text,
+                'model': _modelController.text
               });
 
               setState(() {
@@ -179,7 +176,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         DataCell(Text(e.sifra ?? "")),
                         DataCell(Text(e.naziv ?? "")),
                         DataCell(e.slika != null
-                            ? Container(
+                            ? SizedBox(
                                 width: 100,
                                 height: 100,
                                 child: imageFromBase64String(e.slika!),

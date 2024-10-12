@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/klijent.dart';
+import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/klijent_provider.dart';
-import 'package:flutter_mobile/screens/klijent_details_screen.dart';
+import 'package:flutter_mobile/provider/drzave_provider.dart';
+import 'package:flutter_mobile/screens/drzave_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
-class KlijentScreen extends StatefulWidget {
-  const KlijentScreen({super.key});
+class DrzaveScreen extends StatefulWidget {
+  const DrzaveScreen({super.key});
 
   @override
-  State<KlijentScreen> createState() => _KlijentScreenState();
+  State<DrzaveScreen> createState() => _DrzaveScreenState();
 }
 
-class _KlijentScreenState extends State<KlijentScreen> {
-  late KlijentProvider _klijentProvider;
-  SearchResult<Klijent>? result;
-  final TextEditingController _imeController = TextEditingController();
-  final TextEditingController _prezimeController = TextEditingController();
+class _DrzaveScreenState extends State<DrzaveScreen> {
+  late DrzaveProvider _drzaveProvider;
+  SearchResult<Drzave>? result;
+  final TextEditingController _nazivDrzaveController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _klijentProvider = context.read<KlijentProvider>();
+    _drzaveProvider = context.read<DrzaveProvider>();
     
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Klijent",
+      title: "Drzava",
       child: Column(
         children: [
           _buildSearch(),
@@ -44,42 +43,28 @@ class _KlijentScreenState extends State<KlijentScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-
           Expanded(
             child: TextField(
-              controller: _imeController,
               decoration: const InputDecoration(
-                labelText: "Ime",
+                labelText: 'Naziv drzave',
                 border: OutlineInputBorder(),
-                
+                filled: true,
+                fillColor: Colors.white,
               ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: _prezimeController,
-              decoration: const InputDecoration(
-                labelText: "Prezime",
-                border: OutlineInputBorder(),
-              ),
+              controller: _nazivDrzaveController,
             ),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () async {
               print("podaci proceed");
-             var data = await _klijentProvider.get(filter: {
-  'ime': _imeController.text,
-  'prezime': _prezimeController.text,
-});
-print("Preuzeti podaci: $data");
-
+              var data = await _drzaveProvider.get(filter: {
+                'nazivDrzave': _nazivDrzaveController.text,
+              });
 
               setState(() {
                 result = data;
               });
-              
             },
             child: const Row(
               mainAxisSize: MainAxisSize.min,
@@ -95,7 +80,7 @@ print("Preuzeti podaci: $data");
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> KlijentDetailsScreen(klijent: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> DrzaveDetailsScreen(drzava: null,) // poziv na drugi screen
                      ), );
             },
             child: const Row(
@@ -120,46 +105,26 @@ print("Preuzeti podaci: $data");
           columns: const [
             DataColumn(
               label: Text(
-                'Ime',
+                'Naziv drzave',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            DataColumn(
-              label: Text(
-                'Prezime',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Username',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Email',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
+            
           ],
           rows: result?.result
                 .map(
-                  (Klijent e) => DataRow(
+                  (Drzave e) => DataRow(
                     onSelectChanged: (selected) {
                       if (selected == true) {
-                        print('Selected: ${e.klijentId}');
+                        print('Selected: ${e.drzavaId}');
                         // Ovdje možeš dodati navigaciju ili akciju za detalje
                         Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=> KlijentDetailsScreen(klijent: e,) // poziv na drugi screen
+                        MaterialPageRoute(builder: (context)=> DrzaveDetailsScreen(drzava: e,) // poziv na drugi screen
                          ), );
                       }
                     },
                     cells: [
-                      DataCell(Text(e.ime ?? "")),
-                      DataCell(Text(e.prezime ?? "")),
-                      DataCell(Text(e.username ?? "")),
-                      DataCell(Text(e.email ?? "")),
+                      DataCell(Text(e.nazivDrzave ?? "")),
                     ],
                   ),
                 )

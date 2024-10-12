@@ -115,14 +115,14 @@ namespace CarCareHub.Services
             //    query = query.Where(x => x.Vozilo.GodisteVozila == search.GodisteVozila);
             //}
 
-            if (!string.IsNullOrWhiteSpace(search?.ModelVozila))
+            if (!string.IsNullOrWhiteSpace(search?.Model))
             {
-                query = query.Where(x => x.Vozilo.Models.Any(x=> x.NazivModela.StartsWith(search.ModelVozila)));
+                query = query.Where(x => x.Vozilo.Models.Any(x=> x.NazivModela.StartsWith(search.Model)));
             }
 
             if (search?.GodisteVozila!=null)
             {
-                query = query.Where(x => x.Vozilo.Models.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
+               // query = query.Where(x => x.Vozi.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
             }
             if (search?.KategorijaId!=null)
             {

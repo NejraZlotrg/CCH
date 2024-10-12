@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class ProductDetailScreen extends StatefulWidget {
   Product? product;
-  ProductDetailScreen({Key? key, this.product}) : super(key: key);
+  ProductDetailScreen({super.key, this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -99,7 +99,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       print(_formKey.currentState?.value);
                       print(_formKey.currentState?.value['naziv']);
 
-                      var request = new Map.from(_formKey.currentState!.value);
+                      var request = Map.from(_formKey.currentState!.value);
 
                       request['slika'] = _base64Image;
 
@@ -115,17 +115,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                  title: Text("error"),
+                                  title: const Text("error"),
                                   content: Text(e.toString()),
                                   actions: [
                                     TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text("OK"))
+                                        child: const Text("OK"))
                                   ],
                                 ));
                       }
                     },
-                    child: Text("Spasi")),
+                    child: const Text("Spasi")),
               ),
             ],
           )

@@ -1,5 +1,6 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
@@ -14,7 +15,8 @@ void main() {
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => KategorijaProvider()),
     ChangeNotifierProvider(create: (_) => VoziloProvider()),
-    ChangeNotifierProvider(create: (_) => KlijentProvider())
+    ChangeNotifierProvider(create: (_) => KlijentProvider()),
+    ChangeNotifierProvider(create: (_) => DrzaveProvider())
     
   ],
   child: const MyApp(),));
@@ -69,14 +71,14 @@ class LogInPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'), 
+        title: const Text('Login'), 
         backgroundColor: Colors.grey[400]
       ),
       backgroundColor: Colors.grey[300],
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.grey[400],
               borderRadius: BorderRadius.circular(8.0),
@@ -86,12 +88,12 @@ class LogInPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children:[
                 Image.asset("assets/images/cch_logo.png", height: 100),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 SizedBox(
                   width: containerWidth, // Relativna širina
                   child: TextField(
                     controller: usernameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Korisničko ime',
                       border: OutlineInputBorder(),
                       filled: true,
@@ -99,12 +101,12 @@ class LogInPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 SizedBox(
                   width: containerWidth,
                   child: TextField(
                     controller: passwordController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Lozinka',
                       border: OutlineInputBorder(),
                       filled: true,
@@ -113,7 +115,7 @@ class LogInPage extends StatelessWidget {
                     obscureText: true,
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -132,21 +134,21 @@ class LogInPage extends StatelessWidget {
                           await _productProvider.get();
   
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                            MaterialPageRoute(builder: (context)=> const ProductScreen() // poziv na drugi screen
                           ),
                           );
                         } on Exception catch (e) {
                           showDialog(context: context, 
                           builder: (BuildContext context) => AlertDialog(
-                            title: Text("error"),
+                            title: const Text("error"),
                             content: Text(e.toString()),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(context), child: Text("OK"))
+                              TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
                             ],
                           ));
                         }
                       },
-                      child: Text('Login'),
+                      child: const Text('Login'),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -156,7 +158,7 @@ class LogInPage extends StatelessWidget {
                         ),
                         );
                       },
-                      child: Text('Registruj se'),
+                      child: const Text('Registruj se'),
                     ),
                   ],
                 ),
@@ -190,7 +192,7 @@ class LayoutExamples extends StatelessWidget {
             ),
           ),
         ),
-        Row( mainAxisAlignment: MainAxisAlignment.spaceAround, 
+        const Row( mainAxisAlignment: MainAxisAlignment.spaceAround, 
         children: [
           Text("1"), 
           Text("2"),
@@ -198,7 +200,7 @@ class LayoutExamples extends StatelessWidget {
         ),
         Container(height: 150,
         color: Colors.pink, 
-        child: Center(child: Text("Ali nešša"),),
+        child: const Center(child: Text("Ali nešša"),),
         )
         
       ],

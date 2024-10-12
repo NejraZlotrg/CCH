@@ -9,6 +9,8 @@ class RegistrationPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
+  RegistrationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // Širina ekrana
@@ -16,14 +18,14 @@ class RegistrationPage extends StatelessWidget {
 
         return Scaffold(
       appBar: AppBar(
-        title: Text('Registration'), 
+        title: const Text('Registration'), 
         backgroundColor: Colors.grey[400]
       ),
       body:  Center(
 
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.grey[400], // Tamnija siva pozadina za centralni dio
               borderRadius: BorderRadius.circular(8.0), // Zaobljeni uglovi
@@ -33,12 +35,12 @@ class RegistrationPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset("assets/images/cch_logo.png", height: 100),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 SizedBox(
                   width: containerWidth, // Relativna širina
                   child: TextField(
                     controller: emailController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                       filled: true,
@@ -46,12 +48,12 @@ class RegistrationPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 SizedBox(
                   width: containerWidth, // Relativna širina
                   child: TextField(
                     controller: passwordController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Lozinka',
                       border: OutlineInputBorder(),
                       filled: true,
@@ -60,12 +62,12 @@ class RegistrationPage extends StatelessWidget {
                     obscureText: true,
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 SizedBox(
                   width: containerWidth, // Relativna širina
                   child: TextField(
                     controller: confirmPasswordController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Potvrdi lozinku',
                       border: OutlineInputBorder(),
                       filled: true,
@@ -74,7 +76,7 @@ class RegistrationPage extends StatelessWidget {
                     obscureText: true,
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -82,11 +84,11 @@ class RegistrationPage extends StatelessWidget {
                        onPressed: () {
                         print("Proizvodi proceed"); // dio sto pise u terminalu
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context)=> ProductScreen() // poziv na drugi screen
+                          MaterialPageRoute(builder: (context)=> const ProductScreen() // poziv na drugi screen
                         ),
                         );
                       },
-                      child: Text('Registruj se'),
+                      child: const Text('Registruj se'),
                     ),
                   ],
                 ),
