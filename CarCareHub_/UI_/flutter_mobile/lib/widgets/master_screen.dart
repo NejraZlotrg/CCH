@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/screens/drzave_screen.dart';
+import 'package:flutter_mobile/screens/grad_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
+import 'package:flutter_mobile/screens/usluge_screen.dart';
 //import 'package:flutter_mobile/screens/registracija.dart';
 
 class MasterScreenWidget extends StatefulWidget {
@@ -76,6 +76,28 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context)=> const DrzaveScreen()
+                    ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.build),
+              title: const Text('Grad'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context)=> const GradScreen()
+                    ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.build),
+              title: const Text('Usluge'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context)=> const UslugeScreen()
                     ),
                 );
               },

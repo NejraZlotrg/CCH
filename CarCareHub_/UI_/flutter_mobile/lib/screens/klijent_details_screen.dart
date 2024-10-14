@@ -7,7 +7,6 @@ import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable

@@ -4,24 +4,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/drzave.dart';
+import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
+import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class DrzaveDetailsScreen extends StatefulWidget {
-  Drzave? drzava;
-  DrzaveDetailsScreen({super.key, this.drzava});
+class UslugeDetailsScreen extends StatefulWidget {
+  Usluge? usluge;
+  UslugeDetailsScreen({super.key, this.usluge});
 
   @override
-  State<DrzaveDetailsScreen> createState() => _DrzaveDetailsScreenState();
+  State<UslugeDetailsScreen> createState() => _UslugeDetailsScreenState();
 }
 
-class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
+class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
-  late DrzaveProvider _drzaveProvider;
+  late UslugeProvider _uslugeProvider;
 
   bool isLoading = true;
 
@@ -29,10 +31,10 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
   void initState() {
     super.initState();
     _initialValues = {
-      'nazivDrzave': widget.drzava?.nazivDrzave,
+      'nazivDrzave': widget.usluge?.nazivUsluge,
     };
 
-    _drzaveProvider = context.read<DrzaveProvider>();
+    _uslugeProvider = context.read<UslugeProvider>();
     initForm();
   }
 
@@ -60,11 +62,11 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                     var request = Map.from(_formKey.currentState!.value);
 
                     try {
-                      if (widget.drzava == null) {
-                        await _drzaveProvider.insert(request);
+                      if (widget.usluge == null) {
+                        await _uslugeProvider.insert(request);
                       } else {
-                        await _drzaveProvider.update(
-                            widget.drzava!.drzavaId!, _formKey.currentState?.value);
+                        await _uslugeProvider.update(
+                            widget.usluge!.uslugeId!, _formKey.currentState?.value);
                       }
                     } on Exception catch (e) {
                       showDialog(
@@ -89,7 +91,7 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
           )
         ],
       ),
-      title: widget.drzava?.nazivDrzave ?? "Detalji drzave",
+      title: widget.usluge?.nazivUsluge ?? "Detalji drzave",
     );
   }
 
@@ -104,7 +106,7 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
               Expanded(
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "naziv"),
-                  name: "nazivDrzave",
+                  name: "nazivUsluge",
                 ),
               ),
             ],

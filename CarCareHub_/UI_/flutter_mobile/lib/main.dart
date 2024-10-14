@@ -1,9 +1,11 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
+import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/vozilo.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
@@ -16,7 +18,9 @@ void main() {
     ChangeNotifierProvider(create: (_) => KategorijaProvider()),
     ChangeNotifierProvider(create: (_) => VoziloProvider()),
     ChangeNotifierProvider(create: (_) => KlijentProvider()),
-    ChangeNotifierProvider(create: (_) => DrzaveProvider())
+    ChangeNotifierProvider(create: (_) => DrzaveProvider()),
+    ChangeNotifierProvider(create: (_) => GradProvider()),
+    ChangeNotifierProvider(create: (_) => UslugeProvider()),
     
   ],
   child: const MyApp(),));
