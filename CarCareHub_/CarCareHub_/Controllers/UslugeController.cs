@@ -12,7 +12,7 @@ namespace CarCareHub_.Controllers
     public class UslugeController : BaseCRUDController<Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>
     {
         public UslugeController(ILogger<BaseController<CarCareHub.Model.Usluge, UslugeSearchObject>> logger,
-             ICRUDService<Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate> service) : base(logger, service)
+             IUslugeService uslugeService) : base(logger, uslugeService)
         {
         }
     }

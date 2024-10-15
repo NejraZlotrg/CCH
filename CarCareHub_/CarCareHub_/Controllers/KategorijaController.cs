@@ -14,7 +14,7 @@ namespace CarCareHub_.Controllers
     public class KategorijaController : BaseCRUDController<Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>
     {
         public KategorijaController(ILogger<BaseController<CarCareHub.Model.Kategorija, KategorijaSearchObject>> logger,
-             ICRUDService<Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate> service) : base(logger, service)
+              IKategorijaService kategorijaService) : base(logger, kategorijaService)
         {
         }
     }

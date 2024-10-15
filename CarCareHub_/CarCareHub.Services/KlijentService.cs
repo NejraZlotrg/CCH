@@ -55,7 +55,20 @@ namespace CarCareHub.Services
             return Convert.ToBase64String(inArray);
         }
 
+        public override IQueryable<Database.Klijent> AddFilter(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
+        {
 
+
+            if (!string.IsNullOrWhiteSpace(search?.Ime))
+            {
+                query = query.Where(x => x.Ime.StartsWith(search.Ime));
+            }
+            if (!string.IsNullOrWhiteSpace(search?.Prezime))
+            {
+                query = query.Where(x => x.Prezime.StartsWith(search.Prezime));
+            }
+            return base.AddFilter(query, search);
+        }
         //public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
         //{
         //    return base.Insert(insert);
@@ -71,7 +84,7 @@ namespace CarCareHub.Services
         //    return await base.Delete(id);
         //}
 
-       
+
         public override IQueryable<Database.Klijent> AddInclude(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
         {
             // Uključujemo samo entitet Uloge

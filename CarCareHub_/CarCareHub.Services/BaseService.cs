@@ -21,30 +21,28 @@ namespace CarCareHub.Services
         }
         public virtual async Task<PagedResult<T>> Get(TSearch? search = null)
         {
-            var query = _dbContext.Set<TDb>().AsQueryable();
+            var query = _dbContext.Set<TDb>().AsQueryable(); // Dobijanje DbSet-a za entitet
 
             PagedResult<T> result = new PagedResult<T>();
 
+            query = AddFilter(query, search); // Primjenjuje filtere
+            query = AddInclude(query, search); // Ako koristiš include za relacije
 
+            result.Count = await query.CountAsync(); // Broj ukupnih stavki
 
-            query = AddFilter(query, search);
-
-            query = AddInclude(query, search);
-
-            result.Count = await query.CountAsync();
-
+            // Ispravka paginacije
             if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
             {
-                query = query.Take(search.PageSize.Value).Skip(search.Page.Value * search.PageSize.Value);
+                query = query.Skip((search.Page.Value - 1) * search.PageSize.Value) // Pravi ispravnu paginaciju
+                             .Take(search.PageSize.Value); // Uzimanje traženog broja stavki
             }
 
-            var list = await query.ToListAsync();
+            var list = await query.ToListAsync(); // Dobijanje rezultata
 
-
-            var tmp = _mapper.Map<List<T>>(list);
-            result.Result = tmp;
-            return result;
+            result.Result = _mapper.Map<List<T>>(list); // Mapiranje na odgovarajući model
+            return result; // Vraćanje rezultata
         }
+
         //public virtual async Task<List<T>> Get(TSearch? search=null)
         // {
         //     var query = _dbContext.Set<TDb>().AsQueryable();
@@ -93,5 +91,7 @@ namespace CarCareHub.Services
             var temp =  await _dbContext.Set<TDb>().FindAsync(id);
             return _mapper.Map<T>(temp);
         }
+
+        
     }
 }

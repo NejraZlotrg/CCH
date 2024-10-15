@@ -1,6 +1,9 @@
-﻿namespace CarCareHub.Services
+﻿using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
+
+namespace CarCareHub.Services
 {
-    internal interface IUslugeService
+    public interface IUslugeService : ICRUDService<Model.Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>
     {
     }
 }

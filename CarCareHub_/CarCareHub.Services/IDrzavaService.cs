@@ -3,7 +3,8 @@ using CarCareHub.Model.SearchObjects;
 
 namespace CarCareHub.Services
 {
-    public interface IDrzavaService : IService<Model.Drzava, DrzavaSearchObject>
+    public interface IDrzavaService : ICRUDService<Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>
     {
+      
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace CarCareHub.Services
 {
+
     public class DrzavaService : BaseCRUDService<Model.Drzava, Database.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>, IDrzavaService
     {
         public DrzavaService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
@@ -31,15 +32,39 @@ namespace CarCareHub.Services
         }
 
 
-
-        public override IQueryable<Database.Drzava> AddFilter(IQueryable<Database.Drzava> query, DrzavaSearchObject search = null)
+        public override IQueryable<Database.Drzava> AddFilter(IQueryable<Database.Drzava> query, DrzavaSearchObject? search=null)
         {
-            if (!string.IsNullOrWhiteSpace(search?.NazivDrzave))
+            if (search != null)
             {
-                query = query.Where(x => x.NazivDrzave.StartsWith(search.NazivDrzave));
+                // Filtriranje po nazivu države
+                if (!string.IsNullOrWhiteSpace(search.NazivDrzave))
+                {
+                    query = query.Where(x => x.NazivDrzave.ToLower().StartsWith(search.NazivDrzave.ToLower()));
+                }
             }
+
             return base.AddFilter(query, search);
         }
+
+      
+
+
+        //public override IQueryable<Database.Drzava> AddFilter(IQueryable<Database.Drzava> query, DrzavaSearchObject search = null)
+        //{
+        //    if (!string.IsNullOrWhiteSpace(search?.NazivDrzave))
+        //    {
+        //        // Logiranje vrijednosti pretrage
+        //        Console.WriteLine($"Pretraga po nazivu države: {search.NazivDrzave}");
+
+        //        query = query.Where(x => x.NazivDrzave.ToLower().StartsWith(search.NazivDrzave.ToLower()));
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Pretraga je prazna ili null.");
+        //    }
+        //    return base.AddFilter(query, search);
+        //}
+
 
     }
 }

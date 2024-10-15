@@ -14,8 +14,9 @@ namespace CarCareHub_.Controllers
     public class DrzavaController : BaseCRUDController<Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>
     {
         public DrzavaController(ILogger<BaseController<CarCareHub.Model.Drzava, DrzavaSearchObject>> logger,
-             ICRUDService<Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate> service) : base(logger, service)
+             IDrzavaService drzavaService) : base(logger, drzavaService)
         {
+            
         }
     }
 }

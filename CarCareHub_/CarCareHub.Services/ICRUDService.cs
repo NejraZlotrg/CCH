@@ -12,5 +12,7 @@ namespace CarCareHub.Services
         Task<T> Update(int id, TUpdate update);
         Task<T> Delete(int id);
         
+
+
     }
 }

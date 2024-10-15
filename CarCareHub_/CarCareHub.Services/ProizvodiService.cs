@@ -122,7 +122,7 @@ namespace CarCareHub.Services
 
             if (search?.GodisteVozila!=null)
             {
-               // query = query.Where(x => x.Vozi.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
+               // query = query.Where(x => x.Vozilo.Godiste.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
             }
             if (search?.KategorijaId!=null)
             {

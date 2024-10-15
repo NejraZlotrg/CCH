@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/usluge.dart';
+import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/usluge_provider.dart';
-import 'package:flutter_mobile/screens/usluge_details_screen.dart';
+import 'package:flutter_mobile/provider/model_provider.dart';
+import 'package:flutter_mobile/screens/model_details_screen.dart';
 //import 'package:flutter_mobile/screens/grad_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
-class UslugeScreen extends StatefulWidget {
-  const UslugeScreen({super.key});
+class ModelScreen extends StatefulWidget {
+  const ModelScreen({super.key});
 
   @override
-  State<UslugeScreen> createState() => _UslugeScreenState();
+  State<ModelScreen> createState() => _ModelScreenState();
 }
 
-class _UslugeScreenState extends State<UslugeScreen> {
-  late UslugeProvider _uslugeProvider;
-  SearchResult<Usluge>? result;
-  final TextEditingController _nazivUslugeController = TextEditingController();
+class _ModelScreenState extends State<ModelScreen> {
+  late ModelProvider _modelProvider;
+  SearchResult<Model>? result;
+  final TextEditingController _nazivModelaController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _uslugeProvider = context.read<UslugeProvider>();
+    _modelProvider = context.read<ModelProvider>();
     
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Usluge",
+      title: "Model",
       child: Column(
         children: [
           _buildSearch(),
@@ -47,29 +47,29 @@ class _UslugeScreenState extends State<UslugeScreen> {
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: 'Naziv usluge',
+                labelText: 'Naziv modela',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
-              controller: _nazivUslugeController,
+              controller: _nazivModelaController,
             ),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
 onPressed: () async {
-  print("Pokretanje pretrage za usluge: ${_nazivUslugeController.text}");
+  print("Pokretanje pretrage za grad: ${_nazivModelaController.text}");
 
   var filterParams = {
-    'IsUslugeIncluded': 'true', // Ovaj parametar ostaje
+    'IsAllIncluded': 'true', // Ovaj parametar ostaje
   };
 
   // Dodavanje filtera samo ako je naziv unesen
-  if (_nazivUslugeController.text.isNotEmpty) {
-    filterParams['NazivUsluge'] = _nazivUslugeController.text;
+  if (_nazivModelaController.text.isNotEmpty) {
+    filterParams['nazivModela'] = _nazivModelaController.text;
   }
 
-  var data = await _uslugeProvider.get(filter: filterParams);
+  var data = await _modelProvider.get(filter: filterParams);
 
   setState(() {
     result = data;
@@ -90,7 +90,7 @@ onPressed: () async {
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> UslugeDetailsScreen(usluge: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> ModelDetailsScreen(model: null,) // poziv na drugi screen
                      ), );
             },
             child: const Row(
@@ -115,39 +115,33 @@ onPressed: () async {
           columns: const [
             DataColumn(
               label: Text(
-                'Naziv usluge',
+                'Naziv modela',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
             DataColumn(
               label: Text(
-                'Opis',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Cijena',
+                'Marka vozila',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ],
           rows: result?.result
                 .map(
-                  (Usluge e) => DataRow(
+                  (Model e) => DataRow(
                     onSelectChanged: (selected) {
                       if (selected == true) {
-                        print('Selected: ${e.uslugeId}');
+                        print('Selected: ${e.modelId}');
                         // Ovdje možeš dodati navigaciju ili akciju za detalje
                         Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=> UslugeDetailsScreen(usluge: e,) // poziv na drugi screen
+                        MaterialPageRoute(builder: (context)=> ModelDetailsScreen(model: e,) // poziv na drugi screen
                          ), );
                       }
                     },
                     cells: [
-                      DataCell(Text(e.nazivUsluge ?? "")),
-                      DataCell(Text(e.opis ?? "")),
-                      DataCell(Text(e.cijena.toString())),
+                      DataCell(Text(e.nazivModela ?? "")),
+                      DataCell(Text(e.markaVozila ?? "")),
+
                     ],
                   ),
                 )

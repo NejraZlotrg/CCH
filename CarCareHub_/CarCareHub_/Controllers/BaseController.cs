@@ -23,12 +23,15 @@ namespace CarCareHub_.Controllers
             _service = service;
         }
 
-        [HttpGet()]
-        public async Task<PagedResult<T>> Get([FromQuery] TSearch? search = null)
+        [HttpGet]
+        public async Task<ActionResult<PagedResult<T>>> Get([FromQuery] TSearch? search = null)
         {
-            return await _service.Get(search);
+            var result = await _service.Get(search);
+            return Ok(result); // Ovdje vraćaš 200 OK sa rezultatom
         }
-     
+
+
+
 
 
         [HttpGet("[controller]GetByID/{id}")]

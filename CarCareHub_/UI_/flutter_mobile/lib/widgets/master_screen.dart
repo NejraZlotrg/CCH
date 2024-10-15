@@ -3,6 +3,7 @@ import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/screens/drzave_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
+import 'package:flutter_mobile/screens/model_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
 //import 'package:flutter_mobile/screens/registracija.dart';
@@ -98,6 +99,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context)=> const UslugeScreen()
+                    ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Model'),
+              onTap: () {
+                  Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context)=> ModelScreen()
                     ),
                 );
               },

@@ -3,7 +3,7 @@ using CarCareHub.Model.SearchObjects;
 
 namespace CarCareHub.Services
 {
-    public interface IKategorijaService : IService<Model.Kategorija, KategorijaSearchObject>
+    public interface IKategorijaService : ICRUDService<Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>
     {
     }
 }
