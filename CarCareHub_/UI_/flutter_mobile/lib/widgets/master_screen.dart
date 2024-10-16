@@ -6,6 +6,7 @@ import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
+import 'package:flutter_mobile/screens/vozilo_screen.dart';
 //import 'package:flutter_mobile/screens/registracija.dart';
 
 class MasterScreenWidget extends StatefulWidget {
@@ -110,6 +111,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context)=> ModelScreen()
+                    ),
+                );
+              },
+            ),
+             ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Vozilo'),
+              onTap: () {
+                  Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context)=> VoziloScreen()
                     ),
                 );
               },

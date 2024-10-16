@@ -14,7 +14,7 @@ import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
-import 'package:flutter_mobile/provider/vozilo.dart';
+import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable

@@ -7,7 +7,7 @@ import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
-import 'package:flutter_mobile/provider/vozilo.dart';
+import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/utils/utils.dart';

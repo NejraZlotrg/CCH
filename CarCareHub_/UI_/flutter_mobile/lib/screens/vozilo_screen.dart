@@ -1,43 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/model.dart';
-import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
-import 'package:flutter_mobile/provider/model_provider.dart';
+import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
-import 'package:flutter_mobile/screens/model_details_screen.dart';
-//import 'package:flutter_mobile/screens/grad_details_screen.dart';
+import 'package:flutter_mobile/screens/vozilo_details_screen.dart';
+//import 'package:flutter_mobile/screens/drzave_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
-class ModelScreen extends StatefulWidget {
-  const ModelScreen({super.key});
+class VoziloScreen extends StatefulWidget {
+  const VoziloScreen({super.key});
 
   @override
-  State<ModelScreen> createState() => _ModelScreenState();
+  State<VoziloScreen> createState() => _VoziloScreenState();
 }
 
-class _ModelScreenState extends State<ModelScreen> {
-  late ModelProvider _modelProvider;
-  
-
-  SearchResult<Model>? result;
-  final TextEditingController _nazivModelaController = TextEditingController();
-  final TextEditingController _markaVozilaController = TextEditingController();
-
+class _VoziloScreenState extends State<VoziloScreen> {
+  late VoziloProvider _voziloProvider;
+  SearchResult<Vozilo>? result;
+  final TextEditingController _nazivModelaController = TextEditingController(); //popraviti
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _modelProvider = context.read<ModelProvider>();
-   
-
+    _voziloProvider = context.read<VoziloProvider>();
     
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Model",
+      title: "Marka vozila",
       child: Column(
         children: [
           _buildSearch(),
@@ -55,7 +47,7 @@ class _ModelScreenState extends State<ModelScreen> {
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: 'Naziv modela',
+                labelText: 'Marka vozila',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
@@ -63,40 +55,18 @@ class _ModelScreenState extends State<ModelScreen> {
               controller: _nazivModelaController,
             ),
           ),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Marka vozila',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _markaVozilaController,
-            ),
-          ),
           const SizedBox(width: 10),
           ElevatedButton(
-onPressed: () async {
-  print("Pokretanje pretrage: ${_nazivModelaController.text} i ${_markaVozilaController.text}");
+            onPressed: () async {
+              print("podaci proceed");
+              var data = await _voziloProvider.get(filter: {
+                'markaVozila': _nazivModelaController.text,
+              });
 
-  var filterParams = {
-    'IsAllIncluded': 'true', // Ovaj parametar ostaje
-  };
-
-  // Dodavanje filtera samo ako je naziv unesen
-  if (_nazivModelaController.text.isNotEmpty || _markaVozilaController.text.isNotEmpty) {
-    filterParams['nazivModela'] = _nazivModelaController.text;
-    filterParams['markaVozila'] = _markaVozilaController.text;
-
-  }
-
-  var data = await _modelProvider.get(filter: filterParams, );
-
-  setState(() {
-    result = data;
-  });
-},
-
+              setState(() {
+                result = data;
+              });
+            },
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -111,7 +81,7 @@ onPressed: () async {
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> ModelDetailsScreen(model: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> VoziloDetailsScreen(vozilo: null,) // poziv na drugi screen
                      ), );
             },
             child: const Row(
@@ -136,34 +106,26 @@ onPressed: () async {
           columns: const [
             DataColumn(
               label: Text(
-                'Naziv modela',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
                 'Marka vozila',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
+            
           ],
           rows: result?.result
                 .map(
-                  (Model e) => DataRow(
+                  (Vozilo e) => DataRow(
                     onSelectChanged: (selected) {
                       if (selected == true) {
-                        print('Selected: ${e.modelId}');
+                        print('Selected: ${e.voziloId}');
                         // Ovdje možeš dodati navigaciju ili akciju za detalje
                         Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=> ModelDetailsScreen(model: e,) 
-                       // poziv na drugi screen
+                        MaterialPageRoute(builder: (context)=> VoziloDetailsScreen(vozilo: e,) // poziv na drugi screen
                          ), );
                       }
                     },
                     cells: [
-                      DataCell(Text(e.nazivModela ?? "")),
-                      DataCell(Text(e.vozilo.markaVozila ?? "")),
-
+                      DataCell(Text(e.markaVozila ?? "")),
                     ],
                   ),
                 )

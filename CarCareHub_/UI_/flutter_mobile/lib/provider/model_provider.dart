@@ -10,4 +10,7 @@ class ModelProvider extends BaseProvider<Model> {
     return Model.fromJson(data);
   }
 
+ 
+
+
 }
