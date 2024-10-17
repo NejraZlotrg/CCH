@@ -5,6 +5,7 @@ import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
+import 'package:flutter_mobile/provider/narudzbe_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
@@ -23,6 +24,8 @@ void main() {
     ChangeNotifierProvider(create: (_) => GradProvider()),
     ChangeNotifierProvider(create: (_) => UslugeProvider()),
     ChangeNotifierProvider(create: (_) => ModelProvider()),
+    ChangeNotifierProvider(create: (_) => NarudzbaProvider()),
+
 
     
   ],

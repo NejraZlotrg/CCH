@@ -9,7 +9,7 @@ namespace CarCareHub.Model
 {
     public class NarudzbaStavka
     {
-        public int NarudzbaStavkaId { get; set; }
+       // public int NarudzbaStavkaId { get; set; }
 
         public int? ProizvodId { get; set; }
 

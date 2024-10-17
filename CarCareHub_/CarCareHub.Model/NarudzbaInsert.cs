@@ -10,7 +10,7 @@ namespace CarCareHub.Model
     public class NarudzbaInsert
     {
 
-        public int? NarudzbaStavkeId { get; set; }
+        //public int? NarudzbaStavkeId { get; set; }
 
         public DateTime? DatumNarudzbe { get; set; }
 

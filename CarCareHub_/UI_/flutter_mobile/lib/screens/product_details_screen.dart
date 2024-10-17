@@ -18,15 +18,17 @@ import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
+// ignore: must_be_immutable
 class ProductDetailScreen extends StatefulWidget {
   Product? product;
   ProductDetailScreen({super.key, this.product});
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  State<ProductDetailScreen> createState() => _ProductDetailsScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+
+class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late KategorijaProvider _kategorijaProvider;
@@ -36,6 +38,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   SearchResult<Kategorija>? kategorijaResult;
   SearchResult<Vozilo>? voziloResult;
   bool isLoading = true;
+
+  int _quantity = 1; // Početna količina je 1
 
   @override
   void initState() {
@@ -70,11 +74,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Future initForm() async {
     kategorijaResult = await _kategorijaProvider.get();
-    print(kategorijaResult);
-
     voziloResult = await _voziloProvider.get();
-    print(voziloResult);
-
     setState(() {
       isLoading = false;
     });
@@ -87,34 +87,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         children: [
           isLoading ? Container() : _buildForm(),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Količina
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: () {
+                      setState(() {
+                        if (_quantity > 1) _quantity--;
+                      });
+                    },
+                  ),
+                  Text('$_quantity', style: TextStyle(fontSize: 20)),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        _quantity++;
+                      });
+                    },
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: ElevatedButton(
                     onPressed: () async {
                       _formKey.currentState?.saveAndValidate();
-
-                      print(_formKey.currentState?.value);
-                      print(_formKey.currentState?.value['naziv']);
-
                       var request = Map.from(_formKey.currentState!.value);
-
                       request['slika'] = _base64Image;
+                      request['kolicina'] = _quantity; // Dodaj količinu
 
-                      print(request['slika']);
                       try {
                         if (widget.product == null) {
                           await _productProvider.insert(request);
                         } else {
                           await _productProvider.update(
-                              widget.product!.proizvodId!, _formKey.currentState?.value);
+                              widget.product!.proizvodId!, request);
                         }
+
+                        // Dodaj u košaricu
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              '${widget.product?.naziv ?? "Proizvod"} je dodan u košaricu! Količina: $_quantity'),
+                        ));
                       } on Exception catch (e) {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                  title: const Text("error"),
+                                  title: const Text("Greška"),
                                   content: Text(e.toString()),
                                   actions: [
                                     TextButton(
@@ -124,7 +147,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ));
                       }
                     },
-                    child: const Text("Spasi")),
+                    child: const Text("Dodaj u košaricu")),
               ),
             ],
           )
@@ -144,16 +167,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "sifra"),
+                  decoration: const InputDecoration(labelText: "Šifra"),
                   name: "sifra",
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "naziv"),
+                  decoration: const InputDecoration(labelText: "Naziv"),
                   name: "naziv",
                 ),
               ),
@@ -163,7 +184,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "originalniBroj"),
+                  decoration: const InputDecoration(labelText: "Originalni broj"),
                   name: "originalniBroj",
                 ),
               ),
@@ -173,16 +194,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "model"),
+                  decoration: const InputDecoration(labelText: "Model"),
                   name: "model",
                 ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "opis"),
+                  decoration: const InputDecoration(labelText: "Opis"),
                   name: "opis",
                 ),
               ),
@@ -205,7 +224,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   initialValue: widget.product?.voziloId != null
                       ? widget.product!.voziloId.toString()
-                      : null, // Provjera za null vrijednosti
+                      : null,
                   items: voziloResult?.result
                           .map((item) => DropdownMenuItem(
                                 alignment: AlignmentDirectional.center,
@@ -215,7 +234,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           .toList() ??
                       [],
                 ),
-              )
+              ),
             ],
           ),
           Row(
@@ -235,7 +254,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   initialValue: widget.product?.kategorijaId != null
                       ? widget.product!.kategorijaId.toString()
-                      : null, // Provjera za null vrijednosti
+                      : null,
                   items: kategorijaResult?.result
                           .map((item) => DropdownMenuItem(
                                 alignment: AlignmentDirectional.center,
@@ -248,7 +267,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "cijena"),
+                  decoration: const InputDecoration(labelText: "Cijena"),
                   name: "cijena",
                 ),
               ),
@@ -256,39 +275,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ),
           Row(
             children: [
-              Expanded( child:
-              FormBuilderField(
-                name: 'imageId',
-                builder: ((field) {
-                  return InputDecorator(
-                    decoration: InputDecoration(
-                      label: const Text('odaberi sliku'),
-                       errorText: field.errorText),
-                  child: ListTile(
-                    leading: const Icon(Icons.photo),
-                    title: const Text("oznaci sliku"),
-                    trailing: const Icon(Icons.file_upload),
-                    onTap: getImage,
-                  ), 
-                  );
-                }),)
+              Expanded(
+                child: FormBuilderField(
+                  name: 'imageId',
+                  builder: ((field) {
+                    return InputDecorator(
+                      decoration: InputDecoration(
+                          label: const Text('Odaberi sliku'),
+                          errorText: field.errorText),
+                      child: ListTile(
+                        leading: const Icon(Icons.photo),
+                        title: const Text("Označi sliku"),
+                        trailing: const Icon(Icons.file_upload),
+                        onTap: getImage,
+                      ),
+                    );
+                  }),
+                ),
               )
-            ]
-          )
+            ],
+          ),
         ],
       ),
     );
   }
 
- File? _image;
- String? _base64Image;
- Future getImage() async {
-  var result = await FilePicker.platform.pickFiles(type: FileType.image);
+  File? _image;
+  String? _base64Image;
+  Future getImage() async {
+    var result = await FilePicker.platform.pickFiles(type: FileType.image);
 
-  if(result != null && result.files.single.path != null){
-    _image = File(result.files.single.path!);
-    _base64Image = base64Encode(_image!.readAsBytesSync());
+    if (result != null && result.files.single.path != null) {
+      _image = File(result.files.single.path!);
+      _base64Image = base64Encode(_image!.readAsBytesSync());
+    }
   }
-
- }
 }
+
