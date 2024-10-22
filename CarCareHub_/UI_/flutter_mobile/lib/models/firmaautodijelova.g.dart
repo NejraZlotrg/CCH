@@ -1,0 +1,37 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'firmaautodijelova.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
+    FirmaAutodijelova(
+      (json['firmaAutodijelovaID'] as num?)?.toInt(),
+      json['nazivFirme'] as String?,
+      json['adresa'] as String?,
+      json['email'] as String?,
+      (json['gradId'] as num?)?.toInt(),
+      (json['jib'] as num?)?.toInt(),
+      (json['mbs'] as num?)?.toInt(),
+      json['password'] as String?,
+      json['slikaProfila'] as String?,
+      json['telefon'] as String?,
+      (json['ulogaId'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$FirmaAutodijelovaToJson(FirmaAutodijelova instance) =>
+    <String, dynamic>{
+      'firmaAutodijelovaID': instance.firmaAutodijelovaID,
+      'nazivFirme': instance.nazivFirme,
+      'adresa': instance.adresa,
+      'gradId': instance.gradId,
+      'jib': instance.jib,
+      'mbs': instance.mbs,
+      'telefon': instance.telefon,
+      'email': instance.email,
+      'password': instance.password,
+      'slikaProfila': instance.slikaProfila,
+      'ulogaId': instance.ulogaId,
+    };

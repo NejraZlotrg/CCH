@@ -122,7 +122,16 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
         ],
         rows: result?.result
             .map(
-              (e) => DataRow(
+               (Autoservis e) => DataRow(
+                onSelectChanged: (selected) {
+                      if (selected == true) {
+                        print('Selected: ${e.autoservisId}');
+                        // Ovdje možeš dodati navigaciju ili akciju za detalje
+                        Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context)=> AutoservisDetailsScreen(autoservis: e,) // poziv na drugi screen
+                         ), );
+                      }
+                    },
                 cells: [
                   DataCell(Text(e.autoservisId?.toString() ?? "")),
                   DataCell(Text(e.naziv ?? "")),

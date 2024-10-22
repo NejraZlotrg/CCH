@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/product.dart';
@@ -39,7 +38,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: widget.product?.naziv ?? "Detalji Proizvoda",
-      
       child: Column(
         children: [
           isLoading ? Container() : _buildForm(),
@@ -133,7 +131,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   decoration: const InputDecoration(labelText: "Šifra"),
                   name: "sifra",
                   initialValue: widget.product?.sifra ?? '',
-                  enabled: false, // Disabled to prevent editing
                 ),
               ),
               const SizedBox(width: 10),
@@ -142,7 +139,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   decoration: const InputDecoration(labelText: "Naziv"),
                   name: "naziv",
                   initialValue: widget.product?.naziv ?? '',
-                  enabled: false, // Disabled to prevent editing
                 ),
               ),
             ],
@@ -154,7 +150,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   decoration: const InputDecoration(labelText: "Originalni broj"),
                   name: "originalniBroj",
                   initialValue: widget.product?.originalniBroj ?? '',
-                  enabled: false, // Disabled to prevent editing
                 ),
               ),
             ],
@@ -166,7 +161,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   decoration: const InputDecoration(labelText: "Model"),
                   name: "model",
                   initialValue: widget.product?.model ?? '',
-                  enabled: false, // Disabled to prevent editing
                 ),
               ),
               const SizedBox(width: 10),
@@ -175,7 +169,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   decoration: const InputDecoration(labelText: "Opis"),
                   name: "opis",
                   initialValue: widget.product?.opis ?? '',
-                  enabled: false, // Disabled to prevent editing
                 ),
               ),
             ],
