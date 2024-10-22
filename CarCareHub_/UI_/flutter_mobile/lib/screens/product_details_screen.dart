@@ -1,80 +1,35 @@
-// ignore_for_file: sort_child_properties_last
-
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_mobile/models/kategorija.dart';
 import 'package:flutter_mobile/models/product.dart';
-import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
-import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter_mobile/provider/kategorija.dart';
-import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_mobile/widgets/master_screen.dart';
 
-// ignore: must_be_immutable
-// ignore: must_be_immutable
 class ProductDetailScreen extends StatefulWidget {
-  Product? product;
+  final Product? product;
   ProductDetailScreen({super.key, this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailsScreenState();
 }
 
-
 class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
-  Map<String, dynamic> _initialValues = {};
-  late KategorijaProvider _kategorijaProvider;
-  late VoziloProvider _voziloProvider;
   late ProductProvider _productProvider;
-
-  SearchResult<Kategorija>? kategorijaResult;
-  SearchResult<Vozilo>? voziloResult;
   bool isLoading = true;
-
-  int _quantity = 1; // Početna količina je 1
+  int _quantity = 1; // Default quantity is 1
 
   @override
   void initState() {
     super.initState();
-    _initialValues = {
-      'sifra': widget.product?.sifra,
-      'naziv': widget.product?.naziv,
-      'cijena': widget.product?.cijena.toString(),
-      'popust': widget.product?.popust,
-      'originalniBroj': widget.product?.originalniBroj,
-      'cijenaSaPopustom': widget.product?.cijenaSaPopustom,
-      'model': widget.product?.model,
-      'opis': widget.product?.opis,
-      'voziloId': widget.product?.voziloId?.toString(),
-      'kategorijaId': widget.product?.kategorijaId?.toString(),
-    };
-
-    _kategorijaProvider = context.read<KategorijaProvider>();
-    _voziloProvider = context.read<VoziloProvider>();
     _productProvider = context.read<ProductProvider>();
-
     initForm();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _kategorijaProvider = context.read<KategorijaProvider>();
-    _voziloProvider = context.read<VoziloProvider>();
-  }
-
-  Future initForm() async {
-    kategorijaResult = await _kategorijaProvider.get();
-    voziloResult = await _voziloProvider.get();
+  Future<void> initForm() async {
     setState(() {
       isLoading = false;
     });
@@ -83,26 +38,28 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      title: widget.product?.naziv ?? "Detalji Proizvoda",
+      
       child: Column(
         children: [
           isLoading ? Container() : _buildForm(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Količina
+              // Quantity selector
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.remove),
+                    icon: const Icon(Icons.remove),
                     onPressed: () {
                       setState(() {
                         if (_quantity > 1) _quantity--;
                       });
                     },
                   ),
-                  Text('$_quantity', style: TextStyle(fontSize: 20)),
+                  Text('$_quantity', style: const TextStyle(fontSize: 20)),
                   IconButton(
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     onPressed: () {
                       setState(() {
                         _quantity++;
@@ -114,53 +71,59 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: ElevatedButton(
-                    onPressed: () async {
-                      _formKey.currentState?.saveAndValidate();
-                      var request = Map.from(_formKey.currentState!.value);
-                      request['slika'] = _base64Image;
-                      request['kolicina'] = _quantity; // Dodaj količinu
+                  onPressed: () async {
+                    try {
+                      // Provjerava postoji li aktivna narudžba
+                      int narudzbaId = await _productProvider.getCurrentNarudzbaId();
 
-                      try {
-                        if (widget.product == null) {
-                          await _productProvider.insert(request);
-                        } else {
-                          await _productProvider.update(
-                              widget.product!.proizvodId!, request);
-                        }
-
-                        // Dodaj u košaricu
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              '${widget.product?.naziv ?? "Proizvod"} je dodan u košaricu! Količina: $_quantity'),
-                        ));
-                      } on Exception catch (e) {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  title: const Text("Greška"),
-                                  content: Text(e.toString()),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("OK"))
-                                  ],
-                                ));
+                      if (narudzbaId == -1) {
+                        // Ako nema aktivne narudžbe, kreiraj novu
+                        narudzbaId = await _productProvider.createNewNarudzba();
                       }
-                    },
-                    child: const Text("Dodaj u košaricu")),
+
+                      // Pripremi zahtjev za dodavanje stavke u narudžbu
+                      var request = {
+                        'proizvodId': widget.product?.proizvodId,
+                        'kolicina': _quantity,
+                        'narudzbaId': narudzbaId, // Dodaj narudzbaId u zahtjev
+                      };
+
+                      // Dodaj stavku u narudžbu
+                      await _productProvider.addNarudzbaStavka(request);
+
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            '${widget.product?.naziv ?? "Proizvod"} je dodan u košaricu! Količina: $_quantity'),
+                      ));
+                    } on Exception catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text("Greška"),
+                          content: Text(e.toString()),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text("Dodaj u košaricu"),
+                ),
               ),
             ],
-          )
+          ),
         ],
       ),
-      title: widget.product?.naziv ?? "Detalji Proizvoda",
     );
   }
 
   FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
-      initialValue: _initialValues,
       child: Column(
         children: [
           Row(
@@ -169,6 +132,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Šifra"),
                   name: "sifra",
+                  initialValue: widget.product?.sifra ?? '',
+                  enabled: false, // Disabled to prevent editing
                 ),
               ),
               const SizedBox(width: 10),
@@ -176,6 +141,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Naziv"),
                   name: "naziv",
+                  initialValue: widget.product?.naziv ?? '',
+                  enabled: false, // Disabled to prevent editing
                 ),
               ),
             ],
@@ -186,6 +153,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Originalni broj"),
                   name: "originalniBroj",
+                  initialValue: widget.product?.originalniBroj ?? '',
+                  enabled: false, // Disabled to prevent editing
                 ),
               ),
             ],
@@ -196,6 +165,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Model"),
                   name: "model",
+                  initialValue: widget.product?.model ?? '',
+                  enabled: false, // Disabled to prevent editing
                 ),
               ),
               const SizedBox(width: 10),
@@ -203,112 +174,14 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Opis"),
                   name: "opis",
+                  initialValue: widget.product?.opis ?? '',
+                  enabled: false, // Disabled to prevent editing
                 ),
               ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'voziloId',
-                  decoration: InputDecoration(
-                    labelText: 'Vozilo',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['voziloId']?.reset();
-                      },
-                    ),
-                    hintText: 'vozilo',
-                  ),
-                  initialValue: widget.product?.voziloId != null
-                      ? widget.product!.voziloId.toString()
-                      : null,
-                  items: voziloResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.voziloId.toString(),
-                                child: Text(item.markaVozila ?? ""),
-                              ))
-                          .toList() ??
-                      [],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'kategorijaId',
-                  decoration: InputDecoration(
-                    labelText: 'Kategorija',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['kategorijaId']?.reset();
-                      },
-                    ),
-                    hintText: 'kategorija',
-                  ),
-                  initialValue: widget.product?.kategorijaId != null
-                      ? widget.product!.kategorijaId.toString()
-                      : null,
-                  items: kategorijaResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.kategorijaId.toString(),
-                                child: Text(item.nazivKategorije ?? ""),
-                              ))
-                          .toList() ??
-                      [],
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Cijena"),
-                  name: "cijena",
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderField(
-                  name: 'imageId',
-                  builder: ((field) {
-                    return InputDecorator(
-                      decoration: InputDecoration(
-                          label: const Text('Odaberi sliku'),
-                          errorText: field.errorText),
-                      child: ListTile(
-                        leading: const Icon(Icons.photo),
-                        title: const Text("Označi sliku"),
-                        trailing: const Icon(Icons.file_upload),
-                        onTap: getImage,
-                      ),
-                    );
-                  }),
-                ),
-              )
             ],
           ),
         ],
       ),
     );
   }
-
-  File? _image;
-  String? _base64Image;
-  Future getImage() async {
-    var result = await FilePicker.platform.pickFiles(type: FileType.image);
-
-    if (result != null && result.files.single.path != null) {
-      _image = File(result.files.single.path!);
-      _base64Image = base64Encode(_image!.readAsBytesSync());
-    }
-  }
 }
-

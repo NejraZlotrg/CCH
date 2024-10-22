@@ -51,6 +51,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      title: widget.model?.nazivModela ?? "Detalji modela",
       child: Column(
         children: [
           isLoading ? Container() : _buildForm(),
@@ -95,7 +96,6 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
           ),
         ],
       ),
-      title: widget.model?.nazivModela ?? "Detalji modela",
     );
   }
 

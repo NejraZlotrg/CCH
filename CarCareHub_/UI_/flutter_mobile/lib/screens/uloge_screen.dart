@@ -1,43 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/model.dart';
+import 'package:flutter_mobile/models/uloge.dart';
+import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/models/vozilo.dart';
-import 'package:flutter_mobile/provider/model_provider.dart';
-import 'package:flutter_mobile/provider/vozilo_provider.dart';
-import 'package:flutter_mobile/screens/model_details_screen.dart';
+import 'package:flutter_mobile/provider/uloge_provider.dart';
+import 'package:flutter_mobile/provider/usluge_provider.dart';
+import 'package:flutter_mobile/screens/uloge_details_screen.dart';
+import 'package:flutter_mobile/screens/usluge_details_screen.dart';
 //import 'package:flutter_mobile/screens/grad_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
-class ModelScreen extends StatefulWidget {
-  const ModelScreen({super.key});
+class UlogeScreen extends StatefulWidget {
+  const UlogeScreen({super.key});
 
   @override
-  State<ModelScreen> createState() => _ModelScreenState();
+  State<UlogeScreen> createState() => _UlogeScreenState();
 }
 
-class _ModelScreenState extends State<ModelScreen> {
-  late ModelProvider _modelProvider;
-  
-
-  SearchResult<Model>? result;
-  final TextEditingController _nazivModelaController = TextEditingController();
-  final TextEditingController _markaVozilaController = TextEditingController();
-
+class _UlogeScreenState extends State<UlogeScreen> {
+  late UlogeProvider _ulogeProvider;
+  SearchResult<Uloge>? result;
+  final TextEditingController _nazivUlogeController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _modelProvider = context.read<ModelProvider>();
-   
-
+    _ulogeProvider = context.read<UlogeProvider>();
     
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Model",
+      title: "Uloge",
       child: Column(
         children: [
           _buildSearch(),
@@ -55,48 +50,26 @@ class _ModelScreenState extends State<ModelScreen> {
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: 'Naziv modela',
+                labelText: 'Naziv uloge',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
-              controller: _nazivModelaController,
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Marka vozila',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _markaVozilaController,
+              controller: _nazivUlogeController,
             ),
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-onPressed: () async {
-  print("Pokretanje pretrage: ${_nazivModelaController.text} i ${_markaVozilaController.text}");
+            onPressed: () async {
+              print("podaci proceed");
+              var data = await _ulogeProvider.get(filter: {
+                'nazivUloge': _nazivUlogeController.text,
+              });
 
-  var filterParams = {
-    'IsAllIncluded': 'true', // Ovaj parametar ostaje
-  };
-
-  // Dodavanje filtera samo ako je naziv unesen
-  if (_nazivModelaController.text.isNotEmpty || _markaVozilaController.text.isNotEmpty) {
-    filterParams['nazivModela'] = _nazivModelaController.text;
-    filterParams['markaVozila'] = _markaVozilaController.text;
-
-  }
-
-  var data = await _modelProvider.get(filter: filterParams, );
-
-  setState(() {
-    result = data;
-  });
-},
-
+              setState(() {
+                result = data;
+              });
+            },
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -111,7 +84,7 @@ onPressed: () async {
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> ModelDetailsScreen(model: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> UlogeDetailsScreen(uloge: null,) // poziv na drugi screen
                      ), );
             },
             child: const Row(
@@ -136,34 +109,26 @@ onPressed: () async {
           columns: const [
             DataColumn(
               label: Text(
-                'Naziv modela',
+                'Naziv uloge',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            DataColumn(
-              label: Text(
-                'Marka vozila',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
+            
           ],
           rows: result?.result
                 .map(
-                  (Model e) => DataRow(
+                  (Uloge e) => DataRow(
                     onSelectChanged: (selected) {
                       if (selected == true) {
-                        print('Selected: ${e.modelId}');
+                        print('Selected: ${e.ulogaId}');
                         // Ovdje možeš dodati navigaciju ili akciju za detalje
                         Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=> ModelDetailsScreen(model: e,) 
-                       // poziv na drugi screen
+                        MaterialPageRoute(builder: (context)=> UlogeDetailsScreen(uloge: e,) // poziv na drugi screen
                          ), );
                       }
                     },
                     cells: [
-                      DataCell(Text(e.nazivModela)),
-                      DataCell(Text(e.vozilo.markaVozila ?? "")),
-
+                      DataCell(Text(e.nazivUloge ?? "")),
                     ],
                   ),
                 )

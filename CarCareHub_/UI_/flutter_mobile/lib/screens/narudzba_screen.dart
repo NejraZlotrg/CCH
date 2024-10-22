@@ -160,7 +160,7 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
 
                       },*/
                       cells: [
-                        DataCell(Text(e.narudzbaId?.toString() ?? "")),
+                        DataCell(Text(e.narudzbaId.toString())),
                         DataCell(Text(e.datumNarudzbe?.toString() ?? "")),
                         DataCell(Text(e.datumIsporuke?.toString() ?? "")),
                         

@@ -8,6 +8,8 @@ import 'package:http/http.dart';
 abstract class BaseProvider<T> with ChangeNotifier {
   static String? _baseURL; // Bazni URL aplikacije
   final String _endpoint;  // Endpoint za specifične API zahtjeve
+
+  
   
   BaseProvider(String endpoint) 
       : _endpoint = endpoint {

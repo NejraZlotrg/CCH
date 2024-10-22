@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/main.dart';
+import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/drzave_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_screen.dart';
+import 'package:flutter_mobile/screens/narudzba_stavka_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
+import 'package:flutter_mobile/screens/uloge_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
 import 'package:flutter_mobile/screens/vozilo_screen.dart';
-// import 'package:flutter_mobile/screens/registracija.dart';
 
 class MasterScreenWidget extends StatefulWidget {
   final Widget? child;
@@ -31,29 +33,53 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: widget.titleWidget ?? Text(widget.title ?? ""),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const NarudzbaScreen(),
+        toolbarHeight: 80.0, // Povećana visina AppBar-a
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Back dugme
+            IconButton(
+              icon: const Icon(Icons.arrow_back, size: 30),
+              onPressed: () {
+                Navigator.pop(context); // Vraća na prethodnu stranicu
+              },
+            ),
+            // Naslov
+            Expanded(
+              child: Center(
+                child: Text(
+                  widget.title ?? "",
+                  style: const TextStyle(
+                    fontSize: 20, // Veličina fonta
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const NarudzbaScreen(),
-                ),
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+            // Shopping cart ikona
+            IconButton(
+              icon: const Icon(Icons.shopping_cart, size: 30), // Ikona korpe
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const NarudzbaStavkaScreen(),
+                  ),
+                );
+              },
+            ),
+            // Wallet ikona
+            IconButton(
+              icon: const Icon(Icons.account_balance_wallet_outlined, size: 30), // Ikona novčanika
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const NarudzbaScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -144,6 +170,28 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const VoziloScreen(),
+                  ),
+                );
+              },
+            ),
+             ListTile(
+              leading: const Icon(Icons.directions_car),
+              title: const Text('Autoservis'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AutoservisScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.directions_car),
+              title: const Text('Uloge'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const UlogeScreen(),
                   ),
                 );
               },
