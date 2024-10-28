@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,9 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   late ProductProvider _productProvider;
   bool isLoading = true;
-  int _quantity = 1; // Default quantity is 1
+  int _quantity = 1;
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -32,6 +35,15 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
   }
 
   @override
@@ -71,22 +83,17 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     try {
-                      // Provjerava postoji li aktivna narudžba
                       int narudzbaId = await _productProvider.getCurrentNarudzbaId();
-
                       if (narudzbaId == -1) {
-                        // Ako nema aktivne narudžbe, kreiraj novu
                         narudzbaId = await _productProvider.createNewNarudzba();
                       }
 
-                      // Pripremi zahtjev za dodavanje stavke u narudžbu
                       var request = {
                         'proizvodId': widget.product?.proizvodId,
                         'kolicina': _quantity,
-                        'narudzbaId': narudzbaId, // Dodaj narudzbaId u zahtjev
+                        'narudzbaId': narudzbaId,
                       };
 
-                      // Dodaj stavku u narudžbu
                       await _productProvider.addNarudzbaStavka(request);
 
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -111,6 +118,45 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   },
                   child: const Text("Dodaj u košaricu"),
                 ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  _formKey.currentState?.saveAndValidate();
+
+                  var request = Map.from(_formKey.currentState!.value);
+                  
+                  if (_imageFile != null) {
+                    request['slika'] = base64Encode(await _imageFile!.readAsBytes());
+                    request['slikaThumb'] = base64Encode(await _imageFile!.readAsBytes());
+                  }
+
+                  try {
+                    if (widget.product == null) {
+                      await _productProvider.insert(request);
+                    } else {
+                      await _productProvider.update(
+                          widget.product!.proizvodId!, request);
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: const Text("Proizvod uspješno dodan."),
+                    ));
+                  } on Exception catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text("Greška"),
+                        content: Text(e.toString()),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                },
+                child: const Text("Spasi"),
               ),
             ],
           ),
@@ -171,6 +217,29 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   initialValue: widget.product?.opis ?? '',
                 ),
               ),
+                Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Cijena"),
+                  name: "cijena",
+                  initialValue: widget.product?.cijena.toString(),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: const Text("Odaberi Sliku"),
+              ),
+              const SizedBox(width: 10),
+              _imageFile != null
+                  ? Image.file(
+                      _imageFile!,
+                      width: 100,
+                      height: 100,
+                    )
+                  : const Text("No image selected"),
             ],
           ),
         ],

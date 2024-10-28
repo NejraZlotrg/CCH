@@ -12,6 +12,7 @@ import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/uloge_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
 import 'package:flutter_mobile/screens/vozilo_screen.dart';
+import 'package:flutter_mobile/screens/zaposlenik_screen.dart';
 
 class MasterScreenWidget extends StatefulWidget {
   final Widget? child;
@@ -149,6 +150,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const UslugeScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.emoji_people),
+              title: const Text('Zaposlenici'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ZaposlenikScreen(),
                   ),
                 );
               },

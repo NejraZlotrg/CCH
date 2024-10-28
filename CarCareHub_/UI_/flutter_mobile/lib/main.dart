@@ -12,6 +12,7 @@ import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/utils/utils.dart';
@@ -34,6 +35,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => AutoservisProvider()),
         ChangeNotifierProvider(create: (_) => UlogeProvider()),
         ChangeNotifierProvider(create: (_) => FirmaAutodijelovaProvider()),
+        ChangeNotifierProvider(create: (_) => ZaposlenikProvider()),
+
       ],
       child: const MyApp(),
     ),
