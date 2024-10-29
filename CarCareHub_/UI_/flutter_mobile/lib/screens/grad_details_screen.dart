@@ -8,7 +8,6 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:flutter/src/foundation/key.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -98,7 +97,7 @@ class _GradDetailsScreenState extends State<GradDetailsScreen> {
           )
         ],
       ),
-      title: widget.grad?.nazivGrada ?? "Detalji drzave",
+      title: widget.grad?.nazivGrada ?? "Detalji grada",
     );
   }
 

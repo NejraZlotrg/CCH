@@ -42,8 +42,8 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(  // Polja za pretragu postavljena jedno ispod drugog
         children: [
-          TextField(
-            decoration: const InputDecoration(
+          const TextField(
+            decoration: InputDecoration(
               labelText: 'Naziv',
               border: OutlineInputBorder(),
               filled: true,
@@ -51,15 +51,15 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          TextField(
-            decoration: const InputDecoration(
+          const TextField(
+            decoration: InputDecoration(
               labelText: "MBS",
               border: OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 10),
-          TextField(
-            decoration: const InputDecoration(
+          const TextField(
+            decoration: InputDecoration(
               labelText: "JIB",
               border: OutlineInputBorder(),
             ),

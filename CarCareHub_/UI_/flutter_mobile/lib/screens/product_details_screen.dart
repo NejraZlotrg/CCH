@@ -10,7 +10,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product? product;
-  ProductDetailScreen({super.key, this.product});
+  const ProductDetailScreen({super.key, this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailsScreenState();
@@ -137,8 +137,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                       await _productProvider.update(
                           widget.product!.proizvodId!, request);
                     }
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: const Text("Proizvod uspješno dodan."),
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Proizvod uspješno dodan."),
                     ));
                   } on Exception catch (e) {
                     showDialog(

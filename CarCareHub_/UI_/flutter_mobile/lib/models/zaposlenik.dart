@@ -1,3 +1,7 @@
+import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/firmaautodijelova.dart';
+import 'package:flutter_mobile/models/grad.dart';
+import 'package:flutter_mobile/models/uloge.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'zaposlenik.g.dart';
@@ -7,10 +11,10 @@ class Zaposlenik {
   int? zaposlenikId;
   String? ime;
   String? prezime;
-  /*int? maticniBroj;
+  int? maticniBroj;
   int? brojTelefona;
-  String? grad;
-  int? gradId;
+  final Grad? grad;
+  final int? gradId;
   DateTime? datumRodjenja;
   String? email;
   String? username;
@@ -18,19 +22,18 @@ class Zaposlenik {
   String? lozinkaHash;
   String? password;
   int? ulogaId;
-  String? uloga;
+  final Uloge? uloga;
   int? autoservisId;
-  String? autoservis;
+  final Autoservis? autoservis;
   int? firmaAutodijelovaId;
-  String? firmaAutodijelova;*/
+  final FirmaAutodijelova? firmaAutodijelova;
 
   Zaposlenik({
     this.zaposlenikId,
     this.ime,
     this.prezime,
-   /* this.maticniBroj,
+    this.maticniBroj,
     this.brojTelefona,
-    this.grad,
     this.gradId,
     this.datumRodjenja,
     this.email,
@@ -39,11 +42,13 @@ class Zaposlenik {
     this.lozinkaHash,
     this.password,
     this.ulogaId,
-    this.uloga,
     this.autoservisId,
-    this.autoservis,
     this.firmaAutodijelovaId,
-    this.firmaAutodijelova,*/
+    this.grad,
+    this.autoservis,
+    this.firmaAutodijelova,
+    this.uloga,
+    
   });
 
   factory Zaposlenik.fromJson(Map<String, dynamic> json) =>

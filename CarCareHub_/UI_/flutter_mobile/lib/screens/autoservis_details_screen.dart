@@ -68,6 +68,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      title: widget.autoservis?.naziv ?? "Detalji autoservisa",
       child: Column(
         children: [
           isLoading ? Container() : _buildForm(),
@@ -113,7 +114,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           )
         ],
       ),
-      title: widget.autoservis?.naziv ?? "Detalji autoservisa",
     );
   }
 

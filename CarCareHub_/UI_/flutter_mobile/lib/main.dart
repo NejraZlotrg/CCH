@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
 }
 
 class LogInPage extends StatefulWidget {
-  LogInPage({super.key});
+  const LogInPage({super.key});
 
   @override
   _LogInPageState createState() => _LogInPageState();
@@ -90,7 +90,7 @@ class _LogInPageState extends State<LogInPage> {
                 BoxShadow(
                   color: Colors.grey.shade400,
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -104,7 +104,7 @@ class _LogInPageState extends State<LogInPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Prijavite se na svoj račun',
                           style: TextStyle(
                             fontSize: 18,
@@ -129,7 +129,7 @@ class _LogInPageState extends State<LogInPage> {
                         if (errorMessage != null) // Prikaz poruke o grešci
                           Text(
                             errorMessage!,
-                            style: TextStyle(color: Colors.red, fontSize: 12),
+                            style: const TextStyle(color: Colors.red, fontSize: 12),
                             textAlign: TextAlign.center,
                           ),
                         const SizedBox(height: 15.0),
@@ -160,9 +160,9 @@ class _LogInPageState extends State<LogInPage> {
                                 backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(color: Colors.black),
+                                  side: const BorderSide(color: Colors.black),
                                 ),
-                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                               ),
                               child: const Text(
                                 'Prijava',
@@ -181,11 +181,11 @@ class _LogInPageState extends State<LogInPage> {
                                 );
                               },
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Colors.black),
+                                side: const BorderSide(color: Colors.black),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
                               ),
                               child: const Text(
                                 'Registruj se',
@@ -207,7 +207,7 @@ class _LogInPageState extends State<LogInPage> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(16.0),
                         bottomRight: Radius.circular(16.0),
                       ),
@@ -239,10 +239,10 @@ class _LogInPageState extends State<LogInPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20.0),
-                        Icon(
+                        const Icon(
                           Icons.directions_car_filled_outlined,
                           size: 40,
-                          color: const Color.fromARGB(255, 66, 65, 65),
+                          color: Color.fromARGB(255, 66, 65, 65),
                         ),
                       ],
                     ),

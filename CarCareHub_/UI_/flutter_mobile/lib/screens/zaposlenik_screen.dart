@@ -70,13 +70,22 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
               controller: _prezimeController,
             ),
           ),
+          
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () async {
-              var data = await _zaposlenikProvider.get(filter: {
-                'ime': _imeController.text,
-                'prezime': _prezimeController.text
-              });
+
+                var filterParams = {
+               'IsAllIncluded': 'true', // Ovaj parametar ostaje
+                   };
+
+                   
+  // Dodavanje filtera samo ako je naziv unesen
+                if (_imeController.text.isNotEmpty) {
+                     filterParams['ime'] = _imeController.text;
+                        }
+
+              var data = await _zaposlenikProvider.get(filter: filterParams);
 
               setState(() {
                 result = data;
@@ -97,28 +106,23 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ZaposlenikDetailsScreen(),
-                ),
-              );
+                    ElevatedButton(
+            onPressed: () async {
+
+                     Navigator.of(context).push(
+                     MaterialPageRoute(builder: (context)=> ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
+                     ), );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.add, color: Colors.white),
+                Icon(Icons.search),
                 SizedBox(width: 8.0),
-                Text('Dodaj', style: TextStyle(color: Colors.white)),
+                Text('Dodaj'),
               ],
             ),
           ),
+          
         ],
       ),
     );
@@ -134,8 +138,8 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
             DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
             DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold))),
             DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold))),
-         //  DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold))),
-           // DataColumn(label: Text('Uloga', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Uloga', style: TextStyle(fontWeight: FontWeight.bold))),
           ],
           rows: result?.result.map((Zaposlenik e) {
             return DataRow(
@@ -143,7 +147,7 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                 if (selected == true) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ZaposlenikDetailsScreen(),
+                      builder: (context) => ZaposlenikDetailsScreen( zaposlenik: e,),
                     ),
                   );
                 }
@@ -161,14 +165,14 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(e.prezime ?? ""),
                 )),
-              /* DataCell(Padding(
+               DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.grad ?? ""),
+                  child: Text(e.grad?.nazivGrada ?? ""),
                 )),
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.uloga ?? ""),
-                )),*/
+                  child: Text(e.uloga?.nazivUloge ?? ""),
+                )),
               ],
             );
           }).toList() ?? [],

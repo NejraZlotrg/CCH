@@ -1,3 +1,4 @@
+import 'package:flutter_mobile/models/drzave.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'grad.g.dart';
 
@@ -5,10 +6,11 @@ part 'grad.g.dart';
 class Grad {
   int? gradId;
   String? nazivGrada;
-  int? drzavaId;
+  final int? drzavaId;
+  final Drzave? drzava;
 
 
-  Grad(this.gradId, this.nazivGrada, this.drzavaId);
+  Grad(this.gradId, this.nazivGrada, this.drzavaId, this.drzava);
 
   
   factory Grad.fromJson(Map<String,dynamic> json) => _$GradFromJson(json);

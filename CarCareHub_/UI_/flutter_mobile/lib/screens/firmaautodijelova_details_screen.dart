@@ -15,7 +15,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 
 class FirmaAutodijelovaDetailScreen extends StatefulWidget {
   final FirmaAutodijelova? firmaAutodijelova;
-  FirmaAutodijelovaDetailScreen({super.key, this.firmaAutodijelova});
+  const FirmaAutodijelovaDetailScreen({super.key, this.firmaAutodijelova});
 
   @override
   State<FirmaAutodijelovaDetailScreen> createState() => _FirmaAutodijelovaDetailScreenState();

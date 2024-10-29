@@ -200,7 +200,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 )),
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text("${formatNumber(e.cijena)} KM", style: TextStyle(color: Colors.blueGrey)), // Dodaj "KM" oznaku
+                  child: Text("${formatNumber(e.cijena)} KM", style: const TextStyle(color: Colors.blueGrey)), // Dodaj "KM" oznaku
                 )),
               ],
             );

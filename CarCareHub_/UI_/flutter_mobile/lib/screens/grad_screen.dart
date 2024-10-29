@@ -16,6 +16,7 @@ class GradScreen extends StatefulWidget {
 
 class _GradScreenState extends State<GradScreen> {
   late GradProvider _gradProvider;
+
   SearchResult<Grad>? result;
   final TextEditingController _nazivGradaController = TextEditingController();
 
@@ -56,6 +57,7 @@ class _GradScreenState extends State<GradScreen> {
             ),
           ),
           const SizedBox(width: 10),
+          
           ElevatedButton(
 onPressed: () async {
   print("Pokretanje pretrage za grad: ${_nazivGradaController.text}");
@@ -119,6 +121,12 @@ onPressed: () async {
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
+            DataColumn(
+              label: Text(
+                'Naziv drzave',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
             
           ],
           rows: result?.result
@@ -135,6 +143,7 @@ onPressed: () async {
                     },
                     cells: [
                       DataCell(Text(e.nazivGrada ?? "")),
+                      DataCell(Text(e.drzava?.nazivDrzave ?? "")),
                     ],
                   ),
                 )
