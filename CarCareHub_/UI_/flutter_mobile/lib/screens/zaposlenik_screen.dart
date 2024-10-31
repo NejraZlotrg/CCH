@@ -5,7 +5,6 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
-
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/autoservis_usluge.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/uloge.dart';
@@ -27,6 +28,8 @@ class Zaposlenik {
   final Autoservis? autoservis;
   int? firmaAutodijelovaId;
   final FirmaAutodijelova? firmaAutodijelova;
+
+  String? passwordAgain;
 
   Zaposlenik({
     this.zaposlenikId,

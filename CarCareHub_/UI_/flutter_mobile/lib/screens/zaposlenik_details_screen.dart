@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/autoservis_usluge.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
@@ -58,6 +59,8 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
       'ulogaId': widget.zaposlenik?.ulogaId,
       'autoservisId': widget.zaposlenik?.autoservisId,
       'firmaAutodijelovaId': widget.zaposlenik?.firmaAutodijelovaId,
+      'passwordAgain': widget.zaposlenik?.passwordAgain,
+
     };
 
   
@@ -249,6 +252,12 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Password"),
                   name: "password",
+                ),
+              ),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Password again"),
+                  name: "passwordAgain",
                 ),
               ),
             ],

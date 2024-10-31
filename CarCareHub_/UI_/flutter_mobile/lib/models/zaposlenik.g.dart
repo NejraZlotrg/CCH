@@ -37,7 +37,7 @@ Zaposlenik _$ZaposlenikFromJson(Map<String, dynamic> json) => Zaposlenik(
       uloga: json['uloga'] == null
           ? null
           : Uloge.fromJson(json['uloga'] as Map<String, dynamic>),
-    );
+    )..passwordAgain = json['passwordAgain'] as String?;
 
 Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
     <String, dynamic>{
@@ -60,4 +60,5 @@ Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
       'autoservis': instance.autoservis,
       'firmaAutodijelovaId': instance.firmaAutodijelovaId,
       'firmaAutodijelova': instance.firmaAutodijelova,
+      'passwordAgain': instance.passwordAgain,
     };
