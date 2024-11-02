@@ -39,5 +39,12 @@ namespace CarCareHub_.Controllers
         {
             return await _service.GetByID(id);
         }
+
+        [HttpGet("{id}")]
+        public async Task<List<T>> GetByID_(int id)
+        {
+            return await _service.GetByID_(id);
+        }
     }
+
 }

@@ -92,6 +92,11 @@ namespace CarCareHub.Services
             return _mapper.Map<T>(temp);
         }
 
-        
+        public virtual async Task<List<T>> GetByID_(int id)
+        {
+            var temp = await _dbContext.Set<TDb>().FindAsync(id);
+            return _mapper.Map<List<T>>(temp);
+        }
+
     }
 }

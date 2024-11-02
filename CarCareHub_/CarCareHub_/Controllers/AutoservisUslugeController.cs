@@ -15,8 +15,7 @@ namespace CarCareHub_.Controllers
              IAutoservisUslugeServices Service) : base(logger, Service)
         {
         }
-
-
+     
 
     }
 }

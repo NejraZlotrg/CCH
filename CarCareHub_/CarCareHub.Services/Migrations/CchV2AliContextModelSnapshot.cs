@@ -129,7 +129,7 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasIndex("UslugeId");
 
-                    b.ToTable("AutoservisUsluge");
+                    b.ToTable("AutoservisUsluges");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.BPAutodijeloviAutoservis", b =>

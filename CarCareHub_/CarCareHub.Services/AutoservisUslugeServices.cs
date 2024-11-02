@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -27,5 +28,20 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
+
+        public virtual async Task<List<AutoservisUsluge>> GetByID_(int id)
+        {
+            var temp = await _dbContext.Set<Database.AutoservisUsluge>()
+                                       .Where(x => x.AutoservisId == id)
+                                       .Include(p=>p.Autoservis)
+                                       .Include(p => p.Usluge)
+
+                                       .ToListAsync();
+            return _mapper.Map<List<AutoservisUsluge>>(temp);
+        }
+
+
+
+
     }
 }

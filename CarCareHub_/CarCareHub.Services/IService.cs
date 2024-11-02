@@ -13,9 +13,11 @@ namespace CarCareHub.Services
         //Task<List<T>> Get(TSearch search=null);
         Task<PagedResult<T>> Get(TSearch search = null);
         Task<T> GetByID(int id);
-       
-        
-        
+        Task<List<T>> GetByID_(int id);
+
+
+
+
 
 
     }

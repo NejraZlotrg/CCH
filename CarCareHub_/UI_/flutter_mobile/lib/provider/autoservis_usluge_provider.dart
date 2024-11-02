@@ -9,5 +9,15 @@ class AutoservisUslugeProvider extends BaseProvider<AutoservisUsluge> {
     // TODO: implement fromJson
     return AutoservisUsluge.fromJson(data);
   }
+  
+  Future<List<AutoservisUsluge>> getByAutoservisId(int autoservisId) async {
+    // Kreiramo filter kao mapu
+    var filter = {'autoservisId': autoservisId};
 
+    // Koristimo osnovnu get metodu sa filterom
+    var searchResult = await get(filter: filter);
+    
+    // Vraćamo listu rezultata
+    return searchResult.result;
+  }
 }

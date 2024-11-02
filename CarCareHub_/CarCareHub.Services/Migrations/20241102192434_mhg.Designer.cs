@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20240816160532_aassdd")]
-    partial class aassdd
+    [Migration("20241102192434_mhg")]
+    partial class mhg
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,7 +132,7 @@ namespace CarCareHub.Services.Migrations
 
                     b.HasIndex("UslugeId");
 
-                    b.ToTable("AutoservisUsluge");
+                    b.ToTable("AutoservisUsluges");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.BPAutodijeloviAutoservis", b =>

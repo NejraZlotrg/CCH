@@ -3,6 +3,7 @@ import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/autoservis_usluge.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/autoservis_usluge_provider.dart';
+import 'package:flutter_mobile/screens/autoservis_usluge_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -80,7 +81,10 @@ class _AutoservisUslugeScreenState extends State<AutoservisUslugeScreen> {
               const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
-                  // Ovdje možete dodati logiku za dodavanje nove usluge
+                  
+                     Navigator.of(context).push(
+                     MaterialPageRoute(builder: (context)=> AutoservisUslugeDetailsScreen(autoservisUsluge: null,) // poziv na drugi screen
+                     ), );
                 },
                 child: const Row(
                   children: [
@@ -108,12 +112,16 @@ class _AutoservisUslugeScreenState extends State<AutoservisUslugeScreen> {
         rows: result?.result
                 .map(
                   (AutoservisUsluge e) => DataRow(
-                    onSelectChanged: (selected) {
+                  onSelectChanged: (selected) {
                       if (selected == true) {
                         print('Selected: ${e.autoservisUslugeId}');
-                        // Dodavanje logike za navigaciju ili akciju za detalje
+                        // Ovdje možeš dodati navigaciju ili akciju za detalje
+                        Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context)=> AutoservisUslugeDetailsScreen(autoservisUsluge: e,) // poziv na drugi screen
+                         ), );
                       }
                     },
+                   
                     cells: [
                       DataCell(Text(e.autoservisUslugeId.toString())),
                       DataCell(Text(e.autoservis?.naziv ?? "")),

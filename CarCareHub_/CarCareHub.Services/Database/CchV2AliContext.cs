@@ -17,6 +17,8 @@ public partial class CchV2AliContext : DbContext
     }
 
     public virtual DbSet<Autoservis> Autoservis { get; set; }
+    public virtual DbSet<AutoservisUsluge> AutoservisUsluges { get; set; }
+
 
     public virtual DbSet<ChatKlijentAutoservis> ChatKlijentAutoserviss { get; set; }
 
