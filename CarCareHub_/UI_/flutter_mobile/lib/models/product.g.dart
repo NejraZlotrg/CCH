@@ -11,7 +11,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       json['naziv'] as String?,
       json['sifra'] as String?,
       (json['cijena'] as num?)?.toDouble(),
-      (json['popust'] as num?)?.toDouble(),
+      (json['popust'] as num?)?.toInt(),
       json['slika'] as String?,
       (json['cijenaSaPopustom'] as num?)?.toDouble(),
       json['originalniBroj'] as String?,

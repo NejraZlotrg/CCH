@@ -193,7 +193,7 @@ if (app.Environment.IsDevelopment())
     //////////////////////////////////////////////////////// Facebook SDK
 
 
-    app.UseHttpsRedirection();
+  //  app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

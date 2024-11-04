@@ -198,10 +198,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   initialValue: widget.product?.originalniBroj ?? '',
                 ),
               ),
-            ],
-          ),
-          Row(
-            children: [
               Expanded(
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Model"),
@@ -209,6 +205,11 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   initialValue: widget.product?.model ?? '',
                 ),
               ),
+            ],
+          ),
+          Row(
+            children: [
+              
               const SizedBox(width: 10),
               Expanded(
                 child: FormBuilderTextField(
@@ -222,6 +223,13 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                   decoration: const InputDecoration(labelText: "Cijena"),
                   name: "cijena",
                   initialValue: widget.product?.cijena.toString(),
+                ),
+              ),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Popust"),
+                  name: "popust",
+                  initialValue: widget.product?.cijena?.toInt().toString(),
                 ),
               ),
             ],

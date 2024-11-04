@@ -67,7 +67,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                         await _uslugeProvider.insert(request);
                       } else {
                         await _uslugeProvider.update(
-                            widget.usluge!.uslugeId!, _formKey.currentState?.value);
+                            widget.usluge!.uslugeId, _formKey.currentState?.value);
                       }
                     } on Exception catch (e) {
                       showDialog(

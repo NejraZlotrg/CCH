@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, primary: const Color.fromARGB(255, 84, 83, 83)),
         useMaterial3: true,
       ),
-      home: LogInPage(),
+      home: const LogInPage(),
     );
   }
 }

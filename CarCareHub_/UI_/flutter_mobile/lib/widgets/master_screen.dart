@@ -228,7 +228,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => LogInPage(),
+                    builder: (context) => const LogInPage(),
                   ),
                 );
               },

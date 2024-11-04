@@ -71,6 +71,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: widget.autoservis?.naziv ?? "Detalji autoservisa",
+      child: SingleChildScrollView( 
       child: Column(
         children: [
           isLoading ? Container() : _buildForm(),
@@ -111,44 +112,43 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: ElevatedButton(
-                  onPressed: () async {
-                    _formKey.currentState?.saveAndValidate();
+                   onPressed: () async {
+                      _formKey.currentState?.save();
+                      var request = Map.from(_formKey.currentState!.value);
 
-                    var request = Map.from(_formKey.currentState!.value);
-
-                    try {
-                      if (widget.autoservis == null) {
-                        await _autoservisProvider.insert(request);
-                      } else {
-                        await _autoservisProvider.update(
-                            widget.autoservis!.autoservisId!,
-                            request);
+                      try {
+                        if (widget.autoservis == null) {
+                          await _autoservisProvider.insert(request);
+                        } else {
+                          await _autoservisProvider.update(
+                              widget.autoservis!.autoservisId!,
+                              request);
+                        }
+                        Navigator.pop(context);
+                      } on Exception catch (e) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text("Greška"),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("OK"),
+                              ),
+                            ],
+                          ),
+                        );
                       }
-                      // Možda želiš da se vratiš nazad nakon uspješnog spremanja
-                      Navigator.pop(context);
-                    } on Exception catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text("Greška"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text("Spasi"),
-                ),
+                    },
+                    child: const Text("Spasi"),
+                  ),
               ),
             ],
           )
         ],
       ),
+      )
     );
   }
 
@@ -257,14 +257,14 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
   // Dijalog za dodavanje nove usluge
   void _showAddUslugaDialog() {
-    final _uslugaFormKey = GlobalKey<FormBuilderState>();
+    final uslugaFormKey = GlobalKey<FormBuilderState>();
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("Dodaj novu uslugu"),
           content: FormBuilder(
-            key: _uslugaFormKey,
+            key: uslugaFormKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -293,8 +293,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
             ),
             TextButton(
               onPressed: () async {
-                _uslugaFormKey.currentState?.saveAndValidate();
-                var uslugaRequest = Map.from(_uslugaFormKey.currentState!.value);
+                uslugaFormKey.currentState?.saveAndValidate();
+                var uslugaRequest = Map.from(uslugaFormKey.currentState!.value);
                 uslugaRequest['autoservisId'] = widget.autoservis?.autoservisId;
 
                 try {
@@ -325,4 +325,3 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     );
   }
 }
-//de mi scroll opciju dodaj za screen prevazilazi mi ince pravi mi se overflow

@@ -110,7 +110,7 @@ class _ProductScreenState extends State<ProductScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => ProductDetailScreen(product: null),
+                  builder: (context) => const ProductDetailScreen(product: null),
                 ),
               );
             },
@@ -132,81 +132,150 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
     );
   }
+  
+Widget _buildDataListView() {
+  return Expanded(
+    child: SingleChildScrollView(
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, // Tri kolone
+          childAspectRatio: 1, // Omjer za kvadratne kartice
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
+        ),
+        itemCount: result?.result.length ?? 0,
+        itemBuilder: (context, index) {
+          Product e = result!.result[index];
+          bool hasDiscount = e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
+          double originalPrice = e.cijena ?? 0.0;
+          double discountPrice = hasDiscount ? e.cijenaSaPopustom! * 1.05 : originalPrice; // Cijena sa popustom uvećana za 5%
 
-  Widget _buildDataListView() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: DataTable(
-          dataRowHeight: 70, // Povećaj visinu reda podataka
-          headingRowHeight: 70, // Povećaj visinu reda zaglavlja
-          columns: const [
-            DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Šifra', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Naziv', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Slika', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Cijena', style: TextStyle(fontWeight: FontWeight.bold))),
-          ],
-          rows: result?.result.map((Product e) {
-            return DataRow(
-              onSelectChanged: (selected) {
-                if (selected == true) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailScreen(product: e),
-                    ),
-                  );
-                }
-              },
-              cells: [
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0), // Dodaj padding za razmak
-                  child: Text(e.proizvodId?.toString() ?? ""),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e.sifra ?? ""),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e.naziv ?? ""),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: e.slika != null && e.slika!.isNotEmpty // Provjera da li slika postoji
-                      ? Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10), // Zaobljen okvir
-                            border: Border.all(color: Colors.grey), // Okvir oko slike
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ProductDetailScreen(product: e),
+                ),
+              );
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 4,
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                        ),
+                        child: e.slika != null && e.slika!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                                child: Image.memory(
+                                  base64Decode(e.slika!),
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : const Center(child: Text("x")),
+                      ),
+                      const SizedBox(height: 25), // Razmak od 25 piksela između slike i naziva
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 4.0,), // Podiže naziv i opis
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            e.naziv ?? "",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20, // Povećan font naziva
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10), // Zaobljenje unutar okvira
-                            child: Image.memory(
-                              base64Decode(e.slika!), // Dekodiraj Base64 string
-                              fit: BoxFit.cover, // Prilagodi sliku da se uklopi u kontejner
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 2.0, bottom: 14.0), // Podiže opis i ograničava širinu
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Container(
+                            width: 200, // Ograničava širinu opisa na 60% širine kartice
+                            child: Text(
+                              e.opis != null && e.opis!.length > 30
+                                  ? "${e.opis!.substring(0, 30)}..." // Prikazuje samo prvih 30 karaktera
+                                  : e.opis ?? "",
+                              style: const TextStyle(
+                                color: Colors.blueGrey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal, // Opis nije boldiran
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis, // Omogućava prijelom u novi red
                             ),
                           ),
-                        )
-                      : Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: const Center(child: Text("x")), // Prikaz rezervne slike
                         ),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("${formatNumber(e.cijena)} KM", style: const TextStyle(color: Colors.blueGrey)), // Dodaj "KM" oznaku
-                )),
-              ],
-            );
-          }).toList() ?? [],
-        ),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (hasDiscount)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              "${formatNumber(discountPrice)} KM", // Cijena sa popustom uvećana za 5%
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14, // Povećan font za cijenu sa popustom
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            "${formatNumber(originalPrice)} KM",
+                            style: TextStyle(
+                              color: hasDiscount ? Colors.white70 : Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13, // Povećan font za cijenu
+                              decoration: hasDiscount ? TextDecoration.lineThrough : TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(150.0),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

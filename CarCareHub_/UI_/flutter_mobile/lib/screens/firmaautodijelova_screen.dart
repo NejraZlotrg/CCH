@@ -85,7 +85,7 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> FirmaAutodijelovaDetailScreen(firmaAutodijelova: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null,) // poziv na drugi screen
                      ), );
             },
             child: const Row(

@@ -13,7 +13,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   
   BaseProvider(String endpoint) 
       : _endpoint = endpoint {
-    _baseURL = const String.fromEnvironment("baseURL", defaultValue: "https://localhost:7209/");
+    _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/");
   }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
