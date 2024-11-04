@@ -104,9 +104,6 @@ namespace CarCareHub.Services
             CreateMap<Model.BPAutodijeloviAutoservisInsert, CarCareHub.Services.Database.BPAutodijeloviAutoservis>();
 
 
-            CreateMap<CarCareHub.Services.Database.AutoservisUsluge, Model.AutoservisUsluge>();
-            CreateMap<Model.AutoservisUslugeUpdate, CarCareHub.Services.Database.AutoservisUsluge>();
-            CreateMap<Model.AutoservisUslugeInsert, CarCareHub.Services.Database.AutoservisUsluge>();
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class mhg : Migration
+    public partial class mig1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -89,21 +89,6 @@ namespace CarCareHub.Services.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_uloga", x => x.UlogaID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Usluge",
-                columns: table => new
-                {
-                    UslugeID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    naziv_usluge = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    opis = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    cijena = table.Column<decimal>(type: "decimal(8,2)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_usluge", x => x.UslugeID);
                 });
 
             migrationBuilder.CreateTable(
@@ -283,27 +268,24 @@ namespace CarCareHub.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AutoservisUsluges",
+                name: "Usluge",
                 columns: table => new
                 {
-                    AutoservisUslugeId = table.Column<int>(type: "int", nullable: false)
+                    UslugeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UslugeId = table.Column<int>(type: "int", nullable: true),
-                    AutoservisId = table.Column<int>(type: "int", nullable: true)
+                    naziv_usluge = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    opis = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    cijena = table.Column<decimal>(type: "decimal(8,2)", nullable: true),
+                    autoservisId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AutoservisUsluges", x => x.AutoservisUslugeId);
+                    table.PrimaryKey("PK_usluge", x => x.UslugeID);
                     table.ForeignKey(
-                        name: "FK_AutoservisUsluges_Autoservis_AutoservisId",
-                        column: x => x.AutoservisId,
+                        name: "FK_Usluge_Autoservis_autoservisId",
+                        column: x => x.autoservisId,
                         principalTable: "Autoservis",
                         principalColumn: "AutoservisID");
-                    table.ForeignKey(
-                        name: "FK_AutoservisUsluges_Usluge_UslugeId",
-                        column: x => x.UslugeId,
-                        principalTable: "Usluge",
-                        principalColumn: "UslugeID");
                 });
 
             migrationBuilder.CreateTable(
@@ -596,16 +578,6 @@ namespace CarCareHub.Services.Migrations
                 column: "voziloID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AutoservisUsluges_AutoservisId",
-                table: "AutoservisUsluges",
-                column: "AutoservisId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AutoservisUsluges_UslugeId",
-                table: "AutoservisUsluges",
-                column: "UslugeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BPAutodijeloviAutoservis_AutoservisId",
                 table: "BPAutodijeloviAutoservis",
                 column: "AutoservisId");
@@ -726,6 +698,11 @@ namespace CarCareHub.Services.Migrations
                 column: "VoziloId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Usluge_autoservisId",
+                table: "Usluge",
+                column: "autoservisId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Zaposlenik_autoservisID",
                 table: "Zaposlenik",
                 column: "autoservisID");
@@ -755,9 +732,6 @@ namespace CarCareHub.Services.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AutoservisUsluges");
-
-            migrationBuilder.DropTable(
                 name: "BPAutodijeloviAutoservis");
 
             migrationBuilder.DropTable(
@@ -773,10 +747,10 @@ namespace CarCareHub.Services.Migrations
                 name: "Poruka");
 
             migrationBuilder.DropTable(
-                name: "Zaposlenik_Proizvod");
+                name: "Usluge");
 
             migrationBuilder.DropTable(
-                name: "Usluge");
+                name: "Zaposlenik_Proizvod");
 
             migrationBuilder.DropTable(
                 name: "Model");

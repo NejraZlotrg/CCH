@@ -29,6 +29,8 @@ namespace CarCareHub.Model
         public string? SlikaProfila { get; set; }
 
         public int? UlogaId { get; set; }
+     
+
 
 
         public int? VoziloId { get; set; }

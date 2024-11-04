@@ -10,4 +10,8 @@ class UslugeProvider extends BaseProvider<Usluge> {
     return Usluge.fromJson(data);
   }
 
+   Future<List<Usluge>> getUslugaById(int id) async {
+    return await getById(id); // Pozivanje funkcije getById iz osnovnog provider-a
+  }
+
 }

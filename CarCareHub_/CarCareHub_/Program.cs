@@ -108,7 +108,7 @@ builder.Services.AddTransient<IGodisteService, GodisteService>();
 builder.Services.AddTransient<IVoziloService, VoziloService>();
 builder.Services.AddTransient<IPorukaService, PorukaService>();
 builder.Services.AddTransient<IChatKlijentZaposlenikService, ChatKlijentZaposlenikService>();
-builder.Services.AddTransient<IAutoservisUslugeServices, AutoservisUslugeServices>();
+
 builder.Services.AddTransient<IChatKlijentAutoservisService, ChatKlijentAutoservisService>();
 builder.Services.AddTransient<IBPAutodijeloviAutoservisService, BPAutodijeloviAutoservisService>();
 

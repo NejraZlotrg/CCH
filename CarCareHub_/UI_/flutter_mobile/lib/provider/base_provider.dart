@@ -42,6 +42,28 @@ abstract class BaseProvider<T> with ChangeNotifier {
       throw Exception("Unknown error");
     }
   }
+  
+  Future<List<T>> getById(int id) async {
+  String url = "$_baseURL$_endpoint/$id"; // Pretpostavljamo da se ID dodaje u URL
+
+  Uri uri = Uri.parse(url);
+  Map<String, String> headers = createHeaders();
+  http.Response response = await http.get(uri, headers: headers);
+
+  if (isValidResponse(response)) {
+    var data = jsonDecode(response.body);
+    List<T> resultList = [];
+
+    for (var item in data) {
+      resultList.add(fromJson(item));
+    }
+
+    return resultList;
+  } else {
+    throw Exception("Unknown error");
+  }
+}
+
 
   // Validacija HTTP odgovora
   bool isValidResponse(Response response) {

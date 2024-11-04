@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
-import 'package:flutter_mobile/screens/autoservis_usluge_screen.dart';
+
 import 'package:flutter_mobile/screens/drzave_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
@@ -199,17 +199,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
-             ListTile(
-              leading: const Icon(Icons.directions_car),
-              title: const Text('AutoservisUsluge'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AutoservisUslugeScreen(),
-                  ),
-                );
-              },
-            ),
+           
             ListTile(
               leading: const Icon(Icons.directions_car),
               title: const Text('FirmaAutodijelova'),

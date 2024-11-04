@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarCareHub.Services
 {
@@ -24,6 +25,15 @@ namespace CarCareHub.Services
                 query = query.Where(x => x.NazivUsluge.StartsWith(search.NazivUsluge));
             }
             return base.AddFilter(query, search);
+        }
+        public override async Task<List<Usluge>> GetByID_(int id)
+        {
+            var temp = _dbContext.Usluges.Where(x => x.autoservisId == id).ToList().AsQueryable();
+
+            temp = temp.Include(x => x.Autoservis);
+
+
+            return _mapper.Map<List<Usluge>>(temp);
         }
     }
 }

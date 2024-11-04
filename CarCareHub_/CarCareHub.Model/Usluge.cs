@@ -16,5 +16,8 @@ namespace CarCareHub.Model
 
         public decimal? Cijena { get; set; }
 
+        public int? AutoservisId { get; set; }
+        public virtual Autoservis? Autoservis { get; set; }
+
     }
 }

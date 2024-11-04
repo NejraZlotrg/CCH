@@ -109,29 +109,6 @@ namespace CarCareHub.Services.Migrations
                     b.ToTable("Autoservis");
                 });
 
-            modelBuilder.Entity("CarCareHub.Services.Database.AutoservisUsluge", b =>
-                {
-                    b.Property<int>("AutoservisUslugeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AutoservisUslugeId"));
-
-                    b.Property<int?>("AutoservisId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UslugeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AutoservisUslugeId");
-
-                    b.HasIndex("AutoservisId");
-
-                    b.HasIndex("UslugeId");
-
-                    b.ToTable("AutoservisUsluges");
-                });
-
             modelBuilder.Entity("CarCareHub.Services.Database.BPAutodijeloviAutoservis", b =>
                 {
                     b.Property<int?>("BPAutodijeloviAutoservisId")
@@ -751,8 +728,13 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("opis");
 
+                    b.Property<int?>("autoservisId")
+                        .HasColumnType("int");
+
                     b.HasKey("UslugeId")
                         .HasName("PK_usluge");
+
+                    b.HasIndex("autoservisId");
 
                     b.ToTable("Usluge", (string)null);
                 });
@@ -896,21 +878,6 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Uloga");
 
                     b.Navigation("Vozilo");
-                });
-
-            modelBuilder.Entity("CarCareHub.Services.Database.AutoservisUsluge", b =>
-                {
-                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
-                        .WithMany("AutoservisUsluges")
-                        .HasForeignKey("AutoservisId");
-
-                    b.HasOne("CarCareHub.Services.Database.Usluge", "Usluge")
-                        .WithMany("AutoservisUsluges")
-                        .HasForeignKey("UslugeId");
-
-                    b.Navigation("Autoservis");
-
-                    b.Navigation("Usluge");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.BPAutodijeloviAutoservis", b =>
@@ -1103,6 +1070,15 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Vozilo");
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Usluge", b =>
+                {
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
+                        .WithMany("Usluges")
+                        .HasForeignKey("autoservisId");
+
+                    b.Navigation("Autoservis");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Zaposlenik", b =>
                 {
                     b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
@@ -1151,13 +1127,13 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Autoservis", b =>
                 {
-                    b.Navigation("AutoservisUsluges");
-
                     b.Navigation("BPAutodijeloviAutoservis");
 
                     b.Navigation("ChatKlijentServiss");
 
                     b.Navigation("PlacanjeAutoservisDijelovis");
+
+                    b.Navigation("Usluges");
 
                     b.Navigation("Zaposleniks");
                 });
@@ -1243,11 +1219,6 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("FirmaAutodijelovas");
 
                     b.Navigation("Zaposleniks");
-                });
-
-            modelBuilder.Entity("CarCareHub.Services.Database.Usluge", b =>
-                {
-                    b.Navigation("AutoservisUsluges");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Vozilo", b =>

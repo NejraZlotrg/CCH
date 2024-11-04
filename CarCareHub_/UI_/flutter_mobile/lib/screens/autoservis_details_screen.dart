@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
-import 'package:flutter_mobile/models/vozilo.dart'; // Dodaj model za vozilo
+import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
-import 'package:flutter_mobile/provider/vozilo_provider.dart'; // Dodaj provider za vozilo
+import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -16,19 +16,18 @@ class AutoservisDetailsScreen extends StatefulWidget {
   AutoservisDetailsScreen({super.key, this.autoservis});
 
   @override
-  State<AutoservisDetailsScreen> createState() =>
-      _AutoservisDetailsScreenState();
+  State<AutoservisDetailsScreen> createState() => _AutoservisDetailsScreenState();
 }
 
 class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late AutoservisProvider _autoservisProvider;
+  late UslugeProvider _uslugaProvider; // Provider za usluge
   late GradProvider _gradProvider;
-  late VoziloProvider _voziloProvider; // Vozilo provider
 
   SearchResult<Grad>? gradResult;
-  SearchResult<Vozilo>? voziloResult; // Rezultat za vozila
+  List<Usluge> usluge = []; // Lista usluga za prikaz
   bool isLoading = true;
 
   @override
@@ -45,24 +44,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'mbs': widget.autoservis?.mbs ?? '',
       'ulogaId': widget.autoservis?.ulogaId?.toString() ?? '',
       'gradId': widget.autoservis?.gradId?.toString() ?? '',
-      'voziloId': widget.autoservis?.voziloId?.toString() ?? '', // Dodano voziloId
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
+    _uslugaProvider = context.read<UslugeProvider>(); // Inicijalizacija provider-a za usluge
     _gradProvider = context.read<GradProvider>();
-    _voziloProvider = context.read<VoziloProvider>(); // Inicijalizacija vozilo providera
+    
     initForm();
+    fetchUsluge(); // Dohvati usluge povezane s autoservisom
   }
 
   Future initForm() async {
     gradResult = await _gradProvider.get();
-    voziloResult = await _voziloProvider.get(); // Dohvati vozila
-    print(gradResult);
-    print(voziloResult);
 
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> fetchUsluge() async {
+    usluge = await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
+    setState(() {}); // Osvježi ekran kako bi prikazao dohvaćene usluge
   }
 
   @override
@@ -72,6 +74,37 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       child: Column(
         children: [
           isLoading ? Container() : _buildForm(),
+          // Tabela za prikaz usluga
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: usluge.isNotEmpty
+                ? DataTable(
+                    columns: const [
+                      DataColumn(label: Text("Naziv usluge")),
+                      DataColumn(label: Text("Cijena")),
+                      DataColumn(label: Text("Opis")),
+                    ],
+                    rows: usluge.map((usluga) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(usluga.nazivUsluge ?? "")),
+                          DataCell(Text(usluga.cijena?.toString() ?? "")),
+                          DataCell(Text(usluga.opis ?? "")),
+                        ],
+                      );
+                    }).toList(),
+                  )
+                : const Text("Nema dostupnih usluga za ovaj autoservis."),
+          ),
+          // Dugme za dodavanje nove usluge
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: ElevatedButton(
+              onPressed: () => _showAddUslugaDialog(),
+              child: const Text("Dodaj uslugu"),
+            ),
+          ),
+          // Ostali dijelovi
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -89,19 +122,21 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       } else {
                         await _autoservisProvider.update(
                             widget.autoservis!.autoservisId!,
-                            _formKey.currentState?.value);
+                            request);
                       }
+                      // Možda želiš da se vratiš nazad nakon uspješnog spremanja
+                      Navigator.pop(context);
                     } on Exception catch (e) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
-                          title: const Text("error"),
+                          title: const Text("Greška"),
                           content: Text(e.toString()),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
                               child: const Text("OK"),
-                            )
+                            ),
                           ],
                         ),
                       );
@@ -209,35 +244,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                 value: grad.gradId.toString(),
                                 child: Text(grad.nazivGrada ?? ""),
                               ))
-                          .toList() ??
-                      [],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'voziloId',
-                  decoration: InputDecoration(
-                    labelText: 'Vozilo',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['voziloId']?.reset();
-                      },
-                    ),
-                    hintText: 'Vozilo',
-                  ),
-                  initialValue: widget.autoservis?.voziloId?.toString(),
-                  items: voziloResult?.result
-                          .map((vozilo) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: vozilo.voziloId.toString(),
-                                child: Text(vozilo.markaVozila ?? ""),
-                              ))
-                          .toList() ??
+                          .toList() ?? 
                       [],
                 ),
               ),
@@ -247,4 +254,75 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       ),
     );
   }
+
+  // Dijalog za dodavanje nove usluge
+  void _showAddUslugaDialog() {
+    final _uslugaFormKey = GlobalKey<FormBuilderState>();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Dodaj novu uslugu"),
+          content: FormBuilder(
+            key: _uslugaFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FormBuilderTextField(
+                  name: "nazivUsluge",
+                  decoration: const InputDecoration(labelText: "Naziv usluge"),
+                ),
+                FormBuilderTextField(
+                  name: "cijena",
+                  decoration: const InputDecoration(labelText: "Cijena"),
+                  keyboardType: TextInputType.number,
+                ),
+                FormBuilderTextField(
+                  name: "opis",
+                  decoration: const InputDecoration(labelText: "Opis"),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Odustani"),
+            ),
+            TextButton(
+              onPressed: () async {
+                _uslugaFormKey.currentState?.saveAndValidate();
+                var uslugaRequest = Map.from(_uslugaFormKey.currentState!.value);
+                uslugaRequest['autoservisId'] = widget.autoservis?.autoservisId;
+
+                try {
+                  await _uslugaProvider.insert(uslugaRequest);
+                  Navigator.pop(context);
+                  fetchUsluge(); // Osvježi usluge nakon dodavanja nove
+                } on Exception catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text("Greška"),
+                      content: Text(e.toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+              child: const Text("Dodaj"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+//de mi scroll opciju dodaj za screen prevazilazi mi ince pravi mi se overflow

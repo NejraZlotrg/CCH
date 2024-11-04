@@ -30,11 +30,12 @@ public partial class Autoservis
     public string? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }
-    public virtual ICollection<AutoservisUsluge> AutoservisUsluges { get; set; } = new List<AutoservisUsluge>();
+
 
     public virtual ICollection<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; } = new List<BPAutodijeloviAutoservis>();
 
 
+    public virtual ICollection<Usluge> Usluges { get; set; } = new List<Usluge>();
     public int? VoziloId { get; set; }
 
     public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentServiss { get; set; } = new List<ChatKlijentZaposlenik>();
