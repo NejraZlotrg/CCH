@@ -20,6 +20,9 @@ class _ProductScreenState extends State<ProductScreen> {
   SearchResult<Product>? result;
   final TextEditingController _nazivController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
+  final TextEditingController _nazivFirmeController = TextEditingController();
+
+  
 
   @override
   void didChangeDependencies() {
@@ -40,98 +43,127 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Naziv proizvoda',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _nazivController,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: "Model",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _modelController,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: "JIB ili MB",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              var data = await _productProvider.get(filter: {
-                'naziv': _nazivController.text,
-                'model': _modelController.text
-              });
-
-              setState(() {
-                result = data;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueGrey,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search, color: Colors.white),
-                SizedBox(width: 8.0),
-                Text('Pretraga', style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ProductDetailScreen(product: null),
+ Widget _buildSearch() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Column(
+      children: [
+        // Prvi red za naziv proizvoda
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Naziv proizvoda',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                controller: _nazivController,
+              ),
             ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add, color: Colors.white),
-                SizedBox(width: 8.0),
-                Text('Dodaj', style: TextStyle(color: Colors.white)),
-              ],
+          ],
+        ),
+        const SizedBox(height: 10), // Razmak između redova
+        // Drugi red za naziv firme, JIB ili MBS, i model
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: "Naziv firme",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                controller: _nazivFirmeController, // Novii TextField
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: "JIB ili MBS",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: "Model",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                controller: _modelController,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10), // Razmak između pretraga i dugmadi
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                var data = await _productProvider.get(filter: {
+                  'naziv': _nazivController.text,
+                  'model': _modelController.text,
+                  'nazivFirme': _nazivFirmeController.text, // Dodaj naziv firme ovdje
+                });
+
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueGrey,
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search, color: Colors.white),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ProductDetailScreen(product: null),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add, color: Colors.white),
+                  SizedBox(width: 8.0),
+                  Text('Dodaj', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+
   
 Widget _buildDataListView() {
   return Expanded(
@@ -171,12 +203,12 @@ Widget _buildDataListView() {
                       Container(
                         width: double.infinity,
                         height: 160,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                         ),
                         child: e.slika != null && e.slika!.isNotEmpty
                             ? ClipRRect(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
                                 child: Image.memory(
                                   base64Decode(e.slika!),
                                   fit: BoxFit.cover,
@@ -204,7 +236,7 @@ Widget _buildDataListView() {
                         padding: const EdgeInsets.only(left: 8.0, top: 2.0, bottom: 14.0), // Podiže opis i ograničava širinu
                         child: Align(
                           alignment: Alignment.bottomLeft,
-                          child: Container(
+                          child: SizedBox(
                             width: 200, // Ograničava širinu opisa na 60% širine kartice
                             child: Text(
                               e.opis != null && e.opis!.length > 30

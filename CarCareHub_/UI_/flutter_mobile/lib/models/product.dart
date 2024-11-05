@@ -16,8 +16,10 @@ class Product {
   String? opis;
   int? voziloId;
   int? kategorijaId;
+  int? firmaAutodijelovaID;
 
-  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.model,this.opis,this.voziloId,this.kategorijaId);
+  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.model,this.opis,this.voziloId,
+  this.kategorijaId,this.firmaAutodijelovaID);
 
   factory Product.fromJson(Map<String,dynamic> json) => _$ProductFromJson(json);
 
