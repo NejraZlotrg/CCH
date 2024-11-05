@@ -169,11 +169,11 @@ Future<File> _getImageFileFromBase64(String base64String) async {
           const SizedBox(height: 10), // Razmak između polja
           FormBuilderDropdown(
             name: 'kategorijaId',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Kategorija',
               hintText: 'kategorija',
             ),
-            initialValue: widget.product?.kategorijaId?.toString() ?? null,
+            initialValue: widget.product?.kategorijaId?.toString(),
             items: kategorijaResult?.result.map((item) {
                   return DropdownMenuItem(
                     value: item.kategorijaId.toString(),
@@ -185,11 +185,11 @@ Future<File> _getImageFileFromBase64(String base64String) async {
           const SizedBox(height: 10), // Razmak između polja
           FormBuilderDropdown(
             name: 'firmaAutodijelovaID',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'FirmaAutodijelova',
               hintText: 'firmaAutodijelova',
             ),
-            initialValue: widget.product?.firmaAutodijelovaID?.toString() ?? null,
+            initialValue: widget.product?.firmaAutodijelovaID?.toString(),
             items: firmaAutodijelovaResult?.result.map((item) {
                   return DropdownMenuItem(
                     value: item.firmaAutodijelovaID.toString(),
@@ -201,11 +201,11 @@ Future<File> _getImageFileFromBase64(String base64String) async {
           const SizedBox(height: 10),
           FormBuilderDropdown(
             name: 'voziloId',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Vozilo',
               hintText: 'vozilo',
             ),
-            initialValue: widget.product?.voziloId?.toString() ?? null,
+            initialValue: widget.product?.voziloId?.toString(),
             items: voziloResult?.result.map((item) {
                   return DropdownMenuItem(
                     value: item.voziloId.toString(),
