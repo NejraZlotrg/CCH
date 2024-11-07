@@ -49,5 +49,22 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
-    }
+        public override IQueryable<Database.Autoservis> AddFilter(IQueryable<Database.Autoservis> query, AutoservisSearchObject search = null)
+        {
+            query = base.AddFilter(query, search);
+
+            // Primijeni dodatni filter po nazivu firme
+            if (!string.IsNullOrWhiteSpace(search?.NazivGrada))
+            {
+                query = query.Where(x => x.Grad.NazivGrada.StartsWith(search.NazivGrada));
+            }
+
+
+            return query;
+
+        }
+
+
+    
+}
     }

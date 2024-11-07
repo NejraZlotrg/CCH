@@ -14,7 +14,8 @@ class FirmaAutodijelovaScreen extends StatefulWidget {
   const FirmaAutodijelovaScreen({super.key});
 
   @override
-  State<FirmaAutodijelovaScreen> createState() => _FirmaAutodijelovaScreenState();
+  State<FirmaAutodijelovaScreen> createState() =>
+      _FirmaAutodijelovaScreenState();
 }
 
 class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
@@ -26,7 +27,6 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
-    
   }
 
   @override
@@ -58,13 +58,20 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
               controller: _nazivFirmeController,
             ),
           ),
-
           ElevatedButton(
             onPressed: () async {
               print("podaci proceed");
-              var data = await _firmaAutodijelovaProvider.get(filter: {
-                'nazivFirme': _nazivFirmeController.text,
-              });
+              var filterParams = {
+                'IsAllncluded': 'true', // Ovaj parametar ostaje
+              };
+
+ // Dodavanje filtera samo ako je naziv unesen
+  if (_nazivFirmeController.text.isNotEmpty) {
+    filterParams['nazivFirme'] = _nazivFirmeController.text;
+  }
+
+  var data = await _firmaAutodijelovaProvider.get(filter: filterParams);
+
 
               setState(() {
                 result = data;
@@ -80,13 +87,15 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
             ),
           ),
           const SizedBox(width: 10),
-
           ElevatedButton(
             onPressed: () async {
-
-                     Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null,) // poziv na drugi screen
-                     ), );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const FirmaAutodijelovaDetailScreen(
+                          firmaAutodijelova: null,
+                        ) // poziv na drugi screen
+                    ),
+              );
             },
             child: const Row(
               mainAxisSize: MainAxisSize.min,
@@ -127,7 +136,7 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
             ),
             DataColumn(
               label: Text(
-                'gradId',
+                'grad',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
@@ -142,19 +151,23 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
                   .map(
                     (FirmaAutodijelova e) => DataRow(
                       onSelectChanged: (selected) {
-                        if(selected == true) {
+                        if (selected == true) {
                           print('selected: ${e.firmaAutodijelovaID}');
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context)=> FirmaAutodijelovaDetailScreen(firmaAutodijelova: e,) // poziv na drugi screen
-                          ), );
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    FirmaAutodijelovaDetailScreen(
+                                      firmaAutodijelova: e,
+                                    ) // poziv na drugi screen
+                                ),
+                          );
                         }
-
                       },
                       cells: [
                         DataCell(Text(e.firmaAutodijelovaID?.toString() ?? "")),
                         DataCell(Text(e.nazivFirme ?? "")),
                         DataCell(Text(e.adresa ?? "")),
-                        DataCell(Text(formatNumber(e.gradId))),
+                        DataCell(Text(e.grad?.nazivGrada ?? "")),
                         DataCell(e.slikaProfila != null
                             ? SizedBox(
                                 width: 100,

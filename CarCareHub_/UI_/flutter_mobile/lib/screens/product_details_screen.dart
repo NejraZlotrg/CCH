@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/kategorija.dart';
+import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_mobile/models/product.dart';
@@ -36,6 +38,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   SearchResult<Kategorija>? kategorijaResult;
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
   SearchResult<FirmaAutodijelova>? firmaAutodijelovaResult;
+  late ProizvodjacProvider _proizvodjacProvider;
+  SearchResult<Proizvodjac>? proizvodjacResult;
 
   @override
   void initState() {
@@ -44,6 +48,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
     _voziloProvider = context.read<VoziloProvider>();
     _kategorijaProvider = context.read<KategorijaProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
+    _proizvodjacProvider = context.read<ProizvodjacProvider>();
 
     initForm();
   }
@@ -52,6 +57,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   voziloResult = await _voziloProvider.get();
   kategorijaResult = await _kategorijaProvider.get();
   firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
+  proizvodjacResult = await _proizvodjacProvider.get();
 
   // Check if product exists and slika is not null
   if (widget.product != null && widget.product!.slika != null) {
@@ -182,12 +188,28 @@ Future<File> _getImageFileFromBase64(String base64String) async {
                 }).toList() ??
                 [],
           ),
+                    const SizedBox(height: 10), // Razmak između polja
+          FormBuilderDropdown(
+            name: 'proizvodjacId',
+            decoration: const InputDecoration(
+              labelText: 'Proizvodjac',
+              hintText: 'proizvodjac',
+            ),
+            initialValue: widget.product?.proizvodjacId?.toString(),
+            items: proizvodjacResult?.result.map((item) {
+                  return DropdownMenuItem(
+                    value: item.proizvodjacId.toString(),
+                    child: Text(item.nazivProizvodjaca ?? ""),
+                  );
+                }).toList() ??
+                [],
+          ),
           const SizedBox(height: 10), // Razmak između polja
           FormBuilderDropdown(
-            name: 'firmaAutodijelovaID',
+            name: 'firmaAutoDijelovaID',
             decoration: const InputDecoration(
-              labelText: 'FirmaAutodijelova',
-              hintText: 'firmaAutodijelova',
+              labelText: 'FirmaAutoDijelova',
+              hintText: 'firmaAutoDijelova',
             ),
             initialValue: widget.product?.firmaAutodijelovaID?.toString(),
             items: firmaAutodijelovaResult?.result.map((item) {
@@ -221,50 +243,58 @@ Future<File> _getImageFileFromBase64(String base64String) async {
             initialValue: widget.product?.cijena.toString(),
           ),
           const SizedBox(height: 10), // Razmak između polja
-          ElevatedButton(
-            onPressed: () async {
-              _formKey.currentState?.saveAndValidate();
-              var request = Map.from(_formKey.currentState!.value);
-                  request['opis'] = _formKey.currentState!.fields['opis']?.value; // Provjeri da li je ovo ispravno
+ElevatedButton(
+  onPressed: () async {
+    // Validiraj i sačuvaj formu
+    _formKey.currentState?.saveAndValidate();
+    var request = Map.from(_formKey.currentState!.value);
 
+    // Dodaj polja koja nisu automatski popunjena u formu
+    request['opis'] = _formKey.currentState!.fields['opis']?.value;
+    request['kategorijaId'] = int.tryParse(_formKey.currentState!.fields['kategorijaId']?.value ?? '0');
+    request['proizvodjacId'] = int.tryParse(_formKey.currentState!.fields['proizvodjacId']?.value ?? '0');
+    request['firmaAutoDijelovaID'] = int.tryParse(_formKey.currentState!.fields['firmaAutoDijelovaID']?.value ?? '0');
+    request['voziloId'] = int.tryParse(_formKey.currentState!.fields['voziloId']?.value ?? '0');
+    request['cijena'] = double.tryParse(_formKey.currentState!.fields['cijena']?.value ?? '0');
 
-              if (_imageFile != null) {
-                request['slika'] =
-                    base64Encode(await _imageFile!.readAsBytes());
-                request['slikaThumb'] =
-                    base64Encode(await _imageFile!.readAsBytes());
-              }
+    // Provjeri i konvertuj sliku u base64 ako je odabrana
+    if (_imageFile != null) {
+      request['slika'] = base64Encode(await _imageFile!.readAsBytes());
+      request['slikaThumb'] = base64Encode(await _imageFile!.readAsBytes());
+    }
 
-              try {
-                if (widget.product == null) {
-                  await _productProvider.insert(request);
-                } else {
-                  await _productProvider.update(
-                    widget.product!.proizvodId!,
-                    request,
-                  );
-                }
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Proizvod uspješno dodan."),
-                ));
-              } on Exception catch (e) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: const Text("Greška"),
-                    content: Text(e.toString()),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-            child: const Text("Spasi"),
-          ),
+    try {
+      // Unesi ili ažuriraj podatke o proizvodu na osnovu prisutnosti `widget.product`
+      if (widget.product == null) {
+        await _productProvider.insert(request);
+      } else {
+        await _productProvider.update(
+          widget.product!.proizvodId!,
+          request,
+        );
+      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Proizvod uspješno dodan."),
+      ));
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  },
+  child: const Text("Spasi"),
+),
+
           const SizedBox(height: 10), // Razmak između dugmadi
           // Quantity selector
           Row(

@@ -17,6 +17,9 @@ class AutoservisScreen extends StatefulWidget {
 class _AutoservisScreenState extends State<AutoservisScreen> {
   late AutoservisProvider _autoservisProvider;
   SearchResult<Autoservis>? result;
+  final TextEditingController _nazivGradaController = TextEditingController();
+
+
 
   @override
   void didChangeDependencies() {
@@ -37,75 +40,87 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
     );
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(  // Polja za pretragu postavljena jedno ispod drugog
-        children: [
-          const TextField(
-            decoration: InputDecoration(
-              labelText: 'Naziv',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.white,
-            ),
+ Widget _buildSearch() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const TextField(
+          decoration: InputDecoration(
+            labelText: 'Naziv',
+            border: OutlineInputBorder(),
+            filled: true,
+            fillColor: Colors.white,
           ),
-          const SizedBox(height: 10),
-          const TextField(
-            decoration: InputDecoration(
-              labelText: "MBS",
-              border: OutlineInputBorder(),
-            ),
+        ),
+        const SizedBox(height: 10),
+
+        TextField(
+          decoration: const InputDecoration(
+            labelText: 'Naziv grada',
+            border: OutlineInputBorder(),
+            filled: true,
+            fillColor: Colors.white,
           ),
-          const SizedBox(height: 10),
-          const TextField(
-            decoration: InputDecoration(
-              labelText: "JIB",
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  print("Pretraga podataka");
-                  var data = await _autoservisProvider.get(filter: {});
+          controller: _nazivGradaController,
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                print("Pokretanje pretrage: ${_nazivGradaController.text}");
+                var filterParams = {
+                  'IsAllIncluded': 'true',
+                };
+
+                if (_nazivGradaController.text.isNotEmpty) {
+                  filterParams['nazivGrada'] = _nazivGradaController.text;
+                }
+
+                var data = await _autoservisProvider.get(filter: filterParams);
+
+                if (mounted) { // Provjera da li je widget još uvijek prikazan
                   setState(() {
                     result = data;
                   });
-                },
-                child: const Row(
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
+                }
+              },
+              child: const Row(
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
               ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => AutoservisDetailsScreen(autoservis: null),
-                    ),
-                  );
-                },
-                child: const Row(
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AutoservisDetailsScreen(autoservis: null),
+                  ),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(Icons.add),
+                  SizedBox(width: 8.0),
+                  Text('Dodaj'),
+                ],
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+
 
   Widget _buildDataTable() {
     return SingleChildScrollView(  // Omogućavanje vodoravnog skrolanja
@@ -138,7 +153,7 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                   DataCell(Text(e.adresa ?? "")),
                   DataCell(Text(e.vlasnikFirme ?? "")),
                   DataCell(Text(e.telefon ?? "")),
-                  DataCell(Text(e.gradId.toString())),
+                  DataCell(Text(e.grad.nazivGrada ?? "")),
                   DataCell(Text(e.email ?? "")),
                 ],
               ),

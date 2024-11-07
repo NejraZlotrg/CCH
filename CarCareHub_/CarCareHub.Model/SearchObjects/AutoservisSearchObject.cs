@@ -9,6 +9,8 @@ namespace CarCareHub.Model.SearchObjects
     public class AutoservisSearchObject : BaseSearchObject
     {
         public bool? IsAllIncluded { get; set; }
+        
+        public string? NazivGrada { get; set; }
 
         //  public string? Naziv { get; set; }
     }

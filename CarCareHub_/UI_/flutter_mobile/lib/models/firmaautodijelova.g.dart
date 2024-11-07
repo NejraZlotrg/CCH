@@ -19,6 +19,9 @@ FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
       json['slikaProfila'] as String?,
       json['telefon'] as String?,
       (json['ulogaId'] as num?)?.toInt(),
+      json['grad'] == null
+          ? null
+          : Grad.fromJson(json['grad'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$FirmaAutodijelovaToJson(FirmaAutodijelova instance) =>
@@ -27,6 +30,7 @@ Map<String, dynamic> _$FirmaAutodijelovaToJson(FirmaAutodijelova instance) =>
       'nazivFirme': instance.nazivFirme,
       'adresa': instance.adresa,
       'gradId': instance.gradId,
+      'grad': instance.grad,
       'jib': instance.jib,
       'mbs': instance.mbs,
       'telefon': instance.telefon,

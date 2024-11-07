@@ -14,8 +14,9 @@ namespace CarCareHub_.Controllers
     public class ProizvodjacController : BaseCRUDController<Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>
     {
         public ProizvodjacController(ILogger<BaseController<CarCareHub.Model.Proizvodjac, ProizvodjacSearchObject>> logger,
-             ICRUDService<Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate> service) : base(logger, service)
+             IProizvodjacService service) : base(logger, service)
         {
+
         }
     }
 }

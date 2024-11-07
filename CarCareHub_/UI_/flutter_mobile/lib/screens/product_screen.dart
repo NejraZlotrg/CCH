@@ -21,6 +21,7 @@ class _ProductScreenState extends State<ProductScreen> {
   final TextEditingController _nazivController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _nazivFirmeController = TextEditingController();
+  final TextEditingController _gradController = TextEditingController();
 
   String? _selectedSortingOption; // Nova varijabla za sortiranje
 
@@ -98,13 +99,13 @@ class _ProductScreenState extends State<ProductScreen> {
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
-                    labelText: "Model",
+                    labelText: "Lokacija",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
                     filled: true,
                     fillColor: Colors.white,
                   ),
-                  controller: _modelController,
+                  controller: _gradController,
                 ),
               ),
             ],
@@ -113,7 +114,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
           // Ovdje dodajemo dropdown menue unutar ExpansionTile
           ExpansionTile(
-            title: Center(
+            title: const Center(
               // Centriranje naslova
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -238,6 +239,7 @@ class _ProductScreenState extends State<ProductScreen> {
           'naziv': _nazivController.text,
           'model': _modelController.text,
           'nazivFirme': _nazivFirmeController.text,
+          'nazivGrada': _gradController.text
         });
 
         setState(() {

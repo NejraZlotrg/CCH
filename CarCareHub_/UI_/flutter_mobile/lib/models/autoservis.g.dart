@@ -21,6 +21,7 @@ Autoservis _$AutoservisFromJson(Map<String, dynamic> json) => Autoservis(
       json['slikaProfila'] as String?,
       (json['ulogaId'] as num?)?.toInt(),
       (json['voziloId'] as num?)?.toInt(),
+      Grad.fromJson(json['grad'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AutoservisToJson(Autoservis instance) =>
@@ -39,4 +40,5 @@ Map<String, dynamic> _$AutoservisToJson(Autoservis instance) =>
       'slikaProfila': instance.slikaProfila,
       'ulogaId': instance.ulogaId,
       'voziloId': instance.voziloId,
+      'grad': instance.grad,
     };

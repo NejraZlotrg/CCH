@@ -10,6 +10,7 @@ import 'package:flutter_mobile/screens/model_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_stavka_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
+import 'package:flutter_mobile/screens/proizvodjac_screen.dart';
 import 'package:flutter_mobile/screens/uloge_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
 import 'package:flutter_mobile/screens/vozilo_screen.dart';
@@ -218,6 +219,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const UlogeScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.directions_car),
+              title: const Text('Proizvodjac'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ProizvodjacScreen(),
                   ),
                 );
               },

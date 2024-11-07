@@ -20,6 +20,11 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       (json['voziloId'] as num?)?.toInt(),
       (json['kategorijaId'] as num?)?.toInt(),
       (json['firmaAutodijelovaID'] as num?)?.toInt(),
+      (json['proizvodjacId'] as num?)?.toInt(),
+      json['firmaAutoDijelova'] == null
+          ? null
+          : FirmaAutodijelova.fromJson(
+              json['firmaAutoDijelova'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
@@ -36,4 +41,6 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'voziloId': instance.voziloId,
       'kategorijaId': instance.kategorijaId,
       'firmaAutodijelovaID': instance.firmaAutodijelovaID,
+      'firmaAutoDijelova': instance.firmaAutoDijelova,
+      'proizvodjacId': instance.proizvodjacId,
     };

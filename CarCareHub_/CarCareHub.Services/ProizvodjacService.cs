@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public class ProizvodjacService : BaseCRUDService<Model.Proizvodjac, Database.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodiUpdate>, IProizvodjacService
+    public class ProizvodjacService : BaseCRUDService<Model.Proizvodjac, Database.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>, IProizvodjacService
     {
         public ProizvodjacService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
