@@ -18,7 +18,7 @@ class Autoservis {
   String? slikaProfila;
   int? ulogaId;
   int? voziloId;
-  final Grad grad;
+  final Grad? grad;
 
 
   Autoservis(this.autoservisId, this.naziv,this.adresa,this.vlasnikFirme, this.korisnickoIme, this.gradId, this.telefon, this.password,

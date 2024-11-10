@@ -23,7 +23,6 @@ class _ProductScreenState extends State<ProductScreen> {
   final TextEditingController _nazivFirmeController = TextEditingController();
   final TextEditingController _gradController = TextEditingController();
 
-  String? _selectedSortingOption; // Nova varijabla za sortiranje
 
   @override
   void didChangeDependencies() {

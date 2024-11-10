@@ -5,7 +5,7 @@
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class novabaza : Migration
+    public partial class mig1x : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

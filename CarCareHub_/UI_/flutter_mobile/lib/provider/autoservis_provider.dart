@@ -9,5 +9,7 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
 Autoservis fromJson(data) {
   return Autoservis.fromJson(data);
   }
-   
+
+
+
 }

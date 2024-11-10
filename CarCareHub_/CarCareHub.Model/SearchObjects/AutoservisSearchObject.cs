@@ -11,6 +11,8 @@ namespace CarCareHub.Model.SearchObjects
         public bool? IsAllIncluded { get; set; }
         
         public string? NazivGrada { get; set; }
+        public string? Naziv { get; set; }
+
 
         //  public string? Naziv { get; set; }
     }

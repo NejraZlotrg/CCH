@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20241104172631_novabaza")]
-    partial class novabaza
+    [Migration("20241110155606_mig1x")]
+    partial class mig1x
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,10 +77,10 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(30)")
                         .HasColumnName("password_");
 
-                    b.Property<string>("SlikaProfila")
+                    b.Property<byte[]>("SlikaProfila")
                         .HasMaxLength(40)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(40)")
+                        .HasColumnType("varbinary(40)")
                         .HasColumnName("slika_Profila");
 
                     b.Property<string>("Telefon")

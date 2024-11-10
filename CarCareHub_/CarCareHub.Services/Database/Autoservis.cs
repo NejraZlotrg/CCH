@@ -27,7 +27,7 @@ public partial class Autoservis
 
     public string? Mbs { get; set; }
 
-    public string? SlikaProfila { get; set; }
+    public byte[]? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }
 

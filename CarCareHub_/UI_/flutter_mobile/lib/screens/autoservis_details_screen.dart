@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
@@ -8,9 +11,9 @@ import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
 class AutoservisDetailsScreen extends StatefulWidget {
   Autoservis? autoservis;
   AutoservisDetailsScreen({super.key, this.autoservis});
@@ -23,11 +26,13 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late AutoservisProvider _autoservisProvider;
-  late UslugeProvider _uslugaProvider; // Provider za usluge
+  late UslugeProvider _uslugaProvider; 
   late GradProvider _gradProvider;
 
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
   SearchResult<Grad>? gradResult;
-  List<Usluge> usluge = []; // Lista usluga za prikaz
+  List<Usluge> usluge = []; 
   bool isLoading = true;
 
   @override
@@ -47,75 +52,118 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
-    _uslugaProvider = context.read<UslugeProvider>(); // Inicijalizacija provider-a za usluge
+    _uslugaProvider = context.read<UslugeProvider>(); 
     _gradProvider = context.read<GradProvider>();
     
     initForm();
-    fetchUsluge(); // Dohvati usluge povezane s autoservisom
+    fetchUsluge(); 
   }
 
   Future initForm() async {
     gradResult = await _gradProvider.get();
-
+    if (widget.autoservis != null && widget.autoservis!.slikaProfila != null) {
+      _imageFile = await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);
+    }
     setState(() {
       isLoading = false;
     });
   }
 
+  // Function to convert base64 image to File
+  Future<File> _getImageFileFromBase64(String base64String) async {
+    final bytes = base64Decode(base64String);
+    final tempDir = await Directory.systemTemp.createTemp();
+    final file = File('${tempDir.path}/image.png');
+    await file.writeAsBytes(bytes);
+    return file;
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
   Future<void> fetchUsluge() async {
     usluge = await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
-    setState(() {}); // Osvježi ekran kako bi prikazao dohvaćene usluge
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: widget.autoservis?.naziv ?? "Detalji autoservisa",
-      child: SingleChildScrollView( 
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          // Tabela za prikaz usluga
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: usluge.isNotEmpty
-                ? DataTable(
-                    columns: const [
-                      DataColumn(label: Text("Naziv usluge")),
-                      DataColumn(label: Text("Cijena")),
-                      DataColumn(label: Text("Opis")),
-                    ],
-                    rows: usluge.map((usluga) {
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(usluga.nazivUsluge ?? "")),
-                          DataCell(Text(usluga.cijena?.toString() ?? "")),
-                          DataCell(Text(usluga.opis ?? "")),
-                        ],
-                      );
-                    }).toList(),
-                  )
-                : const Text("Nema dostupnih usluga za ovaj autoservis."),
-          ),
-          // Dugme za dodavanje nove usluge
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: ElevatedButton(
-              onPressed: () => _showAddUslugaDialog(),
-              child: const Text("Dodaj uslugu"),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            isLoading ? Container() : _buildForm(),
+            // Prikaz usluga
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: usluge.isNotEmpty
+                  ? DataTable(
+                      columns: const [
+                        DataColumn(label: Text("Naziv usluge")),
+                        DataColumn(label: Text("Cijena")),
+                        DataColumn(label: Text("Opis")),
+                      ],
+                      rows: usluge.map((usluga) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(usluga.nazivUsluge ?? "")),
+                            DataCell(Text(usluga.cijena?.toString() ?? "")),
+                            DataCell(Text(usluga.opis ?? "")),
+                          ],
+                        );
+                      }).toList(),
+                    )
+                  : const Text("Nema dostupnih usluga za ovaj autoservis."),
             ),
-          ),
-          // Ostali dijelovi
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                   onPressed: () async {
+            // Dugme za dodavanje usluge
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                onPressed: () => _showAddUslugaDialog(),
+                child: const Text("Dodaj uslugu"),
+              ),
+            ),
+            // Prikaz slike
+            GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                alignment: Alignment.topLeft,
+                child: _imageFile != null
+                    ? Image.file(
+                        _imageFile!,
+                        width: 250,
+                        height: 250,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: 250,
+                        height: 250,
+                        color: Colors.grey[300],
+                        child: const Center(child: Text("Odaberi sliku")),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Spremanje podataka
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: ElevatedButton(
+                    onPressed: () async {
                       _formKey.currentState?.save();
                       var request = Map.from(_formKey.currentState!.value);
-
+                      if (_imageFile != null) {
+                        request['slikaProfila'] = base64Encode(await _imageFile!.readAsBytes());
+                      }
                       try {
                         if (widget.autoservis == null) {
                           await _autoservisProvider.insert(request);
@@ -143,15 +191,16 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     },
                     child: const Text("Spasi"),
                   ),
-              ),
-            ],
-          )
-        ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-      )
     );
   }
 
+  
   FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
@@ -222,38 +271,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               ),
             ],
           ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'gradId',
-                  decoration: InputDecoration(
-                    labelText: 'Grad',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['gradId']?.reset();
-                      },
-                    ),
-                    hintText: 'Grad',
-                  ),
-                  initialValue: widget.autoservis?.gradId?.toString(),
-                  items: gradResult?.result
-                          .map((grad) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: grad.gradId.toString(),
-                                child: Text(grad.nazivGrada ?? ""),
-                              ))
-                          .toList() ?? 
-                      [],
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
+
 
   // Dijalog za dodavanje nove usluge
   void _showAddUslugaDialog() {

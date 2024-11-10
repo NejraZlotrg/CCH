@@ -51,20 +51,27 @@ namespace CarCareHub.Services
         }
         public override IQueryable<Database.Autoservis> AddFilter(IQueryable<Database.Autoservis> query, AutoservisSearchObject search = null)
         {
-            query = base.AddFilter(query, search);
+           
 
-            // Primijeni dodatni filter po nazivu firme
             if (!string.IsNullOrWhiteSpace(search?.NazivGrada))
             {
                 query = query.Where(x => x.Grad.NazivGrada.StartsWith(search.NazivGrada));
+
             }
 
+            if (!string.IsNullOrWhiteSpace(search?.Naziv))
+            {
+                query = query.Where(x => x.Naziv.StartsWith(search.Naziv));
 
-            return query;
+            }
+
+            return base.AddFilter(query, search);
 
         }
 
+      
 
-    
-}
+
+
+    }
     }

@@ -159,7 +159,7 @@ namespace CarCareHub.Services.Migrations
                     password_ = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
                     jib = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     MBS = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    slika_Profila = table.Column<string>(type: "varchar(40)", unicode: false, maxLength: 40, nullable: true),
+                    slika_Profila = table.Column<byte[]>(type: "varbinary(40)", unicode: false, maxLength: 40, nullable: true),
                     ulogaID = table.Column<int>(type: "int", nullable: true),
                     voziloID = table.Column<int>(type: "int", nullable: true)
                 },
