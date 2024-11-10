@@ -121,13 +121,7 @@ Future<File> _getImageFileFromBase64(String base64String) async {
                             ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  // Prikaz opisa
-                  FormBuilderTextField(
-                    decoration: const InputDecoration(labelText: "Opis"),
-                    name: "opis",
-                    initialValue: widget.product?.opis ?? '',
-                  ),
+                
                 ],
               ),
             ),
@@ -242,7 +236,16 @@ Future<File> _getImageFileFromBase64(String base64String) async {
             name: "cijena",
             initialValue: widget.product?.cijena.toString(),
           ),
+          const SizedBox(height: 10), 
+            const SizedBox(height: 8),
+                  // Prikaz opisa
+                  FormBuilderTextField(
+                    decoration: const InputDecoration(labelText: "opis"),
+                    name: "opis",
+                    initialValue: widget.product?.opis,
+                  ),// Razmak između polja
           const SizedBox(height: 10), // Razmak između polja
+
 ElevatedButton(
   onPressed: () async {
     // Validiraj i sačuvaj formu
@@ -256,6 +259,9 @@ ElevatedButton(
     request['firmaAutoDijelovaID'] = int.tryParse(_formKey.currentState!.fields['firmaAutoDijelovaID']?.value ?? '0');
     request['voziloId'] = int.tryParse(_formKey.currentState!.fields['voziloId']?.value ?? '0');
     request['cijena'] = double.tryParse(_formKey.currentState!.fields['cijena']?.value ?? '0');
+
+    // Provjeri vrijednost opis
+    print("Uneseni opis: ${request['opis']}"); // Provjerava ispis unesene vrijednosti
 
     // Provjeri i konvertuj sliku u base64 ako je odabrana
     if (_imageFile != null) {
@@ -294,6 +300,7 @@ ElevatedButton(
   },
   child: const Text("Spasi"),
 ),
+
 
           const SizedBox(height: 10), // Razmak između dugmadi
           // Quantity selector
