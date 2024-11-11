@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CarCareHub.Model
@@ -14,6 +16,12 @@ namespace CarCareHub.Model
 
         public decimal? Cijena { get; set; }
         public int? Popust { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public decimal? CijenaSaPopustom { get; set; }
+
+
 
 
         // public string? Sifra { get; set; }

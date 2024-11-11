@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
+import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_details_screen.dart';
-import 'package:flutter_mobile/screens/product_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -16,15 +18,31 @@ class AutoservisScreen extends StatefulWidget {
 }
 
 class _AutoservisScreenState extends State<AutoservisScreen> {
+  final _formKey = GlobalKey<FormBuilderState>();
   late AutoservisProvider _autoservisProvider;
+  late GradProvider _gradProvider;
+
   SearchResult<Autoservis>? result;
-  final TextEditingController _nazivGradaController = TextEditingController();
+  List<Grad>? gradovi;
+
   final TextEditingController _nazivController = TextEditingController();
+  final TextEditingController _nazivGradaController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _autoservisProvider = context.read<AutoservisProvider>();
+    _gradProvider = context.read<GradProvider>();
+
+    // Učitaj gradove kada widget postane dio widget drveta
+    _loadGradovi();
+  }
+
+  Future<void> _loadGradovi() async {
+    var gradoviResult = await _gradProvider.get();
+    setState(() {
+      gradovi = gradoviResult.result;
+    });
   }
 
   @override
@@ -34,15 +52,15 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
       child: Column(
         children: [
           _buildSearch(),
-          Expanded(child: _buildCardList()), // Kartični prikaz umjesto DataTable
+          Expanded(child: _buildCardList()),
         ],
       ),
     );
   }
 
   Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return FormBuilder(
+      key: _formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -56,39 +74,32 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
             controller: _nazivController,
           ),
           const SizedBox(height: 10),
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'Naziv grada',
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-            controller: _nazivGradaController,
-          ),
+          FormBuilderDropdown(
+  name: 'gradId',
+  decoration: InputDecoration(
+    labelText: 'Grad',
+    suffix: IconButton(
+      icon: const Icon(Icons.close),
+      onPressed: () {
+        _formKey.currentState!.fields['gradId']?.reset();
+      },
+    ),
+    hintText: 'Odaberite grad',
+  ),
+  items: gradovi
+      ?.map((grad) => DropdownMenuItem(
+            value: grad.nazivGrada,  // Promjena: šaljemo nazivGrada
+            child: Text(grad.nazivGrada ?? ""),
+          ))
+      .toList() ?? [],
+)
+,
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  print("Pokretanje pretrage: ${_nazivGradaController.text} i  ${_nazivController.text}");
-                  var filterParams = {
-                    'IsAllIncluded': 'true',
-                  };
-
-                  if (_nazivGradaController.text.isNotEmpty || _nazivController.text.isNotEmpty) {
-                    filterParams['nazivGrada'] = _nazivGradaController.text;
-                    filterParams['naziv'] = _nazivController.text;
-                  }
-
-                  var data = await _autoservisProvider.get(filter: filterParams);
-
-                  if (mounted) { // Provjera da li je widget još uvijek prikazan
-                    setState(() {
-                      result = data;
-                    });
-                  }
-                },
+                onPressed: _onSearchPressed,
                 child: const Row(
                   children: [
                     Icon(Icons.search),
@@ -102,7 +113,8 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => AutoservisDetailsScreen(autoservis: null),
+                      builder: (context) =>
+                          AutoservisDetailsScreen(autoservis: null),
                     ),
                   );
                 },
@@ -120,75 +132,117 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
       ),
     );
   }
+
+ Future<void> _onSearchPressed() async {
+  print("Pokretanje pretrage: ${_nazivController.text}");
+
+  var filterParams = {
+    'IsAllIncluded': 'true',
+  };
+
+  // Dodavanje naziva u filter ako je unesen
+  if (_nazivController.text.isNotEmpty) {
+    filterParams['naziv'] = _nazivController.text;
+  }
+
+  // Dodavanje naziva grada u filter ako je odabran
+  var nazivGradaValue = _formKey.currentState?.fields['gradId']?.value;
+  if (nazivGradaValue != null) {
+    print("Odabrani naziv grada: $nazivGradaValue"); // Debug izlaz za odabrani grad
+    filterParams['nazivGrada'] = nazivGradaValue.toString();
+  } else {
+    print("Grad nije odabran."); // Debug ako grad nije odabran
+  }
+
+  print("Filter params: $filterParams");
+
+  // Pozivanje API-ja sa filterima
+  var data = await _autoservisProvider.get(filter: filterParams);
+
+  if (mounted) {
+    setState(() {
+      result = data; // Ažuriraj rezultate sa podacima dobijenim iz backend-a
+    });
+  }
+}
+
+
   Widget _buildCardList() {
-  return SingleChildScrollView(
-    scrollDirection: Axis.vertical,
-    child: Column(
-      children: result?.result
-              .map(
-                (Autoservis e) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 190.0), // Vanjski padding sa strane
-                  child: Card(
-                    margin: const EdgeInsets.all(8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    elevation: 5,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(16.0),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AutoservisDetailsScreen(autoservis: e),
-                          ),
-                        );
-                      },
-                      // Koristimo Row kako bi slika bila sa lijeve strane
-                      title: Row(
-                        children: [
-                          // Slika sa lijeve strane
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0), // Padding samo s lijeve i desne strane
-                            child: Container(
-                              width: 200, // Širina slike
-                              height: 120, // Povećana visina slike
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        children: result?.result
+                .map(
+                  (Autoservis e) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 190.0),
+                    child: Card(
+                      margin: const EdgeInsets.all(8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      elevation: 5,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(16.0),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  AutoservisDetailsScreen(autoservis: e),
+                            ),
+                          );
+                        },
+                        title: Row(
+                          children: [
+                            Container(
+                              width: 200,
+                              height: 150,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image: MemoryImage(base64Decode(e.slikaProfila ?? "")),
-                                  fit: BoxFit.cover, // Slika popunjava cijeli prostor
+                                  image: MemoryImage(
+                                      base64Decode(e.slikaProfila ?? "")),
+                                  fit: BoxFit.fill,
                                 ),
-                                borderRadius: BorderRadius.circular(30.0),
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 16.0), // Razmak između slike i teksta
-                          // Tekst sa desne strane
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Padding samo s lijeve i desne strane
+                            const SizedBox(width: 16.0),
+                            Expanded(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end, // Poravnanje teksta na desnu stranu
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(e.naziv ?? "", style: TextStyle(fontWeight: FontWeight.bold)),
-                                  Text('Adresa: ${e.adresa ?? ""}'),
-                                  Text('Vlasnik: ${e.vlasnikFirme ?? ""}'),
-                                  Text('Telefon: ${e.telefon ?? ""}'),
-                                  Text('Grad: ${e.grad?.nazivGrada ?? ""}'),
-                                  Text('Email: ${e.email ?? ""}'),
+                                  Text(
+                                    e.naziv ?? "",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  Text(
+                                    'Adresa: ${e.adresa ?? ""}',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Grad: ${e.grad?.nazivGrada ?? ""}',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Telefon: ${e.telefon ?? ""}',
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-              .toList() ?? 
-          [],
-    ),
-  );
-}
-
+                )
+                .toList() ??
+            [],
+      ),
+    );
+  }
 }

@@ -14,6 +14,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class AutoservisDetailsScreen extends StatefulWidget {
   Autoservis? autoservis;
   AutoservisDetailsScreen({super.key, this.autoservis});
@@ -48,7 +49,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'jib': widget.autoservis?.jib ?? '',
       'mbs': widget.autoservis?.mbs ?? '',
       'ulogaId': widget.autoservis?.ulogaId?.toString() ?? '',
-      'gradId': widget.autoservis?.gradId?.toString() ?? '',
+      'gradId': widget.autoservis?.gradId,
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
@@ -221,6 +222,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   name: "korisnickoIme",
                 ),
               ),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Vlasnik firme"),
+                  name: "vlasnikFirme",
+                ),
+              ),
             ],
           ),
           Row(
@@ -232,11 +239,32 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 ),
               ),
               Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Vlasnik firme"),
-                  name: "vlasnikFirme",
+                child: FormBuilderDropdown(
+                  name: 'gradId',
+                  decoration: InputDecoration(
+                    labelText: 'Grad',
+                    suffix: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        _formKey.currentState!.fields['gradId']?.reset();
+                      },
+                    ),
+                    hintText: 'grad',
+                  ),
+                  initialValue: widget.autoservis?.gradId != null
+                      ? widget.autoservis!.gradId.toString()
+                      : null, // Provjera za null vrijednosti
+                  items: gradResult?.result
+                          .map((item) => DropdownMenuItem(
+                                alignment: AlignmentDirectional.center,
+                                value: item.gradId.toString(),
+                                child: Text(item.nazivGrada ?? ""),
+                              ))
+                          .toList() ??
+                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
                 ),
-              ),
+              )
+              
             ],
           ),
           Row(

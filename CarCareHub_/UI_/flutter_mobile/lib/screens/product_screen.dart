@@ -64,6 +64,54 @@ class _ProductScreenState extends State<ProductScreen> {
                   controller: _nazivController,
                 ),
               ),
+                            const SizedBox(width: 100),
+
+              Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: "Poredaj po cijeni",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          items: <String>['--', 'Rastuća', 'Opadajuća']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) async {
+      if (value == 'Rastuća') {
+        // Call backend for ascending price sort
+        var data = await _productProvider.get(filter: {
+          'naziv': _nazivController.text,
+          'model': _modelController.text,
+          'nazivFirme': _nazivFirmeController.text,
+          'nazivGrada': _gradController.text,
+          'cijenaRastuca': true,  // Specify ascending sort
+
+        });
+        setState(() {
+          result = data;
+        });
+      } else if (value == 'Opadajuća') {
+        // Call backend for descending price sort
+        var data = await _productProvider.get(filter: {
+          'naziv': _nazivController.text,
+          'model': _modelController.text,
+          'nazivFirme': _nazivFirmeController.text,
+          'nazivGrada': _gradController.text,
+          'cijenaOpadajuca': true,  // Specify descending sort
+        });
+        setState(() {
+          result = data;
+        });
+      }
+    },
+  ),
+),
             ],
           ),
           const SizedBox(height: 10), // Razmak između redova

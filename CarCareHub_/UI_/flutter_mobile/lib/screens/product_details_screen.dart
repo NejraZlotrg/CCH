@@ -236,6 +236,11 @@ Future<File> _getImageFileFromBase64(String base64String) async {
             name: "cijena",
             initialValue: widget.product?.cijena.toString(),
           ),
+          FormBuilderTextField(
+            decoration: const InputDecoration(labelText: "Popust"),
+            name: "popust",
+            initialValue: widget.product?.popust.toString(),
+          ),
           const SizedBox(height: 10), 
             const SizedBox(height: 8),
                   // Prikaz opisa

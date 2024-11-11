@@ -32,6 +32,8 @@ namespace CarCareHub.Services
         {
             var entity = await _dbContext.Proizvods.FindAsync(id);
             var state = _baseState.CreateState(entity.StateMachine);
+            var pom = update.Cijena * update.Popust / 100;
+            update.CijenaSaPopustom = update.Cijena - pom;
             return await state.Update(id, update);
         }
 
