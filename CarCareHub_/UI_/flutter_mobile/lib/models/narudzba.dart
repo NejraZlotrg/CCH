@@ -1,22 +1,19 @@
+import 'package:flutter_mobile/models/narudzba_stavke.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'narudzba.g.dart';
 
 @JsonSerializable()
 class Narudzba {
-  int narudzbaId;
-  DateTime? datumNarudzbe;
-  DateTime? datumIsporuke;
-  bool? zavrsenaNarudzba;
-  int? popustId;
-  double? ukupnaCijenaNarudzbe;
+  final int id;
+  final double ukupnaCijenaNarudzbe;
+  final DateTime datumIsporuke;
+  final bool zavrsenaNarudzba;
 
   Narudzba({
-    required this.narudzbaId,
-    required this.datumNarudzbe,
+    required this.id,
+    required this.ukupnaCijenaNarudzbe,
     required this.datumIsporuke,
     required this.zavrsenaNarudzba,
-    required this.popustId,
-    required this.ukupnaCijenaNarudzbe,
   });
 
   

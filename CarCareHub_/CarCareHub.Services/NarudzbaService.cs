@@ -24,11 +24,14 @@ namespace CarCareHub.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public override Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
+        public override async Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
         {
-          //  insert.UkupnaCijenaNarudzbe=insert.NarudzbaStavkas
-          //uraditi zbir svih ukuonih cijena proizvoda 
-            return base.Insert(insert);
+            // Izračun ukupne cijene narudžbe
+            insert.UkupnaCijenaNarudzbe = insert.NarudzbaStavkas.Sum(s => s.UkupnaCijenaProizvoda);
+
+            // Kreiraj privremenu narudžbu
+            var narudzba = await base.Insert(insert);
+            return narudzba;
         }
 
         public override async Task<Model.Narudzba> Update(int id, Model.NarudzbaUpdate update)
@@ -39,6 +42,74 @@ namespace CarCareHub.Services
         public override async Task<Model.Narudzba> Delete(int id)
         {
             return await base.Delete(id);
+        }
+
+
+        public async Task<Model.Narudzba> PotvrdiNarudzbu(int narudzbaId)
+        {
+            // Pronalaženje narudžbe u bazi
+            var narudzba = await _dbContext.Narudzbas.FindAsync(narudzbaId);
+            if (narudzba == null)
+                throw new Exception("Narudžba nije pronađena.");
+
+            // Postavljanje narudžbe kao završene
+            narudzba.ZavrsenaNarudzba = true;
+            narudzba.DatumIsporuke = DateTime.Now;
+
+            // Spremanje promjena u bazu
+            _dbContext.Narudzbas.Update(narudzba);
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<Model.Narudzba>(narudzba);
+        }
+
+        public async Task<Model.Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina)
+        {
+            // Provjeriti postoji li aktivna narudžba
+            var aktivnaNarudzba = await _dbContext.Narudzbas
+                .Where(n => n.ZavrsenaNarudzba == false) // Provjera da li je narudžba aktivna
+                .FirstOrDefaultAsync();
+
+            if (aktivnaNarudzba != null)
+            {
+                var proizvod = await _dbContext.Proizvods.FindAsync(proizvodId);
+                if (proizvod == null)
+                {
+                    throw new Exception("Proizvod nije pronađen.");
+                }
+
+                var novaStavka = new NarudzbaStavkaInsert
+                {
+                    ProizvodId = proizvodId,
+                    Kolicina = kolicina,
+                    NarudzbaId = aktivnaNarudzba.NarudzbaId,
+                    UkupnaCijenaProizvoda = proizvod.CijenaSaPopustom * kolicina
+                };
+
+                var stavkaService = new NarudzbaStavkaService(_dbContext, _mapper);
+                var stavka = await stavkaService.Insert(novaStavka);
+
+                _dbContext.Narudzbas.Update(aktivnaNarudzba);
+                await _dbContext.SaveChangesAsync();
+
+                // Mapiranje entiteta na model prije vraćanja
+                var aktivnaNarudzbaModel = _mapper.Map<CarCareHub.Model.Narudzba>(aktivnaNarudzba);
+                return aktivnaNarudzbaModel;
+            }
+            else
+            {
+                var novaNarudzba = new NarudzbaInsert
+                {
+                    UkupnaCijenaNarudzbe = 0,
+                    ZavrsenaNarudzba = false,
+                    NarudzbaStavkas = new List<Model.NarudzbaStavka>()
+                };
+
+                var narudzba = await base.Insert(novaNarudzba);
+                var narudzbaModel = _mapper.Map<CarCareHub.Model.Narudzba>(narudzba);
+
+                return narudzbaModel;
+            }
         }
 
 
@@ -93,7 +164,7 @@ namespace CarCareHub.Services
 }
 
 
-       
-       
-    
+
+
+
 

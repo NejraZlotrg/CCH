@@ -307,59 +307,67 @@ ElevatedButton(
 ),
 
 
-          const SizedBox(height: 10), // Razmak između dugmadi
-          // Quantity selector
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () {
-                  setState(() {
-                    if (_quantity > 1) _quantity--;
-                  });
-                },
-              ),
-              Text('$_quantity', style: const TextStyle(fontSize: 20)),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    _quantity++;
-                  });
-                },
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    int narudzbaId =
-                        await _productProvider.getCurrentNarudzbaId();
-                    if (narudzbaId == -1) {
-                      narudzbaId = await _productProvider.createNewNarudzba();
-                    }
+const SizedBox(height: 10), // Razmak između dugmadi
 
-                    var request = {
-                      'proizvodId': widget.product?.proizvodId,
-                      'kolicina': _quantity,
-                      'narudzbaId': narudzbaId,
-                    };
+// Selector za količinu
+Row(
+  children: [
+    IconButton(
+      icon: const Icon(Icons.remove),
+      onPressed: () {
+        setState(() {
+          if (_quantity >= 1) _quantity--; // Smanji količinu, ali ne ispod 1
+        });
+      },
+    ),
+    Text('$_quantity', style: const TextStyle(fontSize: 20)), // Prikaz trenutne količine
+    IconButton(
+      icon: const Icon(Icons.add),
+      onPressed: () {
+        setState(() {
+          _quantity++; // Povećaj količinu
+        });
+      },
+    ),
+    const SizedBox(width: 10),
+    
+    // Dugme za dodavanje u korpu
+    ElevatedButton(
+      onPressed: () async {
+        try {
+          // Provera da li postoji aktivna narudžba
+         
+          // Priprema podataka za stavku
+          var request = {
+            'proizvodId': widget.product?.proizvodId,
+            'kolicina': _quantity, // Trenutna količina
+          'ukupnaCijenaProizvoda': (widget.product?.cijena ?? 0) * _quantity, // Ako cijena nije dostupna, postavi je na 0
+           // 'narudzbaId': 
+          };
 
-                    await _productProvider.addNarudzbaStavka(request);
+          // Dodavanje stavke u narudžbu
+         // await _productProvider.addNarudzbaStavka(request);
 
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          '${widget.product?.naziv ?? "Proizvod"} je dodan u košaricu.'),
-                    ));
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Greška: ${e.toString()}"),
-                    ));
-                  }
-                },
-                child: const Text("Dodaj u korpu"),
-              ),
-            ],
-          ),
+          // Obavijest korisniku
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('${widget.product?.naziv ?? "Proizvod"} je dodan u košaricu.'),
+          ));
+
+          // Opciono: Ažuriranje UI-a, npr. broj proizvoda u korpi
+          setState(() {});
+          
+        } catch (e) {
+          // Greška pri dodavanju u korpu
+         
+            print("Greška: ${e.toString()}"
+          );
+        }
+      },
+      child: const Text("Dodaj u korpu"),
+    ),
+  ],
+),
+
         ],
       ),
     );

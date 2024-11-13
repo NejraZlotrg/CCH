@@ -21,6 +21,8 @@ namespace CarCareHub.Model
         public int? PopustId { get; set; }
         [JsonIgnore]
         public decimal? UkupnaCijenaNarudzbe { get; set; }
+        public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
+
 
     }
 }

@@ -127,7 +127,7 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
                       cells: [
                         DataCell(Text(e.proizvod?.naziv ?? 'N/A')),
                         DataCell(Text(e.kolicina.toString())),
-                        DataCell(Text(e.narudzba?.narudzbaId.toString() ?? 'N/A')),
+                        DataCell(Text(e.narudzba?.zavrsenaNarudzba.toString() ?? 'N/A')),
                         DataCell(Text(e.ukupnaCijenaProizvoda.toString())),
                       ],
                     ),

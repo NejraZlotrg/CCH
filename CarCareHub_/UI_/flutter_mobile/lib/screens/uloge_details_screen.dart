@@ -8,7 +8,7 @@ import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:flutter/src/foundation/key.dart';
+
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
