@@ -2,7 +2,6 @@
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 
-import '../models/uloge.dart';
 
 class UlogeProvider extends BaseProvider<Uloge> {
   UlogeProvider():super("api/uloge");

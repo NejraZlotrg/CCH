@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/screens/product_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
@@ -17,17 +20,32 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   late ProductProvider _productProvider;
+
+  final _formKey = GlobalKey<FormBuilderState>();
+  late VoziloProvider _voziloProvider;
+  List<Vozilo>? vozila;
+
   SearchResult<Product>? result;
+
   final TextEditingController _nazivController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _nazivFirmeController = TextEditingController();
   final TextEditingController _gradController = TextEditingController();
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _productProvider = context.read<ProductProvider>();
+
+    _voziloProvider = context.read<VoziloProvider>();
+    _loadVozila();
+  }
+
+  Future<void> _loadVozila() async {
+    var vozilaResult = await _voziloProvider.get();
+    setState(() {
+      vozila = vozilaResult.result;
+    });
   }
 
   @override
@@ -46,275 +64,262 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget _buildSearch() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          // Prvi red za naziv proizvoda
-          Row(
-            children: [
-              SizedBox(
-                width: 410, // Postavite željenu širinu
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Naziv proizvoda',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivController,
-                ),
-              ),
-                            const SizedBox(width: 100),
-
-              Expanded(
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            labelText: "Poredaj po cijeni",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          items: <String>['--', 'Rastuća', 'Opadajuća']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) async {
-      if (value == 'Rastuća') {
-        // Call backend for ascending price sort
-        var data = await _productProvider.get(filter: {
-          'naziv': _nazivController.text,
-          'model': _modelController.text,
-          'nazivFirme': _nazivFirmeController.text,
-          'nazivGrada': _gradController.text,
-          'cijenaRastuca': true,  // Specify ascending sort
-
-        });
-        setState(() {
-          result = data;
-        });
-      } else if (value == 'Opadajuća') {
-        // Call backend for descending price sort
-        var data = await _productProvider.get(filter: {
-          'naziv': _nazivController.text,
-          'model': _modelController.text,
-          'nazivFirme': _nazivFirmeController.text,
-          'nazivGrada': _gradController.text,
-          'cijenaOpadajuca': true,  // Specify descending sort
-        });
-        setState(() {
-          result = data;
-        });
-      }
-    },
-  ),
-),
-            ],
-          ),
-          const SizedBox(height: 10), // Razmak između redova
-          // Drugi red za naziv firme, JIB ili MBS, i model
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "Naziv firme",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivFirmeController,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "JIB ili MBS",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: "Lokacija",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _gradController,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10), // Razmak između pretraga i dugmadi
-
-          // Ovdje dodajemo dropdown menue unutar ExpansionTile
-          ExpansionTile(
-            title: const Center(
-              // Centriranje naslova
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Dodatne opcije pretrage",
-                    style:
-                        TextStyle(color: Colors.red), // Obojite tekst u crveno
-                  ),
-                ],
-              ),
-            ),
-            children: [
-              Column(
-                children: [
-                  // Red za marku i godište vozila
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            labelText: "Marka vozila",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          items: <String>['Marka 1', 'Marka 2', 'Marka 3']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            // Logika za promjenu marke vozila
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 10), // Razmak između dropdown-a
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            labelText: "Godište vozila",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          items: <String>['2020', '2021', '2022', '2023']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            // Logika za promjenu godišta vozila
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10), // Razmak između redova
-
-                  // Dropdown za model
-                  DropdownButtonFormField<String>(
+      child: FormBuilder(
+        key: _formKey,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: 410,
+                  child: TextField(
                     decoration: InputDecoration(
-                      labelText: "Model",
+                      labelText: 'Naziv proizvoda',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
                       filled: true,
                       fillColor: Colors.white,
                     ),
-                    items: <String>['Model 1', 'Model 2', 'Model 3']
+                    controller: _nazivController,
+                  ),
+                ),
+                const SizedBox(width: 100),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: "Poredaj po cijeni",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    items: <String>['--', 'Rastuća', 'Opadajuća']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
                       );
                     }).toList(),
-                    onChanged: (String? value) {
-                      // Logika za promjenu modela
+                    onChanged: (String? value) async {
+                      if (value == 'Rastuća') {
+                        var data = await _productProvider.get(filter: {
+                          'naziv': _nazivController.text,
+                          'model': _modelController.text,
+                          'nazivFirme': _nazivFirmeController.text,
+                          'nazivGrada': _gradController.text,
+                          'cijenaRastuca': true,
+                        });
+                        setState(() {
+                          result = data;
+                        });
+                      } else if (value == 'Opadajuća') {
+                        var data = await _productProvider.get(filter: {
+                          'naziv': _nazivController.text,
+                          'model': _modelController.text,
+                          'nazivFirme': _nazivFirmeController.text,
+                          'nazivGrada': _gradController.text,
+                          'cijenaOpadajuca': true,
+                        });
+                        setState(() {
+                          result = data;
+                        });
+                      }
                     },
                   ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Naziv firme",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    controller: _nazivFirmeController,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "JIB ili MBS",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Lokacija",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    controller: _gradController,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ExpansionTile(
+              title: const Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Dodatne opcije pretrage",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-
-          const SizedBox(height: 10), // Razmak između dugmadi
-          Row(
-  mainAxisAlignment: MainAxisAlignment.end, // Poravnava dugmad desno
-  children: [
-    ElevatedButton(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ProductDetailScreen(product: null),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.teal,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.add, color: Colors.white),
-          SizedBox(width: 8.0),
-          Text('Dodaj', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    ),
-        const SizedBox(width: 10), // Razmak između dugmadi
-
-    ElevatedButton(
-      onPressed: () async {
-        var data = await _productProvider.get(filter: {
-          'naziv': _nazivController.text,
-          'model': _modelController.text,
-          'nazivFirme': _nazivFirmeController.text,
-          'nazivGrada': _gradController.text
-        });
-
-        setState(() {
-          result = data;
-        });
-      },
-      
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blueGrey,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.search, color: Colors.white),
-          SizedBox(width: 8.0),
-          Text('Pretraga', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    ),
-    const SizedBox(width: 10), // Razmak između dugmadi
-    
-  ],
-),
-        ],
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FormBuilderDropdown(
+                            name: 'voziloId',
+                            decoration: InputDecoration(
+                              labelText: 'Marka vozila',
+                              suffix: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  _formKey.currentState!.fields['voziloId']
+                                      ?.reset();
+                                },
+                              ),
+                              hintText: 'Odaberite marku vozila',
+                            ),
+                            items: vozila
+                                    ?.map((vozilo) => DropdownMenuItem(
+                                          value: vozilo.markaVozila,
+                                          child: Text(vozilo.markaVozila ?? ""),
+                                        ))
+                                    .toList() ??
+                                [],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              labelText: "Godište vozila",
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            items: <String>['2020', '2021', '2022', '2023']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              // Logika za promjenu godišta vozila
+                            },
+                          ),
+                        ),
+                        // Dropdown za model
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              labelText: "Model",
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            items: <String>['Model 1', 'Model 2', 'Model 3']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              // Logika za promjenu modela
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: _onSearchPressed,
+                  child: const Row(
+                    children: [
+                      Icon(Icons.search),
+                      SizedBox(width: 8.0),
+                      Text('Pretraga'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _onSearchPressed() async {
+    print("Pokretanje pretrage: ${_nazivController.text}");
+
+    var filterParams = {
+      'IsAllIncluded': 'true',
+    };
+
+    // Dodavanje naziva u filter ako je unesen
+    if (_nazivController.text.isNotEmpty) {
+      filterParams['naziv'] = _nazivController.text;
+    }
+
+    // Dodavanje marke vozila u filter ako je odabran
+    var markaVozilaValue = _formKey.currentState?.fields['voziloId']?.value;
+    if (markaVozilaValue != null) {
+      print(
+          "Odabrana marka vozila : $markaVozilaValue"); // Debug izlaz za odabrani grad
+      filterParams['markaVozila'] = markaVozilaValue.toString();
+    } else {
+      print("vozilo nije odabrano."); // Debug ako grad nije odabran
+    }
+
+    print("Filter params: $filterParams");
+
+    // Pozivanje API-ja sa filterima
+    var data = await _productProvider.get(filter: filterParams);
+
+    if (mounted) {
+      setState(() {
+        result = data; // Ažuriraj rezultate sa podacima dobijenim iz backend-a
+      });
+    }
   }
 
   Widget _buildDataListView() {

@@ -26,7 +26,6 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
   List<Grad>? gradovi;
 
   final TextEditingController _nazivController = TextEditingController();
-  final TextEditingController _nazivGradaController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -75,25 +74,26 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
           ),
           const SizedBox(height: 10),
           FormBuilderDropdown(
-  name: 'gradId',
-  decoration: InputDecoration(
-    labelText: 'Grad',
-    suffix: IconButton(
-      icon: const Icon(Icons.close),
-      onPressed: () {
-        _formKey.currentState!.fields['gradId']?.reset();
-      },
-    ),
-    hintText: 'Odaberite grad',
-  ),
-  items: gradovi
-      ?.map((grad) => DropdownMenuItem(
-            value: grad.nazivGrada,  // Promjena: šaljemo nazivGrada
-            child: Text(grad.nazivGrada ?? ""),
-          ))
-      .toList() ?? [],
-)
-,
+            name: 'gradId',
+            decoration: InputDecoration(
+              labelText: 'Grad',
+              suffix: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  _formKey.currentState!.fields['gradId']?.reset();
+                },
+              ),
+              hintText: 'Odaberite grad',
+            ),
+            items: gradovi
+                    ?.map((grad) => DropdownMenuItem(
+                          value:
+                              grad.nazivGrada, // Promjena: šaljemo nazivGrada
+                          child: Text(grad.nazivGrada ?? ""),
+                        ))
+                    .toList() ??
+                [],
+          ),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,39 +133,39 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
     );
   }
 
- Future<void> _onSearchPressed() async {
-  print("Pokretanje pretrage: ${_nazivController.text}");
+  Future<void> _onSearchPressed() async {
+    print("Pokretanje pretrage: ${_nazivController.text}");
 
-  var filterParams = {
-    'IsAllIncluded': 'true',
-  };
+    var filterParams = {
+      'IsAllIncluded': 'true',
+    };
 
-  // Dodavanje naziva u filter ako je unesen
-  if (_nazivController.text.isNotEmpty) {
-    filterParams['naziv'] = _nazivController.text;
+    // Dodavanje naziva u filter ako je unesen
+    if (_nazivController.text.isNotEmpty) {
+      filterParams['naziv'] = _nazivController.text;
+    }
+
+    // Dodavanje naziva grada u filter ako je odabran
+    var nazivGradaValue = _formKey.currentState?.fields['gradId']?.value;
+    if (nazivGradaValue != null) {
+      print(
+          "Odabrani naziv grada: $nazivGradaValue"); // Debug izlaz za odabrani grad
+      filterParams['nazivGrada'] = nazivGradaValue.toString();
+    } else {
+      print("Grad nije odabran."); // Debug ako grad nije odabran
+    }
+
+    print("Filter params: $filterParams");
+
+    // Pozivanje API-ja sa filterima
+    var data = await _autoservisProvider.get(filter: filterParams);
+
+    if (mounted) {
+      setState(() {
+        result = data; // Ažuriraj rezultate sa podacima dobijenim iz backend-a
+      });
+    }
   }
-
-  // Dodavanje naziva grada u filter ako je odabran
-  var nazivGradaValue = _formKey.currentState?.fields['gradId']?.value;
-  if (nazivGradaValue != null) {
-    print("Odabrani naziv grada: $nazivGradaValue"); // Debug izlaz za odabrani grad
-    filterParams['nazivGrada'] = nazivGradaValue.toString();
-  } else {
-    print("Grad nije odabran."); // Debug ako grad nije odabran
-  }
-
-  print("Filter params: $filterParams");
-
-  // Pozivanje API-ja sa filterima
-  var data = await _autoservisProvider.get(filter: filterParams);
-
-  if (mounted) {
-    setState(() {
-      result = data; // Ažuriraj rezultate sa podacima dobijenim iz backend-a
-    });
-  }
-}
-
 
   Widget _buildCardList() {
     return SingleChildScrollView(

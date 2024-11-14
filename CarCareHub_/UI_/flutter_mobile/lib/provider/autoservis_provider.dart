@@ -1,7 +1,6 @@
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 
-import '../models/autoservis.dart';
 
 class AutoservisProvider extends BaseProvider<Autoservis> {
  AutoservisProvider(): super("api/Autoservis"); //izmjena 16.9

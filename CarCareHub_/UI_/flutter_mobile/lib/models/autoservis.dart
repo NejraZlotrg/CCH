@@ -1,7 +1,6 @@
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'grad.dart';
 part 'autoservis.g.dart';
 
 @JsonSerializable()
