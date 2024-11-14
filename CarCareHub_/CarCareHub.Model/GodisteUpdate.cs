@@ -10,6 +10,5 @@ namespace CarCareHub.Model
     {
 
         public int? Godiste_ { get; set; }
-        public int? ModelId { get; set; }
     }
 }

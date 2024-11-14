@@ -12,7 +12,9 @@ namespace CarCareHub.Services.Database
         public string? NazivModela { get; set; }
         public int VoziloId { get; set; }
         public Vozilo? Vozilo {get;set;}
-        public virtual ICollection<Godiste> Godistes { get; set; } = new List<Godiste>(); //Njera dodala za modele
+
+        public int GodisteId { get; set; }
+        public Godiste? Godiste { get; set; }
 
 
 

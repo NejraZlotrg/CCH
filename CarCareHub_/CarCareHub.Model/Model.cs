@@ -12,5 +12,8 @@ namespace CarCareHub.Model
         public string? NazivModela { get; set; }
         public int? VoziloId { get; set; }
         public Vozilo? Vozilo { get; set; }
+
+        public int GodisteId { get; set; }
+        public Godiste? Godiste { get; set; }
     }
 }

@@ -24,23 +24,19 @@ namespace CarCareHub.Services
             {
                 query = query.Where(x => x.Godiste_==search.Godiste_);
             }
-            if (!string.IsNullOrWhiteSpace(search?.NazivModela))
-            {
-                query = query.Where(x => x.Model.NazivModela.StartsWith(search.NazivModela));
-            }
+          
             return base.AddFilter(query, search);
         }
 
-        public override IQueryable<Database.Godiste> AddInclude(IQueryable<Database.Godiste> query, GodisteSearchObject? search = null)
-        {
-            // Uključujemo samo entitet Uloge
-            if (search?.IsAllIncluded == true)
-            {
-                query = query.Include(z => z.Model);
-                query = query.Include(z => z.Model.Vozilo);
-            }
-            return base.AddInclude(query, search);
-        }
+        //public override IQueryable<Database.Godiste> AddInclude(IQueryable<Database.Godiste> query, GodisteSearchObject? search = null)
+        //{
+        //    // Uključujemo samo entitet Uloge
+        //    if (search?.IsAllIncluded == true)
+        //    {
+              
+        //    }
+        //    return base.AddInclude(query, search);
+        //}
     }
 
 

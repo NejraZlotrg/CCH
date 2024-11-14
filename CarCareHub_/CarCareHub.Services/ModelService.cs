@@ -28,8 +28,15 @@ namespace CarCareHub.Services
             {
                 query = query.Where(x => x.Vozilo.MarkaVozila.StartsWith(search.MarkaVozila));
             }
+            if (search?.Godiste_ != null)
+            {
+                query = query.Where(x => x.Godiste.Godiste_ == search.Godiste_);
+            }
+            return base.AddFilter(query, search);
+
             return base.AddFilter(query, search);
     }
+
 
     public override IQueryable<Database.Model> AddInclude(IQueryable<Database.Model> query, ModelSearchObject? search = null)
     {
@@ -37,8 +44,10 @@ namespace CarCareHub.Services
         if (search?.IsAllIncluded == true)
         {
             query = query.Include(z => z.Vozilo);
-        }
-        return base.AddInclude(query, search);
+                query = query.Include(z => z.Godiste);
+
+            }
+            return base.AddInclude(query, search);
     }
 }
 

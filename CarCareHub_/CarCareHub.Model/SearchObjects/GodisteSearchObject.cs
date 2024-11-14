@@ -11,7 +11,6 @@ namespace CarCareHub.Model.SearchObjects
         public int? Godiste_ { get; set; }
 
         public bool? IsAllIncluded { get; set; }
-        public string? NazivModela { get; set; }
 
     }
 }
