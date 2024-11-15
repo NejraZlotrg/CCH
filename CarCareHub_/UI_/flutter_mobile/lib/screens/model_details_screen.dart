@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/models/godiste.dart';
 import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
@@ -23,6 +25,8 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
   late VoziloProvider _voziloProvider;
   late ModelProvider _modelProvider;
   SearchResult<Vozilo>? voziloResult;
+  SearchResult<Godiste>? godisteResult;
+  late GodisteProvider _godisteProvider;
 
   bool isLoading = true;
 
@@ -31,16 +35,19 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
     super.initState();
     _initialValues = {
       'nazivModela': widget.model?.nazivModela,
-      'voziloId': widget.model?.vozilo.voziloId
+      'voziloId': widget.model?.vozilo.voziloId,
+      'godisteId': widget.model?.godiste.godisteId
     };
 
     _modelProvider = context.read<ModelProvider>();
     _voziloProvider = context.read<VoziloProvider>();
+    _godisteProvider = context.read<GodisteProvider>();
     initForm();
   }
 
   Future<void> initForm() async {
     voziloResult = await _voziloProvider.get(); 
+    godisteResult = await _godisteProvider.get();
     print(voziloResult);
 
     setState(() {
@@ -108,21 +115,6 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
           Row(
             children: [
               Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Naziv modela"),
-                  name: "nazivModela",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Marka vozila"),
-                  name: "markaVozila", // Novo polje za unos marke vozila
-                  onChanged: (value) {
-                    // Ovdje možeš dodati logiku za pretragu
-                  },
-                ),
-              ),
-              Expanded(
                 child: FormBuilderDropdown(
                   name: 'voziloId',
                   decoration: InputDecoration(
@@ -146,7 +138,38 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                               ))
                           .toList() ?? [],
                 ),
-              )
+              ),
+                            Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(labelText: "Naziv modela"),
+                  name: "nazivModela",
+                ),
+              ),
+              Expanded(
+                child: FormBuilderDropdown(
+                  name: 'godisteId',
+                  decoration: InputDecoration(
+                    labelText: 'Godiste',
+                    suffix: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        _formKey.currentState!.fields['godisteId']?.reset();
+                      },
+                    ),
+                    hintText: 'Odaberi godiste',
+                  ),
+                  initialValue: widget.model?.godiste.godisteId != null
+                      ? widget.model!.godiste.godisteId.toString()
+                      : null,
+                  items: godisteResult?.result
+                          .map((item) => DropdownMenuItem(
+                                alignment: AlignmentDirectional.center,
+                                value: item.godisteId.toString(),
+                                child: Text(item.godiste_.toString()),
+                              ))
+                          .toList() ?? [],
+                ),
+              ),
             ],
           ),
         ],

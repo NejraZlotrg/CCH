@@ -338,12 +338,6 @@ Row(
           // Provera da li postoji aktivna narudžba
          
           // Priprema podataka za stavku
-          var request = {
-            'proizvodId': widget.product?.proizvodId,
-            'kolicina': _quantity, // Trenutna količina
-          'ukupnaCijenaProizvoda': (widget.product?.cijena ?? 0) * _quantity, // Ako cijena nije dostupna, postavi je na 0
-           // 'narudzbaId': 
-          };
 
           // Dodavanje stavke u narudžbu
          // await _productProvider.addNarudzbaStavka(request);

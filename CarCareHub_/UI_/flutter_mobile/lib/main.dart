@@ -3,6 +3,7 @@ import 'package:flutter_mobile/provider/autoservis_provider.dart';
 
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
+import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
@@ -39,6 +40,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => FirmaAutodijelovaProvider()),
         ChangeNotifierProvider(create: (_) => ZaposlenikProvider()),
         ChangeNotifierProvider(create: (_) => ProizvodjacProvider()),
+        ChangeNotifierProvider(create: (_) => GodisteProvider()),
         
 
 

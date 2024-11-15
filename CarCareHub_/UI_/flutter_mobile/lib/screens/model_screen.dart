@@ -55,23 +55,24 @@ class _ModelScreenState extends State<ModelScreen> {
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
-                labelText: 'Naziv modela',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _nazivModelaController,
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
                 labelText: 'Marka vozila',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
               controller: _markaVozilaController,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: 'Naziv modela',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivModelaController,
             ),
           ),
           const SizedBox(width: 10),
@@ -136,13 +137,19 @@ onPressed: () async {
           columns: const [
             DataColumn(
               label: Text(
+                'Marka vozila',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+            DataColumn(
+              label: Text(
                 'Naziv modela',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
             DataColumn(
               label: Text(
-                'Marka vozila',
+                'Godiste',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
@@ -161,8 +168,9 @@ onPressed: () async {
                       }
                     },
                     cells: [
-                      DataCell(Text(e.nazivModela)),
                       DataCell(Text(e.vozilo.markaVozila ?? "")),
+                      DataCell(Text(e.nazivModela)),
+                      DataCell(Text(e.godiste.godiste_.toString())),
 
                     ],
                   ),

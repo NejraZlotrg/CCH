@@ -4,6 +4,7 @@ import 'package:flutter_mobile/screens/autoservis_screen.dart';
 
 import 'package:flutter_mobile/screens/drzave_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
+import 'package:flutter_mobile/screens/godiste_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
@@ -130,6 +131,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const DrzaveScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.map),
+              title: const Text('Godiste'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const GodisteScreen(),
                   ),
                 );
               },

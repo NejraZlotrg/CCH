@@ -1,5 +1,6 @@
 
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
+import 'package:flutter_mobile/models/godiste.dart';
 import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -23,11 +24,11 @@ class Product {
   final FirmaAutodijelova? firmaAutoDijelova;
   int? proizvodjacId;
   final Vozilo? vozilo;
-  //final Model? _model;
-  //final Godiste? godiste;
+  int? godisteId;
+  final Godiste? godiste;
 
-  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.model,this.opis,this.voziloId,
-  this.kategorijaId,this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutoDijelova,this.vozilo,/*this._model*/);
+  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.voziloId,
+  this.kategorijaId,this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutoDijelova,this.vozilo,this.model,this.godiste,this.godisteId);
 
   factory Product.fromJson(Map<String,dynamic> json) => _$ProductFromJson(json);
 

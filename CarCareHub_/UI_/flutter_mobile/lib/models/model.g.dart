@@ -11,6 +11,8 @@ Model _$ModelFromJson(Map<String, dynamic> json) => Model(
       json['nazivModela'] as String,
       Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
       (json['voziloId'] as num).toInt(),
+      (json['godisteId'] as num?)?.toInt(),
+      Godiste.fromJson(json['godiste'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ModelToJson(Model instance) => <String, dynamic>{
@@ -18,4 +20,6 @@ Map<String, dynamic> _$ModelToJson(Model instance) => <String, dynamic>{
       'nazivModela': instance.nazivModela,
       'voziloId': instance.voziloId,
       'vozilo': instance.vozilo,
+      'godisteId': instance.godisteId,
+      'godiste': instance.godiste,
     };
