@@ -600,11 +600,11 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("int")
                         .HasColumnName("kategorijaID");
 
-                    b.Property<string>("Model")
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
-                        .HasColumnName("model");
+                    b.Property<int?>("ModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModelProizvoda")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Naziv")
                         .HasMaxLength(50)
@@ -653,6 +653,8 @@ namespace CarCareHub.Services.Migrations
                     b.HasIndex("FirmaAutodijelovaID");
 
                     b.HasIndex("KategorijaId");
+
+                    b.HasIndex("ModelId");
 
                     b.HasIndex("ProizvodjacId");
 
@@ -1051,12 +1053,16 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("KategorijaId")
                         .HasConstraintName("fk_kategorija_proizvod");
 
+                    b.HasOne("CarCareHub.Services.Database.Model", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId");
+
                     b.HasOne("CarCareHub.Services.Database.Proizvodjac", "Proizvodjac")
                         .WithMany("Proizvods")
                         .HasForeignKey("ProizvodjacId")
                         .HasConstraintName("fk_proizvodjac_proizvod");
 
-                    b.HasOne("CarCareHub.Services.Database.Vozilo", "Vozilo")
+                    b.HasOne("CarCareHub.Services.Database.Vozilo", null)
                         .WithMany("Proizvods")
                         .HasForeignKey("VoziloId");
 
@@ -1064,9 +1070,9 @@ namespace CarCareHub.Services.Migrations
 
                     b.Navigation("Kategorija");
 
-                    b.Navigation("Proizvodjac");
+                    b.Navigation("Model");
 
-                    b.Navigation("Vozilo");
+                    b.Navigation("Proizvodjac");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Usluge", b =>

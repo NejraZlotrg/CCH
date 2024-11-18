@@ -19,9 +19,11 @@ namespace CarCareHub.Model.SearchObjects
 
         public string? MarkaVozila { get; set; }  
         public int? GodisteVozila { get; set; }
-        public string? Model { get; set; }  
+        public string? ModelProizvoda { get; set; }  
         public int? KategorijaId { get; set; }
         public bool? CijenaOpadajuca { get; set; }
         public bool? CijenaRastuca { get; set; }
+        public string? NazivModela { get; set; }
+
     }
 }

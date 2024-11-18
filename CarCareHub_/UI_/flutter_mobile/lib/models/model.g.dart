@@ -8,11 +8,15 @@ part of 'model.dart';
 
 Model _$ModelFromJson(Map<String, dynamic> json) => Model(
       (json['modelId'] as num).toInt(),
-      json['nazivModela'] as String,
-      Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
-      (json['voziloId'] as num).toInt(),
+      json['nazivModela'] as String?,
+      json['vozilo'] == null
+          ? null
+          : Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
+      (json['voziloId'] as num?)?.toInt(),
       (json['godisteId'] as num?)?.toInt(),
-      Godiste.fromJson(json['godiste'] as Map<String, dynamic>),
+      json['godiste'] == null
+          ? null
+          : Godiste.fromJson(json['godiste'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ModelToJson(Model instance) => <String, dynamic>{

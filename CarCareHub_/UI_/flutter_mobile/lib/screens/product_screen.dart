@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/screens/product_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
@@ -22,8 +25,12 @@ class _ProductScreenState extends State<ProductScreen> {
   late ProductProvider _productProvider;
 
   final _formKey = GlobalKey<FormBuilderState>();
+  late ModelProvider _modelProvider;
   late VoziloProvider _voziloProvider;
-  List<Vozilo>? vozila;
+
+  List<Model>? model;
+  List<Vozilo>? vozilo;
+
 
   SearchResult<Product>? result;
 
@@ -37,14 +44,20 @@ class _ProductScreenState extends State<ProductScreen> {
     super.didChangeDependencies();
     _productProvider = context.read<ProductProvider>();
 
+    _modelProvider = context.read<ModelProvider>();
     _voziloProvider = context.read<VoziloProvider>();
-    _loadVozila();
+
+    _loadModel();
   }
 
-  Future<void> _loadVozila() async {
-    var vozilaResult = await _voziloProvider.get();
+  Future<void> _loadModel() async {
+    var modelResult = await _modelProvider.get();
+    var voziloResult = await _voziloProvider.get();
+
     setState(() {
-      vozila = vozilaResult.result;
+      model = modelResult.result;
+      vozilo = voziloResult.result;
+
     });
   }
 
@@ -60,6 +73,7 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
     );
   }
+  
 
   Widget _buildSearch() {
     return Padding(
@@ -191,22 +205,22 @@ class _ProductScreenState extends State<ProductScreen> {
                       children: [
                         Expanded(
                           child: FormBuilderDropdown(
-                            name: 'voziloId',
+                            name: 'modelId',
                             decoration: InputDecoration(
-                              labelText: 'Marka vozila',
+                              labelText: 'Marka modela',
                               suffix: IconButton(
                                 icon: const Icon(Icons.close),
                                 onPressed: () {
-                                  _formKey.currentState!.fields['voziloId']
+                                  _formKey.currentState!.fields['modelId']
                                       ?.reset();
                                 },
                               ),
-                              hintText: 'Odaberite marku vozila',
+                              hintText: 'Odaberite marku modela',
                             ),
-                            items: vozila
-                                    ?.map((vozilo) => DropdownMenuItem(
-                                          value: vozilo.markaVozila,
-                                          child: Text(vozilo.markaVozila ?? ""),
+                            items: model
+                                    ?.map((model) => DropdownMenuItem(
+                                          value: model.nazivModela,
+                                          child: Text(model.nazivModela ?? ""),
                                         ))
                                     .toList() ??
                                 [],
@@ -306,29 +320,36 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Future<void> _onSearchPressed() async {
-    print("Pokretanje pretrage: ${_nazivController.text}");
+  print("Pokretanje pretrage: ${_nazivController.text}");
 
-    var filterParams = {
-      'IsAllIncluded': 'true',
-    };
+  var filterParams = {
+    'IsAllIncluded': 'true',
+  };
 
-    // Dodavanje naziva u filter ako je unesen
-    if (_nazivController.text.isNotEmpty) {
-      filterParams['naziv'] = _nazivController.text;
+  // Dodavanje naziva u filter ako je unesen
+  if (_nazivController.text.isNotEmpty) {
+    filterParams['naziv'] = _nazivController.text;
+  }
+
+  // Dodavanje marke vozila u filter ako je odabran
+  var markaVozilaValue = _formKey.currentState?.fields['voziloId']?.value;
+
+  if (markaVozilaValue != null) {
+    // Assuming markaVozilaValue is an instance of the Vozilo model
+    if (markaVozilaValue is Vozilo) {
+      print("Odabrana marka vozila: ${markaVozilaValue.markaVozila}");
+      filterParams['voziloId'] = markaVozilaValue.voziloId.toString(); // Store voziloId in filterParams
     }
+  }
 
-    // Dodavanje marke vozila u filter ako je odabran
-    var markaVozilaValue = _formKey.currentState?.fields['voziloId']?.value;
-    if (markaVozilaValue != null) {
-      print(
-          "Odabrana marka vozila : $markaVozilaValue"); // Debug izlaz za odabrani grad
-      filterParams['markaVozila'] = markaVozilaValue.toString();
-    } else {
-      print("vozilo nije odabrano."); // Debug ako grad nije odabran
-    }
+  print("Filter params: $filterParams");
 
-    print("Filter params: $filterParams");
+  // Display loading indicator while fetching data
+  setState(() {
+    // You can use a loading state flag here if needed
+  });
 
+  try {
     // Pozivanje API-ja sa filterima
     var data = await _productProvider.get(filter: filterParams);
 
@@ -337,7 +358,12 @@ class _ProductScreenState extends State<ProductScreen> {
         result = data; // Ažuriraj rezultate sa podacima dobijenim iz backend-a
       });
     }
+  } catch (e) {
+    print("Error during fetching data: $e");
+    // Handle the error, maybe show a snackbar or alert to the user
   }
+}
+
 
   Widget _buildDataListView() {
     return Expanded(

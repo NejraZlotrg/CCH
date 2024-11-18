@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class mig1 : Migration
+    public partial class ghg : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,19 @@ namespace CarCareHub.Services.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_drzava", x => x.DrzavaID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Godiste",
+                columns: table => new
+                {
+                    GodisteId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Godiste_ = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Godiste", x => x.GodisteId);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,11 +143,18 @@ namespace CarCareHub.Services.Migrations
                     ModelId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NazivModela = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VoziloId = table.Column<int>(type: "int", nullable: false)
+                    VoziloId = table.Column<int>(type: "int", nullable: false),
+                    GodisteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Model", x => x.ModelId);
+                    table.ForeignKey(
+                        name: "FK_Model_Godiste_GodisteId",
+                        column: x => x.GodisteId,
+                        principalTable: "Godiste",
+                        principalColumn: "GodisteId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Model_Vozilos_VoziloId",
                         column: x => x.VoziloId,
@@ -249,25 +269,6 @@ namespace CarCareHub.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Godiste",
-                columns: table => new
-                {
-                    GodisteId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Godiste_ = table.Column<int>(type: "int", nullable: true),
-                    ModelId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Godiste", x => x.GodisteId);
-                    table.ForeignKey(
-                        name: "FK_Godiste_Model_ModelId",
-                        column: x => x.ModelId,
-                        principalTable: "Model",
-                        principalColumn: "ModelId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Usluge",
                 columns: table => new
                 {
@@ -350,19 +351,25 @@ namespace CarCareHub.Services.Migrations
                     Popust = table.Column<int>(type: "int", nullable: true),
                     sifra = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     originalni_broj = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    model = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    ModelProizvoda = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     opis = table.Column<string>(type: "text", nullable: true),
                     kategorijaID = table.Column<int>(type: "int", nullable: true),
-                    VoziloId = table.Column<int>(type: "int", nullable: true),
+                    ModelId = table.Column<int>(type: "int", nullable: true),
                     proizvodjacID = table.Column<int>(type: "int", nullable: true),
                     Slika = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     SlikaThumb = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     StateMachine = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FirmaAutodijelovaID = table.Column<int>(type: "int", nullable: true)
+                    FirmaAutodijelovaID = table.Column<int>(type: "int", nullable: true),
+                    VoziloId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_proizvod", x => x.ProizvodID);
+                    table.ForeignKey(
+                        name: "FK_Proizvod_Model_ModelId",
+                        column: x => x.ModelId,
+                        principalTable: "Model",
+                        principalColumn: "ModelId");
                     table.ForeignKey(
                         name: "FK_Proizvod_Vozilos_VoziloId",
                         column: x => x.VoziloId,
@@ -628,11 +635,6 @@ namespace CarCareHub.Services.Migrations
                 column: "ulogaID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Godiste_ModelId",
-                table: "Godiste",
-                column: "ModelId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Grad_drzavaID",
                 table: "Grad",
                 column: "drzavaID");
@@ -641,6 +643,11 @@ namespace CarCareHub.Services.Migrations
                 name: "IX_Klijent_gradID",
                 table: "Klijent",
                 column: "gradID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Model_GodisteId",
+                table: "Model",
+                column: "GodisteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Model_VoziloId",
@@ -686,6 +693,11 @@ namespace CarCareHub.Services.Migrations
                 name: "IX_Proizvod_kategorijaID",
                 table: "Proizvod",
                 column: "kategorijaID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Proizvod_ModelId",
+                table: "Proizvod",
+                column: "ModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Proizvod_proizvodjacID",
@@ -735,9 +747,6 @@ namespace CarCareHub.Services.Migrations
                 name: "BPAutodijeloviAutoservis");
 
             migrationBuilder.DropTable(
-                name: "Godiste");
-
-            migrationBuilder.DropTable(
                 name: "NarudzbaStavkas");
 
             migrationBuilder.DropTable(
@@ -751,9 +760,6 @@ namespace CarCareHub.Services.Migrations
 
             migrationBuilder.DropTable(
                 name: "Zaposlenik_Proizvod");
-
-            migrationBuilder.DropTable(
-                name: "Model");
 
             migrationBuilder.DropTable(
                 name: "Narudzbas");
@@ -774,6 +780,9 @@ namespace CarCareHub.Services.Migrations
                 name: "Zaposlenik");
 
             migrationBuilder.DropTable(
+                name: "Model");
+
+            migrationBuilder.DropTable(
                 name: "Kategorija");
 
             migrationBuilder.DropTable(
@@ -784,6 +793,9 @@ namespace CarCareHub.Services.Migrations
 
             migrationBuilder.DropTable(
                 name: "Autoservis");
+
+            migrationBuilder.DropTable(
+                name: "Godiste");
 
             migrationBuilder.DropTable(
                 name: "Izvjestaj");

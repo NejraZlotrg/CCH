@@ -71,7 +71,11 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.FirmaAutodijelova.Grad);
                 query = query.Include(z => z.FirmaAutodijelova.Grad.Drzava);
                 query = query.Include(z => z.FirmaAutodijelova.Uloga);
-                query = query.Include(h => h.Vozilo);
+                query = query.Include(h => h.Model);
+                query = query.Include(h => h.Model.Vozilo);
+
+
+
             }
             return base.AddInclude(query, search);
         }
@@ -109,7 +113,7 @@ namespace CarCareHub.Services
             if (!string.IsNullOrWhiteSpace(search?.MarkaVozila))
             {
                
-                query = query.Where(x => x.Vozilo.MarkaVozila.StartsWith(search.MarkaVozila));
+                query = query.Where(x => x.Model.Vozilo.MarkaVozila.StartsWith(search.MarkaVozila));
             }
 
             //if (search.GodisteVozila != null)
@@ -117,9 +121,14 @@ namespace CarCareHub.Services
             //    query = query.Where(x => x.Vozilo.GodisteVozila == search.GodisteVozila);
             //}
 
-            if (!string.IsNullOrWhiteSpace(search?.Model))
+         //   if (!string.IsNullOrWhiteSpace(search?.ModelProizvoda))
+           // {
+            //    query = query.Where(x => x.ModelProizvoda.StartsWith(search.ModelProizvoda));
+            //}
+
+            if (!string.IsNullOrWhiteSpace(search?.NazivModela))
             {
-                query = query.Where(x => x.Vozilo.Models.Any(x=> x.NazivModela.StartsWith(search.Model)));
+                query = query.Where(x => x.Model.NazivModela.StartsWith(search.NazivModela));
             }
 
             if (search?.GodisteVozila!=null)

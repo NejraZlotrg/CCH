@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/kategorija.dart';
+import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,8 +34,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   int _quantity = 1;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
-  late VoziloProvider _voziloProvider;
-  SearchResult<Vozilo>? voziloResult;
+  late ModelProvider _modelProvider;
+  SearchResult<Model>? modelResult;
   late KategorijaProvider _kategorijaProvider;
   SearchResult<Kategorija>? kategorijaResult;
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
@@ -45,7 +47,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     _productProvider = context.read<ProductProvider>();
-    _voziloProvider = context.read<VoziloProvider>();
+    _modelProvider = context.read<ModelProvider>();
     _kategorijaProvider = context.read<KategorijaProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
@@ -54,7 +56,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   }
 
  Future<void> initForm() async {
-  voziloResult = await _voziloProvider.get();
+  modelResult = await _modelProvider.get();
   kategorijaResult = await _kategorijaProvider.get();
   firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
   proizvodjacResult = await _proizvodjacProvider.get();
@@ -164,7 +166,7 @@ Future<File> _getImageFileFromBase64(String base64String) async {
           FormBuilderTextField(
             decoration: const InputDecoration(labelText: "Model"),
             name: "model",
-            initialValue: widget.product?.model ?? '',
+            initialValue: widget.product?.modelProizvoda?? '',
           ),
           const SizedBox(height: 10), // Razmak između polja
           FormBuilderDropdown(
@@ -215,21 +217,22 @@ Future<File> _getImageFileFromBase64(String base64String) async {
                 [],
           ),
           const SizedBox(height: 10),
-          FormBuilderDropdown(
-            name: 'voziloId',
-            decoration: const InputDecoration(
-              labelText: 'Vozilo',
-              hintText: 'vozilo',
-            ),
-            initialValue: widget.product?.voziloId?.toString(),
-            items: voziloResult?.result.map((item) {
-                  return DropdownMenuItem(
-                    value: item.voziloId.toString(),
-                    child: Text(item.markaVozila ?? ""),
-                  );
-                }).toList() ??
-                [],
-          ),
+         FormBuilderDropdown(
+  name: 'modelId',
+  decoration: const InputDecoration(
+    labelText: 'Model',
+    hintText: 'Odaberite Model',
+  ),
+  initialValue: widget.product?.model?.modelId?.toString(),
+
+  items: modelResult?.result.map((item) {
+        return DropdownMenuItem(
+          value: item.modelId.toString(),
+          child: Text(item.nazivModela ?? ""),
+        );
+      }).toList() ??
+      [],
+),
           const SizedBox(height: 10), // Razmak između polja
           FormBuilderTextField(
             decoration: const InputDecoration(labelText: "Cijena"),
@@ -262,7 +265,8 @@ ElevatedButton(
     request['kategorijaId'] = int.tryParse(_formKey.currentState!.fields['kategorijaId']?.value ?? '0');
     request['proizvodjacId'] = int.tryParse(_formKey.currentState!.fields['proizvodjacId']?.value ?? '0');
     request['firmaAutoDijelovaID'] = int.tryParse(_formKey.currentState!.fields['firmaAutoDijelovaID']?.value ?? '0');
-    request['voziloId'] = int.tryParse(_formKey.currentState!.fields['voziloId']?.value ?? '0');
+    request['modelId'] = int.tryParse(_formKey.currentState!.fields['modelId']?.value ?? '0');
+
     request['cijena'] = double.tryParse(_formKey.currentState!.fields['cijena']?.value ?? '0');
 
     // Provjeri vrijednost opis

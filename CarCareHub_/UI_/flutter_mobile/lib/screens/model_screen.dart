@@ -168,9 +168,9 @@ onPressed: () async {
                       }
                     },
                     cells: [
-                      DataCell(Text(e.vozilo.markaVozila ?? "")),
-                      DataCell(Text(e.nazivModela)),
-                      DataCell(Text(e.godiste.godiste_.toString())),
+                      DataCell(Text(e.vozilo?.markaVozila ?? "")),
+                      DataCell(Text(e.nazivModela ?? "")),
+                      DataCell(Text(e.godiste!.godiste_.toString())),
 
                     ],
                   ),

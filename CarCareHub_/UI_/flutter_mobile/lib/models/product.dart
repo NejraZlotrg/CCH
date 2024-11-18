@@ -16,19 +16,21 @@ class Product {
   String? slika;
   double? cijenaSaPopustom;
   String? originalniBroj;
-  String? model;
+  String? modelProizvoda;
   String? opis;
-  int? voziloId;
+  int? modelId;
   int? kategorijaId;
   int? firmaAutodijelovaID;
   final FirmaAutodijelova? firmaAutoDijelova;
   int? proizvodjacId;
-  final Vozilo? vozilo;
+  final Model? model;
   int? godisteId;
   final Godiste? godiste;
+  final Vozilo? vozilo;
+  int? voziloId;
 
-  Product(this.proizvodId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.voziloId,
-  this.kategorijaId,this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutoDijelova,this.vozilo,this.model,this.godiste,this.godisteId);
+  Product(this.proizvodId,this.voziloId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.modelId,
+  this.kategorijaId,this.vozilo, this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutoDijelova,this.model,this.modelProizvoda,this.godiste,this.godisteId);
 
   factory Product.fromJson(Map<String,dynamic> json) => _$ProductFromJson(json);
 

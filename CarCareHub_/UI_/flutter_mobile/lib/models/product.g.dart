@@ -8,6 +8,7 @@ part of 'product.dart';
 
 Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       (json['proizvodId'] as num?)?.toInt(),
+      (json['voziloId'] as num?)?.toInt(),
       json['naziv'] as String?,
       json['sifra'] as String?,
       (json['cijena'] as num?)?.toDouble(),
@@ -16,18 +17,21 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       (json['cijenaSaPopustom'] as num?)?.toDouble(),
       json['originalniBroj'] as String?,
       json['opis'] as String?,
-      (json['voziloId'] as num?)?.toInt(),
+      (json['modelId'] as num?)?.toInt(),
       (json['kategorijaId'] as num?)?.toInt(),
+      json['vozilo'] == null
+          ? null
+          : Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
       (json['firmaAutodijelovaID'] as num?)?.toInt(),
       (json['proizvodjacId'] as num?)?.toInt(),
       json['firmaAutoDijelova'] == null
           ? null
           : FirmaAutodijelova.fromJson(
               json['firmaAutoDijelova'] as Map<String, dynamic>),
-      json['vozilo'] == null
+      json['model'] == null
           ? null
-          : Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
-      json['model'] as String?,
+          : Model.fromJson(json['model'] as Map<String, dynamic>),
+      json['modelProizvoda'] as String?,
       json['godiste'] == null
           ? null
           : Godiste.fromJson(json['godiste'] as Map<String, dynamic>),
@@ -43,14 +47,16 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'slika': instance.slika,
       'cijenaSaPopustom': instance.cijenaSaPopustom,
       'originalniBroj': instance.originalniBroj,
-      'model': instance.model,
+      'modelProizvoda': instance.modelProizvoda,
       'opis': instance.opis,
-      'voziloId': instance.voziloId,
+      'modelId': instance.modelId,
       'kategorijaId': instance.kategorijaId,
       'firmaAutodijelovaID': instance.firmaAutodijelovaID,
       'firmaAutoDijelova': instance.firmaAutoDijelova,
       'proizvodjacId': instance.proizvodjacId,
-      'vozilo': instance.vozilo,
+      'model': instance.model,
       'godisteId': instance.godisteId,
       'godiste': instance.godiste,
+      'vozilo': instance.vozilo,
+      'voziloId': instance.voziloId,
     };

@@ -20,7 +20,7 @@ namespace CarCareHub.Model
 
         public string? OriginalniBroj { get; set; }
 
-        public string? Model { get; set; }
+        public string? ModelProizvoda { get; set; }
 
         public string? Opis { get; set; }
 
@@ -32,8 +32,8 @@ namespace CarCareHub.Model
         public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 
 
-        public int? VoziloId { get; set; }
-        public virtual Vozilo? Vozilo { get; set; }
+        public int? ModelId { get; set; } // Foreign key
+        public virtual Model? Model { get; set; }
 
         public int? ProizvodjacId { get; set; }
         public virtual Proizvodjac Proizvodjac { get; set; }

@@ -35,8 +35,8 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
     super.initState();
     _initialValues = {
       'nazivModela': widget.model?.nazivModela,
-      'voziloId': widget.model?.vozilo.voziloId,
-      'godisteId': widget.model?.godiste.godisteId
+      'voziloId': widget.model?.vozilo?.voziloId,
+      'godisteId': widget.model?.godiste?.godisteId
     };
 
     _modelProvider = context.read<ModelProvider>();
@@ -127,8 +127,8 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                     ),
                     hintText: 'Izaberi vozilo',
                   ),
-                  initialValue: widget.model?.vozilo.voziloId != null
-                      ? widget.model!.vozilo.voziloId.toString()
+                  initialValue: widget.model?.vozilo?.voziloId != null
+                      ? widget.model!.vozilo?.voziloId.toString()
                       : null,
                   items: voziloResult?.result
                           .map((item) => DropdownMenuItem(
@@ -158,8 +158,8 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                     ),
                     hintText: 'Odaberi godiste',
                   ),
-                  initialValue: widget.model?.godiste.godisteId != null
-                      ? widget.model!.godiste.godisteId.toString()
+                  initialValue: widget.model?.godiste?.godisteId != null
+                      ? widget.model!.godiste?.godisteId.toString()
                       : null,
                   items: godisteResult?.result
                           .map((item) => DropdownMenuItem(

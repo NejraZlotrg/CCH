@@ -12,13 +12,13 @@ public partial class Proizvod
 
     public string? Sifra { get; set; }
     public string? OriginalniBroj { get; set; }
-    public string? Model { get; set; }
+    public string? ModelProizvoda { get; set; }
     public string? Opis { get; set; }
     public int? KategorijaId { get; set; }
     public virtual Kategorija? Kategorija { get; set; }
-    public int? VoziloId { get; set; } // Foreign key
+    public int? ModelId { get; set; } // Foreign key
 
-    public virtual Vozilo? Vozilo { get; set; }
+    public virtual Model? Model { get; set; }
     public int? ProizvodjacId { get; set; }
     public byte[]? Slika { get; set; }
     public byte[]? SlikaThumb { get; set; }

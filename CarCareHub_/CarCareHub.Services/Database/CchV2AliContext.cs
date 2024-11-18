@@ -314,10 +314,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnType("money")
                 .HasColumnName("cijena");
             entity.Property(e => e.KategorijaId).HasColumnName("kategorijaID");
-            entity.Property(e => e.Model)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("model");
+         
             entity.Property(e => e.Naziv)
                 .HasMaxLength(50)
                 .IsUnicode(false)

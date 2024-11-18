@@ -6,11 +6,11 @@ part 'model.g.dart';
 @JsonSerializable()
 class Model {
    final int modelId;
-  final String nazivModela;
-  final int voziloId;
-  final Vozilo vozilo;
+  final String? nazivModela;
+  final int? voziloId;
+  final Vozilo? vozilo;
   final int? godisteId;
-  final Godiste godiste;
+  final Godiste? godiste;
 
 
   Model(this.modelId, this.nazivModela, this.vozilo, this.voziloId,this.godisteId,this.godiste);

@@ -29,16 +29,15 @@ namespace CarCareHub.Model
 
         public string? OriginalniBroj { get; set; }
 
-        public string? Model { get; set; }
+        public string? ModelProizvoda { get; set; }
 
         public string? Opis { get; set; }
 
         public int? KategorijaId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
+     
         public int? FirmaAutoDijelovaID { get; set; }
-        public int? VoziloId { get; set; }
+        public int? ModelId { get; set; } // Foreign key
+
 
         public int? ProizvodjacId { get; set; }
         public byte[]? Slika { get; set; }

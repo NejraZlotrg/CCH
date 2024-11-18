@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20241110153240_mig1")]
-    partial class mig1
+    [Migration("20241118181915_ghg")]
+    partial class ghg
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -300,12 +300,7 @@ namespace CarCareHub.Services.Migrations
                     b.Property<int?>("Godiste_")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ModelId")
-                        .HasColumnType("int");
-
                     b.HasKey("GodisteId");
-
-                    b.HasIndex("ModelId");
 
                     b.ToTable("Godiste");
                 });
@@ -450,6 +445,9 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelId"));
 
+                    b.Property<int>("GodisteId")
+                        .HasColumnType("int");
+
                     b.Property<string>("NazivModela")
                         .HasColumnType("nvarchar(max)");
 
@@ -457,6 +455,8 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ModelId");
+
+                    b.HasIndex("GodisteId");
 
                     b.HasIndex("VoziloId");
 
@@ -603,11 +603,11 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("int")
                         .HasColumnName("kategorijaID");
 
-                    b.Property<string>("Model")
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
-                        .HasColumnName("model");
+                    b.Property<int?>("ModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModelProizvoda")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Naziv")
                         .HasMaxLength(50)
@@ -656,6 +656,8 @@ namespace CarCareHub.Services.Migrations
                     b.HasIndex("FirmaAutodijelovaID");
 
                     b.HasIndex("KategorijaId");
+
+                    b.HasIndex("ModelId");
 
                     b.HasIndex("ProizvodjacId");
 
@@ -958,15 +960,6 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("Uloga");
                 });
 
-            modelBuilder.Entity("CarCareHub.Services.Database.Godiste", b =>
-                {
-                    b.HasOne("CarCareHub.Services.Database.Model", "Model")
-                        .WithMany("Godistes")
-                        .HasForeignKey("ModelId");
-
-                    b.Navigation("Model");
-                });
-
             modelBuilder.Entity("CarCareHub.Services.Database.Grad", b =>
                 {
                     b.HasOne("CarCareHub.Services.Database.Drzava", "Drzava")
@@ -989,11 +982,19 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
                 {
+                    b.HasOne("CarCareHub.Services.Database.Godiste", "Godiste")
+                        .WithMany()
+                        .HasForeignKey("GodisteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CarCareHub.Services.Database.Vozilo", "Vozilo")
                         .WithMany("Models")
                         .HasForeignKey("VoziloId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Godiste");
 
                     b.Navigation("Vozilo");
                 });
@@ -1055,12 +1056,16 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("KategorijaId")
                         .HasConstraintName("fk_kategorija_proizvod");
 
+                    b.HasOne("CarCareHub.Services.Database.Model", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId");
+
                     b.HasOne("CarCareHub.Services.Database.Proizvodjac", "Proizvodjac")
                         .WithMany("Proizvods")
                         .HasForeignKey("ProizvodjacId")
                         .HasConstraintName("fk_proizvodjac_proizvod");
 
-                    b.HasOne("CarCareHub.Services.Database.Vozilo", "Vozilo")
+                    b.HasOne("CarCareHub.Services.Database.Vozilo", null)
                         .WithMany("Proizvods")
                         .HasForeignKey("VoziloId");
 
@@ -1068,9 +1073,9 @@ namespace CarCareHub.Services.Migrations
 
                     b.Navigation("Kategorija");
 
-                    b.Navigation("Proizvodjac");
+                    b.Navigation("Model");
 
-                    b.Navigation("Vozilo");
+                    b.Navigation("Proizvodjac");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Usluge", b =>
@@ -1193,11 +1198,6 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("ChatKlijentAutoserviss");
 
                     b.Navigation("ChatKlijentZaposlenik");
-                });
-
-            modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
-                {
-                    b.Navigation("Godistes");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Narudzba", b =>
