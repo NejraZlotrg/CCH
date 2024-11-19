@@ -73,6 +73,7 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.FirmaAutodijelova.Uloga);
                 query = query.Include(h => h.Model);
                 query = query.Include(h => h.Model.Vozilo);
+                query = query.Include(h => h.Model.Godiste);
 
 
 
@@ -133,7 +134,7 @@ namespace CarCareHub.Services
 
             if (search?.GodisteVozila!=null)
             {
-               // query = query.Where(x => x.Vozilo.Godiste.Any(o=>o.Godistes.Any(c=>c.Godiste_==search.GodisteVozila)));
+              //  query = query.Where(x => x.Model.Godiste.Any(o => o.Godistes.Any(c => c.Godiste_ == search.GodisteVozila)));
             }
             if (search?.KategorijaId!=null)
             {

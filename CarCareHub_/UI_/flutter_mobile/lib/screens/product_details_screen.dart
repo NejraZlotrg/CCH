@@ -223,7 +223,7 @@ Future<File> _getImageFileFromBase64(String base64String) async {
     labelText: 'Model',
     hintText: 'Odaberite Model',
   ),
-  initialValue: widget.product?.model?.modelId?.toString(),
+  initialValue: widget.product?.model?.modelId.toString(),
 
   items: modelResult?.result.map((item) {
         return DropdownMenuItem(

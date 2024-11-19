@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/models/godiste.dart';
 import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
@@ -27,9 +28,11 @@ class _ProductScreenState extends State<ProductScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   late ModelProvider _modelProvider;
   late VoziloProvider _voziloProvider;
+  late GodisteProvider _godisteProvider;
 
   List<Model>? model;
-  List<Vozilo>? vozilo;
+  List<Vozilo>? vozila; //----- Dodano za vozila
+  List<Godiste>? godiste;
 
 
   SearchResult<Product>? result;
@@ -46,20 +49,27 @@ class _ProductScreenState extends State<ProductScreen> {
 
     _modelProvider = context.read<ModelProvider>();
     _voziloProvider = context.read<VoziloProvider>();
+    _godisteProvider = context.read<GodisteProvider>();
 
-    _loadModel();
+
+    _loadInitialData(); //----- Promijenjeno ime funkcije
+
+
+   // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
 
-  Future<void> _loadModel() async {
+  Future<void> _loadInitialData() async {
     var modelResult = await _modelProvider.get();
-    var voziloResult = await _voziloProvider.get();
+    var vozilaResult = await _voziloProvider.get(); //----- Učitavanje vozila
+    var godistaResult = await _godisteProvider.get(); //----- Učitavanje godista
 
     setState(() {
       model = modelResult.result;
-      vozilo = voziloResult.result;
-
+      vozila = vozilaResult.result;
+      godiste = godistaResult.result;
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -205,47 +215,50 @@ class _ProductScreenState extends State<ProductScreen> {
                       children: [
                         Expanded(
                           child: FormBuilderDropdown(
-                            name: 'modelId',
+                            name: 'voziloId',
                             decoration: InputDecoration(
-                              labelText: 'Marka modela',
+                              labelText: 'Marka vozila',
                               suffix: IconButton(
                                 icon: const Icon(Icons.close),
                                 onPressed: () {
-                                  _formKey.currentState!.fields['modelId']
+                                  _formKey.currentState!.fields['voziloId']
                                       ?.reset();
                                 },
                               ),
-                              hintText: 'Odaberite marku modela',
+                              hintText: 'Odaberite marku vozila',
                             ),
-                            items: model
-                                    ?.map((model) => DropdownMenuItem(
-                                          value: model.nazivModela,
-                                          child: Text(model.nazivModela ?? ""),
+                            items: vozila
+                                    ?.map((vozila) => DropdownMenuItem(
+                                          value: vozila,
+                                          child: Text(vozila.markaVozila ?? ""),
                                         ))
                                     .toList() ??
                                 [],
                           ),
                         ),
+                        
                         const SizedBox(width: 10),
                         Expanded(
-                          child: DropdownButtonFormField<String>(
+                          child: FormBuilderDropdown(
+                            name: 'godisteId',
                             decoration: InputDecoration(
-                              labelText: "Godište vozila",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              filled: true,
-                              fillColor: Colors.white,
+                              labelText: 'Godiste',
+                              suffix: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  _formKey.currentState!.fields['godisteId']
+                                      ?.reset();
+                                },
+                              ),
+                              hintText: 'Odaberite godiste',
                             ),
-                            items: <String>['2020', '2021', '2022', '2023']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              // Logika za promjenu godišta vozila
-                            },
+                            items: godiste
+                                    ?.map((godiste) => DropdownMenuItem(
+                                          value: godiste,
+                                          child: Text(godiste.godiste_!.toString()),
+                                        ))
+                                    .toList() ??
+                                [],
                           ),
                         ),
                         // Dropdown za model
@@ -255,26 +268,29 @@ class _ProductScreenState extends State<ProductScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: DropdownButtonFormField<String>(
+                          child: FormBuilderDropdown(
+                            name: 'modelId',
                             decoration: InputDecoration(
-                              labelText: "Model",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              filled: true,
-                              fillColor: Colors.white,
+                              labelText: 'Model',
+                              suffix: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  _formKey.currentState!.fields['modelId']
+                                      ?.reset();
+                                },
+                              ),
+                              hintText: 'Odaberite model',
                             ),
-                            items: <String>['Model 1', 'Model 2', 'Model 3']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              // Logika za promjenu modela
-                            },
+                            items: model
+                                    ?.map((model) => DropdownMenuItem(
+                                          value: model,
+                                          child: Text(model.nazivModela ?? ""),
+                                        ))
+                                    .toList() ??
+                                [],
                           ),
                         ),
+                        
                       ],
                     )
                   ],
@@ -289,7 +305,7 @@ class _ProductScreenState extends State<ProductScreen> {
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> ProductDetailScreen(product: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> const ProductDetailScreen(product: null,) // poziv na drugi screen
                      ), );
             },
             child: const Row(
@@ -319,51 +335,53 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Future<void> _onSearchPressed() async {
+Future<void> _onSearchPressed() async {
   print("Pokretanje pretrage: ${_nazivController.text}");
 
   var filterParams = {
-    'IsAllIncluded': 'true',
+    'IsAllIncluded': 'true',  // Ovdje navodimo da želimo sve proizvode ako nema specifičnih filtera
   };
 
-  // Dodavanje naziva u filter ako je unesen
+  // Dodavanje naziva proizvoda u filter ako je unesen
   if (_nazivController.text.isNotEmpty) {
     filterParams['naziv'] = _nazivController.text;
   }
 
-  // Dodavanje marke vozila u filter ako je odabran
-  var markaVozilaValue = _formKey.currentState?.fields['voziloId']?.value;
+  // Dodavanje filtera za vozilo, ako je odabrano
+  var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
+  if (selectedVozilo != null && selectedVozilo is Vozilo) {
+    filterParams['markaVozila'] = selectedVozilo.markaVozila!;
+  }
 
-  if (markaVozilaValue != null) {
-    // Assuming markaVozilaValue is an instance of the Vozilo model
-    if (markaVozilaValue is Vozilo) {
-      print("Odabrana marka vozila: ${markaVozilaValue.markaVozila}");
-      filterParams['voziloId'] = markaVozilaValue.voziloId.toString(); // Store voziloId in filterParams
-    }
+  // Dodavanje filtera za godiste, ako je odabrano
+ var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
+if (selectedGodiste != null && selectedGodiste is Godiste) {
+  // Provjerite ako je godiste_ tipa int i postavite ga direktno
+  //filterParams['godiste_'] = selectedGodiste.godiste_;  // Pretvori u string ako je potrebno
+}
+
+  // Dodavanje modela, ako je odabran
+  var modelValue = _formKey.currentState?.fields['modelId']?.value;
+  if (modelValue != null && modelValue is Model) {
+    filterParams['nazivModela'] = modelValue.nazivModela!;
   }
 
   print("Filter params: $filterParams");
 
-  // Display loading indicator while fetching data
-  setState(() {
-    // You can use a loading state flag here if needed
-  });
-
+  // Pozivanje API-ja sa filterima
   try {
-    // Pozivanje API-ja sa filterima
     var data = await _productProvider.get(filter: filterParams);
 
     if (mounted) {
       setState(() {
-        result = data; // Ažuriraj rezultate sa podacima dobijenim iz backend-a
+        result = data;  // Ažuriraj rezultate sa podacima dobijenim iz backend-a
       });
     }
   } catch (e) {
     print("Error during fetching data: $e");
-    // Handle the error, maybe show a snackbar or alert to the user
+    // Prikazivanje greške ako dođe do problema pri dohvaćanju podataka
   }
 }
-
 
   Widget _buildDataListView() {
     return Expanded(
