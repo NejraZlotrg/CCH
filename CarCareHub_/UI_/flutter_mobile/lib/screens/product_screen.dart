@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/godiste.dart';
@@ -33,7 +34,6 @@ class _ProductScreenState extends State<ProductScreen> {
   List<Model>? model;
   List<Vozilo>? vozila; //----- Dodano za vozila
   List<Godiste>? godiste;
-
 
   SearchResult<Product>? result;
 
@@ -337,10 +337,14 @@ class _ProductScreenState extends State<ProductScreen> {
 
 Future<void> _onSearchPressed() async {
   print("Pokretanje pretrage: ${_nazivController.text}");
+  
+Map<dynamic, dynamic> filterParams = {};
 
-  var filterParams = {
+    filterParams = {
     'IsAllIncluded': 'true',  // Ovdje navodimo da želimo sve proizvode ako nema specifičnih filtera
   };
+
+
 
   // Dodavanje naziva proizvoda u filter ako je unesen
   if (_nazivController.text.isNotEmpty) {
@@ -356,9 +360,9 @@ Future<void> _onSearchPressed() async {
   // Dodavanje filtera za godiste, ako je odabrano
  var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
 if (selectedGodiste != null && selectedGodiste is Godiste) {
-  // Provjerite ako je godiste_ tipa int i postavite ga direktno
-  //filterParams['godiste_'] = selectedGodiste.godiste_;  // Pretvori u string ako je potrebno
+  filterParams['GodisteVozila'] = int.parse(selectedGodiste.godiste_!.toString());
 }
+
 
   // Dodavanje modela, ako je odabran
   var modelValue = _formKey.currentState?.fields['modelId']?.value;
@@ -367,6 +371,8 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
   }
 
   print("Filter params: $filterParams");
+  print("Godiste_: ${filterParams['godiste_']} (type: ${filterParams['godiste_']?.runtimeType})");
+
 
   // Pozivanje API-ja sa filterima
   try {

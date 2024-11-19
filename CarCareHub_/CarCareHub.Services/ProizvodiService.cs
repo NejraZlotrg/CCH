@@ -134,7 +134,7 @@ namespace CarCareHub.Services
 
             if (search?.GodisteVozila!=null)
             {
-              //  query = query.Where(x => x.Model.Godiste.Any(o => o.Godistes.Any(c => c.Godiste_ == search.GodisteVozila)));
+                query = query.Where(x => x.Model.Godiste.Godiste_ == search.GodisteVozila);
             }
             if (search?.KategorijaId!=null)
             {

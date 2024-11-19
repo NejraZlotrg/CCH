@@ -18,6 +18,7 @@ import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
+import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -180,28 +181,49 @@ class _LogInPageState extends State<LogInPage> {
                               ),
                             ),
                             OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => RegistrationPage(),
-                                  ),
-                                );
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.black),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                              ),
-                              child: const Text(
-                                'Registruj se',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Registruj se kao:"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.store),
+                title: const Text("Firma autodijelova"),
+                onTap: () {
+                  Navigator.pop(context); // Zatvaranje dijaloga
+                  Navigator.of(context).push(
+                   MaterialPageRoute(builder: (context)=> ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
+                     ), 
+                  );
+                },
+              ),
+              
+            ],
+          ),
+        );
+      },
+    );
+  },
+  style: OutlinedButton.styleFrom(
+    side: const BorderSide(color: Colors.black),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+  ),
+  child: const Text(
+    'Registruj se',
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 14,
+    ),
+  ),
+),
+
                           ],
                         ),
                       ],

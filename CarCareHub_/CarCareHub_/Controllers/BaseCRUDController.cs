@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CarCareHub_.Controllers
 {
@@ -23,12 +24,29 @@ namespace CarCareHub_.Controllers
             _service = service;
         }
 
+        /*   [HttpPost("")]
+           [AllowAnonymous]
+           public virtual async Task<T> Insert([FromBody] TInsert insert)
+           {
+               return await _service.Insert(insert);
+           }*/
         [HttpPost("")]
+        [AllowAnonymous]
         public virtual async Task<T> Insert([FromBody] TInsert insert)
         {
-            
+            var allowedClasses = new[] { "FirmaAutodijelova", "Autoservis", "Klijent" };
+
+            // Provjera naziva trenutne klase
+            var className = typeof(T).Name;
+            if (!allowedClasses.Contains(className))
+            {
+                // Vratite grešku za neautorizovane zahtjeve
+                throw new UnauthorizedAccessException("Access denied.");
+            }
+
             return await _service.Insert(insert);
         }
+
 
         [HttpPut("{id}")]
         public virtual async Task<T> Update(int id, [FromBody] TUpdate update)

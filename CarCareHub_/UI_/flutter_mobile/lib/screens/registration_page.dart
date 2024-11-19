@@ -1,5 +1,6 @@
 //import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/screens/autoservis_details_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 //import 'package:flutter_mobile/widgets/master_screen.dart';
 
@@ -9,7 +10,7 @@ class RegistrationPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
-  RegistrationPage({super.key});
+  RegistrationPage(AutoservisDetailsScreen autoservisDetailsScreen, {super.key});
 
   @override
   Widget build(BuildContext context) {
