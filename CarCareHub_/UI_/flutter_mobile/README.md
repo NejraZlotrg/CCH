@@ -19,3 +19,7 @@ za generisanje mapiranja ide komanda :
 flutter pub run build_runner build --delete-conflicting-outputs
 
 flutter pub run build_runner build watch--delete-conflicting-outputs
+
+
+
+KOD BOJE ARGB 204 SVE, SVIJETLA SIVA

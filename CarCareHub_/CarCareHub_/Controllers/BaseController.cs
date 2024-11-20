@@ -24,8 +24,19 @@ namespace CarCareHub_.Controllers
         }
 
         [HttpGet]
+       // [AllowAnonymous]//----
         public async Task<ActionResult<PagedResult<T>>> Get([FromQuery] TSearch? search = null)
         {
+            //----
+
+            //var allowedClasses = new[] { "Grad", "Uloge", "Vozilo" };
+            //var className = typeof(T).Name;
+            //if (!allowedClasses.Contains(className))
+            //{
+            //    // Vratite grešku za neautorizovane zahtjeve
+            //    throw new UnauthorizedAccessException("Access denied.");
+            //}
+            //----
             var result = await _service.Get(search);
             return Ok(result); // Ovdje vraćaš 200 OK sa rezultatom
         }

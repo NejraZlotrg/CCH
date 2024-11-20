@@ -31,18 +31,18 @@ namespace CarCareHub_.Controllers
                return await _service.Insert(insert);
            }*/
         [HttpPost("")]
-        [AllowAnonymous]
+    //    [AllowAnonymous]
         public virtual async Task<T> Insert([FromBody] TInsert insert)
         {
-            var allowedClasses = new[] { "FirmaAutodijelova", "Autoservis", "Klijent" };
+            //var allowedClasses = new[] { "FirmaAutodijelova", "Autoservis", "Klijent", "Zaposlenik"};
 
-            // Provjera naziva trenutne klase
-            var className = typeof(T).Name;
-            if (!allowedClasses.Contains(className))
-            {
-                // Vratite grešku za neautorizovane zahtjeve
-                throw new UnauthorizedAccessException("Access denied.");
-            }
+            //// Provjera naziva trenutne klase
+            //var className = typeof(T).Name;
+            //if (!allowedClasses.Contains(className))
+            //{
+            //    // Vratite grešku za neautorizovane zahtjeve
+            //    throw new UnauthorizedAccessException("Access denied.");
+            //}
 
             return await _service.Insert(insert);
         }

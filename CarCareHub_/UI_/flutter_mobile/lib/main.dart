@@ -16,6 +16,9 @@ import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
+import 'package:flutter_mobile/screens/autoservis_details_screen.dart';
+import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
+import 'package:flutter_mobile/screens/klijent_details_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
@@ -196,7 +199,29 @@ class _LogInPageState extends State<LogInPage> {
                 onTap: () {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
+                   MaterialPageRoute(builder: (context)=> const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null,) // poziv na drugi screen
+                     ), 
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.store),
+                title: const Text("Autoservis"),
+                onTap: () {
+                  Navigator.pop(context); // Zatvaranje dijaloga
+                  Navigator.of(context).push(
+                   MaterialPageRoute(builder: (context)=> AutoservisDetailsScreen(autoservis: null,) // poziv na drugi screen
+                     ), 
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.store),
+                title: const Text("Klijent"),
+                onTap: () {
+                  Navigator.pop(context); // Zatvaranje dijaloga
+                  Navigator.of(context).push(
+                   MaterialPageRoute(builder: (context)=> KlijentDetailsScreen(klijent: null,) // poziv na drugi screen
                      ), 
                   );
                 },

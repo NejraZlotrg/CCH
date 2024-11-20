@@ -19,10 +19,12 @@ class FirmaAutodijelovaDetailScreen extends StatefulWidget {
   const FirmaAutodijelovaDetailScreen({super.key, this.firmaAutodijelova});
 
   @override
-  State<FirmaAutodijelovaDetailScreen> createState() => _FirmaAutodijelovaDetailScreenState();
+  State<FirmaAutodijelovaDetailScreen> createState() =>
+      _FirmaAutodijelovaDetailScreenState();
 }
 
-class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailScreen> {
+class _FirmaAutodijelovaDetailScreenState
+    extends State<FirmaAutodijelovaDetailScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
@@ -56,8 +58,10 @@ class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailS
     gradResult = await _gradProvider.get();
     ulogaResult = await _ulogaProvider.get();
 
-    if (widget.firmaAutodijelova != null && widget.firmaAutodijelova!.slikaProfila != null) {
-      _imageFile = await _getImageFileFromBase64(widget.firmaAutodijelova!.slikaProfila!);
+    if (widget.firmaAutodijelova != null &&
+        widget.firmaAutodijelova!.slikaProfila != null) {
+      _imageFile = await _getImageFileFromBase64(
+          widget.firmaAutodijelova!.slikaProfila!);
     }
 
     setState(() {
@@ -84,56 +88,79 @@ class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailS
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title: widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme",
-      child: isLoading
+    return Scaffold(
+      backgroundColor:
+          const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+      appBar: AppBar(
+        title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme"),
+      ),
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView( // Dodali smo scroll
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _buildForm(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            _formKey.currentState?.saveAndValidate();
+          : SingleChildScrollView(
+              // Dodali smo scroll
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    _buildForm(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              _formKey.currentState?.saveAndValidate();
 
-                            var request = Map.from(_formKey.currentState!.value);
+                              var request =
+                                  Map.from(_formKey.currentState!.value);
 
-                            try {
-                              if (widget.firmaAutodijelova == null) {
-                                await _firmaAutodijelovaProvider.insert(request);
-                              } else {
-                                await _firmaAutodijelovaProvider.update(
-                                    widget.firmaAutodijelova!.firmaAutodijelovaID!,
-                                    _formKey.currentState?.value);
+                              try {
+                                if (widget.firmaAutodijelova == null) {
+                                  await _firmaAutodijelovaProvider
+                                      .insert(request);
+                                } else {
+                                  await _firmaAutodijelovaProvider.update(
+                                      widget.firmaAutodijelova!
+                                          .firmaAutodijelovaID!,
+                                      _formKey.currentState?.value);
+                                }
+                              } on Exception catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text("Error"),
+                                    content: Text(e.toString()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("OK"),
+                                      )
+                                    ],
+                                  ),
+                                );
                               }
-                            } on Exception catch (e) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: const Text("Error"),
-                                  content: Text(e.toString()),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("OK"),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text("Spasi"),
-                        ),
+                            },
+                            child: const Text("Spasi"),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.red, // Beli tekst
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              textStyle: const TextStyle(fontSize: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    10), // Zaobljeni uglovi
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    ],
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
     );
@@ -146,23 +173,37 @@ class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailS
       child: Column(
         children: [
           const SizedBox(height: 20),
-          Center( // Centrirana slika
+          Center(
+            // Centrirana slika u kvadratnom okviru
             child: GestureDetector(
               onTap: _pickImage,
               child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.grey[200],
+                  border: Border.all(color: Colors.grey, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
                 child: _imageFile != null
-                    ? Image.file(
-                        _imageFile!,
-                        width: 250,
-                        height: 250,
-                        fit: BoxFit.cover,
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.file(
+                          _imageFile!,
+                          width: 250,
+                          height: 250,
+                          fit: BoxFit.contain,
+                        ),
                       )
-                    : Container(
-                        width: 250,
-                        height: 250,
-                        color: Colors.grey[300],
-                        child: const Center(child: Text("Odaberi sliku")),
-                      ),
+                    : const Icon(Icons.camera_alt,
+                        size: 60, color: Colors.grey),
               ),
             ),
           ),
@@ -175,28 +216,43 @@ class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailS
 
   List<Widget> _buildFormFields() {
     return [
+      // Osnovni podaci
       Row(
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "Naziv firme"),
+              decoration: InputDecoration(
+                labelText: "Naziv firme",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
               name: "nazivFirme",
             ),
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: 20),
       Row(
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "Adresa"),
+              decoration: InputDecoration(
+                labelText: "Adresa",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
               name: "adresa",
             ),
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: 20),
       Row(
         children: [
           Expanded(
@@ -204,12 +260,11 @@ class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailS
               name: 'gradId',
               decoration: InputDecoration(
                 labelText: 'Grad',
-                suffix: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    _formKey.currentState!.fields['gradId']?.reset();
-                  },
-                ),
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 hintText: 'Izaberite grad',
               ),
               initialValue: widget.firmaAutodijelova?.gradId?.toString(),
@@ -225,67 +280,107 @@ class _FirmaAutodijelovaDetailScreenState extends State<FirmaAutodijelovaDetailS
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: 20),
+
+      // Kontakt podaci
       Row(
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "JIB"),
-              name: "jib",
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "MBS"),
-              name: "mbs",
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "Telefon"),
+              decoration: InputDecoration(
+                labelText: "Telefon",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
               name: "telefon",
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
               name: "email",
             ),
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: 20),
+
+      // Dodatni podaci
       Row(
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: const InputDecoration(labelText: "Password"),
+              decoration: InputDecoration(
+                labelText: "JIB",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
+              name: "jib",
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: FormBuilderTextField(
+              decoration: InputDecoration(
+                labelText: "MBS",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
+              name: "mbs",
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 20),
+
+      // Password i uloga
+      Row(
+        children: [
+          Expanded(
+            child: FormBuilderTextField(
+              decoration: InputDecoration(
+                labelText: "Password",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              ),
               name: "password",
             ),
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: 20),
       Row(
         children: [
           Expanded(
             child: FormBuilderDropdown(
               name: 'ulogaId',
               decoration: InputDecoration(
-                labelText: 'Uloge',
-                suffix: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    _formKey.currentState!.fields['ulogaId']?.reset();
-                  },
-                ),
+                labelText: 'Uloga',
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 hintText: 'Izaberite ulogu',
               ),
               initialValue: widget.firmaAutodijelova?.ulogaId?.toString(),

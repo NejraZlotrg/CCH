@@ -90,11 +90,11 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.grey[800],
+                color: Color.fromARGB(255, 134, 134, 134),
               ),
-              child: const Text(
+              child: Text(
                 'CarCareHub',
                 style: TextStyle(
                   color: Colors.white,
