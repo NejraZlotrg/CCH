@@ -314,8 +314,11 @@ class _ProductScreenState extends State<ProductScreen> {
                 Icon(Icons.search),
                 SizedBox(width: 8.0),
                 Text('Dodaj'),
+                
               ],
+              
             ),
+            
           ),
                 ElevatedButton(
                   onPressed: _onSearchPressed,

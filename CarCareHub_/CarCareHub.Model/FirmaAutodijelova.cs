@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,10 +22,15 @@ namespace CarCareHub.Model
         public string? Telefon { get; set; }
 
         public string? Email { get; set; }
+        public string? Username { get; set; }
 
         public string? Password { get; set; }
 
-        public string? SlikaProfila { get; set; }
+        public string? LozinkaSalt { get; set; }
+        public string? LozinkaHash { get; set; }
+
+        [Column(TypeName = "VARBINARY(MAX)")]
+        public byte[]? SlikaProfila { get; set; }
 
         public int? UlogaId { get; set; }
         public virtual Grad? Grad { get; set; }

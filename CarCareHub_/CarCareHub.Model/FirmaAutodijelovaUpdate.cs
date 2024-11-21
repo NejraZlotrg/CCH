@@ -10,6 +10,10 @@ namespace CarCareHub.Model
     {
         public string? NazivFirme { get; set; }
 
+        public string? Username { get; set; }
+
+        public string? Password { get; set; }
+
         public string? Adresa { get; set; }
 
         public string? Telefon { get; set; }
@@ -18,6 +22,7 @@ namespace CarCareHub.Model
         public int? GradId { get; set; }
         public int? JIB { get; set; }
         public int? MBS { get; set; }
+        public byte[]? SlikaProfila { get; set; }
 
     }
 }

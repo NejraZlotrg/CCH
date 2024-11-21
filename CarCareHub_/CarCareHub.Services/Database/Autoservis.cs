@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarCareHub.Services.Database;
 
@@ -21,12 +22,17 @@ public partial class Autoservis
 
     public string? Email { get; set; }
 
+    public string? Username { get; set; }
+
     public string? Password { get; set; }
 
+    public string? LozinkaSalt { get; set; }
+    public string? LozinkaHash { get; set; }
     public string? Jib { get; set; }
 
     public string? Mbs { get; set; }
 
+    [Column(TypeName = "VARBINARY(MAX)")]
     public byte[]? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }

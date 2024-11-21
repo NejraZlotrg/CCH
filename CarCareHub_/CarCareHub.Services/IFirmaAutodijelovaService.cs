@@ -10,6 +10,8 @@ namespace CarCareHub.Services
 {
     public interface IFirmaAutodijelovaService : ICRUDService<Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject,FirmaAutodijelovaInsert,FirmaAutodijelovaUpdate>
     {
-     
+
+        public Task<Model.FirmaAutodijelova> Login(string username, string password);
+
     }
 }

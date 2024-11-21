@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20241121193009_firmaautodijelovastzjtrgz5bjhzu6jvh57b8nčuigč")]
+    partial class firmaautodijelovastzjtrgz5bjhzu6jvh57b8nčuigč
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,12 +59,6 @@ namespace CarCareHub.Services.Migrations
                     b.Property<string>("KorisnickoIme")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LozinkaHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LozinkaSalt")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Mbs")
                         .HasMaxLength(20)
                         .IsUnicode(false)
@@ -94,9 +91,6 @@ namespace CarCareHub.Services.Migrations
                     b.Property<int?>("UlogaId")
                         .HasColumnType("int")
                         .HasColumnName("ulogaID");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VlasnikFirme")
                         .HasColumnType("nvarchar(max)");

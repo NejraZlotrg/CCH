@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,8 +22,14 @@ namespace CarCareHub.Model
 
         public string? Email { get; set; }
 
+        public string? Username { get; set; }
+        [Compare("PasswordAgain", ErrorMessage = "Pass don't match")]
+
         public string? Password { get; set; }
 
-        public string? SlikaProfila { get; set; }
+        [Compare("Password", ErrorMessage = "Pass don't match")]
+        public string? PasswordAgain { get; set; }
+
+        public byte[]? SlikaProfila { get; set; }
     }
 }

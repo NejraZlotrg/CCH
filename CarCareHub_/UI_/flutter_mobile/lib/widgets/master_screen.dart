@@ -38,6 +38,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 134, 134, 134), // Siva pozadina za AppBar
         toolbarHeight: 80.0, // Povećana visina AppBar-a
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,5 +1,7 @@
-﻿using CarCareHub.Services;
+﻿using CarCareHub.Model;
+using CarCareHub.Services; // Zamijeniti sa stvarnim prostorom imena za servise
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -10,54 +12,107 @@ namespace CarCareHub_
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        IZaposlenikService _korisniciService;
-        public BasicAuthenticationHandler(IZaposlenikService korisniciService, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+        private readonly IFirmaAutodijelovaService _firmaService;
+        private readonly IAutoservisService _autoservisService;
+        private readonly IZaposlenikService _korisniciService;
+
+        public BasicAuthenticationHandler(
+     IFirmaAutodijelovaService firmaService,
+     IZaposlenikService korisniciService,
+     IAutoservisService autoservisService,
+     IOptionsMonitor<AuthenticationSchemeOptions> options,
+     ILoggerFactory logger,
+     UrlEncoder encoder,
+     ISystemClock clock) : base(options, logger, encoder, clock)
         {
+            _firmaService = firmaService;
             _korisniciService = korisniciService;
+            _autoservisService = autoservisService;
         }
+
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            // Provjera zaglavlja Authorization
             if (!Request.Headers.ContainsKey("Authorization"))
             {
-                return AuthenticateResult.Fail("Missing header");
+                return AuthenticateResult.Fail("Missing Authorization Header");
             }
 
-            var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-            var credentialsBytes = Convert.FromBase64String(authHeader.Parameter);
-            var credentials = Encoding.UTF8.GetString(credentialsBytes).Split(':');
-
-            var username = credentials[0];
-            var password = credentials[1];
-
-            var user = await _korisniciService.Login(username, password);
-
-            if (user == null)
+            try
             {
-                return AuthenticateResult.Fail("Incorrect username or password");
-            }
-            else
-            {
+                // Dekodiranje Authorization headera
+                var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+                var credentialsBytes = Convert.FromBase64String(authHeader.Parameter);
+                var credentials = Encoding.UTF8.GetString(credentialsBytes).Split(':');
 
-
-                var claims = new List<Claim>()
+                if (credentials.Length != 2)
                 {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.NameIdentifier, user.Username)
-                };
+                    return AuthenticateResult.Fail("Invalid Authorization Header Format");
+                }
 
-              
-              
-                claims.Add(new Claim(ClaimTypes.Role, user.Uloga.NazivUloge));
-               
+                var username = credentials[0];
+                var password = credentials[1];
 
+                // Pokušaj autentifikacije u svakom servisu
+                var userFirma = await _firmaService.Login(username, password);
+                var userKorisnik = await _korisniciService.Login(username, password);
+                var userAutoservis = await _autoservisService.Login(username, password);
+
+                object user = null;
+
+                if (userFirma != null)
+                {
+                    user = userFirma;
+                }
+                else if (userKorisnik != null)
+                {
+                    user = userKorisnik;
+                }
+                else if (userAutoservis != null)
+                {
+                    user = userAutoservis;
+                }
+
+                if (user == null)
+                {
+                    return AuthenticateResult.Fail("Invalid Username or Password");
+                }
+
+                // Kreiranje claimova
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.NameIdentifier, username),
+        };
+
+                // Dodavanje claimova za uloge ovisno o tipu korisnika
+                if (user is FirmaAutodijelova)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "FirmaAutodijelova"));
+                }
+                else if (user is Zaposlenik)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Korisnik"));
+                }
+                else if (user is Autoservis)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Autoservis"));
+                }
+
+                // Kreiranje identiteta i autentifikacijskog ticketa
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
-
                 var principal = new ClaimsPrincipal(identity);
-
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
                 return AuthenticateResult.Success(ticket);
             }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error in Basic Authentication");
+                return AuthenticateResult.Fail("Invalid Authorization Header");
+            }
         }
+
     }
 }

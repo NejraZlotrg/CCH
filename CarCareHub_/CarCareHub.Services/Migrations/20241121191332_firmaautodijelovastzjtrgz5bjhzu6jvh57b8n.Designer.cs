@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20241118222440_gg")]
-    partial class gg
+    [Migration("20241121191332_firmaautodijelovastzjtrgz5bjhzu6jvh57b8n")]
+    partial class firmaautodijelovastzjtrgz5bjhzu6jvh57b8n
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,9 +78,8 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnName("password_");
 
                     b.Property<byte[]>("SlikaProfila")
-                        .HasMaxLength(40)
                         .IsUnicode(false)
-                        .HasColumnType("varbinary(40)")
+                        .HasColumnType("VARBINARY(MAX)")
                         .HasColumnName("slika_Profila");
 
                     b.Property<string>("Telefon")
@@ -261,10 +260,10 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(30)")
                         .HasColumnName("password_");
 
-                    b.Property<string>("SlikaProfila")
+                    b.Property<byte[]>("SlikaProfila")
                         .HasMaxLength(40)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(40)")
+                        .HasColumnType("varbinary(40)")
                         .HasColumnName("slika_Profila");
 
                     b.Property<string>("Telefon")
@@ -276,6 +275,9 @@ namespace CarCareHub.Services.Migrations
                     b.Property<int?>("UlogaId")
                         .HasColumnType("int")
                         .HasColumnName("ulogaID");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FirmaAutodijelovaID")
                         .HasName("PK_firma");

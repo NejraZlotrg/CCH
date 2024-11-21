@@ -6,5 +6,7 @@ namespace CarCareHub.Services
     public interface IAutoservisService : ICRUDService<Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>
     {
 
+        public Task<Model.Autoservis> Login(string username, string password);
+
     }
 }

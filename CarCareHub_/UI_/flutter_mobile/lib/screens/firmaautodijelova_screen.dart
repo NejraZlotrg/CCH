@@ -33,18 +33,34 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "FirmaAutodijelova",
-      child: Column(
-        children: [
-          _buildSearch(),
-          _buildDataListView(),
-        ],
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+  return Container(
+    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
+      child: Padding(padding:  const EdgeInsets.all(10.0),
       child: Row(
         children: [
           Expanded(
@@ -58,6 +74,7 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
               controller: _nazivFirmeController,
             ),
           ),
+          const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () async {
               print("podaci proceed");
@@ -65,18 +82,25 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
                 'IsAllncluded': 'true', // Ovaj parametar ostaje
               };
 
- // Dodavanje filtera samo ako je naziv unesen
-  if (_nazivFirmeController.text.isNotEmpty) {
-    filterParams['nazivFirme'] = _nazivFirmeController.text;
-  }
+              // Dodavanje filtera samo ako je naziv unesen
+              if (_nazivFirmeController.text.isNotEmpty) {
+                filterParams['nazivFirme'] = _nazivFirmeController.text;
+              }
 
-  var data = await _firmaAutodijelovaProvider.get(filter: filterParams);
-
+              var data =
+                  await _firmaAutodijelovaProvider.get(filter: filterParams);
 
               setState(() {
                 result = data;
               });
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja dugmeta
+              foregroundColor: Colors.white, // Bela boja teksta
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+              ),
+            ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -91,16 +115,23 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
             onPressed: () async {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => const FirmaAutodijelovaDetailScreen(
-                          firmaAutodijelova: null,
-                        ) // poziv na drugi screen
-                    ),
+                  builder: (context) => const FirmaAutodijelovaDetailScreen(
+                    firmaAutodijelova: null,
+                  ),
+                ),
               );
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja dugmeta
+              foregroundColor: Colors.white, // Bela boja teksta
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+              ),
+            ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.search),
+                Icon(Icons.add),
                 SizedBox(width: 8.0),
                 Text('Dodaj'),
               ],
@@ -108,11 +139,26 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
           ),
         ],
       ),
-    );
-  }
+      ),
+    ),
+  );
+}
 
-  Widget _buildDataListView() {
-    return Expanded(
+Widget _buildDataListView() {
+  return Container(
+    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
       child: SingleChildScrollView(
         child: DataTable(
           columns: const [
@@ -182,6 +228,8 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
               [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

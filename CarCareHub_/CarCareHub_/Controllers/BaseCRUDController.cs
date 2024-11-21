@@ -31,10 +31,10 @@ namespace CarCareHub_.Controllers
                return await _service.Insert(insert);
            }*/
         [HttpPost("")]
-    //    [AllowAnonymous]
+     //  [AllowAnonymous]
         public virtual async Task<T> Insert([FromBody] TInsert insert)
         {
-            //var allowedClasses = new[] { "FirmaAutodijelova", "Autoservis", "Klijent", "Zaposlenik"};
+            //var allowedClasses = new[] { "FirmaAutodijelova", "Autoservis", "Klijent", "Zaposlenik" }; 
 
             //// Provjera naziva trenutne klase
             //var className = typeof(T).Name;

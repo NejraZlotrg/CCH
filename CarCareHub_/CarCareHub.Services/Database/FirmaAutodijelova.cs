@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarCareHub.Services.Database;
 
@@ -17,9 +18,16 @@ public partial class FirmaAutodijelova
 
     public string? Email { get; set; }
 
+    public string? Username { get; set; }
+
     public string? Password { get; set; }
 
-    public string? SlikaProfila { get; set; }
+
+    public string? LozinkaSalt { get; set; }
+    public string? LozinkaHash { get; set; }
+
+    [Column(TypeName = "VARBINARY(MAX)")]
+    public byte[]? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }
     public int? JIB { get; set; }

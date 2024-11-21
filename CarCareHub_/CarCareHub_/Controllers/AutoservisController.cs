@@ -17,6 +17,13 @@ namespace CarCareHub_.Controllers
         {
 
         }
+        [HttpPost("login")]
+        [AllowAnonymous]
 
+        public async Task<CarCareHub.Model.Autoservis> Login(string username, string password)
+        {
+            return await (_service as IAutoservisService).Login(username, password);
+
+        }
     }
 }

@@ -3,6 +3,7 @@ using CarCareHub.Services;
 using CarCareHub.Services.Database;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarCareHub_.Controllers
 {
@@ -17,6 +18,16 @@ namespace CarCareHub_.Controllers
         {
            
         }
-     
+
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+
+        public async Task<CarCareHub.Model.FirmaAutodijelova> Login(string username, string password)
+        {
+            return await (_service as IFirmaAutodijelovaService).Login(username, password);
+
+        }
+
     }
 }

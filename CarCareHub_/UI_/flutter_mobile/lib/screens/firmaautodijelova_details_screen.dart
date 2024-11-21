@@ -143,7 +143,6 @@ class _FirmaAutodijelovaDetailScreenState
                                 );
                               }
                             },
-                            child: const Text("Spasi"),
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.red, // Beli tekst
@@ -155,6 +154,7 @@ class _FirmaAutodijelovaDetailScreenState
                                     10), // Zaobljeni uglovi
                               ),
                             ),
+                            child: const Text("Spasi"),
                           )
                         ],
                       ),
@@ -221,13 +221,13 @@ class _FirmaAutodijelovaDetailScreenState
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Naziv firme",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "nazivFirme",
             ),
@@ -239,13 +239,13 @@ class _FirmaAutodijelovaDetailScreenState
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Adresa",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "adresa",
             ),
@@ -258,13 +258,13 @@ class _FirmaAutodijelovaDetailScreenState
           Expanded(
             child: FormBuilderDropdown(
               name: 'gradId',
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Grad',
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 hintText: 'Izaberite grad',
               ),
               initialValue: widget.firmaAutodijelova?.gradId?.toString(),
@@ -287,13 +287,13 @@ class _FirmaAutodijelovaDetailScreenState
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Telefon",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "telefon",
             ),
@@ -301,13 +301,13 @@ class _FirmaAutodijelovaDetailScreenState
           const SizedBox(width: 10),
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Email",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "email",
             ),
@@ -321,13 +321,13 @@ class _FirmaAutodijelovaDetailScreenState
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "JIB",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "jib",
             ),
@@ -335,13 +335,13 @@ class _FirmaAutodijelovaDetailScreenState
           const SizedBox(width: 10),
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "MBS",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "mbs",
             ),
@@ -355,13 +355,13 @@ class _FirmaAutodijelovaDetailScreenState
         children: [
           Expanded(
             child: FormBuilderTextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Password",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               ),
               name: "password",
             ),
@@ -374,13 +374,13 @@ class _FirmaAutodijelovaDetailScreenState
           Expanded(
             child: FormBuilderDropdown(
               name: 'ulogaId',
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Uloga',
                 border: OutlineInputBorder(),
                 fillColor: Colors.white, // Bela pozadina
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 hintText: 'Izaberite ulogu',
               ),
               initialValue: widget.firmaAutodijelova?.ulogaId?.toString(),

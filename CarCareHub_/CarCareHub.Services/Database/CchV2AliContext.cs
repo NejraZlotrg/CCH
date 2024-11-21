@@ -92,7 +92,7 @@ public partial class CchV2AliContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("password_");
             entity.Property(e => e.SlikaProfila)
-                .HasMaxLength(40)
+                .HasColumnType("VARBINARY(MAX)")
                 .IsUnicode(false)
                 .HasColumnName("slika_Profila");
             entity.Property(e => e.Telefon)

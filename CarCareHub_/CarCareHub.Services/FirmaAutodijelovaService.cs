@@ -19,6 +19,40 @@ namespace CarCareHub.Services
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
 
+
+
+        public override async Task BeforeInsert(CarCareHub.Services.Database.FirmaAutodijelova entity, FirmaAutodijelovaInsert insert)
+        {
+            entity.LozinkaSalt = GenerateSalt();
+            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
+        }
+
+
+        public static string GenerateSalt()
+        {
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            var byteArray = new byte[16];
+            provider.GetBytes(byteArray);
+
+
+            return Convert.ToBase64String(byteArray);
+        }
+        public static string GenerateHash(string salt, string password)
+        {
+            byte[] src = Convert.FromBase64String(salt);
+            byte[] bytes = Encoding.Unicode.GetBytes(password);
+            byte[] dst = new byte[src.Length + bytes.Length];
+
+            System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
+            System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
+
+            HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
+            byte[] inArray = algorithm.ComputeHash(dst);
+            return Convert.ToBase64String(inArray);
+        }
+
+
+
         public FirmaAutodijelovaService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
             _dbContext = dbContext;
@@ -70,8 +104,30 @@ namespace CarCareHub.Services
 
             }
             return base.AddInclude(query, search);
+
+
         }
-       
+
+
+        public async Task<Model.FirmaAutodijelova> Login(string username, string password)
+        {
+            var entity = await _dbContext.FirmaAutodijelovas.Include(x => x.Uloga).FirstOrDefaultAsync(x => x.Username == username);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            var hash = GenerateHash(entity.LozinkaSalt, password);
+
+            if (hash != entity.LozinkaHash)
+            {
+                return null;
+            }
+
+            return _mapper.Map<Model.FirmaAutodijelova>(entity);
+        }
+
         //protected override IQueryable<Database.FirmaAutodijelova> GetCollection(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search)
         //{
         //    // Ako želite uključiti kolekciju 'BPAutodijeloviAutoservis' unutar 'FirmaAutodijelova'

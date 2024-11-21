@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class ghg : Migration
+    public partial class firmaautodijelovas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -179,7 +179,7 @@ namespace CarCareHub.Services.Migrations
                     password_ = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
                     jib = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     MBS = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    slika_Profila = table.Column<byte[]>(type: "varbinary(40)", unicode: false, maxLength: 40, nullable: true),
+                    slika_Profila = table.Column<byte[]>(type: "VARBINARY(MAX)", unicode: false, nullable: true),
                     ulogaID = table.Column<int>(type: "int", nullable: true),
                     voziloID = table.Column<int>(type: "int", nullable: true)
                 },
@@ -214,8 +214,9 @@ namespace CarCareHub.Services.Migrations
                     gradID = table.Column<int>(type: "int", nullable: true),
                     telefon = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     email = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     password_ = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
-                    slika_Profila = table.Column<string>(type: "varchar(40)", unicode: false, maxLength: 40, nullable: true),
+                    slika_Profila = table.Column<byte[]>(type: "varbinary(40)", unicode: false, maxLength: 40, nullable: true),
                     ulogaID = table.Column<int>(type: "int", nullable: true),
                     JIB = table.Column<int>(type: "int", nullable: true),
                     MBS = table.Column<int>(type: "int", nullable: true),
