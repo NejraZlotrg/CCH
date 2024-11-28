@@ -9,13 +9,16 @@ class FirmaAutodijelova {
   String? adresa;
   int? gradId;
   final Grad? grad;
-  int? jib;
-  int? mbs;
+  String? jib;
+  String? mbs;
   String? telefon;
   String? email;
   String? password;
   String? slikaProfila;
+  String? username;
   int? ulogaId;
+  String? passwordAgain;
+
 
   FirmaAutodijelova(
       this.firmaAutodijelovaID,
@@ -29,7 +32,9 @@ class FirmaAutodijelova {
       this.slikaProfila,
       this.telefon,
       this.ulogaId,
-      this.grad);
+      this.grad,
+      this.passwordAgain,
+      this.username);
 
   factory FirmaAutodijelova.fromJson(Map<String, dynamic> json) =>
       _$FirmaAutodijelovaFromJson(json);

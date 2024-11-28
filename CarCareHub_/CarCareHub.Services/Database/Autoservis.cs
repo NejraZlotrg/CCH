@@ -14,7 +14,6 @@ public partial class Autoservis
     public string? Adresa { get; set; }
 
     public string? VlasnikFirme { get; set; }
-    public string? KorisnickoIme { get; set; }
 
     public int? GradId { get; set; }
 
@@ -34,6 +33,8 @@ public partial class Autoservis
 
     [Column(TypeName = "VARBINARY(MAX)")]
     public byte[]? SlikaProfila { get; set; }
+    public byte[]? SlikaThumb { get; set; }
+
 
     public int? UlogaId { get; set; }
 

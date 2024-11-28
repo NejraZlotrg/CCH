@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20241128194822_sjnidtzjh")]
+    partial class sjnidtzjh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -437,9 +440,6 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(10)")
                         .HasColumnName("spol");
 
-                    b.Property<int>("UlogaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .HasMaxLength(30)
                         .IsUnicode(false)
@@ -450,8 +450,6 @@ namespace CarCareHub.Services.Migrations
                         .HasName("PK_klijent");
 
                     b.HasIndex("GradId");
-
-                    b.HasIndex("UlogaId");
 
                     b.ToTable("Klijent", (string)null);
                 });
@@ -996,15 +994,7 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("GradId")
                         .HasConstraintName("fk_klijent_grad");
 
-                    b.HasOne("CarCareHub.Services.Database.Uloge", "uloga")
-                        .WithMany()
-                        .HasForeignKey("UlogaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Grad");
-
-                    b.Navigation("uloga");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>

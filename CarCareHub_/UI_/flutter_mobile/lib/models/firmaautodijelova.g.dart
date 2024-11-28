@@ -13,8 +13,8 @@ FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
       json['adresa'] as String?,
       json['email'] as String?,
       (json['gradId'] as num?)?.toInt(),
-      (json['jib'] as num?)?.toInt(),
-      (json['mbs'] as num?)?.toInt(),
+      json['jib'] as String?,
+      json['mbs'] as String?,
       json['password'] as String?,
       json['slikaProfila'] as String?,
       json['telefon'] as String?,
@@ -22,6 +22,8 @@ FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
       json['grad'] == null
           ? null
           : Grad.fromJson(json['grad'] as Map<String, dynamic>),
+      json['passwordAgain'] as String?,
+      json['username'] as String?,
     );
 
 Map<String, dynamic> _$FirmaAutodijelovaToJson(FirmaAutodijelova instance) =>
@@ -37,5 +39,7 @@ Map<String, dynamic> _$FirmaAutodijelovaToJson(FirmaAutodijelova instance) =>
       'email': instance.email,
       'password': instance.password,
       'slikaProfila': instance.slikaProfila,
+      'username': instance.username,
       'ulogaId': instance.ulogaId,
+      'passwordAgain': instance.passwordAgain,
     };

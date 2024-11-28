@@ -9,6 +9,7 @@ namespace CarCareHub_.Controllers
     [ApiController]
     [AllowAnonymous]
     [Route("api/klijent")]
+
     //[Authorize]
     public class KlijentiController : BaseCRUDController<CarCareHub.Model.Klijent, KlijentSearchObject, KlijentInsert, KlijentUpdate>
     {

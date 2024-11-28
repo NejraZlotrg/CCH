@@ -15,11 +15,13 @@ namespace CarCareHub_
         private readonly IFirmaAutodijelovaService _firmaService;
         private readonly IAutoservisService _autoservisService;
         private readonly IZaposlenikService _korisniciService;
+        private readonly IKlijentService _klijentService;
 
         public BasicAuthenticationHandler(
      IFirmaAutodijelovaService firmaService,
      IZaposlenikService korisniciService,
      IAutoservisService autoservisService,
+     IKlijentService klijentService,
      IOptionsMonitor<AuthenticationSchemeOptions> options,
      ILoggerFactory logger,
      UrlEncoder encoder,
@@ -28,6 +30,7 @@ namespace CarCareHub_
             _firmaService = firmaService;
             _korisniciService = korisniciService;
             _autoservisService = autoservisService;
+            _klijentService = klijentService;
         }
 
 
@@ -58,6 +61,7 @@ namespace CarCareHub_
                 var userFirma = await _firmaService.Login(username, password);
                 var userKorisnik = await _korisniciService.Login(username, password);
                 var userAutoservis = await _autoservisService.Login(username, password);
+                var userKlijent = await _klijentService.Login(username, password);
 
                 object user = null;
 
@@ -72,6 +76,10 @@ namespace CarCareHub_
                 else if (userAutoservis != null)
                 {
                     user = userAutoservis;
+                }
+                else if (userKlijent != null)
+                {
+                    user = userKlijent;
                 }
 
                 if (user == null)
@@ -98,6 +106,10 @@ namespace CarCareHub_
                 else if (user is Autoservis)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "Autoservis"));
+                }
+                else if (user is Klijent)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Klijent"));
                 }
 
                 // Kreiranje identiteta i autentifikacijskog ticketa

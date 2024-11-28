@@ -97,9 +97,9 @@ namespace CarCareHub.Services
             }
 
             // Primijeni dodatni filter po JIB-u ili MBS-u firme
-            if (!string.IsNullOrWhiteSpace(search?.JIB_MBS) && int.TryParse(search.JIB_MBS, out int jibMbsInt))
+            if (!string.IsNullOrWhiteSpace(search?.JIB_MBS))
             {
-                query = query.Where(x => x.FirmaAutodijelova.JIB == jibMbsInt || x.FirmaAutodijelova.MBS == jibMbsInt);
+                query = query.Where(x => x.FirmaAutodijelova.JIB.StartsWith(search.JIB_MBS) || x.FirmaAutodijelova.MBS.StartsWith(search.JIB_MBS));
             }
 
             // Primijeni dodatni filter po gradu firme

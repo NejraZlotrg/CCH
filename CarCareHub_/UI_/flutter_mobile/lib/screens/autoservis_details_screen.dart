@@ -41,7 +41,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     super.initState();
     _initialValues = {
       'naziv': widget.autoservis?.naziv ?? '',
-      'korisnickoIme': widget.autoservis?.korisnickoIme ?? '',
       'adresa': widget.autoservis?.adresa ?? '',
       'vlasnikFirme': widget.autoservis?.vlasnikFirme ?? '',
       'telefon': widget.autoservis?.telefon ?? '',
@@ -50,6 +49,10 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'mbs': widget.autoservis?.mbs ?? '',
       'ulogaId': widget.autoservis?.ulogaId?.toString() ?? '',
       'gradId': widget.autoservis?.gradId,
+      'username': widget.autoservis?.username,
+      'password': widget.autoservis?.password,
+      'passwordAgain': widget.autoservis?.passwordAgain,
+      "slikaProfila": widget.autoservis?.slikaProfila
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
@@ -214,12 +217,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 child: FormBuilderTextField(
                   decoration: const InputDecoration(labelText: "Naziv"),
                   name: "naziv",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Korisničko ime"),
-                  name: "korisnickoIme",
                 ),
               ),
               Expanded(

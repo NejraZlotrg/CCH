@@ -12,7 +12,6 @@ import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_mobile/widgets/master_screen.dart';
 
 class FirmaAutodijelovaDetailScreen extends StatefulWidget {
   final FirmaAutodijelova? firmaAutodijelova;
@@ -42,9 +41,17 @@ class _FirmaAutodijelovaDetailScreenState
   void initState() {
     super.initState();
     _initialValues = {
-      'nazivFirme': widget.firmaAutodijelova?.nazivFirme,
-      'gradId': widget.firmaAutodijelova?.gradId,
-      'ulogaId': widget.firmaAutodijelova?.ulogaId,
+      'nazivFirme': widget.firmaAutodijelova?.nazivFirme ?? '',
+      'adresa': widget.firmaAutodijelova?.adresa ?? '',
+      'gradId': widget.firmaAutodijelova?.gradId ?? '',
+      'jib': widget.firmaAutodijelova?.jib ?? '',
+      'mbs': widget.firmaAutodijelova?.mbs ?? '',
+      'telefon': widget.firmaAutodijelova?.telefon ?? '',
+      'email': widget.firmaAutodijelova?.email ?? '',
+      'username': widget.firmaAutodijelova?.username ?? '',
+      'password': widget.firmaAutodijelova?.password ?? '',
+      'passwordAgain': widget.firmaAutodijelova?.passwordAgain ?? '',
+      'ulogaId': widget.firmaAutodijelova?.ulogaId ?? '',
     };
 
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
@@ -97,7 +104,6 @@ class _FirmaAutodijelovaDetailScreenState
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              // Dodali smo scroll
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -111,47 +117,57 @@ class _FirmaAutodijelovaDetailScreenState
                         children: [
                           ElevatedButton(
                             onPressed: () async {
-                              _formKey.currentState?.saveAndValidate();
+                              if (_formKey.currentState?.saveAndValidate() ??
+                                  false) {
+                                var request =
+                                    Map.from(_formKey.currentState!.value);
 
-                              var request =
-                                  Map.from(_formKey.currentState!.value);
-
-                              try {
-                                if (widget.firmaAutodijelova == null) {
-                                  await _firmaAutodijelovaProvider
-                                      .insert(request);
-                                } else {
-                                  await _firmaAutodijelovaProvider.update(
-                                      widget.firmaAutodijelova!
-                                          .firmaAutodijelovaID!,
-                                      _formKey.currentState?.value);
+                                // Dodaj sliku u request
+                                if (_imageFile != null) {
+                                  final imageBytes =
+                                      await _imageFile!.readAsBytes();
+                                  request['slikaProfila'] =
+                                      base64Encode(imageBytes);
                                 }
-                              } on Exception catch (e) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: const Text("Error"),
-                                    content: Text(e.toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("OK"),
-                                      )
-                                    ],
-                                  ),
-                                );
+
+                                try {
+                                  if (widget.firmaAutodijelova == null) {
+                                    await _firmaAutodijelovaProvider
+                                        .insert(request);
+                                  } else {
+                                    await _firmaAutodijelovaProvider.update(
+                                        widget.firmaAutodijelova!
+                                            .firmaAutodijelovaID!,
+                                        request);
+                                  }
+                                  Navigator.pop(context);
+                                } on Exception catch (e) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text("Greška"),
+                                      content: Text(e.toString()),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("OK"),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
-                              backgroundColor: Colors.red, // Beli tekst
+                              backgroundColor: Colors.red,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10),
                               textStyle: const TextStyle(fontSize: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Zaobljeni uglovi
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             child: const Text("Spasi"),
@@ -174,7 +190,6 @@ class _FirmaAutodijelovaDetailScreenState
         children: [
           const SizedBox(height: 20),
           Center(
-            // Centrirana slika u kvadratnom okviru
             child: GestureDetector(
               onTap: _pickImage,
               child: Container(
@@ -213,6 +228,7 @@ class _FirmaAutodijelovaDetailScreenState
       ),
     );
   }
+
 
   List<Widget> _buildFormFields() {
     return [

@@ -20,8 +20,8 @@ namespace CarCareHub.Model
 
         public string? Email { get; set; }
         public int? GradId { get; set; }
-        public int? JIB { get; set; }
-        public int? MBS { get; set; }
+        public string? JIB { get; set; }
+        public string? MBS { get; set; }
         public byte[]? SlikaProfila { get; set; }
 
     }

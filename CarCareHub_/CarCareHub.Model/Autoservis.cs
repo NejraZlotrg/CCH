@@ -17,7 +17,6 @@ namespace CarCareHub.Model
         public string? Adresa { get; set; }
 
         public string? VlasnikFirme { get; set; }
-        public string? KorisnickoIme { get; set; }
 
 
         public int? GradId { get; set; }
@@ -38,6 +37,8 @@ namespace CarCareHub.Model
         public string? Mbs { get; set; }
         [Column(TypeName = "VARBINARY(MAX)")]
         public byte[]? SlikaProfila { get; set; }
+        public byte[]? SlikaThumb { get; set; }
+
 
         public int? UlogaId { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarCareHub.Model;
+using System;
 using System.Collections.Generic;
 
 namespace CarCareHub.Services.Database;
@@ -29,4 +30,8 @@ public partial class Klijent
     public virtual ICollection<ChatKlijentAutoservis> ChatKlijentAutoserviss { get; set; } = new List<ChatKlijentAutoservis>();
 
     public virtual Grad? Grad { get; set; }
+
+    public int UlogaId { get; set; }
+    public virtual Uloge uloga { get; set; }
+
 }

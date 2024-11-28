@@ -30,8 +30,8 @@ public partial class FirmaAutodijelova
     public byte[]? SlikaProfila { get; set; }
 
     public int? UlogaId { get; set; }
-    public int? JIB { get; set; }
-    public int? MBS { get; set; }
+    public string? JIB { get; set; }
+    public string? MBS { get; set; }
 
     public int? IzvjestajId { get; set; }
 

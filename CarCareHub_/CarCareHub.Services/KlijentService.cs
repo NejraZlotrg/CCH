@@ -94,6 +94,7 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.Grad.Drzava);
                 query = query.Include(z => z.ChatKlijentAutoserviss);
                 query = query.Include(z => z.ChatKlijentZaposlenik);
+                query = query.Include(z => z.uloga);
             }
             return base.AddInclude(query, search);
         }

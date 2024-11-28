@@ -17,8 +17,11 @@ import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_details_screen.dart';
+import 'package:flutter_mobile/screens/autoservis_registracija_screen.dart';
+import 'package:flutter_mobile/screens/firma_autodijelova_registracija_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
 import 'package:flutter_mobile/screens/klijent_details_screen.dart';
+import 'package:flutter_mobile/screens/klijent_registracija_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
@@ -199,7 +202,7 @@ class _LogInPageState extends State<LogInPage> {
                 onTap: () {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null,) // poziv na drugi screen
+                   MaterialPageRoute(builder: (context)=> FirmaAutodijelovaRegistracijaScreen(firmaAutodijelova: null,) // poziv na drugi screen
                      ), 
                   );
                 },
@@ -210,7 +213,7 @@ class _LogInPageState extends State<LogInPage> {
                 onTap: () {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> AutoservisDetailsScreen(autoservis: null,) // poziv na drugi screen
+                   MaterialPageRoute(builder: (context)=> AutoservisRegistracijaScreen(autoservis: null,) // poziv na drugi screen
                      ), 
                   );
                 },
@@ -221,7 +224,7 @@ class _LogInPageState extends State<LogInPage> {
                 onTap: () {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> KlijentDetailsScreen(klijent: null,) // poziv na drugi screen
+                   MaterialPageRoute(builder: (context)=> KlijentRegistracijaScreen(klijent: null,) // poziv na drugi screen
                      ), 
                   );
                 },

@@ -9,6 +9,8 @@ namespace CarCareHub_.Controllers
 {
     [ApiController]
     [Route("api/firmaAutodijelova")]
+    [AllowAnonymous]
+
     public class FirmaAutodijelovaController : BaseCRUDController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>
     {
 

@@ -9,11 +9,12 @@ class Autoservis {
   String? naziv;
   String? adresa;
   String? vlasnikFirme;
-  String? korisnickoIme;
   int?    gradId;
   String? telefon;
   String? email;
+  String? username;
   String? password;
+  String? passwordAgain;
   String? jib;
   String? mbs;
   String? slikaProfila;
@@ -22,8 +23,8 @@ class Autoservis {
   final Grad? grad;
 
 
-  Autoservis(this.autoservisId, this.naziv,this.adresa,this.vlasnikFirme, this.korisnickoIme, this.gradId, this.telefon, this.password,
-  this.email, this.jib, this.mbs, this.slikaProfila, this.ulogaId, this.voziloId, this.grad);
+  Autoservis(this.autoservisId, this.naziv,this.adresa,this.vlasnikFirme, this.gradId, this.telefon, this.password,
+  this.email, this.jib, this.mbs, this.slikaProfila, this.ulogaId, this.voziloId, this.grad,this.passwordAgain,this.username);
 
   
   factory Autoservis.fromJson(Map<String,dynamic> json) => _$AutoservisFromJson(json);
