@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    //[AllowAnonymous]
+    [AllowAnonymous]
     [Route("api/grad")]
     public class GradController : BaseCRUDController<Grad, GradSearchObject, GradInsert, GradUpdate>
     {
