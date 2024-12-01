@@ -19,7 +19,7 @@ namespace CarCareHub.Services.Database; public partial class Zaposlenik
     public string? LozinkaSalt { get; set; }
     public string? LozinkaHash { get; set; }
 
-    public int? AutoservisId { get; set; }
+    public int? autoservisId { get; set; }
     public virtual Autoservis? Autoservis { get; set; }
 
     public int? FirmaAutodijelovaId { get; set; }

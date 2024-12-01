@@ -788,10 +788,6 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZaposlenikId"));
 
-                    b.Property<int?>("AutoservisId")
-                        .HasColumnType("int")
-                        .HasColumnName("autoservisID");
-
                     b.Property<int?>("BrojTelefona")
                         .HasColumnType("int");
 
@@ -848,16 +844,20 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("username");
 
+                    b.Property<int?>("autoservisId")
+                        .HasColumnType("int")
+                        .HasColumnName("autoservisID");
+
                     b.HasKey("ZaposlenikId")
                         .HasName("PK_zaposlenik");
-
-                    b.HasIndex("AutoservisId");
 
                     b.HasIndex("FirmaAutodijelovaId");
 
                     b.HasIndex("GradId");
 
                     b.HasIndex("UlogaId");
+
+                    b.HasIndex("autoservisId");
 
                     b.ToTable("Zaposlenik", (string)null);
                 });
@@ -1116,11 +1116,6 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Zaposlenik", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
-                        .WithMany("Zaposleniks")
-                        .HasForeignKey("AutoservisId")
-                        .HasConstraintName("fk_zaposlenik_autoservis");
-
                     b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "FirmaAutodijelova")
                         .WithMany("Zaposleniks")
                         .HasForeignKey("FirmaAutodijelovaId")
@@ -1135,6 +1130,11 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("UlogaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
+                        .WithMany("Zaposleniks")
+                        .HasForeignKey("autoservisId")
+                        .HasConstraintName("fk_zaposlenik_autoservis");
 
                     b.Navigation("Autoservis");
 

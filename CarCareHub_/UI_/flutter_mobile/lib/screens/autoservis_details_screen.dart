@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
+import 'package:flutter_mobile/models/zaposlenik.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,12 +31,19 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   Map<String, dynamic> _initialValues = {};
   late AutoservisProvider _autoservisProvider;
   late UslugeProvider _uslugaProvider; 
+  late ZaposlenikProvider _zaposlenikProvider; 
+
   late GradProvider _gradProvider;
+
 
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   SearchResult<Grad>? gradResult;
   List<Usluge> usluge = []; 
+  List<Zaposlenik> zaposlenik = []; 
+  List<Grad> grad = []; 
+
+
   bool isLoading = true;
 
   @override
@@ -57,10 +67,18 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
     _autoservisProvider = context.read<AutoservisProvider>();
     _uslugaProvider = context.read<UslugeProvider>(); 
+    _gradProvider = context.read<GradProvider>(); 
+
+    _zaposlenikProvider = context.read<ZaposlenikProvider>(); 
+
     _gradProvider = context.read<GradProvider>();
     
     initForm();
     fetchUsluge(); 
+    fetchGrad(); 
+
+    fetchZaposlenik(); 
+
   }
 
   Future initForm() async {
@@ -93,6 +111,16 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
   Future<void> fetchUsluge() async {
     usluge = await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
+    setState(() {});
+  }
+  Future<void> fetchZaposlenik() async {
+  if (widget.autoservis?.autoservisId != null) {
+    zaposlenik = await _zaposlenikProvider.getzaposlenikById(widget.autoservis!.autoservisId!);
+  }
+  setState(() {});
+}
+   Future<void> fetchGrad() async {
+    grad = await _gradProvider.getById(widget.autoservis?.gradId ?? 0);
     setState(() {});
   }
 
@@ -132,6 +160,49 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               child: ElevatedButton(
                 onPressed: () => _showAddUslugaDialog(),
                 child: const Text("Dodaj uslugu"),
+              ),
+            ),
+            //prikaz zaposlenika
+            Padding(
+  padding: const EdgeInsets.all(10),
+  child: zaposlenik.isNotEmpty
+      ? DataTable(
+          columns: const [
+            DataColumn(label: Text("Ime")),
+            DataColumn(label: Text("Prezime")),
+            DataColumn(label: Text("Email")),
+            DataColumn(label: Text("Matični broj")),
+            DataColumn(label: Text("Broj telefona")),
+            DataColumn(label: Text("Datum rođenja")),
+            DataColumn(label: Text("Korisničko ime")),
+            DataColumn(label: Text("Lozinka")),
+            DataColumn(label: Text("Grad")),
+          ],
+          rows: zaposlenik.map((zap) {
+            return DataRow(
+              cells: [
+                DataCell(Text(zap.ime ?? "")),
+                DataCell(Text(zap.prezime ?? "")),
+                DataCell(Text(zap.email ?? "")),
+                DataCell(Text(zap.maticniBroj?.toString() ?? "")),
+             DataCell(Text(zap.brojTelefona?.toString() ?? "")),
+                DataCell(Text(zap.datumRodjenja?.toString() ?? "")),
+                DataCell(Text(zap.username ?? "")),
+                DataCell(Text(zap.password ?? "")),
+                DataCell(Text(zap.gradId?.toString() ?? "")), // Pretpostavljam da je gradId u zaposlenik objektu
+              ],
+            );
+          }).toList(),
+        )
+      : const Text("Nema dostupnih zaposlenika za ovaj autoservis."),
+),
+
+            // Dugme za dodavanje zaposlenika
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                onPressed: () => _showAddZaposlenikDialog(),
+                child: const Text("Dodaj zaposlenika"),
               ),
             ),
             // Prikaz slike
@@ -371,4 +442,120 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       },
     );
   }
+void _showAddZaposlenikDialog() {
+  final zaposlenikFormKey = GlobalKey<FormBuilderState>();
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Dodaj novog zaposlenika"),
+        content: SingleChildScrollView(
+          child: FormBuilder(
+            key: zaposlenikFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FormBuilderTextField(
+                  name: "ime",
+                  decoration: const InputDecoration(labelText: "Ime"),
+                ),
+                FormBuilderTextField(
+                  name: "prezime",
+                  decoration: const InputDecoration(labelText: "Prezime"),
+                ),
+                FormBuilderTextField(
+                  name: "maticniBroj",
+                  decoration: const InputDecoration(labelText: "Matični broj"),
+                  keyboardType: TextInputType.number,
+                ),
+                FormBuilderTextField(
+                  name: "brojTelefona",
+                  decoration: const InputDecoration(labelText: "Broj telefona"),
+                  keyboardType: TextInputType.phone,
+                ),
+                FormBuilderDateTimePicker(
+                  name: "datumRodjenja",
+                  decoration: const InputDecoration(labelText: "Datum rođenja"),
+                  inputType: InputType.date,
+                ),
+                FormBuilderTextField(
+                  name: "email",
+                  decoration: const InputDecoration(labelText: "Email"),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                FormBuilderTextField(
+                  name: "username",
+                  decoration: const InputDecoration(labelText: "Korisničko ime"),
+                ),
+                FormBuilderTextField(
+                  name: "password",
+                  decoration: const InputDecoration(labelText: "Lozinka"),
+                  obscureText: true,
+                ),
+                FormBuilderTextField(
+                  name: "passwordAgain",
+                  decoration: const InputDecoration(labelText: "Ponovi lozinku"),
+                  obscureText: true,
+                ),
+               
+                FormBuilderDropdown<int>(
+                  name: "gradId",
+                  decoration: const InputDecoration(labelText: "Grad"),
+                  items: grad // Pretpostavljam da imaš listu gradova
+                      .map((grad) => DropdownMenuItem(
+                            value: grad.gradId,
+                            child: Text(grad.nazivGrada ?? ""),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Odustani"),
+          ),
+          TextButton(
+            onPressed: () async {
+              zaposlenikFormKey.currentState?.saveAndValidate();
+              var zaposlenikRequest =
+                  Map<String, dynamic>.from(zaposlenikFormKey.currentState!.value);
+   zaposlenikRequest['ulogaId'] = 1;
+
+              // Dodaj autoservisId prije slanja na server
+              zaposlenikRequest['autoservisId'] = widget.autoservis?.autoservisId;
+
+              try {
+                await _zaposlenikProvider.insert(zaposlenikRequest);
+                Navigator.pop(context);
+                fetchZaposlenik(); // Osvježi listu zaposlenika nakon dodavanja
+              } catch (e) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text("Greška"),
+                    content: Text(e.toString()),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+            child: const Text("Dodaj"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 }

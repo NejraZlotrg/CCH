@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20241128194822_sjnidtzjh")]
-    partial class sjnidtzjh
+    [Migration("20241201115642_nejra")]
+    partial class nejra
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -440,6 +440,9 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(10)")
                         .HasColumnName("spol");
 
+                    b.Property<int>("UlogaId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Username")
                         .HasMaxLength(30)
                         .IsUnicode(false)
@@ -450,6 +453,8 @@ namespace CarCareHub.Services.Migrations
                         .HasName("PK_klijent");
 
                     b.HasIndex("GradId");
+
+                    b.HasIndex("UlogaId");
 
                     b.ToTable("Klijent", (string)null);
                 });
@@ -786,10 +791,6 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZaposlenikId"));
 
-                    b.Property<int?>("AutoservisId")
-                        .HasColumnType("int")
-                        .HasColumnName("autoservisID");
-
                     b.Property<int?>("BrojTelefona")
                         .HasColumnType("int");
 
@@ -846,16 +847,20 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("username");
 
+                    b.Property<int?>("autoservisId")
+                        .HasColumnType("int")
+                        .HasColumnName("autoservisID");
+
                     b.HasKey("ZaposlenikId")
                         .HasName("PK_zaposlenik");
-
-                    b.HasIndex("AutoservisId");
 
                     b.HasIndex("FirmaAutodijelovaId");
 
                     b.HasIndex("GradId");
 
                     b.HasIndex("UlogaId");
+
+                    b.HasIndex("autoservisId");
 
                     b.ToTable("Zaposlenik", (string)null);
                 });
@@ -994,7 +999,15 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("GradId")
                         .HasConstraintName("fk_klijent_grad");
 
+                    b.HasOne("CarCareHub.Services.Database.Uloge", "uloga")
+                        .WithMany()
+                        .HasForeignKey("UlogaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Grad");
+
+                    b.Navigation("uloga");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
@@ -1106,11 +1119,6 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Zaposlenik", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
-                        .WithMany("Zaposleniks")
-                        .HasForeignKey("AutoservisId")
-                        .HasConstraintName("fk_zaposlenik_autoservis");
-
                     b.HasOne("CarCareHub.Services.Database.FirmaAutodijelova", "FirmaAutodijelova")
                         .WithMany("Zaposleniks")
                         .HasForeignKey("FirmaAutodijelovaId")
@@ -1125,6 +1133,11 @@ namespace CarCareHub.Services.Migrations
                         .HasForeignKey("UlogaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
+                        .WithMany("Zaposleniks")
+                        .HasForeignKey("autoservisId")
+                        .HasConstraintName("fk_zaposlenik_autoservis");
 
                     b.Navigation("Autoservis");
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarCareHub.Services.Migrations
 {
     /// <inheritdoc />
-    public partial class firmaautodijelovas : Migration
+    public partial class nejra : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -172,14 +172,17 @@ namespace CarCareHub.Services.Migrations
                     naziv = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     adresa = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     VlasnikFirme = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KorisnickoIme = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     gradID = table.Column<int>(type: "int", nullable: true),
                     telefon = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     email = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     password_ = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
+                    LozinkaSalt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LozinkaHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     jib = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     MBS = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     slika_Profila = table.Column<byte[]>(type: "VARBINARY(MAX)", unicode: false, nullable: true),
+                    SlikaThumb = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     ulogaID = table.Column<int>(type: "int", nullable: true),
                     voziloID = table.Column<int>(type: "int", nullable: true)
                 },
@@ -216,10 +219,12 @@ namespace CarCareHub.Services.Migrations
                     email = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     password_ = table.Column<string>(type: "varchar(30)", unicode: false, maxLength: 30, nullable: true),
-                    slika_Profila = table.Column<byte[]>(type: "varbinary(40)", unicode: false, maxLength: 40, nullable: true),
+                    LozinkaSalt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LozinkaHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    slika_Profila = table.Column<byte[]>(type: "VARBINARY(MAX)", unicode: false, maxLength: 40, nullable: true),
                     ulogaID = table.Column<int>(type: "int", nullable: true),
-                    JIB = table.Column<int>(type: "int", nullable: true),
-                    MBS = table.Column<int>(type: "int", nullable: true),
+                    JIB = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MBS = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     izvjestajID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -257,11 +262,18 @@ namespace CarCareHub.Services.Migrations
                     LozinkaHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     spol = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true),
                     broj_telefona = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    gradID = table.Column<int>(type: "int", nullable: true)
+                    gradID = table.Column<int>(type: "int", nullable: true),
+                    UlogaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_klijent", x => x.KlijentID);
+                    table.ForeignKey(
+                        name: "FK_Klijent_Uloge_UlogaId",
+                        column: x => x.UlogaId,
+                        principalTable: "Uloge",
+                        principalColumn: "UlogaID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_klijent_grad",
                         column: x => x.gradID,
@@ -644,6 +656,11 @@ namespace CarCareHub.Services.Migrations
                 name: "IX_Klijent_gradID",
                 table: "Klijent",
                 column: "gradID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Klijent_UlogaId",
+                table: "Klijent",
+                column: "UlogaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Model_GodisteId",

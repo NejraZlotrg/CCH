@@ -396,7 +396,7 @@ public partial class CchV2AliContext : DbContext
             entity.ToTable("Zaposlenik");
 
             entity.Property(e => e.ZaposlenikId).HasColumnName("ZaposlenikID");
-            entity.Property(e => e.AutoservisId).HasColumnName("autoservisID");
+            entity.Property(e => e.autoservisId).HasColumnName("autoservisID");
             entity.Property(e => e.DatumRodjenja)
                 .HasColumnType("date")
                 .HasColumnName("datum_rodjenja");
@@ -423,7 +423,7 @@ public partial class CchV2AliContext : DbContext
                 .HasColumnName("username");
 
             entity.HasOne(d => d.Autoservis).WithMany(p => p.Zaposleniks)
-                .HasForeignKey(d => d.AutoservisId)
+                .HasForeignKey(d => d.autoservisId)
                 .HasConstraintName("fk_zaposlenik_autoservis");
 
             entity.HasOne(d => d.FirmaAutodijelova).WithMany(p => p.Zaposleniks)

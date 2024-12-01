@@ -104,6 +104,17 @@ namespace CarCareHub.Services
             return _mapper.Map<Model.Zaposlenik>(entity);
         }
 
+
+        public override async Task<List<Model.Zaposlenik>> GetByID_(int id)
+        {
+            var temp = _dbContext.Zaposleniks.Where(x => x.autoservisId == id).ToList().AsQueryable();
+
+            temp = temp.Include(x => x.Autoservis);
+
+
+            return _mapper.Map<List<Model.Zaposlenik>>(temp);
+        }
+
     }
     
 }

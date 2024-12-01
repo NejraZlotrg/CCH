@@ -9,5 +9,7 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
     // TODO: implement fromJson
     return Zaposlenik.fromJson(data);
   }
-
+   Future<List<Zaposlenik>> getzaposlenikById(int id) async {
+    return await getById(id); // Pozivanje funkcije getById iz osnovnog provider-a
+  }
 }

@@ -37,7 +37,8 @@ namespace CarCareHub.Model
 
 
         public int? UlogaId { get; set; }
-     
+
+        public int? ZaposlenikId { get; set; }
 
 
         public int? VoziloId { get; set; }

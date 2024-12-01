@@ -19,6 +19,8 @@ class Autoservis {
   String? mbs;
   String? slikaProfila;
   int? ulogaId;
+  int? zaposlenikId;
+
   int? voziloId;
   final Grad? grad;
 
