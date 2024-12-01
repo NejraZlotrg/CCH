@@ -121,7 +121,7 @@ class _FirmaAutodijelovaDetailScreenState
                                   false) {
                                 var request =
                                     Map.from(_formKey.currentState!.value);
-
+                                    request['ulogaId'] = 3;
                                 // Dodaj sliku u request
                                 if (_imageFile != null) {
                                   final imageBytes =
@@ -366,52 +366,76 @@ class _FirmaAutodijelovaDetailScreenState
       ),
       const SizedBox(height: 20),
 
-      // Password i uloga
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-              name: "password",
-            ),
+      Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Korisničko ime",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
-        ],
-      ),
+          name: "username",
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 3: Lozinka
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Lozinka",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "password",
+          obscureText: true,
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 4: Ponovljena Lozinka
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Ponovite lozinku",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "passwordAgain",
+          obscureText: true,
+        ),
+      ],
+    ),
       const SizedBox(height: 20),
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderDropdown(
-              name: 'ulogaId',
-              decoration: const InputDecoration(
-                labelText: 'Uloga',
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                hintText: 'Izaberite ulogu',
-              ),
-              initialValue: widget.firmaAutodijelova?.ulogaId?.toString(),
-              items: ulogaResult?.result
-                      .map((item) => DropdownMenuItem(
-                            alignment: AlignmentDirectional.center,
-                            value: item.ulogaId.toString(),
-                            child: Text(item.nazivUloge ?? ""),
-                          ))
-                      .toList() ??
-                  [],
-            ),
-          ),
-        ],
-      ),
+     
     ];
   }
 }

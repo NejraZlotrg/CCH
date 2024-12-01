@@ -236,6 +236,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     onPressed: () async {
                       _formKey.currentState?.save();
                       var request = Map.from(_formKey.currentState!.value);
+                            // Postavljanje 'ulogaId' na 2
+      request['ulogaId'] = 2;  // ili 2 ako je tip int
                       if (_imageFile != null) {
                         request['slikaProfila'] = base64Encode(await _imageFile!.readAsBytes());
                       }
@@ -275,102 +277,133 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     );
   }
 
-  
   FormBuilder _buildForm() {
-    return FormBuilder(
-      key: _formKey,
-      initialValue: _initialValues,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Naziv"),
-                  name: "naziv",
-                ),
+  return FormBuilder(
+    key: _formKey,
+    initialValue: _initialValues,
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Naziv"),
+                name: "naziv",
               ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Vlasnik firme"),
-                  name: "vlasnikFirme",
-                ),
+            ),
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Vlasnik firme"),
+                name: "vlasnikFirme",
               ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Adresa"),
-                  name: "adresa",
-                ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Adresa"),
+                name: "adresa",
               ),
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'gradId',
-                  decoration: InputDecoration(
-                    labelText: 'Grad',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['gradId']?.reset();
-                      },
-                    ),
-                    hintText: 'grad',
+            ),
+            Expanded(
+              child: FormBuilderDropdown(
+                name: 'gradId',
+                decoration: InputDecoration(
+                  labelText: 'Grad',
+                  suffix: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      _formKey.currentState!.fields['gradId']?.reset();
+                    },
                   ),
-                  initialValue: widget.autoservis?.gradId != null
-                      ? widget.autoservis!.gradId.toString()
-                      : null, // Provjera za null vrijednosti
-                  items: gradResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.gradId.toString(),
-                                child: Text(item.nazivGrada ?? ""),
-                              ))
-                          .toList() ??
-                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
+                  hintText: 'grad',
                 ),
-              )
-              
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Telefon"),
-                  name: "telefon",
-                ),
+                initialValue: widget.autoservis?.gradId != null
+                    ? widget.autoservis!.gradId.toString()
+                    : null,
+                items: gradResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.gradId.toString(),
+                              child: Text(item.nazivGrada ?? ""),
+                            ))
+                        .toList() ??
+                    [],
               ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Email"),
-                  name: "email",
-                ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Telefon"),
+                name: "telefon",
               ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "JIB"),
-                  name: "jib",
-                ),
+            ),
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Email"),
+                name: "email",
               ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "MBS"),
-                  name: "mbs",
-                ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "JIB"),
+                name: "jib",
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+            ),
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "MBS"),
+                name: "mbs",
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+         
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Username"),
+                name: "username",
+                initialValue: widget.autoservis?.username,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Password"),
+                name: "password",
+                obscureText: true,
+                initialValue: widget.autoservis?.password,
+              ),
+            ),
+            Expanded(
+              child: FormBuilderTextField(
+                decoration: const InputDecoration(labelText: "Confirm Password"),
+                name: "passwordAgain",
+                obscureText: true,
+                initialValue: widget.autoservis?.passwordAgain,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 
 
   // Dijalog za dodavanje nove usluge
@@ -498,17 +531,33 @@ void _showAddZaposlenikDialog() {
                   decoration: const InputDecoration(labelText: "Ponovi lozinku"),
                   obscureText: true,
                 ),
-               
-                FormBuilderDropdown<int>(
-                  name: "gradId",
-                  decoration: const InputDecoration(labelText: "Grad"),
-                  items: grad // Pretpostavljam da imaš listu gradova
-                      .map((grad) => DropdownMenuItem(
-                            value: grad.gradId,
-                            child: Text(grad.nazivGrada ?? ""),
-                          ))
-                      .toList(),
+             
+                FormBuilderDropdown(
+                name: 'gradId',
+                decoration: InputDecoration(
+                  labelText: 'Grad',
+                  suffix: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      _formKey.currentState!.fields['gradId']?.reset();
+                    },
+                  ),
+                  hintText: 'grad',
                 ),
+                initialValue: widget.autoservis?.gradId != null
+                    ? widget.autoservis!.gradId.toString()
+                    : null,
+                items: gradResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.gradId.toString(),
+                              child: Text(item.nazivGrada ?? ""),
+                            ))
+                        .toList() ??
+                    [],
+              ),
+               
+             
               ],
             ),
           ),

@@ -18,6 +18,8 @@ class FirmaAutodijelova {
   String? username;
   int? ulogaId;
   String? passwordAgain;
+  
+
 
 
   FirmaAutodijelova(
