@@ -173,7 +173,18 @@ builder.Services.AddAuthentication("BasicAuthentication").AddScheme<Authenticati
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+await SeedUloge(app);
 
+static async Task SeedUloge(WebApplication app)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var ulogeService = scope.ServiceProvider.GetRequiredService<IUlogeService>();
+
+        // Pozivanje funkcije za dodavanje uloga
+        await ulogeService.AddUlogeAsync();
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

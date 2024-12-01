@@ -5,5 +5,6 @@ namespace CarCareHub.Services
 {
     public interface IUlogeService : ICRUDService<Model.Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>
     {
+        Task AddUlogeAsync();
     }
 }

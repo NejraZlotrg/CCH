@@ -25,5 +25,30 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
+
+        public async Task AddUlogeAsync()
+        {
+            // Provjerite da li uloge već postoje u bazi
+            if (!_dbContext.Uloges.Any())
+            {
+                // Kreirajte listu uloga za unos
+                var ulogeInsert = new List<UlogeInsert>
+        {
+            new UlogeInsert { NazivUloge = "Zapolenik" },
+            new UlogeInsert { NazivUloge = "Autoservis" },
+            new UlogeInsert { NazivUloge = "Firma autodijelova" },
+            new UlogeInsert { NazivUloge = "Klijent" }
+        };
+
+                // Mapirajte svaki Insert model u Database.Uloge entitet
+                var ulogeEntities = ulogeInsert.Select(u => _mapper.Map<Database.Uloge>(u)).ToList();
+
+                // Dodajte uloge u bazu podataka
+                await _dbContext.Uloges.AddRangeAsync(ulogeEntities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+
     }
 }

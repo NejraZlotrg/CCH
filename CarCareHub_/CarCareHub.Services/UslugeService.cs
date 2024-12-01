@@ -35,5 +35,6 @@ namespace CarCareHub.Services
 
             return _mapper.Map<List<Usluge>>(temp);
         }
+  
     }
 }
