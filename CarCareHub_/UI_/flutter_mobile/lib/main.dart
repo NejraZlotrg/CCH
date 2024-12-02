@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
+import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 
 import 'package:flutter_mobile/provider/drzave_provider.dart';
@@ -48,6 +50,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => ZaposlenikProvider()),
         ChangeNotifierProvider(create: (_) => ProizvodjacProvider()),
         ChangeNotifierProvider(create: (_) => GodisteProvider()),
+        ChangeNotifierProvider(create: (_) => BPAutodijeloviAutoservisProvider()),
+
         
 
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/screens/BPAutodijeloviAutoservis_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
 import 'package:flutter_mobile/screens/product_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
@@ -45,9 +47,9 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
     );
   }
 
-  Widget _buildSearch() {
+Widget _buildSearch() {
   return Container(
-    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
     margin: const EdgeInsets.only(
       top: 20.0, // Razmak od vrha
     ),
@@ -60,89 +62,93 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
           width: 1.0, // Debljina okvira (1px)
         ),
       ),
-      child: Padding(padding:  const EdgeInsets.all(10.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Naziv firme',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _nazivFirmeController,
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              print("podaci proceed");
-              var filterParams = {
-                'IsAllncluded': 'true', // Ovaj parametar ostaje
-              };
-
-              // Dodavanje filtera samo ako je naziv unesen
-              if (_nazivFirmeController.text.isNotEmpty) {
-                filterParams['nazivFirme'] = _nazivFirmeController.text;
-              }
-
-              var data =
-                  await _firmaAutodijelovaProvider.get(filter: filterParams);
-
-              setState(() {
-                result = data;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Crvena boja dugmeta
-              foregroundColor: Colors.white, // Bela boja teksta
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-              ),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Pretraga'),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const FirmaAutodijelovaDetailScreen(
-                    firmaAutodijelova: null,
-                  ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Naziv firme',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Crvena boja dugmeta
-              foregroundColor: Colors.white, // Bela boja teksta
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                controller: _nazivFirmeController,
               ),
             ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
-              ],
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () async {
+                print("podaci proceed");
+                var filterParams = {
+                  'IsAllncluded': 'true', // Ovaj parametar ostaje
+                };
+
+                // Dodavanje filtera samo ako je naziv unesen
+                if (_nazivFirmeController.text.isNotEmpty) {
+                  filterParams['nazivFirme'] = _nazivFirmeController.text;
+                }
+
+                var data =
+                    await _firmaAutodijelovaProvider.get(filter: filterParams);
+
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FirmaAutodijelovaDetailScreen(
+                      firmaAutodijelova: null,
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add), // Ikonica plus
+                  SizedBox(width: 8.0),
+                  Text('Dodaj'),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+         
+          ],
+        ),
       ),
     ),
   );
 }
+
 
 Widget _buildDataListView() {
   return Container(

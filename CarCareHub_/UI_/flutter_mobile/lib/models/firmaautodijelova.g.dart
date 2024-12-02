@@ -8,7 +8,7 @@ part of 'firmaautodijelova.dart';
 
 FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
     FirmaAutodijelova(
-      (json['firmaAutodijelovaID'] as num?)?.toInt(),
+      (json['firmaAutodijelovaID'] as num).toInt(),
       json['nazivFirme'] as String?,
       json['adresa'] as String?,
       json['email'] as String?,

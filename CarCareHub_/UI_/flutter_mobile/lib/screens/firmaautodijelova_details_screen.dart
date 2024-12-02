@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/uloge.dart';
+import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
+import 'package:flutter_mobile/screens/BPAutodijeloviAutoservis_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -29,9 +33,12 @@ class _FirmaAutodijelovaDetailScreenState
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
   late GradProvider _gradProvider;
   late UlogeProvider _ulogaProvider;
+  late BPAutodijeloviAutoservisProvider _bpProvider;
+
   SearchResult<Grad>? gradResult;
   SearchResult<Uloge>? ulogaResult;
-
+SearchResult<BPAutodijeloviAutoservis>? bpResult;
+List<BPAutodijeloviAutoservis>? temp;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -57,6 +64,8 @@ class _FirmaAutodijelovaDetailScreenState
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _gradProvider = context.read<GradProvider>();
     _ulogaProvider = context.read<UlogeProvider>();
+    _bpProvider = context.read<BPAutodijeloviAutoservisProvider>();
+
 
     initForm();
   }
@@ -64,6 +73,8 @@ class _FirmaAutodijelovaDetailScreenState
   Future<void> initForm() async {
     gradResult = await _gradProvider.get();
     ulogaResult = await _ulogaProvider.get();
+    temp = await _bpProvider.getById(widget.firmaAutodijelova?.firmaAutodijelovaID ?? 0);
+
 
     if (widget.firmaAutodijelova != null &&
         widget.firmaAutodijelova!.slikaProfila != null) {
@@ -92,95 +103,178 @@ class _FirmaAutodijelovaDetailScreenState
       });
     }
   }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+    appBar: AppBar(
+      title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme"),
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  _buildForm(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // Dugme za spašavanje
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState?.saveAndValidate() ??
+                                false) {
+                              var request = Map.from(
+                                  _formKey.currentState!.value);
+                              request['ulogaId'] = 3;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
-      appBar: AppBar(
-        title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme"),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildForm(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState?.saveAndValidate() ??
-                                  false) {
-                                var request =
-                                    Map.from(_formKey.currentState!.value);
-                                    request['ulogaId'] = 3;
-                                // Dodaj sliku u request
-                                if (_imageFile != null) {
-                                  final imageBytes =
-                                      await _imageFile!.readAsBytes();
-                                  request['slikaProfila'] =
-                                      base64Encode(imageBytes);
-                                }
-
-                                try {
-                                  if (widget.firmaAutodijelova == null) {
-                                    await _firmaAutodijelovaProvider
-                                        .insert(request);
-                                  } else {
-                                    await _firmaAutodijelovaProvider.update(
-                                        widget.firmaAutodijelova!
-                                            .firmaAutodijelovaID!,
-                                        request);
-                                  }
-                                  Navigator.pop(context);
-                                } on Exception catch (e) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
-                                      title: const Text("Greška"),
-                                      content: Text(e.toString()),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text("OK"),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                }
+                              // Dodaj sliku u request
+                              if (_imageFile != null) {
+                                final imageBytes =
+                                    await _imageFile!.readAsBytes();
+                                request['slikaProfila'] =
+                                    base64Encode(imageBytes);
                               }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              textStyle: const TextStyle(fontSize: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+
+                              try {
+                                if (widget.firmaAutodijelova == null) {
+                                  await _firmaAutodijelovaProvider.insert(
+                                      request);
+                                } else {
+                                  await _firmaAutodijelovaProvider.update(
+                                      widget.firmaAutodijelova!
+                                          .firmaAutodijelovaID!,
+                                      request);
+                                }
+                                Navigator.pop(context);
+                              } on Exception catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text("Greška"),
+                                    content: Text(e.toString()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: const Text("OK"),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            textStyle: const TextStyle(fontSize: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text("Spasi"),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                          ),
+                          child: const Text("Spasi"),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        // Dugme za bazu autoservisa
+                        ElevatedButton(
+  onPressed: () {
+    _showSearchDialog(context);
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.red, // Crvena boja dugmeta
+    foregroundColor: Colors.white, // Bijela boja teksta
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+  ),
+  child: const Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.storage),
+      SizedBox(width: 8.0),
+      Text('Baza autoservisa'),
+    ],
+  ),
+),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-    );
-  }
+          ),
+  );
+}
+
+Future<void> _showSearchDialog(BuildContext context) async {
+  // Automatski postavljamo ID firme na onaj koji je izabran
+  int firmaId = widget.firmaAutodijelova?.firmaAutodijelovaID ?? 0;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Pretraga za Autoservisima'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              //controller: TextEditingController(int: firmaId), // Automatski popunjeno
+              decoration: InputDecoration(
+                labelText: 'ID firme',
+              ),
+              enabled: false, // Onemogućavamo uređivanje ID-a
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Zatvori dijalog
+            },
+            child: Text('Otkaži'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (firmaId != null) {
+                try {
+                  // Pozivanje API-ja za pretragu prema automatski popunjenom ID-u
+                  var data = await _bpProvider.getById(firmaId);
+                  setState(() {
+                    temp = data; // Ažuriramo temp sa podacima
+                  });
+                  Navigator.of(context).pop(); // Zatvori dijalog nakon poziva API-ja
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Greška: ${e.toString()}')),
+                  );
+                }
+              } else {
+                // Ako ID nije popunjen, obavještavamo korisnika
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('ID firme nije validan')),
+                );
+              }
+            },
+            child: Text('Pretraži'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   FormBuilder _buildForm() {
     return FormBuilder(

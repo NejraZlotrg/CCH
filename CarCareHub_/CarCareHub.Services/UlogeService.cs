@@ -37,7 +37,9 @@ namespace CarCareHub.Services
             new UlogeInsert { NazivUloge = "Zapolenik" },
             new UlogeInsert { NazivUloge = "Autoservis" },
             new UlogeInsert { NazivUloge = "Firma autodijelova" },
-            new UlogeInsert { NazivUloge = "Klijent" }
+            new UlogeInsert { NazivUloge = "Klijent" },
+            new UlogeInsert { NazivUloge = "Admin" }
+
         };
 
                 // Mapirajte svaki Insert model u Database.Uloge entitet

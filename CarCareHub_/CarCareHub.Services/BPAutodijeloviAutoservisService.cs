@@ -42,5 +42,14 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
+        public override async Task<List<Model.BPAutodijeloviAutoservis>> GetByID_(int id)
+        {
+            var temp = _dbContext.BPAutodijeloviAutoservis.Where(x => x.FirmaAutodijelova.FirmaAutodijelovaID == id).ToList().AsQueryable();
+
+          
+
+
+            return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(temp);
+        }
     }
 }

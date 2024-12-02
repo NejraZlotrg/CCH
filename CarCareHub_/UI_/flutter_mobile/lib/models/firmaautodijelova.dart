@@ -4,7 +4,7 @@ part 'firmaautodijelova.g.dart';
 
 @JsonSerializable()
 class FirmaAutodijelova {
-  int? firmaAutodijelovaID;
+  int firmaAutodijelovaID;
   String? nazivFirme;
   String? adresa;
   int? gradId;
