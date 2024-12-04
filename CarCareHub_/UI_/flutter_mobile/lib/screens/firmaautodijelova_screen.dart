@@ -80,7 +80,6 @@ Widget _buildSearch() {
             const SizedBox(width: 10),
             ElevatedButton(
               onPressed: () async {
-                print("podaci proceed");
                 var filterParams = {
                   'IsAllncluded': 'true', // Ovaj parametar ostaje
                 };
@@ -92,6 +91,9 @@ Widget _buildSearch() {
 
                 var data =
                     await _firmaAutodijelovaProvider.get(filter: filterParams);
+
+                      if (!mounted) return; // Dodaj ovu proveru
+
 
                 setState(() {
                   result = data;
@@ -204,7 +206,6 @@ Widget _buildDataListView() {
                     (FirmaAutodijelova e) => DataRow(
                       onSelectChanged: (selected) {
                         if (selected == true) {
-                          print('selected: ${e.firmaAutodijelovaID}');
                           Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) =>
@@ -216,7 +217,7 @@ Widget _buildDataListView() {
                         }
                       },
                       cells: [
-                        DataCell(Text(e.firmaAutodijelovaID?.toString() ?? "")),
+                        DataCell(Text(e.firmaAutodijelovaID.toString())),
                         DataCell(Text(e.nazivFirme ?? "")),
                         DataCell(Text(e.adresa ?? "")),
                         DataCell(Text(e.grad?.nazivGrada ?? "")),

@@ -43,6 +43,8 @@ List<BPAutodijeloviAutoservis>? temp;
   final ImagePicker _picker = ImagePicker();
 
   bool isLoading = true;
+  
+  get firmaAutodijelova => null;
 
   @override
   void initState() {
@@ -82,9 +84,12 @@ List<BPAutodijeloviAutoservis>? temp;
           widget.firmaAutodijelova!.slikaProfila!);
     }
 
+      if (mounted) {
     setState(() {
       isLoading = false;
     });
+  }
+
   }
 
   Future<File> _getImageFileFromBase64(String base64String) async {
@@ -148,12 +153,14 @@ Widget build(BuildContext context) {
                                 } else {
                                   await _firmaAutodijelovaProvider.update(
                                       widget.firmaAutodijelova!
-                                          .firmaAutodijelovaID!,
+                                          .firmaAutodijelovaID,
                                       request);
                                 }
+                                // ignore: use_build_context_synchronously
                                 Navigator.pop(context);
                               } on Exception catch (e) {
                                 showDialog(
+                                  // ignore: use_build_context_synchronously
                                   context: context,
                                   builder: (BuildContext context) =>
                                       AlertDialog(
@@ -189,7 +196,15 @@ Widget build(BuildContext context) {
                         // Dugme za bazu autoservisa
                         ElevatedButton(
   onPressed: () {
-    _showSearchDialog(context);
+    // Navigacija na BPAutodijeloviAutoservisScreen i prosleđivanje objekta
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BPAutodijeloviAutoservisScreen(
+          firmaAutodijelova: widget.firmaAutodijelova, // Prosleđivanje objekta
+        ),
+      ),
+    );
   },
   style: ElevatedButton.styleFrom(
     backgroundColor: Colors.red, // Crvena boja dugmeta
@@ -207,6 +222,7 @@ Widget build(BuildContext context) {
     ],
   ),
 ),
+
                       ],
                     ),
                   ),
@@ -216,65 +232,6 @@ Widget build(BuildContext context) {
           ),
   );
 }
-
-Future<void> _showSearchDialog(BuildContext context) async {
-  // Automatski postavljamo ID firme na onaj koji je izabran
-  int firmaId = widget.firmaAutodijelova?.firmaAutodijelovaID ?? 0;
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Pretraga za Autoservisima'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              //controller: TextEditingController(int: firmaId), // Automatski popunjeno
-              decoration: InputDecoration(
-                labelText: 'ID firme',
-              ),
-              enabled: false, // Onemogućavamo uređivanje ID-a
-            ),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Zatvori dijalog
-            },
-            child: Text('Otkaži'),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (firmaId != null) {
-                try {
-                  // Pozivanje API-ja za pretragu prema automatski popunjenom ID-u
-                  var data = await _bpProvider.getById(firmaId);
-                  setState(() {
-                    temp = data; // Ažuriramo temp sa podacima
-                  });
-                  Navigator.of(context).pop(); // Zatvori dijalog nakon poziva API-ja
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Greška: ${e.toString()}')),
-                  );
-                }
-              } else {
-                // Ako ID nije popunjen, obavještavamo korisnika
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('ID firme nije validan')),
-                );
-              }
-            },
-            child: Text('Pretraži'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
 
   FormBuilder _buildForm() {
     return FormBuilder(

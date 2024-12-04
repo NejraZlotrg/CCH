@@ -7,9 +7,9 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class BPAutodijeloviAutoservisScreen extends StatefulWidget {
-  //final FirmaAutodijelova? firmaAutodijelova;
+  final FirmaAutodijelova? firmaAutodijelova; // Primanje objekta FirmaAutodijelova
 
-  const BPAutodijeloviAutoservisScreen({super.key});
+  const BPAutodijeloviAutoservisScreen({super.key, this.firmaAutodijelova});
 
   @override
   State<BPAutodijeloviAutoservisScreen> createState() =>
@@ -17,28 +17,37 @@ class BPAutodijeloviAutoservisScreen extends StatefulWidget {
 }
 
 class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservisScreen> {
- 
-  SearchResult<BPAutodijeloviAutoservis>? result;
+  List<BPAutodijeloviAutoservis>? result;
   bool isLoading = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
- 
-    
-    // Provjeri da li je firmaAutodijelova poslata i pozovi API
-   
+    // Ako je firmaAutodijelova prosleđena, pozivamo pretragu odmah prilikom učitavanja ekrana
+    if (widget.firmaAutodijelova != null && isLoading) {
+      _fetchData();
+    }
   }
 
   Future<void> _fetchData() async {
-    var filterParams = {
-      'IsAllIncluded': 'true', // Ovaj parametar ostaje
-    };
+    // Provera da li je firmaAutodijelovaID prisutan
+    String firmaId = widget.firmaAutodijelova?.firmaAutodijelovaID.toString() ?? "";
+    if (firmaId.isEmpty) {
+      print("Firma ID nije prosleđen!");
+      return;  // Ako nema ID-a, ne šaljemo upit
+    }
 
-   
+    // Filtriranje sa prosleđenim ID-jem firme
+
+    print("Filtriranje sa ID-jem firme: $firmaId");
+
+    // Pozovi API koristeći filterParams
+    var data = await context.read<BPAutodijeloviAutoservisProvider>().getById(widget.firmaAutodijelova!.firmaAutodijelovaID);
+
+    if (!mounted) return; // Provera da li je widget još uvek montiran
 
     setState(() {
-    //  result = data;
+      result = data; // Postavi podatke
       isLoading = false;
     });
   }
@@ -49,7 +58,7 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
       title: "Baza autoservisa",
       child: Column(
         children: [
-          _buildSearch(),
+          _buildSearch(),  // Ako želiš da zadržiš dugme za pretragu, zadrži ovo
           _buildDataListView(),
         ],
       ),
@@ -92,7 +101,7 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
 
     return Expanded(
       child: SingleChildScrollView(
-        scrollDirection: Axis.vertical, // Vertikalni pomak
+        scrollDirection: Axis.vertical,
         child: DataTable(
           columns: const [
             DataColumn(
@@ -108,7 +117,7 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
               ),
             ),
           ],
-          rows: result?.result
+          rows: result?.toList()
                 .map(
                   (BPAutodijeloviAutoservis e) => DataRow(
                     cells: [
