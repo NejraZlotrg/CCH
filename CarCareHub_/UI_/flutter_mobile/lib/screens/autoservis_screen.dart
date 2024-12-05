@@ -89,51 +89,35 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: FormBuilderDropdown(
-                      name: 'gradId',
-                      decoration: InputDecoration(
-                        labelText: 'Grad',
-                        suffix: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            _formKey.currentState!.fields['gradId']?.reset();
-                          },
-                        ),
-                        hintText: 'Odaberite grad',
-                      ),
-                      items: gradovi
-                              ?.map((grad) => DropdownMenuItem(
-                                    value: grad.nazivGrada,
-                                    child: Text(grad.nazivGrada ?? ""),
-                                  ))
-                              .toList() ??
-                          [],
-                    ),
-                  ),
+          child: FormBuilderDropdown<Grad>(
+            name: 'gradId',
+            decoration: InputDecoration(
+              labelText: 'Grad',
+              suffixIcon: const Icon(Icons.location_city),
+              hintText: 'Odaberite grad',
+              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: const Color.fromARGB(255, 255, 255, 255),
+            ),
+            items: gradovi
+                    ?.map((grad) => DropdownMenuItem(
+                          value: grad,
+                          child: Text(grad.nazivGrada ?? ""),
+                        ))
+                    .toList() ??
+                [],
+          ),
+        ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: _onSearchPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Crvena boja
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.search, color: Colors.white),
-                        SizedBox(width: 8.0),
-                        Text('Pretraga', style: TextStyle(color: Colors.white)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
+              
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
@@ -155,6 +139,24 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                         Icon(Icons.add, color: Colors.white),
                         SizedBox(width: 8.0),
                         Text('Dodaj', style: TextStyle(color: Colors.white)),
+                      ],
+                    ),
+                  ),
+              const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: _onSearchPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // Crvena boja
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.search, color: Colors.white),
+                        SizedBox(width: 8.0),
+                        Text('Pretraga', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),

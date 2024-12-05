@@ -75,12 +75,15 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Proizvodi",
+     child: Container(
+      color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
       child: Column(
         children: [
           _buildSearch(),
           _buildDataListView(),
         ],
       ),
+      )
     );
   }
   
@@ -210,128 +213,140 @@ class _ProductScreenState extends State<ProductScreen> {
               ),
               children: [
                 Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FormBuilderDropdown(
-                            name: 'voziloId',
-                            decoration: InputDecoration(
-                              labelText: 'Marka vozila',
-                              suffix: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  _formKey.currentState!.fields['voziloId']
-                                      ?.reset();
-                                },
-                              ),
-                              hintText: 'Odaberite marku vozila',
-                            ),
-                            items: vozila
-                                    ?.map((vozila) => DropdownMenuItem(
-                                          value: vozila,
-                                          child: Text(vozila.markaVozila ?? ""),
-                                        ))
-                                    .toList() ??
-                                [],
-                          ),
-                        ),
-                        
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: FormBuilderDropdown(
-                            name: 'godisteId',
-                            decoration: InputDecoration(
-                              labelText: 'Godiste',
-                              suffix: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  _formKey.currentState!.fields['godisteId']
-                                      ?.reset();
-                                },
-                              ),
-                              hintText: 'Odaberite godiste',
-                            ),
-                            items: godiste
-                                    ?.map((godiste) => DropdownMenuItem(
-                                          value: godiste,
-                                          child: Text(godiste.godiste_!.toString()),
-                                        ))
-                                    .toList() ??
-                                [],
-                          ),
-                        ),
-                        // Dropdown za model
-                      ],
-                    ),
-                    const SizedBox(width: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FormBuilderDropdown(
-                            name: 'modelId',
-                            decoration: InputDecoration(
-                              labelText: 'Model',
-                              suffix: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  _formKey.currentState!.fields['modelId']
-                                      ?.reset();
-                                },
-                              ),
-                              hintText: 'Odaberite model',
-                            ),
-                            items: model
-                                    ?.map((model) => DropdownMenuItem(
-                                          value: model,
-                                          child: Text(model.nazivModela ?? ""),
-                                        ))
-                                    .toList() ??
-                                [],
-                          ),
-                        ),
-                        
-                      ],
-                    )
-                  ],
-                ),
+  children: [
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderDropdown<Vozilo>(
+            name: 'voziloId',
+            decoration: InputDecoration(
+              labelText: 'Marka vozila',
+              suffixIcon: const Icon(Icons.directions_car),
+              hintText: 'Odaberite marku vozila',
+              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: const Color.fromARGB(255, 255, 255, 255),
+            ),
+            items: vozila
+                    ?.map((vozila) => DropdownMenuItem(
+                          value: vozila,
+                          child: Text(vozila.markaVozila ?? ""),
+                        ))
+                    .toList() ??
+                [],
+          ),
+        ),
+        const SizedBox(width: 16), // Razmak između dropdown-ova
+        Expanded(
+          child: FormBuilderDropdown<Godiste>(
+            name: 'godisteId',
+            decoration: InputDecoration(
+              labelText: 'Godiste',
+              suffixIcon: const Icon(Icons.date_range),
+              hintText: 'Odaberite godiste',
+              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: const Color.fromARGB(255, 255, 255, 255),
+            ),
+            items: godiste
+                    ?.map((godiste) => DropdownMenuItem(
+                          value: godiste,
+                          child: Text(godiste.godiste_!.toString()),
+                        ))
+                    .toList() ??
+                [],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 16), // Razmak između redova
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderDropdown<Model>(
+            name: 'modelId',
+            decoration: InputDecoration(
+              labelText: 'Model',
+              suffixIcon: const Icon(Icons.dashboard_customize),
+              hintText: 'Odaberite model',
+              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: const Color.fromARGB(255, 255, 255, 255),
+            ),
+            items: model
+                    ?.map((model) => DropdownMenuItem(
+                          value: model,
+                          child: Text(model.nazivModela ?? ""),
+                        ))
+                    .toList() ??
+                [],
+          ),
+        ),
+      ],
+    ),
+  ],
+)
+
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-
-                     Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> const ProductDetailScreen(product: null,) // poziv na drugi screen
-                     ), );
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
-                
-              ],
-              
-            ),
-            
+  mainAxisAlignment: MainAxisAlignment.end, // Elemente poravnaj desno
+  children: [
+    ElevatedButton(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ProductDetailScreen(product: null),
           ),
-                ElevatedButton(
-                  onPressed: _onSearchPressed,
-                  child: const Row(
-                    children: [
-                      Icon(Icons.search),
-                      SizedBox(width: 8.0),
-                      Text('Pretraga'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red, // Crvena boja za dugme
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
+        children: [
+          Icon(Icons.add, color: Colors.white),
+          SizedBox(width: 8.0), // Razmak između ikone i teksta
+          Text('Dodaj', style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    ),
+    const SizedBox(width: 10), // Razmak između dva dugmeta
+    ElevatedButton(
+      onPressed: _onSearchPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red, // Crvena boja za dugme
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
+        children: [
+          Icon(Icons.search, color: Colors.white),
+          SizedBox(width: 8.0), // Razmak između ikone i teksta
+          Text('Pretraga', style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    ),
+  ],
+)
+
           ],
         ),
       ),
