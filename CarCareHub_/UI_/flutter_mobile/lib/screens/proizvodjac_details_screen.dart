@@ -1,100 +1,116 @@
-// ignore_for_file: sort_child_properties_last
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
-import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:flutter/src/foundation/key.dart';
 import 'package:provider/provider.dart';
-
+ 
 // ignore: must_be_immutable
 class ProizvodjacDetailsScreen extends StatefulWidget {
   Proizvodjac? proizvodjac;
   ProizvodjacDetailsScreen({super.key, this.proizvodjac});
-
+ 
   @override
-  State<ProizvodjacDetailsScreen> createState() => _ProizvodjacDetailsScreenState();
+  State<ProizvodjacDetailsScreen> createState() =>
+      _ProizvodjacDetailsScreenState();
 }
-
+ 
 class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late ProizvodjacProvider _proizvodjacProvider;
-
+ 
   bool isLoading = true;
-
+ 
   @override
   void initState() {
     super.initState();
     _initialValues = {
       'nazivProizvodjaca': widget.proizvodjac?.nazivProizvodjaca,
     };
-
+ 
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
     initForm();
   }
-
+ 
   Future initForm() async {
     setState(() {
       isLoading = false;
     });
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
             children: [
+              const SizedBox(height: 20),
+              isLoading ? const CircularProgressIndicator() : _buildForm(),
               Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    _formKey.currentState?.saveAndValidate();
-
-                    var request = Map.from(_formKey.currentState!.value);
-
-                    try {
-                      if (widget.proizvodjac == null) {
-                        await _proizvodjacProvider.insert(request);
-                      } else {
-                        await _proizvodjacProvider.update(
-                            widget.proizvodjac!.proizvodjacId!, _formKey.currentState?.value);
-                      }
-                    } on Exception catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text("error"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            )
-                          ],
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          _formKey.currentState?.saveAndValidate();
+ 
+                          var request = Map.from(_formKey.currentState!.value);
+ 
+                          try {
+                            if (widget.proizvodjac == null) {
+                              await _proizvodjacProvider.insert(request);
+                            } else {
+                              await _proizvodjacProvider.update(
+                                widget.proizvodjac!.proizvodjacId!,
+                                _formKey.currentState?.value,
+                              );
+                            }
+                          } on Exception catch (e) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text("Error"),
+                                content: Text(e.toString()),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("OK"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          textStyle: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                      );
-                    }
-                  },
-                  child: const Text("Spasi"),
+                        child: const Text("Spasi"),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+              )
             ],
-          )
-        ],
+          ),
+        ),
       ),
-      title: widget.proizvodjac?.nazivProizvodjaca ?? "Detalji proizvodjaca",
+      title: widget.proizvodjac?.nazivProizvodjaca ?? "Detalji proizvođača",
     );
   }
-
+ 
   FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
@@ -105,14 +121,24 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "naziv"),
+                  decoration: const InputDecoration(
+                    labelText: "Naziv proizvođača",
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
                   name: "nazivProizvodjaca",
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
 }
+ 
+ 

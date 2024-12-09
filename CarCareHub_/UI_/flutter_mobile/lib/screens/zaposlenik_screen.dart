@@ -28,25 +28,41 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Zaposlenici",
-      child: Column(
-        children: [
-          _buildSearch(),
-          _buildDataListView(),
-        ],
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
-
   Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
+  return Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            Expanded(
             child: TextField(
               decoration: InputDecoration(
                 labelText: 'Ime',
@@ -90,17 +106,19 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                 result = data;
               });
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueGrey,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+                          style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+                          ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.search, color: Colors.white),
+                Icon(Icons.search),
                 SizedBox(width: 8.0),
-                Text('Pretraga', style: TextStyle(color: Colors.white)),
+                Text('Pretraga'),
               ],
             ),
           ),
@@ -112,6 +130,12 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                      MaterialPageRoute(builder: (context)=> ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
                      ), );
             },
+                style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -119,20 +143,37 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                 SizedBox(width: 8.0),
                 Text('Dodaj'),
               ],
+              ),
             ),
-          ),
-          
-        ],
+            const SizedBox(width: 10),
+         
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
 
   Widget _buildDataListView() {
-    return Expanded(
+  return Container(
+    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
       child: SingleChildScrollView(
         child: DataTable(
-          dataRowHeight: 70,
-          headingRowHeight: 70,
           columns: const [
             DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
             DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold))),
@@ -175,8 +216,10 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
               ],
             );
           }).toList() ?? [],
-        ),
+         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

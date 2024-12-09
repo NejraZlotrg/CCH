@@ -86,17 +86,27 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+    appBar: AppBar(
+      title: Text(widget.zaposlenik?.ime ?? "Detalji zaposlenika"),
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  _buildForm(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [ 
+                        ElevatedButton(
                   onPressed: () async {
                     _formKey.currentState?.saveAndValidate();
                     var request = Map.from(_formKey.currentState!.value);
@@ -126,16 +136,28 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
                       );
                     }
                   },
+                                            style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            textStyle: const TextStyle(fontSize: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                   child: const Text("Spasi"),
                 ),
+          
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ],
-      ),
-      title: widget.zaposlenik?.ime ?? "Detalji zaposlenika",
-    );
-  }
+  );
+}
 
   FormBuilder _buildForm() {
     return FormBuilder(
@@ -143,218 +165,384 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
       initialValue: _initialValues,
       child: Column(
         children: [
-          // Red 1
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Ime"),
-                  name: "ime",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Prezime"),
-                  name: "prezime",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Red 2
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Matični Broj"),
-                  name: "maticniBroj",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Broj Telefona"),
-                  name: "brojTelefona",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Red 3
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'gradId',
-                  decoration: InputDecoration(
-                    labelText: 'Grad',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['gradId']?.reset();
-                      },
-                    ),
-                    hintText: 'grad',
-                  ),
-                  initialValue: widget.zaposlenik?.gradId != null
-                      ? widget.zaposlenik!.gradId.toString()
-                      : null, // Provjera za null vrijednosti
-                  items: gradResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.gradId.toString(),
-                                child: Text(item.nazivGrada ?? ""),
-                              ))
-                          .toList() ??
-                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
-                ),
-              ),
-              Expanded(
-              child: FormBuilderDateTimePicker(
-                name: "datumRodjenja",
-                inputType: InputType.date,
-                decoration: const InputDecoration(labelText: "Datum Rođenja"),
-                initialValue: widget.zaposlenik?.datumRodjenja,
-                format: DateFormat("dd.MM.yyyy"), // Format datuma
-                onChanged: (value) {
-                  // Ovdje možeš dodati logiku za promjenu
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-
-          // Red 4
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Email"),
-                  name: "email",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Username"),
-                  name: "username",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Red 6
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Password"),
-                  name: "password",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Password again"),
-                  name: "passwordAgain",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Red 7
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'ulogaId',
-                  decoration: InputDecoration(
-                    labelText: 'Uloge',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['ulogaId']?.reset();
-                      },
-                    ),
-                    hintText: 'uloge',
-                  ),
-                  initialValue: widget.zaposlenik?.ulogaId != null
-                      ? widget.zaposlenik!.ulogaId.toString()
-                      : null, // Provjera za null vrijednosti
-                  items: ulogeResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.ulogaId.toString(),
-                                child: Text(item.nazivUloge ?? ""),
-                              ))
-                          .toList() ??
-                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
-                ),
-              ),
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'autoservisId',
-                  decoration: InputDecoration(
-                    labelText: 'Autoservis',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['autoservisId']?.reset();
-                      },
-                    ),
-                    hintText: 'autoservis',
-                  ),
-                  initialValue: widget.zaposlenik?.autoservisId != null
-                      ? widget.zaposlenik!.autoservisId.toString()
-                      : null, // Provjera za null vrijednosti
-                  items: autoservisResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.autoservisId.toString(),
-                                child: Text(item.naziv ?? ""),
-                              ))
-                          .toList() ??
-                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // Red 8
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'firmaAutodijelovaID',
-                  decoration: InputDecoration(
-                    labelText: 'FirmaAutodijelova',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['firmaAutodijelovaID']?.reset();
-                      },
-                    ),
-                    hintText: 'firmaautodijelova',
-                  ),
-                  initialValue: widget.zaposlenik?.firmaAutodijelovaId != null
-                      ? widget.zaposlenik!.firmaAutodijelovaId.toString()
-                      : null, // Provjera za null vrijednosti
-                  items: firmaAutodijelovaResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.firmaAutodijelovaID.toString(),
-                                child: Text(item.nazivFirme ?? ""),
-                              ))
-                          .toList() ??
-                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
-                ),
-              ),
-            ],
-          ),
+      
+          const SizedBox(height: 8),
+          ..._buildFormFields(),
         ],
       ),
     );
   }
+
+List<Widget> _buildFormFields() {
+  return [
+    // Red 1: Ime i Prezime
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Ime:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "ime",
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Prezime:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "prezime",
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 2: Matični Broj i Broj Telefona
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Matični Broj:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "maticniBroj",
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Broj Telefona:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "brojTelefona",
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 3: Grad i Datum Rođenja
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Grad:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderDropdown(
+                name: 'gradId',
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  hintText: 'Izaberite grad',
+                ),
+                items: gradResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.gradId.toString(),
+                              child: Text(item.nazivGrada ?? ""),
+                            ))
+                        .toList() ??
+                    [],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Datum Rođenja:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderDateTimePicker(
+                name: "datumRodjenja",
+                inputType: InputType.date,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  labelText: "Datum Rođenja",
+                ),
+                format: DateFormat("dd.MM.yyyy"),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 4: Email i Username
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Email:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "email",
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Username:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "username",
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 5: Password i Password Again
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Password:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "password",
+                obscureText: true,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Password Again:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderTextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                ),
+                name: "passwordAgain",
+                obscureText: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 6: Uloga i Autoservis
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Uloga:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderDropdown(
+                name: 'ulogaId',
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  hintText: 'Izaberite ulogu',
+                ),
+                items: ulogeResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.ulogaId.toString(),
+                              child: Text(item.nazivUloge ?? ""),
+                            ))
+                        .toList() ??
+                    [],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Autoservis:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderDropdown(
+                name: 'autoservisId',
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  hintText: 'Izaberite autoservis',
+                ),
+                items: autoservisResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.autoservisId.toString(),
+                              child: Text(item.naziv ?? ""),
+                            ))
+                        .toList() ??
+                    [],
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 7: Firma Autodijelova
+    Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Firma Autodijelova:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5),
+              FormBuilderDropdown(
+                name: 'firmaAutodijelovaID',
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  hintText: 'Izaberite firmu',
+                ),
+                items: firmaAutodijelovaResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.firmaAutodijelovaID.toString(),
+                              child: Text(item.nazivFirme ?? ""),
+                            ))
+                        .toList() ??
+                    [],
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+  ];
+}
 }

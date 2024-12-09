@@ -8,44 +8,62 @@ import 'package:flutter_mobile/screens/drzave_details_screen.dart';
 import 'package:flutter_mobile/screens/proizvodjac_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
-
+ 
 class ProizvodjacScreen extends StatefulWidget {
   const ProizvodjacScreen({super.key});
-
+ 
   @override
   State<ProizvodjacScreen> createState() => _ProizvodjacScreenState();
 }
-
+ 
 class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   late ProizvodjacProvider _proizvodjacProvider;
   SearchResult<Proizvodjac>? result;
   final TextEditingController _nazivProizvodjacaController = TextEditingController();
-
+ 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
-    
+   
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Proizvodjac",
-      child: Column(
-        children: [
-          _buildSearch(),
-          _buildDataListView(),
-        ],
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
 
+ 
   Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
+  return Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
           Expanded(
             child: TextField(
               decoration: const InputDecoration(
@@ -64,11 +82,18 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
               var data = await _proizvodjacProvider.get(filter: {
                 'nazivDrzave': _nazivProizvodjacaController.text,
               });
-
+ 
               setState(() {
                 result = data;
               });
             },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+              ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -81,11 +106,18 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
           const SizedBox(width: 10),
           ElevatedButton(
             onPressed: () async {
-
+ 
                      Navigator.of(context).push(
                      MaterialPageRoute(builder: (context)=> ProizvodjacDetailsScreen(proizvodjac: null,) // poziv na drugi screen
                      ), );
             },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+              ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -97,43 +129,57 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
           ),
         ],
       ),
+      ),)
     );
   }
-
-  Widget _buildDataListView() {
-  return Expanded(
-    child: SingleChildScrollView(
-      scrollDirection: Axis.vertical, // Vertikalni pomak
+Widget _buildDataListView() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: SingleChildScrollView(
         child: DataTable(
           columns: const [
             DataColumn(
               label: Text(
-                'Naziv proizvodjaca',
+                'Naziv proizvođača',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-            
           ],
           rows: result?.result
-                .map(
-                  (Proizvodjac e) => DataRow(
-                    onSelectChanged: (selected) {
-                      if (selected == true) {
-                        print('Selected: ${e.proizvodjacId}');
-                        // Ovdje možeš dodati navigaciju ili akciju za detalje
-                        Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=> ProizvodjacDetailsScreen(proizvodjac: e,) // poziv na drugi screen
-                         ), );
-                      }
-                    },
-                    cells: [
-                      DataCell(Text(e.nazivProizvodjaca ?? "")),
-                    ],
-                  ),
-                )
-                .toList() ?? [],
+                  .map(
+                    (Proizvodjac e) => DataRow(
+                      cells: [
+                        DataCell(
+                          Text(e.nazivProizvodjaca ?? ""),
+                          onTap: () {
+                            // Navigacija na drugi ekran pri kliku na ćeliju
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProizvodjacDetailsScreen(proizvodjac: e),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
-        ),
-    );
-  }
+      ),
+    ),
+  );
 }
+ 
+ 
+}
+ 
+ 

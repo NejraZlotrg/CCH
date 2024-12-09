@@ -83,7 +83,7 @@ class _KlijentRegistracijaScreenState
         await _klijentProvider.insert(request);
       } else {
         await _klijentProvider.update(
-          widget.klijent!.klijentId!,
+          widget.klijent!.klijentId,
           request,
         );
       }
@@ -291,7 +291,6 @@ class _KlijentRegistracijaScreenState
     // Red 5: Adresa i Grad
     Row(
       children: [
-        const SizedBox(width: 20),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,6 +322,8 @@ class _KlijentRegistracijaScreenState
             ],
           ),
         ),
+        const SizedBox(width: 20),
+
 
         Expanded(
           child: Column(

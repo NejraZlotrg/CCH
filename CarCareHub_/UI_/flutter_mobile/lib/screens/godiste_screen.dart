@@ -31,84 +31,147 @@ class _GodisteScreenState extends State<GodisteScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Godiste ",
-      child: Column(
-        children: [
-          _buildSearch(),
-          _buildDataListView(),
-        ],
+      title: "Godiste",
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'godiste',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
+
+
+Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Godiste:',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                controller: _nazivModelaController,
               ),
-              controller: _nazivModelaController,
             ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              print("podaci proceed");
-              var data = await _godisteProvider.get(filter: {
-                'godiste_': _nazivModelaController.text,
-              });
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () async {
+                var filterParams = {
+                  'IsAllncluded': 'true', // Ovaj parametar ostaje
+                };
 
-              setState(() {
-                result = data;
-              });
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Pretraga'),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
+                // Dodavanje filtera samo ako je naziv unesen
+                if (_nazivModelaController.text.isNotEmpty) {
+                  filterParams['godiste_'] = _nazivModelaController.text;
+                }
 
-                     Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> GodisteDetailsScreen(godiste: null,) // poziv na drugi screen
-                     ), );
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
-              ],
+                var data =
+                    await _godisteProvider.get(filter: filterParams);
+
+                      if (!mounted) return; // Dodaj ovu proveru
+
+
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => GodisteDetailsScreen(
+                      godiste: null,
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, // Crvena boja dugmeta
+                foregroundColor: Colors.white, // Bijela boja teksta
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add), // Ikonica plus
+                  SizedBox(width: 8.0),
+                  Text('Dodaj'),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+         
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildDataListView() {
-  return Expanded(
-    child: SingleChildScrollView(
-      scrollDirection: Axis.vertical, // Vertikalni pomak
+  return Container(
+    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
+    margin: const EdgeInsets.only(
+      top: 20.0, // Razmak od vrha
+    ),
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
+      child: SingleChildScrollView(
         child: DataTable(
           columns: const [
             DataColumn(
               label: Text(
-                'godiste',
+                'Godiste: ',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
@@ -132,8 +195,10 @@ class _GodisteScreenState extends State<GodisteScreen> {
                   ),
                 )
                 .toList() ?? [],
-        ),
-        ),
-    );
-  }
+          ),
+      ),
+    ),
+  );
+}
+
 }

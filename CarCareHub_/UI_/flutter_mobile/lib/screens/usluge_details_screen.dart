@@ -1,101 +1,129 @@
-// ignore_for_file: sort_child_properties_last
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/usluge.dart';
-import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-
-
 import 'package:provider/provider.dart';
-
+ 
 // ignore: must_be_immutable
 class UslugeDetailsScreen extends StatefulWidget {
   Usluge? usluge;
   UslugeDetailsScreen({super.key, this.usluge});
-
+ 
   @override
   State<UslugeDetailsScreen> createState() => _UslugeDetailsScreenState();
 }
-
+ 
 class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late UslugeProvider _uslugeProvider;
-
+ 
   bool isLoading = true;
-
+ 
   @override
   void initState() {
     super.initState();
     _initialValues = {
-      'nazivDrzave': widget.usluge?.nazivUsluge,
+      'nazivUsluge': widget.usluge?.nazivUsluge,
     };
-
-    _uslugeProvider = context.read<UslugeProvider>();
-    initForm();
+ 
+    // Osiguraj da je provider dostupan
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _uslugeProvider = context.read<UslugeProvider>();
+      initForm();
+    });
   }
-
+ 
   Future initForm() async {
     setState(() {
       isLoading = false;
     });
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+      title: widget.usluge?.nazivUsluge ?? "Detalji usluge",
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
             children: [
+              const SizedBox(height: 20),
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : _buildForm(),
               Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    _formKey.currentState?.saveAndValidate();
-
-                    var request = Map.from(_formKey.currentState!.value);
-
-                    try {
-                      if (widget.usluge == null) {
-                        await _uslugeProvider.insert(request);
-                      } else {
-                        await _uslugeProvider.update(
-                            widget.usluge!.uslugeId, _formKey.currentState?.value);
-                      }
-                    } on Exception catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text("error"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            )
-                          ],
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState?.saveAndValidate() ?? false) {
+                            var request = Map.from(_formKey.currentState!.value);
+                            try {
+                              if (widget.usluge == null) {
+                                await _uslugeProvider.insert(request);
+                              } else {
+                                await _uslugeProvider.update(
+                                  widget.usluge!.uslugeId,
+                                  request,  // Poslati nove vrednosti iz forme
+                                );
+                              }
+ 
+                              // Nakon uspešnog unosa vraćamo na prethodni ekran
+                              // ignore: use_build_context_synchronously
+                              Navigator.pop(context);
+                            } on Exception catch (e) {
+                              // Ako dođe do greške, logujemo grešku
+                              print("Greška pri čuvanju podataka: $e");
+                              showDialog(
+                                // ignore: use_build_context_synchronously
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text("Greška"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("OK"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          } else {
+                            // Ako forma nije validna, logujemo grešku
+                            print("Forma nije validna!");
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          textStyle: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                      );
-                    }
-                  },
-                  child: const Text("Spasi"),
+                        child: const Text("Spasi"),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          )
-        ],
+          ),
+        ),
       ),
-      title: widget.usluge?.nazivUsluge ?? "Detalji drzave",
     );
   }
-
+ 
   FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
@@ -106,14 +134,24 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
             children: [
               Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "naziv"),
+                  decoration: const InputDecoration(
+                    labelText: "Naziv usluge",
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
                   name: "nazivUsluge",
+                 // validator: FormBuilderValidators.required(context),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
 }
+ 
+ 

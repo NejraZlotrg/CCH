@@ -31,7 +31,7 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
   void initState() {
     super.initState();
     _initialValues = {
-      'godiste_': widget.godiste?.godiste_,
+      'godiste_': widget.godiste?.godiste_.toString(),
     };
 
     _godisteProvider = context.read<GodisteProvider>();
@@ -46,53 +46,81 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    _formKey.currentState?.saveAndValidate();
+    return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.godiste?.godiste_.toString() ?? "Godiste"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      _buildForm(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  _formKey.currentState?.saveAndValidate();
 
-                    var request = Map.from(_formKey.currentState!.value);
+                                  var request =
+                                      Map.from(_formKey.currentState!.value);
 
-                    try {
-                      if (widget.godiste == null) {
-                        await _godisteProvider.insert(request);
-                      } else {
-                        await _godisteProvider.update(
-                            widget.godiste!.godisteId!, _formKey.currentState?.value);
-                      }
-                    } on Exception catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text("error"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            )
+                                  try {
+                                    if (widget.godiste == null) {
+                                      await _godisteProvider.insert(request);
+                                    } else {
+                                      await _godisteProvider.update(
+                                          widget.godiste!.godisteId!,
+                                          _formKey.currentState?.value);
+                                    }
+                                  } on Exception catch (e) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text("error"),
+                                        content: Text(e.toString()),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text("OK"),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.red,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  textStyle: const TextStyle(fontSize: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text("Spasi"),
+                              ),
+                            ),
                           ],
                         ),
-                      );
-                    }
-                  },
-                  child: const Text("Spasi"),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          )
-        ],
-      ),
-      title: widget.godiste?.godiste_.toString() ?? "Detalji vozila",
-    );
+              ));
   }
 
   FormBuilder _buildForm() {
@@ -101,18 +129,34 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
       initialValue: _initialValues,
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "godiste"),
-                  name: "godiste_",
-                ),
-              ),
-            ],
-          ),
+          const SizedBox(height: 20),
+          ..._buildFormFields(),
         ],
       ),
     );
+  }
+
+  List<Widget> _buildFormFields() {
+    return [
+      Row(
+        children: [
+          Expanded(
+              child: FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    labelText: "Godiste: ",
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white, // Bela pozadina
+                    filled: true, // Da pozadina bude ispunjena
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "godiste_")
+                  )
+                  
+        ],
+      ),
+            const SizedBox(height: 20),
+
+    ];
   }
 }

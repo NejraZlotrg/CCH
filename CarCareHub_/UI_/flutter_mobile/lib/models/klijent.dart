@@ -3,7 +3,7 @@ part 'klijent.g.dart';
 
 @JsonSerializable()
 class Klijent {
-  int? klijentId;
+  int klijentId;
   String? ime;
   String? prezime;
   String? username;

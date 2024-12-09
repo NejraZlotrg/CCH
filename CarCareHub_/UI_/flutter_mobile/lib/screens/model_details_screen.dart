@@ -9,16 +9,16 @@ import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
-
+ 
 // ignore: must_be_immutable
 class ModelDetailsScreen extends StatefulWidget {
   Model? model;
   ModelDetailsScreen({super.key, this.model});
-
+ 
   @override
   State<ModelDetailsScreen> createState() => _ModelDetailsScreenState();
 }
-
+ 
 class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
@@ -27,9 +27,9 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
   SearchResult<Vozilo>? voziloResult;
   SearchResult<Godiste>? godisteResult;
   late GodisteProvider _godisteProvider;
-
+ 
   bool isLoading = true;
-
+ 
   @override
   void initState() {
     super.initState();
@@ -38,74 +38,91 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
       'voziloId': widget.model?.vozilo?.voziloId,
       'godisteId': widget.model?.godiste?.godisteId
     };
-
+ 
     _modelProvider = context.read<ModelProvider>();
     _voziloProvider = context.read<VoziloProvider>();
     _godisteProvider = context.read<GodisteProvider>();
     initForm();
   }
-
+ 
   Future<void> initForm() async {
-    voziloResult = await _voziloProvider.get(); 
+    voziloResult = await _voziloProvider.get();
     godisteResult = await _godisteProvider.get();
-    print(voziloResult);
-
     setState(() {
       isLoading = false;
     });
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: widget.model?.nazivModela ?? "Detalji modela",
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
             children: [
+              const SizedBox(height: 20),
+              isLoading ? const CircularProgressIndicator() : _buildForm(),
               Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState?.saveAndValidate() ?? false) {
-                      var request = Map.from(_formKey.currentState!.value);
-
-                      try {
-                        if (widget.model == null) {
-                          await _modelProvider.insert(request);
-                        } else {
-                          await _modelProvider.update(
-                              widget.model!.modelId, request);
-                        }
-                      } on Exception catch (e) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text("Error"),
-                            content: Text(e.toString()),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("OK"),
-                              )
-                            ],
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState?.saveAndValidate() ?? false) {
+                            var request = Map.from(_formKey.currentState!.value);
+ 
+                            try {
+                              if (widget.model == null) {
+                                await _modelProvider.insert(request);
+                              } else {
+                                await _modelProvider.update(
+                                    widget.model!.modelId, request);
+                              }
+                            } on Exception catch (e) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text("Error"),
+                                  content: Text(e.toString()),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("OK"),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          textStyle: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        );
-                      }
-                    }
-                  },
-                  child: const Text("Spasi"),
+                        ),
+                        child: const Text("Spasi"),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
-
+ 
   FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
@@ -119,13 +136,16 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                   name: 'voziloId',
                   decoration: InputDecoration(
                     labelText: 'Vozilo',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                     suffix: IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () {
                         _formKey.currentState!.fields['voziloId']?.reset();
                       },
                     ),
-                    hintText: 'Izaberi vozilo',
                   ),
                   initialValue: widget.model?.vozilo?.voziloId != null
                       ? widget.model!.vozilo?.voziloId.toString()
@@ -139,24 +159,35 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                           .toList() ?? [],
                 ),
               ),
-                            Expanded(
+              const SizedBox(width: 20),
+              Expanded(
                 child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "Naziv modela"),
                   name: "nazivModela",
+                  decoration: const InputDecoration(
+                    labelText: "Naziv modela",
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
                 ),
               ),
+              const SizedBox(width: 20),
               Expanded(
                 child: FormBuilderDropdown(
                   name: 'godisteId',
                   decoration: InputDecoration(
                     labelText: 'Godiste',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                     suffix: IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () {
                         _formKey.currentState!.fields['godisteId']?.reset();
                       },
                     ),
-                    hintText: 'Odaberi godiste',
                   ),
                   initialValue: widget.model?.godiste?.godisteId != null
                       ? widget.model!.godiste?.godisteId.toString()
@@ -177,3 +208,5 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
     );
   }
 }
+ 
+ 

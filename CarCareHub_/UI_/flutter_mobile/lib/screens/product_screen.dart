@@ -568,7 +568,7 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
           },
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(150.0),
+          padding: const EdgeInsets.all(50.0),
         ),
       ),
     );

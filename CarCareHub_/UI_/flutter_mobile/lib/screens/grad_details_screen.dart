@@ -52,16 +52,27 @@ class _GradDetailsScreenState extends State<GradDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      child: Column(
-        children: [
-          isLoading ? Container() : _buildForm(), //////////////////////////////////////////////////////
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+    appBar: AppBar(
+      title: Text(widget.grad?.nazivGrada ?? "Detalji grada"),
+    ),
+    body: isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  _buildForm(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // Dugme za spašavanje
+                        ElevatedButton(
                   onPressed: () async {
                     _formKey.currentState?.saveAndValidate();
 
@@ -90,61 +101,87 @@ class _GradDetailsScreenState extends State<GradDetailsScreen> {
                       );
                     }
                   },
+                  style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.red,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  textStyle: const TextStyle(fontSize: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
                   child: const Text("Spasi"),
                 ),
+                ],
               ),
-            ],
+            
           )
         ],
       ),
-      title: widget.grad?.nazivGrada ?? "Detalji grada",
+            ),)
     );
   }
 
-  FormBuilder _buildForm() {
+    FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
       initialValue: _initialValues,
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
-                  decoration: const InputDecoration(labelText: "naziv"),
-                  name: "nazivGrada",
-                ),
-              ),
-              Expanded(
-                child: FormBuilderDropdown(
-                  name: 'drzavaId',
-                  decoration: InputDecoration(
-                    labelText: 'Drzava',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _formKey.currentState!.fields['drzavaId']?.reset();
-                      },
-                    ),
-                    hintText: 'drzava',
-                  ),
-                  initialValue: widget.grad?.drzavaId != null
-                      ? widget.grad!.drzavaId.toString()
-                      : null, // Provjera za null vrijednosti
-                  items: drzavaResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.drzavaId.toString(),
-                                child: Text(item.nazivDrzave ?? ""),
-                              ))
-                          .toList() ??
-                      [], // Provjera za praznu listu //////////////////////////////////////////////////////
-                ),
-              )
-            ],
-          ),
+          const SizedBox(height: 20),
+          ..._buildFormFields(),
         ],
       ),
     );
+  }
+List<Widget> _buildFormFields() {
+    return [
+      Row(
+        children: [
+          Expanded(
+              child: FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    labelText: "Naziv grada",
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white, // Bela pozadina
+                    filled: true, // Da pozadina bude ispunjena
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "nazivGrada"))
+        ],
+      ),
+        const SizedBox(height: 20),
+      Row(
+        children: [
+          Expanded(
+            child: FormBuilderDropdown(
+              name: 'drzavaId',
+              decoration: const InputDecoration(
+                labelText: 'Drzava',
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                hintText: 'Izaberite grad',
+              ),
+              initialValue: widget.grad?.drzavaId?.toString(),
+              items: drzavaResult?.result
+                      .map((item) => DropdownMenuItem(
+                            alignment: AlignmentDirectional.center,
+                            value: item.drzavaId.toString(),
+                            child: Text(item.nazivDrzave ?? ""),
+                          ))
+                      .toList() ??
+                  [],
+            ),
+          ),
+        ],
+      ),
+            const SizedBox(height: 20),
+
+    ];
   }
 }
