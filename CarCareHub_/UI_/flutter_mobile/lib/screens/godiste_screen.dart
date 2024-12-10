@@ -25,8 +25,17 @@ class _GodisteScreenState extends State<GodisteScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _godisteProvider = context.read<GodisteProvider>();
-    
+    _loadData();
   }
+
+  Future<void> _loadData() async {
+  var data = await _godisteProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {

@@ -51,12 +51,20 @@ class _ProductScreenState extends State<ProductScreen> {
     _voziloProvider = context.read<VoziloProvider>();
     _godisteProvider = context.read<GodisteProvider>();
 
-
+_loadData();
     _loadInitialData(); //----- Promijenjeno ime funkcije
 
 
    // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
+  Future<void> _loadData() async {
+  var data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
 
   Future<void> _loadInitialData() async {
     var modelResult = await _modelProvider.get();
@@ -102,8 +110,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: 'Naziv proizvoda',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -115,8 +122,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: "Poredaj po cijeni",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -163,8 +169,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: "Naziv firme",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -176,8 +181,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: "JIB ili MBS",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -188,8 +192,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: "Lokacija",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -225,7 +228,6 @@ class _ProductScreenState extends State<ProductScreen> {
               hintText: 'Odaberite marku vozila',
               hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),
@@ -249,7 +251,6 @@ class _ProductScreenState extends State<ProductScreen> {
               hintText: 'Odaberite godiste',
               hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),
@@ -277,7 +278,6 @@ class _ProductScreenState extends State<ProductScreen> {
               hintText: 'Odaberite model',
               hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),

@@ -26,8 +26,16 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
+   _loadData();
   }
-
+ Future<void> _loadData() async {
+  var data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
    @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

@@ -22,8 +22,23 @@ class _UlogeScreenState extends State<UlogeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _ulogeProvider = context.read<UlogeProvider>();
+    _fetchInitialData();
   }
- 
+   Future<void> _fetchInitialData() async {
+    try {
+      var data = await _ulogeProvider.get(filter: {
+        'IsAllncluded': 'true',
+      });
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

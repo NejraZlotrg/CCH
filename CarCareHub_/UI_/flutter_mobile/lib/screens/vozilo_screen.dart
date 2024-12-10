@@ -22,8 +22,16 @@ class _VoziloScreenState extends State<VoziloScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _voziloProvider = context.read<VoziloProvider>();
+     _loadData();
   }
- 
+ Future<void> _loadData() async {
+  var data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

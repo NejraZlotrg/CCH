@@ -42,8 +42,15 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      child: SingleChildScrollView(
+     return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.vozilo?.markaVozila ?? "Detalji vozila"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -108,20 +115,30 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
           ),
         ),
       ),
-      title: widget.vozilo?.markaVozila ?? "Detalji vozila",
     );
   }
- 
-  FormBuilder _buildForm() {
+
+
+   FormBuilder _buildForm() {
     return FormBuilder(
       key: _formKey,
       initialValue: _initialValues,
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: FormBuilderTextField(
+          const SizedBox(height: 20),
+          ..._buildFormFields(),
+        ],
+      ),
+    );
+  }
+
+
+    List<Widget> _buildFormFields() {
+    return [
+      Row(
+        children: [
+          Expanded(
+              child: FormBuilderTextField(
                   decoration: const InputDecoration(
                     labelText: "Marka vozila",
                     border: OutlineInputBorder(),
@@ -129,16 +146,12 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
                     filled: true,
                     contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
-                  name: "markaVozila",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-        ],
+                  name: "markaVozila",))
+                 ],
       ),
-    );
+            const SizedBox(height: 20),
+
+    ];
   }
 }
- 
  

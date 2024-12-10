@@ -29,8 +29,17 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
+    _loadData();
   }
 
+Future<void> _loadData() async {
+  var data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

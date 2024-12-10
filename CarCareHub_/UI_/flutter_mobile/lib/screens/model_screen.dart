@@ -23,8 +23,16 @@ class _ModelScreenState extends State<ModelScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _modelProvider = context.read<ModelProvider>();
+    _loadData();
   }
- 
+ Future<void> _loadData() async {
+  var data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

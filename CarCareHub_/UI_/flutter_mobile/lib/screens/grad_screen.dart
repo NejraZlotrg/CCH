@@ -24,21 +24,31 @@ class _GradScreenState extends State<GradScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _gradProvider = context.read<GradProvider>();
+    _loadData();
   }
-
-  @override
+Future<void> _loadData() async {
+  var data = await _gradProvider.get(filter: {'IsDrzavaIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
+   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Grad",
-      child: Column(
-        children: [
-          _buildSearch(),
-          _buildDataListView(),
-        ],
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
-
   Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width, // Širina 100% ekrana

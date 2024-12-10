@@ -33,8 +33,8 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
     _autoservisProvider = context.read<AutoservisProvider>();
     _gradProvider = context.read<GradProvider>();
 
-    // Učitaj gradove kada widget postane dio widget drveta
     _loadGradovi();
+    _fetchInitialData(); // Dodano inicijalno učitavanje podataka
   }
 
   Future<void> _loadGradovi() async {
@@ -44,12 +44,27 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
     });
   }
 
+  Future<void> _fetchInitialData() async {
+    try {
+      var data = await _autoservisProvider.get(filter: {
+        'IsAllIncluded': 'true',
+      });
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Autoservis",
       child: Container(
-        color: Colors.grey[200], // Postavlja pozadinu ekrana na sivu
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -61,18 +76,18 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
   }
 
   Widget _buildSearch() {
-    return FormBuilder(
-      key: _formKey,
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
       child: Card(
-        margin: const EdgeInsets.all(16.0),
+        elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
         ),
-        elevation: 5,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 children: [
@@ -89,35 +104,32 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-          child: FormBuilderDropdown<Grad>(
-            name: 'gradId',
-            decoration: InputDecoration(
-              labelText: 'Grad',
-              suffixIcon: const Icon(Icons.location_city),
-              hintText: 'Odaberite grad',
-              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            items: gradovi
-                    ?.map((grad) => DropdownMenuItem(
-                          value: grad,
-                          child: Text(grad.nazivGrada ?? ""),
-                        ))
-                    .toList() ??
-                [],
-          ),
-        ),
+                    child: FormBuilderDropdown<Grad>(
+                      name: 'gradId',
+                      decoration: InputDecoration(
+                        labelText: 'Grad',
+                        suffixIcon: const Icon(Icons.location_city),
+                        hintText: 'Odaberite grad',
+                        hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      items: gradovi
+                              ?.map((grad) => DropdownMenuItem(
+                                    value: grad,
+                                    child: Text(grad.nazivGrada ?? ""),
+                                  ))
+                              .toList() ??
+                          [],
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-              
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
@@ -128,7 +140,7 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Crvena boja
+                      backgroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -142,11 +154,10 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                       ],
                     ),
                   ),
-              const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _onSearchPressed,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Crvena boja
+                      backgroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -170,27 +181,19 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
   }
 
   Future<void> _onSearchPressed() async {
-    print("Pokretanje pretrage: ${_nazivController.text}");
-
     var filterParams = {
       'IsAllIncluded': 'true',
     };
 
-    // Dodavanje naziva u filter ako je unesen
     if (_nazivController.text.isNotEmpty) {
       filterParams['naziv'] = _nazivController.text;
     }
 
-    // Dodavanje naziva grada u filter ako je odabran
-    var nazivGradaValue = _formKey.currentState?.fields['gradId']?.value;
-    if (nazivGradaValue != null) {
-      print("Odabrani naziv grada: $nazivGradaValue");
-      filterParams['nazivGrada'] = nazivGradaValue.toString();
+    var gradValue = _formKey.currentState?.fields['gradId']?.value;
+    if (gradValue != null) {
+      filterParams['nazivGrada'] = gradValue.toString();
     }
 
-    print("Filter params: $filterParams");
-
-    // Pozivanje API-ja sa filterima
     var data = await _autoservisProvider.get(filter: filterParams);
 
     if (mounted) {

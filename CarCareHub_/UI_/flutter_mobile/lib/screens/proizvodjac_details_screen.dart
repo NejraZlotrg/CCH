@@ -41,8 +41,15 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      child: SingleChildScrollView(
+       return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.proizvodjac?.nazivProizvodjaca ?? "Detalji proizvodjaca"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -107,7 +114,6 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
           ),
         ),
       ),
-      title: widget.proizvodjac?.nazivProizvodjaca ?? "Detalji proizvođača",
     );
   }
  

@@ -25,7 +25,21 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
-   
+   _fetchInitialData();
+  }
+  Future<void> _fetchInitialData() async {
+    try {
+      var data = await _proizvodjacProvider.get(filter: {
+        'IsAllncluded': 'true',
+      });
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
   }
 
   @override

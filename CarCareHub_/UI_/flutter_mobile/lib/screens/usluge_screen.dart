@@ -23,8 +23,16 @@ class _UslugeScreenState extends State<UslugeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _uslugaProvider = context.read<UslugeProvider>();
+     _loadData();
   }
- 
+ Future<void> _loadData() async {
+  var data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

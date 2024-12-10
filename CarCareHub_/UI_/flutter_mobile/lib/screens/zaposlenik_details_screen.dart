@@ -111,6 +111,12 @@ Widget build(BuildContext context) {
                     _formKey.currentState?.saveAndValidate();
                     var request = Map.from(_formKey.currentState!.value);
 
+
+// Pretvorite datum u odgovarajući format (npr. ISO 8601)
+if (request['datumRodjenja'] != null) {
+  request['datumRodjenja'] = (request['datumRodjenja'] as DateTime).toIso8601String();
+}
+
                     try {
                       if (widget.zaposlenik == null) {
                         await _zaposlenikProvider.insert(request);
@@ -318,18 +324,20 @@ List<Widget> _buildFormFields() {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
-              FormBuilderDateTimePicker(
-                name: "datumRodjenja",
-                inputType: InputType.date,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  labelText: "Datum Rođenja",
-                ),
-                format: DateFormat("dd.MM.yyyy"),
-              ),
+             FormBuilderDateTimePicker(
+  name: "datumRodjenja",
+  inputType: InputType.date,
+  decoration: const InputDecoration(
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    labelText: "Datum Rođenja",
+  ),
+  format: DateFormat("dd.MM.yyyy"),
+  initialValue: _initialValues['datumRodjenja'], // Povezuje inicijalnu vrednost
+)
+
             ],
           ),
         ),

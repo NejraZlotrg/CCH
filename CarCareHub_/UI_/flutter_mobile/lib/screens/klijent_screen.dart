@@ -23,9 +23,16 @@ class _KlijentScreenState extends State<KlijentScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _klijentProvider = context.read<KlijentProvider>();
-    
+    _loadData();
   }
-
+Future<void> _loadData() async {
+  var data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
+  if (mounted) {
+    setState(() {
+      result = data;
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(

@@ -40,8 +40,15 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      child: SingleChildScrollView(
+       return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.uloge?.nazivUloge ?? "Detalji uloge"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -106,7 +113,6 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
           ),
         ),
       ),
-      title: widget.uloge?.nazivUloge ?? "Detalji uloge",
     );
   }
  

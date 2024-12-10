@@ -22,7 +22,22 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _drzaveProvider = context.read<DrzaveProvider>();
-    
+    _fetchInitialData(); // Poziv funkcije za inicijalno učitavanje
+  }
+
+  Future<void> _fetchInitialData() async {
+    try {
+      var data = await _drzaveProvider.get(filter: {
+        'IsAllncluded': 'true',
+      });
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
   }
 
   @override
@@ -30,7 +45,7 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
     return MasterScreenWidget(
       title: "Drzava",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -41,159 +56,143 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
     );
   }
 
-Widget _buildSearch() {
-  return Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
-    child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-        side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
+  Widget _buildSearch() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Naziv drzave',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                controller: _nazivDrzaveController,
-              ),
-            ),
-            const SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () async {
-                var filterParams = {
-                  'IsAllncluded': 'true', // Ovaj parametar ostaje
-                };
-
-                // Dodavanje filtera samo ako je naziv unesen
-                if (_nazivDrzaveController.text.isNotEmpty) {
-                  filterParams['nazivDrzave'] = _nazivDrzaveController.text;
-                }
-
-                var data =
-                    await _drzaveProvider.get(filter: filterParams);
-
-                      if (!mounted) return; // Dodaj ovu proveru
-
-
-                setState(() {
-                  result = data;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8.0),
-                  Text('Pretraga'),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => DrzaveDetailsScreen(
-                      drzava: null,
-                    ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Naziv drzave',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                  controller: _nazivDrzaveController,
                 ),
               ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add), // Ikonica plus
-                  SizedBox(width: 8.0),
-                  Text('Dodaj'),
-                ],
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  var filterParams = {
+                    'IsAllncluded': 'true',
+                  };
+
+                  if (_nazivDrzaveController.text.isNotEmpty) {
+                    filterParams['nazivDrzave'] = _nazivDrzaveController.text;
+                  }
+
+                  try {
+                    var data = await _drzaveProvider.get(filter: filterParams);
+                    if (mounted) {
+                      setState(() {
+                        result = data;
+                      });
+                    }
+                  } catch (e) {
+                    print("Error fetching filtered data: $e");
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.search),
+                    SizedBox(width: 8.0),
+                    Text('Pretraga'),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-         
-          ],
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DrzaveDetailsScreen(drzava: null),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add),
+                    SizedBox(width: 8.0),
+                    Text('Dodaj'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
-    child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-        side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
+        ),
+        child: SingleChildScrollView(
+          child: DataTable(
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Naziv drzave',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
+            rows: result?.result
+                    .map(
+                      (Drzave e) => DataRow(
+                        onSelectChanged: (selected) {
+                          if (selected == true) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => DrzaveDetailsScreen(drzava: e),
+                              ),
+                            );
+                          }
+                        },
+                        cells: [
+                          DataCell(Text(e.nazivDrzave ?? "")),
+                        ],
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv drzave',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            
-          ],
-          rows: result?.result
-                .map(
-                  (Drzave e) => DataRow(
-                    onSelectChanged: (selected) {
-                      if (selected == true) {
-                        print('Selected: ${e.drzavaId}');
-                        // Ovdje možeš dodati navigaciju ili akciju za detalje
-                        Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context)=> DrzaveDetailsScreen(drzava: e,) // poziv na drugi screen
-                         ), );
-                      }
-                    },
-                    cells: [
-                      DataCell(Text(e.nazivDrzave ?? "")),
-                    ],
-                  ),
-                )
-                .toList() ?? [],
-          ),
-      ),
-    ),
-  );
-}
-
+    );
+  }
 }
