@@ -1,7 +1,6 @@
 ﻿using CarCareHub.Model;
 using CarCareHub.Services; // Zamijeniti sa stvarnim prostorom imena za servise
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -18,21 +17,20 @@ namespace CarCareHub_
         private readonly IKlijentService _klijentService;
 
         public BasicAuthenticationHandler(
-     IFirmaAutodijelovaService firmaService,
-     IZaposlenikService korisniciService,
-     IAutoservisService autoservisService,
-     IKlijentService klijentService,
-     IOptionsMonitor<AuthenticationSchemeOptions> options,
-     ILoggerFactory logger,
-     UrlEncoder encoder,
-     ISystemClock clock) : base(options, logger, encoder, clock)
+            IFirmaAutodijelovaService firmaService,
+            IZaposlenikService korisniciService,
+            IAutoservisService autoservisService,
+            IKlijentService klijentService,
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            ISystemClock clock) : base(options, logger, encoder, clock)
         {
             _firmaService = firmaService;
             _korisniciService = korisniciService;
             _autoservisService = autoservisService;
             _klijentService = klijentService;
         }
-
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
@@ -64,22 +62,28 @@ namespace CarCareHub_
                 var userKlijent = await _klijentService.Login(username, password);
 
                 object user = null;
+                string userId = null;
 
+                // Odredjivanje korisnika prema tipu i dodela ID-a
                 if (userFirma != null)
                 {
                     user = userFirma;
+                    userId = userFirma.FirmaAutodijelovaID.ToString();
                 }
                 else if (userKorisnik != null)
                 {
                     user = userKorisnik;
+                    userId = userKorisnik.ZaposlenikId.ToString();
                 }
                 else if (userAutoservis != null)
                 {
                     user = userAutoservis;
+                    userId = userAutoservis.AutoservisId.ToString();
                 }
                 else if (userKlijent != null)
                 {
                     user = userKlijent;
+                    userId = userKlijent.KlijentId.ToString();
                 }
 
                 if (user == null)
@@ -89,10 +93,10 @@ namespace CarCareHub_
 
                 // Kreiranje claimova
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.NameIdentifier, username),
-        };
+                {
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.NameIdentifier, userId),
+                };
 
                 // Dodavanje claimova za uloge ovisno o tipu korisnika
                 if (user is FirmaAutodijelova)
@@ -125,6 +129,5 @@ namespace CarCareHub_
                 return AuthenticateResult.Fail("Invalid Authorization Header");
             }
         }
-
     }
 }

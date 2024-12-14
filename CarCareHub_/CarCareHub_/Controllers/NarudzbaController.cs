@@ -34,25 +34,25 @@ namespace CarCareHub_.Controllers
             }
         }
 
-        [HttpPost("DodajStavkuUKosaricu")]
+        //[HttpPost("DodajStavkuUKosaricu")]
 
-        public async Task<Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina)
-        {
-            try
-            {
-                // Pozivanje servisa za dodavanje stavke u košaricu
-                var narudzba = await _narudzbaService.DodajStavkuUKosaricu(proizvodId, kolicina);
+        //public async Task<Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina)
+        //{
+        //    try
+        //    {
+        //        // Pozivanje servisa za dodavanje stavke u košaricu
+        //        var narudzba = await _narudzbaService.DodajStavkuUKosaricu(proizvodId, kolicina);
 
-                // Ako je uspješno, vraćamo ažuriranu narudžbu
-                return narudzba;
-            }
-            catch (Exception ex)
-            {
+        //        // Ako je uspješno, vraćamo ažuriranu narudžbu
+        //        return narudzba;
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                var narudzba = new Narudzba();
-                return null;
-            }
-        }
+        //        var narudzba = new Narudzba();
+        //        return null;
+        //    }
+        //}
 
     }
 }

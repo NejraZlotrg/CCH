@@ -1,4 +1,4 @@
-using CarCareHub.Model;
+﻿using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services;
 
@@ -69,6 +69,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
+
 // Add services to the container.
 builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 
@@ -111,6 +112,8 @@ builder.Services.AddTransient<IChatKlijentZaposlenikService, ChatKlijentZaposlen
 builder.Services.AddTransient<IChatKlijentAutoservisService, ChatKlijentAutoservisService>();
 builder.Services.AddTransient<IBPAutodijeloviAutoservisService, BPAutodijeloviAutoservisService>();
 builder.Services.AddTransient<IProizvodjacService, ProizvodjacService>();
+builder.Services.AddTransient<IKorpaService, KorpaService>();
+
 
 
 
@@ -169,7 +172,8 @@ builder.Services.AddAutoMapper(typeof(IKlijentService));
 
 builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
- 
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model.SearchObjects
 {
-    public class NarudzbaStavkaSearchObject : BaseSearchObject
+    public class KorpaSearchObject : BaseSearchObject
     {
+      
 
-        public bool IsAllncluded { get; set; }
-
-        public int? NarudzbaId { get; set; }
+        public bool? IsAllIncluded { get; set; }
 
     }
 }

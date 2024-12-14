@@ -34,7 +34,7 @@ namespace CarCareHub.Services
                 // Kreirajte listu uloga za unos
                 var ulogeInsert = new List<UlogeInsert>
         {
-            new UlogeInsert { NazivUloge = "Zapolenik" },
+            new UlogeInsert { NazivUloge = "Zaposlenik" },
             new UlogeInsert { NazivUloge = "Autoservis" },
             new UlogeInsert { NazivUloge = "Firma autodijelova" },
             new UlogeInsert { NazivUloge = "Klijent" },

@@ -104,6 +104,10 @@ namespace CarCareHub.Services
             CreateMap<Model.BPAutodijeloviAutoservisInsert, CarCareHub.Services.Database.BPAutodijeloviAutoservis>();
 
 
+            CreateMap<CarCareHub.Services.Database.Korpa, Model.Korpa>();
+            CreateMap<Model.KorpaUpdate, CarCareHub.Services.Database.Korpa>();
+            CreateMap<Model.KorpaInsert, CarCareHub.Services.Database.Korpa>();
+
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

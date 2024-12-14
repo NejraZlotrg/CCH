@@ -478,26 +478,20 @@ namespace CarCareHub.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NarudzbaStavkas",
+                name: "Korpa",
                 columns: table => new
                 {
-                    NarudzbaStavkaId = table.Column<int>(type: "int", nullable: false)
+                    KorpaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProizvodId = table.Column<int>(type: "int", nullable: true),
                     Kolicina = table.Column<int>(type: "int", nullable: true),
-                    UkupnaCijenaProizvoda = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    NarudzbaId = table.Column<int>(type: "int", nullable: true)
+                    UkupnaCijenaProizvoda = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NarudzbaStavkas", x => x.NarudzbaStavkaId);
+                    table.PrimaryKey("PK_Korpa", x => x.KorpaId);
                     table.ForeignKey(
-                        name: "FK_NarudzbaStavkas_Narudzbas_NarudzbaId",
-                        column: x => x.NarudzbaId,
-                        principalTable: "Narudzbas",
-                        principalColumn: "NarudzbaId");
-                    table.ForeignKey(
-                        name: "FK_NarudzbaStavkas_Proizvod_ProizvodId",
+                        name: "FK_Korpa_Proizvod_ProizvodId",
                         column: x => x.ProizvodId,
                         principalTable: "Proizvod",
                         principalColumn: "ProizvodID");
@@ -554,6 +548,30 @@ namespace CarCareHub.Services.Migrations
                         column: x => x.zaposlenikID,
                         principalTable: "Zaposlenik",
                         principalColumn: "ZaposlenikID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NarudzbaStavkas",
+                columns: table => new
+                {
+                    NarudzbaStavkaId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    KorpaId = table.Column<int>(type: "int", nullable: true),
+                    NarudzbaId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NarudzbaStavkas", x => x.NarudzbaStavkaId);
+                    table.ForeignKey(
+                        name: "FK_NarudzbaStavkas_Korpa_KorpaId",
+                        column: x => x.KorpaId,
+                        principalTable: "Korpa",
+                        principalColumn: "KorpaId");
+                    table.ForeignKey(
+                        name: "FK_NarudzbaStavkas_Narudzbas_NarudzbaId",
+                        column: x => x.NarudzbaId,
+                        principalTable: "Narudzbas",
+                        principalColumn: "NarudzbaId");
                 });
 
             migrationBuilder.CreateTable(
@@ -663,6 +681,11 @@ namespace CarCareHub.Services.Migrations
                 column: "UlogaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Korpa_ProizvodId",
+                table: "Korpa",
+                column: "ProizvodId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Model_GodisteId",
                 table: "Model",
                 column: "GodisteId");
@@ -673,14 +696,14 @@ namespace CarCareHub.Services.Migrations
                 column: "VoziloId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NarudzbaStavkas_KorpaId",
+                table: "NarudzbaStavkas",
+                column: "KorpaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NarudzbaStavkas_NarudzbaId",
                 table: "NarudzbaStavkas",
                 column: "NarudzbaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_NarudzbaStavkas_ProizvodId",
-                table: "NarudzbaStavkas",
-                column: "ProizvodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_placanje_autoservis_dijelovi_AutoservisId",
@@ -778,6 +801,9 @@ namespace CarCareHub.Services.Migrations
 
             migrationBuilder.DropTable(
                 name: "Zaposlenik_Proizvod");
+
+            migrationBuilder.DropTable(
+                name: "Korpa");
 
             migrationBuilder.DropTable(
                 name: "Narudzbas");

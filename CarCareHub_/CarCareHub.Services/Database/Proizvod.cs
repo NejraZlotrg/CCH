@@ -27,7 +27,9 @@ public partial class Proizvod
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
 
     // Navigation properties
-    public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
+   // public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
+    public virtual ICollection<Korpa> Korpas { get; set; } = new List<Korpa>();
+
     public virtual Proizvodjac? Proizvodjac { get; set; }
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
 }

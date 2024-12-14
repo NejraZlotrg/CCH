@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
-    public class NarudzbaStavkaInsert
+    public class KorpaUpdate
     {
 
-    
+        public int? ProizvodId { get; set; }
 
-        public int? KorpaId { get; set; }
-        public int? NarudzbaId { get; set; }
-
-
+        public int? Kolicina { get; set; }
+        [JsonIgnore]
+        public decimal? UkupnaCijenaProizvoda { get; set; }
     }
 }

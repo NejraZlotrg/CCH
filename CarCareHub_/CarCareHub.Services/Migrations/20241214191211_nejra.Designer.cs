@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20241214191211_nejra")]
+    partial class nejra
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -464,12 +467,6 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KorpaId"));
 
-                    b.Property<int?>("AutoservisId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("KlijentId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Kolicina")
                         .HasColumnType("int");
 
@@ -479,20 +476,11 @@ namespace CarCareHub.Services.Migrations
                     b.Property<decimal?>("UkupnaCijenaProizvoda")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ZaposlenikId")
-                        .HasColumnType("int");
-
                     b.HasKey("KorpaId");
-
-                    b.HasIndex("AutoservisId");
-
-                    b.HasIndex("KlijentId");
 
                     b.HasIndex("ProizvodId");
 
-                    b.HasIndex("ZaposlenikId");
-
-                    b.ToTable("Korpas");
+                    b.ToTable("Korpa");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
@@ -1042,29 +1030,11 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
                 {
-                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
-                        .WithMany()
-                        .HasForeignKey("AutoservisId");
-
-                    b.HasOne("CarCareHub.Services.Database.Klijent", "Klijent")
-                        .WithMany()
-                        .HasForeignKey("KlijentId");
-
                     b.HasOne("CarCareHub.Services.Database.Proizvod", "Proizvod")
                         .WithMany("Korpas")
                         .HasForeignKey("ProizvodId");
 
-                    b.HasOne("CarCareHub.Services.Database.Zaposlenik", "Zaposlenik")
-                        .WithMany()
-                        .HasForeignKey("ZaposlenikId");
-
-                    b.Navigation("Autoservis");
-
-                    b.Navigation("Klijent");
-
                     b.Navigation("Proizvod");
-
-                    b.Navigation("Zaposlenik");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>

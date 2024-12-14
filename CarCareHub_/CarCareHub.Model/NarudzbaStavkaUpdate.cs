@@ -10,16 +10,11 @@ namespace CarCareHub.Model
     public class NarudzbaStavkaUpdate
     {
 
-        public int? ProizvodId { get; set; }
-
-        public int? Kolicina { get; set; }
-        [JsonIgnore]
-        public decimal? UkupnaCijenaProizvoda { get; set; }
 
 
-        // public decimal? Cijena { get; set; }
-        //public int? NarudzbaId { get; set; }
 
+        public int? KorpaId { get; set; }
+        public int? NarudzbaId { get; set; }
 
     }
 }

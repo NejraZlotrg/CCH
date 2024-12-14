@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20241204191119_ajajaja")]
-    partial class ajajaja
+    [Migration("20241214212203_nejraz5")]
+    partial class nejraz5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -459,6 +459,45 @@ namespace CarCareHub.Services.Migrations
                     b.ToTable("Klijent", (string)null);
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
+                {
+                    b.Property<int>("KorpaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KorpaId"));
+
+                    b.Property<int?>("AutoservisId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("KlijentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Kolicina")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProizvodId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("UkupnaCijenaProizvoda")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ZaposlenikId")
+                        .HasColumnType("int");
+
+                    b.HasKey("KorpaId");
+
+                    b.HasIndex("AutoservisId");
+
+                    b.HasIndex("KlijentId");
+
+                    b.HasIndex("ProizvodId");
+
+                    b.HasIndex("ZaposlenikId");
+
+                    b.ToTable("Korpas");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
                 {
                     b.Property<int>("ModelId")
@@ -518,23 +557,17 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NarudzbaStavkaId"));
 
-                    b.Property<int?>("Kolicina")
+                    b.Property<int?>("KorpaId")
                         .HasColumnType("int");
 
                     b.Property<int?>("NarudzbaId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProizvodId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("UkupnaCijenaProizvoda")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("NarudzbaStavkaId");
 
-                    b.HasIndex("NarudzbaId");
+                    b.HasIndex("KorpaId");
 
-                    b.HasIndex("ProizvodId");
+                    b.HasIndex("NarudzbaId");
 
                     b.ToTable("NarudzbaStavkas");
                 });
@@ -1010,6 +1043,33 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("uloga");
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
+                {
+                    b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")
+                        .WithMany()
+                        .HasForeignKey("AutoservisId");
+
+                    b.HasOne("CarCareHub.Services.Database.Klijent", "Klijent")
+                        .WithMany()
+                        .HasForeignKey("KlijentId");
+
+                    b.HasOne("CarCareHub.Services.Database.Proizvod", "Proizvod")
+                        .WithMany("Korpas")
+                        .HasForeignKey("ProizvodId");
+
+                    b.HasOne("CarCareHub.Services.Database.Zaposlenik", "Zaposlenik")
+                        .WithMany()
+                        .HasForeignKey("ZaposlenikId");
+
+                    b.Navigation("Autoservis");
+
+                    b.Navigation("Klijent");
+
+                    b.Navigation("Proizvod");
+
+                    b.Navigation("Zaposlenik");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
                 {
                     b.HasOne("CarCareHub.Services.Database.Godiste", "Godiste")
@@ -1031,17 +1091,17 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.NarudzbaStavka", b =>
                 {
+                    b.HasOne("CarCareHub.Services.Database.Korpa", "Korpa")
+                        .WithMany("NarudzbaStavkas")
+                        .HasForeignKey("KorpaId");
+
                     b.HasOne("CarCareHub.Services.Database.Narudzba", "Narudzba")
                         .WithMany("NarudzbaStavkas")
                         .HasForeignKey("NarudzbaId");
 
-                    b.HasOne("CarCareHub.Services.Database.Proizvod", "Proizvod")
-                        .WithMany("NarudzbaStavkas")
-                        .HasForeignKey("ProizvodId");
+                    b.Navigation("Korpa");
 
                     b.Navigation("Narudzba");
-
-                    b.Navigation("Proizvod");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.PlacanjeAutoservisDijelovi", b =>
@@ -1230,6 +1290,11 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("ChatKlijentZaposlenik");
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
+                {
+                    b.Navigation("NarudzbaStavkas");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Narudzba", b =>
                 {
                     b.Navigation("NarudzbaStavkas");
@@ -1237,7 +1302,7 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Proizvod", b =>
                 {
-                    b.Navigation("NarudzbaStavkas");
+                    b.Navigation("Korpas");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Proizvodjac", b =>

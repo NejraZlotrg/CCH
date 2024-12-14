@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    [Migration("20241201115642_nejra")]
-    partial class nejra
+    [Migration("20241214191933_nejraz")]
+    partial class nejraz
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -459,6 +459,30 @@ namespace CarCareHub.Services.Migrations
                     b.ToTable("Klijent", (string)null);
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
+                {
+                    b.Property<int>("KorpaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KorpaId"));
+
+                    b.Property<int?>("Kolicina")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProizvodId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("UkupnaCijenaProizvoda")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("KorpaId");
+
+                    b.HasIndex("ProizvodId");
+
+                    b.ToTable("Korpas");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
                 {
                     b.Property<int>("ModelId")
@@ -518,23 +542,17 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NarudzbaStavkaId"));
 
-                    b.Property<int?>("Kolicina")
+                    b.Property<int?>("KorpaId")
                         .HasColumnType("int");
 
                     b.Property<int?>("NarudzbaId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProizvodId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("UkupnaCijenaProizvoda")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("NarudzbaStavkaId");
 
-                    b.HasIndex("NarudzbaId");
+                    b.HasIndex("KorpaId");
 
-                    b.HasIndex("ProizvodId");
+                    b.HasIndex("NarudzbaId");
 
                     b.ToTable("NarudzbaStavkas");
                 });
@@ -1010,6 +1028,15 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("uloga");
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
+                {
+                    b.HasOne("CarCareHub.Services.Database.Proizvod", "Proizvod")
+                        .WithMany("Korpas")
+                        .HasForeignKey("ProizvodId");
+
+                    b.Navigation("Proizvod");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Model", b =>
                 {
                     b.HasOne("CarCareHub.Services.Database.Godiste", "Godiste")
@@ -1031,17 +1058,17 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.NarudzbaStavka", b =>
                 {
+                    b.HasOne("CarCareHub.Services.Database.Korpa", "Korpa")
+                        .WithMany("NarudzbaStavkas")
+                        .HasForeignKey("KorpaId");
+
                     b.HasOne("CarCareHub.Services.Database.Narudzba", "Narudzba")
                         .WithMany("NarudzbaStavkas")
                         .HasForeignKey("NarudzbaId");
 
-                    b.HasOne("CarCareHub.Services.Database.Proizvod", "Proizvod")
-                        .WithMany("NarudzbaStavkas")
-                        .HasForeignKey("ProizvodId");
+                    b.Navigation("Korpa");
 
                     b.Navigation("Narudzba");
-
-                    b.Navigation("Proizvod");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.PlacanjeAutoservisDijelovi", b =>
@@ -1230,6 +1257,11 @@ namespace CarCareHub.Services.Migrations
                     b.Navigation("ChatKlijentZaposlenik");
                 });
 
+            modelBuilder.Entity("CarCareHub.Services.Database.Korpa", b =>
+                {
+                    b.Navigation("NarudzbaStavkas");
+                });
+
             modelBuilder.Entity("CarCareHub.Services.Database.Narudzba", b =>
                 {
                     b.Navigation("NarudzbaStavkas");
@@ -1237,7 +1269,7 @@ namespace CarCareHub.Services.Migrations
 
             modelBuilder.Entity("CarCareHub.Services.Database.Proizvod", b =>
                 {
-                    b.Navigation("NarudzbaStavkas");
+                    b.Navigation("Korpas");
                 });
 
             modelBuilder.Entity("CarCareHub.Services.Database.Proizvodjac", b =>

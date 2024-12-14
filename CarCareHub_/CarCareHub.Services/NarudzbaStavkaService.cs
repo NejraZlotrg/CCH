@@ -26,23 +26,8 @@ namespace CarCareHub.Services
         {
             var narudzbaStavka = _mapper.Map<Database.NarudzbaStavka>(insert);
 
-            // Dobavljanje cijene proizvoda iz baze podataka
-            var proizvod = await _dbContext.Proizvods.FindAsync(insert.ProizvodId);
-
-            // Provjera da li je pronađen proizvod
-            if (proizvod != null)
-            {
-                // Izračunavanje UkupneCijene
-                narudzbaStavka.UkupnaCijenaProizvoda = proizvod.CijenaSaPopustom != null ? proizvod.CijenaSaPopustom * insert.Kolicina : proizvod.Cijena * insert.Kolicina;
-
-                // Postavljanje navigacionog property-ja Proizvod
-                narudzbaStavka.Proizvod = proizvod;
-            }
-            else
-            {
-                throw new Exception("Proizvod nije pronađen.");
-            }
-
+            // Dobavljanje cijene proizvoda iz baze podataka DODATI U KORPU
+           
             // Spremanje u bazu podataka
             await _dbContext.NarudzbaStavkas.AddAsync(narudzbaStavka);
             await _dbContext.SaveChangesAsync();
@@ -73,10 +58,10 @@ namespace CarCareHub.Services
             // Uključujemo samo entitet Uloge
             if (search?.IsAllncluded == true)
             {
-                query = query.Include(z => z.Proizvod);
+              
                 query = query.Include(z => z.Narudzba);
-                query = query.Include(z => z.Proizvod.Proizvodjac);
-                query = query.Include(z => z.Proizvod.Kategorija);
+                query = query.Include(z => z.Korpa);
+             
             }
             return base.AddInclude(query, search);
         }
