@@ -94,7 +94,6 @@ _loadData();
       )
     );
   }
-  
 
   Widget _buildSearch() {
     return Padding(

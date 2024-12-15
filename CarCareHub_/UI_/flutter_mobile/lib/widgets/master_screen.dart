@@ -7,6 +7,7 @@ import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
 import 'package:flutter_mobile/screens/godiste_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
+import 'package:flutter_mobile/screens/korpa_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_stavka_screen.dart';
@@ -68,7 +69,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const NarudzbaStavkaScreen(),
+              builder: (context) => KorpaScreen(),
                   ),
                 );
               },

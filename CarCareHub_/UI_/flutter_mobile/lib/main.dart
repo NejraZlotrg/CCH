@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 
 import 'package:flutter_mobile/provider/drzave_provider.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
+import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/narudzba_stavka_provider.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
@@ -51,6 +53,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => ProizvodjacProvider()),
         ChangeNotifierProvider(create: (_) => GodisteProvider()),
         ChangeNotifierProvider(create: (_) => BPAutodijeloviAutoservisProvider()),
+        ChangeNotifierProvider(create: (_) => KorpaProvider()),
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+
 
         
 
@@ -154,42 +159,48 @@ class _LogInPageState extends State<LogInPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                var username = usernameController.text;
-                                var password = passwordController.text;
-                                Authorization.username = username;
-                                Authorization.password = password;
+   ElevatedButton(
+  onPressed: () async {
+    var username = usernameController.text;
+    var password = passwordController.text;
 
-                                try {
-                                  await productProvider.get();
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const ProductScreen(),
-                                    ),
-                                  );
-                                } catch (e) {
-                                  setState(() {
-                                    errorMessage = "Neuspješna prijava. Provjerite podatke i pokušajte ponovo.";
-                                  });
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: const BorderSide(color: Colors.black),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-                              ),
-                              child: const Text(
-                                'Prijava',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
+    // Pohranjujemo korisničke podatke u Authorization
+    Authorization.username = username;
+    Authorization.password = password;
+
+    try {
+      // 1. Prvo pokušavamo da dobijemo ID korisnika preko funkcije iz AutoservisProvider
+      final autoservisProvider = AutoservisProvider();
+      int? userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+
+      // 2. Ako je ID validan (nije null), pohranjujemo ga u UserProvider
+      if (userId != null) {
+        final userProvider = context.read<UserProvider>();
+        userProvider.setUser(userId, ''); // Pohranjujemo ID korisnika (i role ako postoji)
+
+        // 3. Nakon što je ID pohranjen, nastavljamo s navigacijom prema ProductScreen
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ProductScreen(),
+          ),
+        );
+      } else {
+        // 4. Ako ID nije pronađen, prikazujemo grešku
+        setState(() {
+          errorMessage = "Neuspješna prijava. Provjerite podatke i pokušajte ponovo.";
+        });
+      }
+    } catch (e) {
+      // 5. Obrada grešaka
+      setState(() {
+        errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
+      });
+    }
+  },
+  child: Text("Prijavi se"),
+)
+
+,
                             OutlinedButton(
   onPressed: () {
     showDialog(

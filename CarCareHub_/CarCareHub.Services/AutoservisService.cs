@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 
 namespace CarCareHub.Services
 {
+
     public class AutoservisService : BaseCRUDService<Model.Autoservis, Database.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, IAutoservisService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
@@ -127,7 +128,15 @@ namespace CarCareHub.Services
 
             return _mapper.Map<List<Model.Autoservis>>(temp);
         }
+        public int? GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
+            var user = _dbContext.Autoservis
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
 
+            // Ako korisnik nije pronađen, vraća null.
+            return user?.AutoservisId;
+        }
 
     }
 }

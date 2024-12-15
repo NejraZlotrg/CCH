@@ -9,11 +9,9 @@ abstract class BaseProvider<T> with ChangeNotifier {
   static String? _baseURL; // Bazni URL aplikacije
   final String _endpoint;  // Endpoint za specifične API zahtjeve
 
-  
-  
   BaseProvider(String endpoint) 
       : _endpoint = endpoint {
-    _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/");
+    _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
   }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
@@ -42,28 +40,32 @@ abstract class BaseProvider<T> with ChangeNotifier {
       throw Exception("Unknown error");
     }
   }
-  
+
+// Funkcija za dobijanje ID-a korisnika na osnovu korisničkog imena i lozinke
+
+
+  // Implementacija getById
   Future<List<T>> getById(int id) async {
-  String url = "$_baseURL$_endpoint/$id"; // Pretpostavljamo da se ID dodaje u URL
+    String url = "$_baseURL$_endpoint/$id"; // Dodajemo ID u URL
 
-  Uri uri = Uri.parse(url);
-  Map<String, String> headers = createHeaders();
-  http.Response response = await http.get(uri, headers: headers);
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
 
-  if (isValidResponse(response)) {
-    var data = jsonDecode(response.body);
-    List<T> resultList = [];
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      List<T> resultList = [];
 
-    for (var item in data) {
-      resultList.add(fromJson(item));
+      // Pretvaramo svaki element u model tipa T
+      for (var item in data) {
+        resultList.add(fromJson(item));
+      }
+
+      return resultList;
+    } else {
+      throw Exception("Unknown error");
     }
-
-    return resultList;
-  } else {
-    throw Exception("Unknown error");
   }
-}
-
 
   // Validacija HTTP odgovora
   bool isValidResponse(Response response) {

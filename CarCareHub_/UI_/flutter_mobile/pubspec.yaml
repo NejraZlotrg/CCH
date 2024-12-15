@@ -30,7 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    
+  shared_preferences: ^2.0.15 # Provjeri najnoviju verziju
+
+
     
   image_picker: ^1.1.2
   cupertino_icons: ^1.0.2

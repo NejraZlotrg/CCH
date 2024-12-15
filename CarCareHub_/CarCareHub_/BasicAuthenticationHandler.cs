@@ -34,7 +34,6 @@ namespace CarCareHub_
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            // Provjera zaglavlja Authorization
             if (!Request.Headers.ContainsKey("Authorization"))
             {
                 return AuthenticateResult.Fail("Missing Authorization Header");
@@ -42,7 +41,6 @@ namespace CarCareHub_
 
             try
             {
-                // Dekodiranje Authorization headera
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
                 var credentialsBytes = Convert.FromBase64String(authHeader.Parameter);
                 var credentials = Encoding.UTF8.GetString(credentialsBytes).Split(':');
@@ -55,7 +53,7 @@ namespace CarCareHub_
                 var username = credentials[0];
                 var password = credentials[1];
 
-                // Pokušaj autentifikacije u svakom servisu
+                // Provjera za svakog korisnika (firma, zaposleni, autoservis, klijent)
                 var userFirma = await _firmaService.Login(username, password);
                 var userKorisnik = await _korisniciService.Login(username, password);
                 var userAutoservis = await _autoservisService.Login(username, password);
@@ -64,7 +62,7 @@ namespace CarCareHub_
                 object user = null;
                 string userId = null;
 
-                // Odredjivanje korisnika prema tipu i dodela ID-a
+                // Dodavanje korisničkog ID-a temeljem vrste korisnika
                 if (userFirma != null)
                 {
                     user = userFirma;
@@ -93,12 +91,12 @@ namespace CarCareHub_
 
                 // Kreiranje claimova
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.NameIdentifier, userId),
-                };
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.NameIdentifier, userId), // Ovo dodajete ID kao Claim
+        };
 
-                // Dodavanje claimova za uloge ovisno o tipu korisnika
+                // Dodavanje uloge korisniku
                 if (user is FirmaAutodijelova)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, "FirmaAutodijelova"));
@@ -129,5 +127,6 @@ namespace CarCareHub_
                 return AuthenticateResult.Fail("Invalid Authorization Header");
             }
         }
+
     }
 }
