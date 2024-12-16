@@ -120,5 +120,24 @@ namespace CarCareHub.Services
 
             return _mapper.Map<Model.Klijent>(entity);
         }
+
+        public override async Task<List<Model.Klijent>> GetByID_(int id)
+        {
+            var temp = _dbContext.Klijents.Where(x => x.KlijentId == id).ToList().AsQueryable();
+
+            //temp = temp.Include(x => x.BPAutodijeloviAutoservis);
+
+
+            return _mapper.Map<List<Model.Klijent>>(temp);
+        }
+        public int? GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
+            var user = _dbContext.Klijents
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+
+            // Ako korisnik nije pronađen, vraća null.
+            return user?.KlijentId;
+        }
     }
 }

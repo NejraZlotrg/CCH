@@ -107,12 +107,21 @@ namespace CarCareHub.Services
 
         public override async Task<List<Model.Zaposlenik>> GetByID_(int id)
         {
-            var temp = _dbContext.Zaposleniks.Where(x => x.autoservisId == id).ToList().AsQueryable();
+            var temp = _dbContext.Zaposleniks.Where(x => x.ZaposlenikId == id).ToList().AsQueryable();
 
-            temp = temp.Include(x => x.Autoservis);
+           // temp = temp.Include(x => x.BPAutodijeloviAutoservis);
 
 
             return _mapper.Map<List<Model.Zaposlenik>>(temp);
+        }
+        public int? GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
+            var user = _dbContext.Zaposleniks
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+
+            // Ako korisnik nije pronađen, vraća null.
+            return user?.ZaposlenikId;
         }
 
     }

@@ -167,35 +167,47 @@ class _LogInPageState extends State<LogInPage> {
     // Pohranjujemo korisničke podatke u Authorization
     Authorization.username = username;
     Authorization.password = password;
+int? userId;
 
-    try {
-      // 1. Prvo pokušavamo da dobijemo ID korisnika preko funkcije iz AutoservisProvider
-      final autoservisProvider = AutoservisProvider();
-      int? userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+try {
+  // Inicijalizacija providera
+  final autoservisProvider = AutoservisProvider();
+  final zaposlenikProvider = ZaposlenikProvider();
+  final klijentProvider = KlijentProvider();
 
-      // 2. Ako je ID validan (nije null), pohranjujemo ga u UserProvider
-      if (userId != null) {
-        final userProvider = context.read<UserProvider>();
-        userProvider.setUser(userId, ''); // Pohranjujemo ID korisnika (i role ako postoji)
+  // Ugniježđena provjera
+  userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
 
-        // 3. Nakon što je ID pohranjen, nastavljamo s navigacijom prema ProductScreen
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ProductScreen(),
-          ),
-        );
-      } else {
-        // 4. Ako ID nije pronađen, prikazujemo grešku
-        setState(() {
-          errorMessage = "Neuspješna prijava. Provjerite podatke i pokušajte ponovo.";
-        });
-      }
-    } catch (e) {
-      // 5. Obrada grešaka
-      setState(() {
-        errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
-      });
-    }
+  if (userId == null) {
+    userId = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+  }
+
+  if (userId == null) {
+    userId = await klijentProvider.getIdByUsernameAndPassword(username, password);
+  }
+
+  // Ako je userId pronađen, nastavljamo s navigacijom
+  if (userId != null) {
+    final userProvider = context.read<UserProvider>();
+    userProvider.setUser(userId, ''); // Spremamo userId, bez uloge
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProductScreen(),
+      ),
+    );
+  } else {
+    // Ako userId nije pronađen, prikazujemo grešku
+    setState(() {
+      errorMessage = "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
+    });
+  }
+} catch (e) {
+  // Obrada grešaka
+  setState(() {
+    errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
+  });
+}
   },
   child: Text("Prijavi se"),
 )
