@@ -102,23 +102,47 @@ namespace CarCareHub.Services
 
 
 
+
+
         public async Task<Model.Klijent> Login(string username, string password)
+
         {
+
             var entity = await _dbContext.Klijents.FirstOrDefaultAsync(x => x.Username == username);
 
             if (entity == null)
+
             {
+
                 return null;
+
             }
 
             var hash = GenerateHash(entity.LozinkaSalt, password);
 
             if (hash != entity.LozinkaHash)
+
             {
+
                 return null;
+
             }
 
             return _mapper.Map<Model.Klijent>(entity);
+
         }
+
+
+
+        public int? GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
+            var user = _dbContext.Klijents
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+
+            // Ako korisnik nije pronađen, vraća null.
+            return user?.KlijentId;
+        }
+
     }
 }

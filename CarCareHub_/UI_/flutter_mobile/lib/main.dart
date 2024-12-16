@@ -3,7 +3,7 @@ import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
-
+ 
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
@@ -31,7 +31,7 @@ import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
-
+ 
 void main() {
   runApp(
     MultiProvider(
@@ -55,20 +55,20 @@ void main() {
         ChangeNotifierProvider(create: (_) => BPAutodijeloviAutoservisProvider()),
         ChangeNotifierProvider(create: (_) => KorpaProvider()),
       ChangeNotifierProvider(create: (_) => UserProvider()),
-
-
-        
-
-
+ 
+ 
+       
+ 
+ 
       ],
       child: const MyApp(),
     ),
   );
 }
-
+ 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -81,24 +81,25 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+ 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
-
+ 
   @override
+  // ignore: library_private_types_in_public_api
   _LogInPageState createState() => _LogInPageState();
 }
-
+ 
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String? errorMessage; // Poruka greške koja će se prikazati ako login ne uspije
-
+ 
   @override
   Widget build(BuildContext context) {
-    final productProvider = context.read<ProductProvider>();
+    context.read<ProductProvider>();
     double containerWidth = MediaQuery.of(context).size.width * 0.8;
-
+ 
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: Center(
@@ -163,43 +164,58 @@ class _LogInPageState extends State<LogInPage> {
   onPressed: () async {
     var username = usernameController.text;
     var password = passwordController.text;
-
+ 
     // Pohranjujemo korisničke podatke u Authorization
     Authorization.username = username;
     Authorization.password = password;
+int? userId;
+ 
+try {
+  // Inicijalizacija providera
+  final autoservisProvider = AutoservisProvider();
+  final zaposlenikProvider = ZaposlenikProvider();
+  final klijentProvider = KlijentProvider();
 
-    try {
-      // 1. Prvo pokušavamo da dobijemo ID korisnika preko funkcije iz AutoservisProvider
-      final autoservisProvider = AutoservisProvider();
-      int? userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+  // Provjera userId kroz sve providere
+  userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
 
-      // 2. Ako je ID validan (nije null), pohranjujemo ga u UserProvider
-      if (userId != null) {
-        final userProvider = context.read<UserProvider>();
-        userProvider.setUser(userId, ''); // Pohranjujemo ID korisnika (i role ako postoji)
+  if (userId == null) {
+    userId = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+  }
 
-        // 3. Nakon što je ID pohranjen, nastavljamo s navigacijom prema ProductScreen
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ProductScreen(),
-          ),
-        );
-      } else {
-        // 4. Ako ID nije pronađen, prikazujemo grešku
-        setState(() {
-          errorMessage = "Neuspješna prijava. Provjerite podatke i pokušajte ponovo.";
-        });
-      }
-    } catch (e) {
-      // 5. Obrada grešaka
-      setState(() {
-        errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
-      });
-    }
+  if (userId == null) {
+    userId = await klijentProvider.getIdByUsernameAndPassword(username, password);
+  }
+
+  if (userId != null) {
+    // Ako je userId pronađen, nastavljamo s navigacijom
+    // ignore: use_build_context_synchronously
+    final userProvider = context.read<UserProvider>();
+    userProvider.setUser(userId, ''); // Spremamo userId, bez uloge
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProductScreen(),
+      ),
+    );
+  } else {
+    // Ako userId nije pronađen, prikazujemo grešku
+    setState(() {
+      errorMessage = "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
+    });
+  }
+} catch (e) {
+  // Obrada grešaka
+  setState(() {
+    errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
+  });
+}
+
   },
   child: Text("Prijavi se"),
 )
-
+ 
 ,
                             OutlinedButton(
   onPressed: () {
@@ -218,7 +234,7 @@ class _LogInPageState extends State<LogInPage> {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
                    MaterialPageRoute(builder: (context)=> FirmaAutodijelovaRegistracijaScreen(firmaAutodijelova: null,) // poziv na drugi screen
-                     ), 
+                     ),
                   );
                 },
               ),
@@ -229,7 +245,7 @@ class _LogInPageState extends State<LogInPage> {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
                    MaterialPageRoute(builder: (context)=> AutoservisRegistracijaScreen(autoservis: null,) // poziv na drugi screen
-                     ), 
+                     ),
                   );
                 },
               ),
@@ -240,11 +256,11 @@ class _LogInPageState extends State<LogInPage> {
                   Navigator.pop(context); // Zatvaranje dijaloga
                   Navigator.of(context).push(
                    MaterialPageRoute(builder: (context)=> KlijentRegistracijaScreen(klijent: null,) // poziv na drugi screen
-                     ), 
+                     ),
                   );
                 },
               ),
-              
+             
             ],
           ),
         );
@@ -266,7 +282,7 @@ class _LogInPageState extends State<LogInPage> {
     ),
   ),
 ),
-
+ 
                           ],
                         ),
                       ],
@@ -327,7 +343,7 @@ class _LogInPageState extends State<LogInPage> {
       ),
     );
   }
-
+ 
   Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false}) {
     return SizedBox(
       width: 370, // Narrower input field
@@ -344,3 +360,5 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 }
+ 
+ 

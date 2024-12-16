@@ -17,5 +17,23 @@ namespace CarCareHub_.Controllers
               IKlijentService Service) : base(logger, Service)
         {
         }
+
+
+        [HttpPost("get-id")]
+        [AllowAnonymous]
+        public IActionResult GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Poziv metode servisa za dobivanje korisničkog ID-a.
+            var id = (_service as IKlijentService)?.GetIdByUsernameAndPassword(username, password);
+
+            // Ako korisnik nije pronađen, vraća 404 status sa porukom.
+            if (id == null)
+            {
+                return NotFound("Invalid username or password");
+            }
+
+            // Ako je korisnik pronađen, vraća ID u formatu JSON.
+            return Ok(new { Id = id });
+        }
     }
 }

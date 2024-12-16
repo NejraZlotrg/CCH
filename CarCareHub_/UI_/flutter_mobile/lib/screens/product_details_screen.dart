@@ -10,6 +10,7 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
@@ -30,6 +31,8 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   late ProductProvider _productProvider;
+  late KorpaProvider _korpaProvider;
+
   bool isLoading = true;
   int _quantity = 1;
   File? _imageFile;
@@ -47,6 +50,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     _productProvider = context.read<ProductProvider>();
+    _korpaProvider = context.read<KorpaProvider>();
+
     _modelProvider = context.read<ModelProvider>();
     _kategorijaProvider = context.read<KategorijaProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
@@ -249,31 +254,44 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
               ),
               const SizedBox(width: 10),
               // Add to cart button
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    // Add item to cart logic
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          '${widget.product?.naziv ?? "Proizvod"} je dodan u košaricu.'),
-                    ));
-                    setState(() {});
-                  } catch (e) {
-                    print("Greška: ${e.toString()}");
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            textStyle: const TextStyle(fontSize: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                child: const Text("Dodaj u korpu"),
-              ),
+ElevatedButton(
+  onPressed: () async {
+    if (widget.product?.proizvodId != null) {
+      final int productId = widget.product!.proizvodId!;
+
+      // Formiraj zahtjev
+      var request = Map.from(_formKey.currentState!.value);
+      request['proizvodId'] = productId;
+      request['kolicina'] = _quantity;
+
+      try {
+        await _korpaProvider.insert(request);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Proizvod dodan u korpu.")),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Greška: ${e.toString()}")),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Proizvod nije validan.")),
+      );
+    }
+  },
+  style: ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.red,
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    textStyle: const TextStyle(fontSize: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+  child: const Text("Dodaj u korpu"),
+),
+
             ],
           ),
         ],

@@ -387,9 +387,7 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
     filterParams['nazivModela'] = modelValue.nazivModela!;
   }
 
-  print("Filter params: $filterParams");
-  print("Godiste_: ${filterParams['godiste_']} (type: ${filterParams['godiste_']?.runtimeType})");
-
+  
 
   // Pozivanje API-ja sa filterima
   try {

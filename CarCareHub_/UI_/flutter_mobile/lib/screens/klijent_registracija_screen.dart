@@ -36,6 +36,8 @@ class _KlijentRegistracijaScreenState
   late GradProvider _gradProvider;
 
   SearchResult<Grad>? gradResult;
+
+
   List<Usluge> usluge = [];
   bool isLoading = true;
 
@@ -77,6 +79,7 @@ class _KlijentRegistracijaScreenState
     _formKey.currentState?.saveAndValidate();
     var request = Map.from(_formKey.currentState!.value);
 
+      request['ulogaId'] = 4;
 
     try {
       if (widget.klijent == null) {
@@ -325,37 +328,8 @@ class _KlijentRegistracijaScreenState
         const SizedBox(width: 20),
 
 
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Uloga",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderDropdown(
-                name: 'ulogaId',
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  hintText: 'Izaberite ulogu',
-                ),
-                items: gradResult?.result
-                        .map((item) => DropdownMenuItem(
-                              alignment: AlignmentDirectional.center,
-                              value: item.gradId.toString(),
-                              child: Text(item.nazivGrada ?? ""),
-                            ))
-                        .toList() ??
-                    [],
-              ),
-            ],
-          ),
-        ),
+        
+          
       ],
     ),
     const SizedBox(height: 20),

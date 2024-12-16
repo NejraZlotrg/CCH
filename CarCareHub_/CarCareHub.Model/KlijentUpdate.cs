@@ -20,8 +20,6 @@ namespace CarCareHub.Model
 
         public string? Password { get; set; }
 
-        public string? LozinkaSalt { get; set; }
-        public string? LozinkaHash { get; set; }
         public string? Spol { get; set; }
 
         public string? BrojTelefona { get; set; }

@@ -86,23 +86,33 @@ namespace CarCareHub.Services
 
 
         public async Task<Model.Zaposlenik> Login(string username, string password)
+
         {
-            var entity = await _dbContext.Zaposleniks.Include(x=>x.Uloga).FirstOrDefaultAsync(x => x.Username == username);
+
+            var entity = await _dbContext.Zaposleniks.Include(x => x.Uloga).FirstOrDefaultAsync(x => x.Username == username);
 
             if (entity == null)
+
             {
+
                 return null;
+
             }
 
             var hash = GenerateHash(entity.LozinkaSalt, password);
 
             if (hash != entity.LozinkaHash)
+
             {
+
                 return null;
+
             }
 
             return _mapper.Map<Model.Zaposlenik>(entity);
+
         }
+
 
 
         public override async Task<List<Model.Zaposlenik>> GetByID_(int id)
@@ -113,6 +123,16 @@ namespace CarCareHub.Services
 
 
             return _mapper.Map<List<Model.Zaposlenik>>(temp);
+        }
+
+        public int? GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
+            var user = _dbContext.Zaposleniks
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+
+            // Ako korisnik nije pronađen, vraća null.
+            return user?.ZaposlenikId;
         }
 
     }
