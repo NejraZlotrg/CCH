@@ -179,13 +179,9 @@ try {
   // Provjera userId kroz sve providere
   userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
 
-  if (userId == null) {
-    userId = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
-  }
+  userId ??= await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
 
-  if (userId == null) {
-    userId = await klijentProvider.getIdByUsernameAndPassword(username, password);
-  }
+  userId ??= await klijentProvider.getIdByUsernameAndPassword(username, password);
 
   if (userId != null) {
     // Ako je userId pronađen, nastavljamo s navigacijom
@@ -213,7 +209,7 @@ try {
 }
 
   },
-  child: Text("Prijavi se"),
+  child: const Text("Prijavi se"),
 )
  
 ,

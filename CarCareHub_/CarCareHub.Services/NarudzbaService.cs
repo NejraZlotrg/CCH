@@ -24,14 +24,35 @@ namespace CarCareHub.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
+
         public override async Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
         {
-            // Izračun ukupne cijene narudžbe
-           
+            var korpe = await _dbContext.Korpas.Where(x => (!insert.KlijentId.HasValue || x.KlijentId == insert.KlijentId) &&
+                                                            (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
+                                                            (!insert.FirmaAutodijelovaId.HasValue || x.ZaposlenikId == insert.FirmaAutodijelovaId)) .ToListAsync();
 
-            // Kreiraj privremenu narudžbu
-            var narudzba = await base.Insert(insert);
-            return narudzba;
+            var narudzba = new CarCareHub.Services.Database.Narudzba();
+
+            await _dbContext.AddAsync(narudzba);
+
+            await _dbContext.SaveChangesAsync();
+
+            foreach (var item in korpe)
+            {
+                var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
+                {
+                    ProizvodId = item.ProizvodId,
+                    NarudzbaId = narudzba.NarudzbaId,
+                };
+
+                narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
+            }
+
+            _mapper.Map<Database.Narudzba>(insert);
+
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<Model.Narudzba>(narudzba);
         }
 
         public override async Task<Model.Narudzba> Update(int id, Model.NarudzbaUpdate update)

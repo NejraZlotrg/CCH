@@ -11,6 +11,9 @@ namespace CarCareHub.Model
     {
 
         //public int? NarudzbaStavkeId { get; set; }
+        public int? KlijentId { get; set; }
+        public int? AutoservisId { get; set; }
+        public int? FirmaAutodijelovaId { get; set; }
 
         public DateTime? DatumNarudzbe { get; set; }
 
@@ -21,8 +24,6 @@ namespace CarCareHub.Model
         public int? PopustId { get; set; }
         [JsonIgnore]
         public decimal? UkupnaCijenaNarudzbe { get; set; }
-        public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
-
 
     }
 }

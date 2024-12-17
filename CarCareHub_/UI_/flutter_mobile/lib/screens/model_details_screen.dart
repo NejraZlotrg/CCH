@@ -134,7 +134,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          Center(
+          const Center(
           ),
           const SizedBox(height: 20),
           ..._buildFormFields(),
@@ -152,10 +152,10 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
             name: 'voziloId',
             decoration: InputDecoration(
               labelText: 'Vozilo',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               fillColor: Colors.white,
               filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
@@ -180,7 +180,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
         Expanded(
           child: FormBuilderTextField(
             name: "nazivModela",
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Naziv modela",
               border: OutlineInputBorder(),
               fillColor: Colors.white,
@@ -195,10 +195,10 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
             name: 'godisteId',
             decoration: InputDecoration(
               labelText: 'Godiste',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               fillColor: Colors.white,
               filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {

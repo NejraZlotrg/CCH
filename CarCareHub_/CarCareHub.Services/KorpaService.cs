@@ -20,6 +20,34 @@ namespace CarCareHub.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async void KreirajNarudzbu(long userId)
+        {
+            var korpa = await _dbContext.Korpas.Where(x => x.KlijentId == userId).ToListAsync(); // 10
+
+            var narudzba = new Narudzba();
+
+            await _dbContext.AddAsync(narudzba);
+
+            await _dbContext.SaveChangesAsync();
+
+            foreach (var stavka in korpa)
+            {
+                var stavkaNarudzbe = new NarudzbaStavka
+                {
+                    NarudzbaId = narudzba.NarudzbaId,
+                    ProizvodId = stavka.ProizvodId
+                };
+
+                await _dbContext.AddAsync(stavkaNarudzbe);
+            }
+
+            narudzba.UkupnaCijenaNarudzbe = korpa.Sum(x => x.UkupnaCijenaProizvoda);
+
+            narudzba.ZavrsenaNarudzba = true;
+
+            await _dbContext.SaveChangesAsync();
+        }
+
         public override async Task<Model.Korpa> Insert(Model.KorpaInsert insert)
         {
             var korpa = _mapper.Map<Database.Korpa>(insert);

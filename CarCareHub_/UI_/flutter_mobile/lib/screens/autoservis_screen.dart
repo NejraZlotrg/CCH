@@ -111,7 +111,7 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                         suffixIcon: const Icon(Icons.location_city),
                         hintText: 'Odaberite grad',
                         hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
                       ),

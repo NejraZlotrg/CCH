@@ -107,7 +107,7 @@ _loadData();
                 SizedBox(
                   width: 410,
                   child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Naziv proizvoda',
                       border: OutlineInputBorder(),
                       filled: true,
@@ -119,7 +119,7 @@ _loadData();
                 const SizedBox(width: 100),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Poredaj po cijeni",
                       border: OutlineInputBorder(),
                       filled: true,
@@ -166,7 +166,7 @@ _loadData();
               children: [
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Naziv firme",
                       border: OutlineInputBorder(),
                       filled: true,
@@ -176,7 +176,7 @@ _loadData();
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
+                const Expanded(
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: "JIB ili MBS",
@@ -189,7 +189,7 @@ _loadData();
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Lokacija",
                       border: OutlineInputBorder(),
                       filled: true,
@@ -226,7 +226,7 @@ _loadData();
               suffixIcon: const Icon(Icons.directions_car),
               hintText: 'Odaberite marku vozila',
               hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
               ),
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),
@@ -249,7 +249,7 @@ _loadData();
               suffixIcon: const Icon(Icons.date_range),
               hintText: 'Odaberite godiste',
               hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
               ),
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),
@@ -276,7 +276,7 @@ _loadData();
               suffixIcon: const Icon(Icons.dashboard_customize),
               hintText: 'Odaberite model',
               hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
               ),
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),

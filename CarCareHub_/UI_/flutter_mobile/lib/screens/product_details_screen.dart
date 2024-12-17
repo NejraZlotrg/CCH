@@ -267,7 +267,7 @@ ElevatedButton(
       try {
         await _korpaProvider.insert(request);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Proizvod dodan u korpu.")),
+          const SnackBar(content: Text("Proizvod dodan u korpu.")),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -276,7 +276,7 @@ ElevatedButton(
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Proizvod nije validan.")),
+        const SnackBar(content: Text("Proizvod nije validan.")),
       );
     }
   },

@@ -10,6 +10,8 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class KorpaScreen extends StatefulWidget {
+  const KorpaScreen({super.key});
+
   @override
   State<KorpaScreen> createState() => _KorpaScreenState();
 }
@@ -113,11 +115,11 @@ class _KorpaScreenState extends State<KorpaScreen> {
           // Pokrećemo logiku za završavanje narudžbe
           _completeOrder();
         },
-        child: Text('Završi narudžbu'),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
-          textStyle: TextStyle(fontSize: 18),
+          padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
+          textStyle: const TextStyle(fontSize: 18),
         ),
+        child: Text('Završi narudžbu'),
       ),
     );
   }
@@ -138,7 +140,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
   try {
     // Step 1: Uzmi trenutni datum i datum isporuke
     DateTime currentDate = DateTime.now().toUtc(); // Postavljanje na UTC
-    DateTime deliveryDate = DateTime.now().add(Duration(days: 3)).toUtc(); // Datum isporuke 3 dana od sada (UTC)
+    DateTime deliveryDate = DateTime.now().add(const Duration(days: 3)).toUtc(); // Datum isporuke 3 dana od sada (UTC)
 
     // Konvertuj u ISO 8601 format sa UTC 'Z'
     String formattedCurrentDate = currentDate.toIso8601String();
@@ -162,7 +164,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
     if (korpaList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Korpa je prazna!')),
+        const SnackBar(content: Text('Korpa je prazna!')),
       );
       return;
     }
@@ -170,7 +172,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
     for (Korpa item in korpaList) {
       if (item.proizvodId == null || item.kolicina == null || item.ukupnaCijenaProizvoda == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Nema validnih podataka u korpi!')),
+          const SnackBar(content: Text('Nema validnih podataka u korpi!')),
         );
         return;
       }
@@ -200,12 +202,12 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
     // Obavijesti korisnika da je narudžba završena
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Narudžba je uspješno završena!')),
+      const SnackBar(content: Text('Narudžba je uspješno završena!')),
     );
   } catch (e) {
     print('Greška pri završavanju narudžbe: $e');
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Došlo je do greške pri završavanju narudžbe!')),
+      const SnackBar(content: Text('Došlo je do greške pri završavanju narudžbe!')),
     );
   }
 }

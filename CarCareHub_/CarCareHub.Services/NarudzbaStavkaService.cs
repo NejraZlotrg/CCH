@@ -60,7 +60,7 @@ namespace CarCareHub.Services
             {
               
                 query = query.Include(z => z.Narudzba);
-                query = query.Include(z => z.Korpa);
+                query = query.Include(z => z.Proizvod);
              
             }
             return base.AddInclude(query, search);
