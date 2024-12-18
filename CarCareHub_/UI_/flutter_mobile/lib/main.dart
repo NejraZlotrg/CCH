@@ -168,7 +168,10 @@ class _LogInPageState extends State<LogInPage> {
     // Pohranjujemo korisničke podatke u Authorization
     Authorization.username = username;
     Authorization.password = password;
-int? userId;
+int? userIdA;
+int? userIdZ;
+int? userIdK;
+
  
 try {
   // Inicijalizacija providera
@@ -177,18 +180,22 @@ try {
   final klijentProvider = KlijentProvider();
 
   // Provjera userId kroz sve providere
-  userId = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+  userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
 
-  userId ??= await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+  userIdZ ??= await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
 
-  userId ??= await klijentProvider.getIdByUsernameAndPassword(username, password);
+  userIdK ??= await klijentProvider.getIdByUsernameAndPassword(username, password);
 
-  if (userId != null) {
+  if (userIdA != null || userIdZ != null || userIdK != null) {
     // Ako je userId pronađen, nastavljamo s navigacijom
     // ignore: use_build_context_synchronously
     final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userId, ''); // Spremamo userId, bez uloge
-
+    if(userIdA!=null)
+    userProvider.setUser(userIdA, 'Autoservis'); 
+        if(userIdZ!=null)
+    userProvider.setUser(userIdZ, 'Zaposlenik'); 
+       if(userIdK!=null)
+    userProvider.setUser(userIdK, 'Klijent'); 
     // ignore: use_build_context_synchronously
     Navigator.of(context).push(
       MaterialPageRoute(

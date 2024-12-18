@@ -33,88 +33,14 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
       title: "Narudzbe",
       child: Column(
         children: [
-          _buildSearch(),
+         
           _buildDataListView(),
         ],
       ),
     );
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          
-
-         ElevatedButton(
-            onPressed: () async {
-              print("podaci proceed");
-              var data = await _narudzbaProvider.get(filter: {
-              //  'naziv': _nazivController.text,
-                //'model': _modelController.text
-              });
-
-              setState(() {
-                result = data;
-              });
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Prikazi narudzbu'),
-              ],
-
-            ),
-          ),
-          // Novo dugme za kreiranje nove narudžbe
-        ElevatedButton(
-          onPressed: () async {
-            // Kreiranje nove narudžbe pozivom na backend
-            await _narudzbaProvider.createNewNarudzba();
-
-            // Nakon kreiranja nove narudžbe, osvježi listu
-            var data = await _narudzbaProvider.get();
-            setState(() {
-              result = data;
-            });
-
-            print("Nova narudžba kreirana!");
-          },
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add),
-              SizedBox(width: 8.0),
-              Text('Dodaj novu narudžbu'),
-            ],
-          ),
-        ),
-          const SizedBox(width: 10),
-
-        /*  ElevatedButton(
-            onPressed: () async {
-
-                     Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> NarudzbaDetailScreen(product: null,) // poziv na drugi screen
-                     ), );
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
-              ],
-            ),
-          ),*/
-        ],
-      ),
-    );
-  }
-
+  
   Widget _buildDataListView() {
     return Expanded(
       child: SingleChildScrollView(

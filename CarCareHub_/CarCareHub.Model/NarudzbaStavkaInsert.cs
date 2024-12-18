@@ -11,6 +11,7 @@ namespace CarCareHub.Model
     {
 
     
+    public int? Kolicina { get; set; }
 
         public int? KorpaId { get; set; }
         public int? NarudzbaId { get; set; }

@@ -74,10 +74,11 @@ namespace CarCareHub.Services
 
             // Retrieve the logged-in user's ID from the claims (you can also add other user-specific data)
             var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //var who=user;
 
             if (string.IsNullOrEmpty(userId))
             {
-                throw new Exception("User ID is missing from claims.");
+                throw new Exception("User ID is missing from claims. ");
             }
 
             // Validate and parse userId
@@ -86,7 +87,8 @@ namespace CarCareHub.Services
                 throw new Exception($"User ID '{userId}' is invalid or not a number.");
             }
 
-            var userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
+            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+
 
             if (userRole != null)
             {
@@ -94,9 +96,10 @@ namespace CarCareHub.Services
                 korpa.KlijentId = null;
                 korpa.ZaposlenikId = null;
                 korpa.AutoservisId = null;
-
-                // Dodjeljivanje ID-a na osnovu uloge korisnika
-                switch (userRole)
+                if(userRole!=null)
+                {
+                    // Dodjeljivanje ID-a na osnovu uloge korisnika
+                    switch (userRole)
                 {
                     case "Klijent":
                         korpa.KlijentId = parsedUserId; // Set KlijentId for logged-in client
@@ -111,7 +114,8 @@ namespace CarCareHub.Services
                         break;
 
                     default:
-                        throw new Exception("Unknown user role.");
+                        throw new Exception("Unknown user role." );
+                    }
                 }
 
                 // Ispis koji ID je dodijeljen

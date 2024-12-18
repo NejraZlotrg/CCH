@@ -13,7 +13,7 @@ namespace CarCareHub.Model
         //public int? NarudzbaStavkeId { get; set; }
         public int? KlijentId { get; set; }
         public int? AutoservisId { get; set; }
-        public int? FirmaAutodijelovaId { get; set; }
+        public int? ZaposlenikId { get; set; }
 
         public DateTime? DatumNarudzbe { get; set; }
 

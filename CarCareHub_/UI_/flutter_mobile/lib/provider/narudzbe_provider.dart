@@ -11,14 +11,4 @@ class NarudzbaProvider extends BaseProvider<Narudzba> {
     return Narudzba.fromJson(data);
   }
 
-  // Kreiranje nove narudžbe
-  Future<void> createNewNarudzba() async {
-    await insert({
-      'datumNarudzbe': DateTime.now().toIso8601String(),
-      'datumIsporuke': null,
-      'zavrsenaNarudzba': false,
-      'popustId': 0,
-      'ukupnaCijenaNarudzbe': null,
-    });
-  }
 }

@@ -9,6 +9,7 @@ public partial class NarudzbaStavka
     public int? ProizvodId { get; set; }
 
     public virtual Proizvod? Proizvod { get; set; }
+    public int? Kolicina { get; set; }
     public int? NarudzbaId { get; set; }
     public virtual Narudzba? Narudzba { get; set; }
 

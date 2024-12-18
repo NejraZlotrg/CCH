@@ -29,7 +29,7 @@ namespace CarCareHub.Services
         {
             var korpe = await _dbContext.Korpas.Where(x => (!insert.KlijentId.HasValue || x.KlijentId == insert.KlijentId) &&
                                                             (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
-                                                            (!insert.FirmaAutodijelovaId.HasValue || x.ZaposlenikId == insert.FirmaAutodijelovaId)) .ToListAsync();
+                                                            (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId)) .ToListAsync();
 
             var narudzba = new CarCareHub.Services.Database.Narudzba();
 
@@ -43,10 +43,24 @@ namespace CarCareHub.Services
                 {
                     ProizvodId = item.ProizvodId,
                     NarudzbaId = narudzba.NarudzbaId,
+                   Kolicina = item.Kolicina.HasValue ? item.Kolicina.Value : 1
                 };
 
                 narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
             }
+            // Datum kada je narudžba kreirana (univerzalno vreme)
+            // Datum kada je narudžba kreirana (univerzalno vreme)
+            insert.DatumNarudzbe = DateTime.UtcNow;  // Čuva se kao DateTime, UTC vremenska zona
+
+            // Datum kada je predviđena isporuka (lokalno vreme sa predviđenim rokom isporuke za 7 dana)
+            insert.DatumIsporuke = DateTime.Now.AddDays(7);  // Čuva se kao DateTime, lokalno vreme
+
+            // Ako treba da pošaljete ili prikažete podatke u specifičnom formatu, koristite:
+            //string? datumNarudzbeStr = insert.DatumNarudzbe.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            //string datumIsporukeStr = insert.DatumIsporuke.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
+
+
 
             _mapper.Map<Database.Narudzba>(insert);
 
