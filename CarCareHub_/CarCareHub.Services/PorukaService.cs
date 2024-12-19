@@ -43,7 +43,6 @@ namespace CarCareHub.Services
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.ChatKlijentZaposlenik);
-                query = query.Include(z => z.ChatKlijentAutoservis);
             }
             return base.AddInclude(query, search);
         }

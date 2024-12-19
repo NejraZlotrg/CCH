@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CarCareHub.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,9 +92,6 @@ namespace CarCareHub.Services
             CreateMap<Model.ChatKlijentZaposlenikUpdate, CarCareHub.Services.Database.ChatKlijentZaposlenik>();
             CreateMap<Model.ChatKlijentZaposlenikInsert, CarCareHub.Services.Database.ChatKlijentZaposlenik>();
 
-            CreateMap<CarCareHub.Services.Database.ChatKlijentAutoservis, Model.ChatKlijentAutoservis>();
-            CreateMap<Model.ChatKlijentAutoservisUpdate, CarCareHub.Services.Database.ChatKlijentAutoservis>();
-            CreateMap<Model.ChatKlijentAutoservisInsert, CarCareHub.Services.Database.ChatKlijentAutoservis>();
 
             CreateMap<CarCareHub.Services.Database.PlacanjeAutoservisDijelovi, Model.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviUpdate, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
@@ -107,6 +105,14 @@ namespace CarCareHub.Services
             CreateMap<CarCareHub.Services.Database.Korpa, Model.Korpa>();
             CreateMap<Model.KorpaUpdate, CarCareHub.Services.Database.Korpa>();
             CreateMap<Model.KorpaInsert, CarCareHub.Services.Database.Korpa>();
+
+
+            CreateMap<ChatAutoservisKlijentInsert, Model.ChatAutoservisKlijent>();
+            CreateMap<Model.ChatAutoservisKlijent, ChatAutoservisKlijentInsert>();
+
+            CreateMap<CarCareHub.Services.Database.ChatAutoservisKlijent, Model.ChatAutoservisKlijent>();
+            CreateMap<Model.ChatAutoservisKlijentUpdate, CarCareHub.Services.Database.ChatAutoservisKlijent>();
+            CreateMap<Model.ChatAutoservisKlijentInsert, CarCareHub.Services.Database.ChatAutoservisKlijent>();
 
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();

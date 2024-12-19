@@ -13,7 +13,7 @@ namespace CarCareHub.Model
         public DateTime VrijemeSlanja { get; set; }
         public int? ChatKlijentAutoservisId { get; set; } // ID razgovora kojem poruka pripada
 
-        public virtual ChatKlijentAutoservis? ChatKlijentAutoservis { get; set; }
+        //public virtual ChatKlijentAutoservis? ChatKlijentAutoservis { get; set; }
 
 
         public int? ChatKlijentZaposlenikId { get; set; } // ID razgovora kojem poruka pripada

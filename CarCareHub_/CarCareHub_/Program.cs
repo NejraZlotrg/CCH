@@ -110,12 +110,13 @@ builder.Services.AddTransient<IGodisteService, GodisteService>();
 builder.Services.AddTransient<IVoziloService, VoziloService>();
 builder.Services.AddTransient<IPorukaService, PorukaService>();
 builder.Services.AddTransient<IChatKlijentZaposlenikService, ChatKlijentZaposlenikService>();
-builder.Services.AddTransient<IChatKlijentAutoservisService, ChatKlijentAutoservisService>();
 builder.Services.AddTransient<IBPAutodijeloviAutoservisService, BPAutodijeloviAutoservisService>();
 builder.Services.AddTransient<IProizvodjacService, ProizvodjacService>();
 builder.Services.AddTransient<IKorpaService, KorpaService>();
 
-builder.Services.AddTransient<IChatService, ChatService>();
+
+
+builder.Services.AddScoped<IChatAutoservisKlijentService, CarCareHub.Services.ChatAutoservisKlijentService>();
 
 
 

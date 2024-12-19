@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model.SearchObjects
 {
-    public class ChatKlijentAutoservisSearchObject : BaseSearchObject
+    public class ChatAKSearchObject : BaseSearchObject
     {
         public bool? IsAllIncluded { get; set; }
+
+      //  public string Poruka { get; set; }
     }
 }

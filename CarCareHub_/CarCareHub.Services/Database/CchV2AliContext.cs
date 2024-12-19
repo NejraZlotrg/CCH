@@ -22,7 +22,6 @@ public partial class CchV2AliContext : DbContext
 
     public virtual DbSet<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; }
 
-    public virtual DbSet<ChatKlijentAutoservis> ChatKlijentAutoserviss { get; set; }
 
     public virtual DbSet<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; }
 
@@ -64,7 +63,7 @@ public partial class CchV2AliContext : DbContext
 
 
 
-    public DbSet<ChatAutoservisKlijent> ChatAUtoservisKlijents { get; set; }
+    public DbSet<ChatAutoservisKlijent> ChatAutoservisKlijents { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
