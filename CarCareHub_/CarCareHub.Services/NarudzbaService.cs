@@ -32,7 +32,8 @@ namespace CarCareHub.Services
                                                             (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId)) .ToListAsync();
 
             var narudzba = new CarCareHub.Services.Database.Narudzba();
-
+            narudzba.DatumNarudzbe = DateTime.Now;
+            narudzba.DatumIsporuke = DateTime.Now.AddDays(2);
             await _dbContext.AddAsync(narudzba);
 
             await _dbContext.SaveChangesAsync();

@@ -103,7 +103,7 @@ namespace CarCareHub_
                 }
                 else if (user is Zaposlenik)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, "Korisnik"));
+                    claims.Add(new Claim(ClaimTypes.Role, "Zaposlenik"));
                 }
                 else if (user is Autoservis)
                 {

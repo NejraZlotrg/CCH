@@ -58,4 +58,10 @@ public partial class Autoservis
     public virtual Vozilo? Vozilo { get; set; }
 
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
+
+
+
+
+    public virtual ICollection<ChatAutoservisKlijent> ChatPoruke { get; set; } = new List<ChatAutoservisKlijent>();
+
 }

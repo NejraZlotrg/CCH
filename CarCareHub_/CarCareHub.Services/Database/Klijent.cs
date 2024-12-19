@@ -29,9 +29,16 @@ public partial class Klijent
 
     public virtual ICollection<ChatKlijentAutoservis> ChatKlijentAutoserviss { get; set; } = new List<ChatKlijentAutoservis>();
 
+
     public virtual Grad? Grad { get; set; }
 
     public int UlogaId { get; set; }
     public virtual Uloge uloga { get; set; }
+
+
+
+
+    public virtual ICollection<ChatAutoservisKlijent> ChatPoruke { get; set; } = new List<ChatAutoservisKlijent>();
+
 
 }

@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CarCareHub_.Hubs;
 
 
 
@@ -114,6 +115,7 @@ builder.Services.AddTransient<IBPAutodijeloviAutoservisService, BPAutodijeloviAu
 builder.Services.AddTransient<IProizvodjacService, ProizvodjacService>();
 builder.Services.AddTransient<IKorpaService, KorpaService>();
 
+builder.Services.AddTransient<IChatService, ChatService>();
 
 
 
@@ -174,7 +176,16 @@ builder.Services.AddAuthentication("BasicAuthentication").AddScheme<Authenticati
 
 builder.Services.AddHttpContextAccessor();
 
+
+builder.Services.AddSignalR();
+
+
+
+
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 await SeedUloge(app);
@@ -220,13 +231,21 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dataContext = scope.ServiceProvider.GetRequiredService<CchV2AliContext>();
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var dataContext = scope.ServiceProvider.GetRequiredService<CchV2AliContext>();
 
-//    // dataContext.Database.EnsureCreated();
-//    var conn = dataContext.Database.GetConnectionString();
-//    dataContext.Database.Migrate();
-//}
-app.Run();
+    //    // dataContext.Database.EnsureCreated();
+    //    var conn = dataContext.Database.GetConnectionString();
+    //    dataContext.Database.Migrate();
+    //}
+
+
+
+
+    // Mapiraj SignalR rute
+    app.MapHub<ChatHub>("/chatHub");
+
+
+    app.Run();
 }
