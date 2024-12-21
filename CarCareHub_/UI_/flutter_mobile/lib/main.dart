@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
- 
+import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
+
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
@@ -31,7 +34,7 @@ import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
- 
+
 void main() {
   runApp(
     MultiProvider(
@@ -52,54 +55,54 @@ void main() {
         ChangeNotifierProvider(create: (_) => ZaposlenikProvider()),
         ChangeNotifierProvider(create: (_) => ProizvodjacProvider()),
         ChangeNotifierProvider(create: (_) => GodisteProvider()),
-        ChangeNotifierProvider(create: (_) => BPAutodijeloviAutoservisProvider()),
+        ChangeNotifierProvider(
+            create: (_) => BPAutodijeloviAutoservisProvider()),
         ChangeNotifierProvider(create: (_) => KorpaProvider()),
-      ChangeNotifierProvider(create: (_) => UserProvider()),
- 
- 
-       
- 
- 
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ChatAutoservisKlijentProvider()),
       ],
       child: const MyApp(),
     ),
   );
 }
- 
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Car Care Hub',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, primary: const Color.fromARGB(255, 84, 83, 83)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            primary: const Color.fromARGB(255, 84, 83, 83)),
         useMaterial3: true,
       ),
       home: const LogInPage(),
     );
   }
 }
- 
+
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
- 
+
   @override
   // ignore: library_private_types_in_public_api
   _LogInPageState createState() => _LogInPageState();
 }
- 
+
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String? errorMessage; // Poruka greške koja će se prikazati ako login ne uspije
- 
+  String?
+      errorMessage; // Poruka greške koja će se prikazati ako login ne uspije
+
   @override
   Widget build(BuildContext context) {
     context.read<ProductProvider>();
     double containerWidth = MediaQuery.of(context).size.width * 0.8;
- 
+
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: Center(
@@ -148,144 +151,177 @@ class _LogInPageState extends State<LogInPage> {
                         const SizedBox(height: 30.0),
                         _buildTextField(usernameController, 'Korisničko ime'),
                         const SizedBox(height: 15.0),
-                        _buildTextField(passwordController, 'Lozinka', obscureText: true),
+                        _buildTextField(passwordController, 'Lozinka',
+                            obscureText: true),
                         const SizedBox(height: 10.0),
                         if (errorMessage != null) // Prikaz poruke o grešci
                           Text(
                             errorMessage!,
-                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
                             textAlign: TextAlign.center,
                           ),
                         const SizedBox(height: 15.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-   ElevatedButton(
-  onPressed: () async {
-    var username = usernameController.text;
-    var password = passwordController.text;
- 
-    // Pohranjujemo korisničke podatke u Authorization
-    Authorization.username = username;
-    Authorization.password = password;
-int? userIdA;
-int? userIdZ;
-int? userIdK;
+                            ElevatedButton(
+                              onPressed: () async {
+                                var username = usernameController.text;
+                                var password = passwordController.text;
 
- 
-try {
-  // Inicijalizacija providera
-  final autoservisProvider = AutoservisProvider();
-  final zaposlenikProvider = ZaposlenikProvider();
-  final klijentProvider = KlijentProvider();
+                                // Pohranjujemo korisničke podatke u Authorization
+                                Authorization.username = username;
+                                Authorization.password = password;
 
-  // Provjera userId kroz sve providere
-  userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+                                try {
+                                  // Inicijalizacija providera
+                                  final autoservisProvider =
+                                      AutoservisProvider();
+                                  final zaposlenikProvider =
+                                      ZaposlenikProvider();
+                                  final klijentProvider = KlijentProvider();
 
-  userIdZ ??= await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+                                  // Provjera userId kroz sve providere
+                                  final userIdA = await autoservisProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
+                                  final userIdZ = await zaposlenikProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
+                                  final userIdK = await klijentProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
 
-  userIdK ??= await klijentProvider.getIdByUsernameAndPassword(username, password);
+                                  // Provjera svih korisnika
+                                  if (userIdA != null) {
+                                    // Ako je userIdA pronađen
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(userIdA, 'Autoservis');
 
-  if (userIdA != null || userIdZ != null || userIdK != null) {
-    // Ako je userId pronađen, nastavljamo s navigacijom
-    // ignore: use_build_context_synchronously
-    final userProvider = context.read<UserProvider>();
-    if(userIdA!=null)
-    userProvider.setUser(userIdA, 'Autoservis'); 
-        if(userIdZ!=null)
-    userProvider.setUser(userIdZ, 'Zaposlenik'); 
-       if(userIdK!=null)
-    userProvider.setUser(userIdK, 'Klijent'); 
-    // ignore: use_build_context_synchronously
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  } else {
-    // Ako userId nije pronađen, prikazujemo grešku
-    setState(() {
-      errorMessage = "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
-    });
-  }
-} catch (e) {
-  // Obrada grešaka
-  setState(() {
-    errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
-  });
-}
+                                    // Nastavimo s navigacijom nakon što je Autoservis korisnik autentifikovan
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  } else if (userIdZ != null) {
+                                    // Ako userIdA nije pronađen, provjeri Zaposlenika
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(userIdZ, 'Zaposlenik');
 
-  },
-  child: const Text("Prijavi se"),
-)
- 
-,
+                                    // Nastavimo s navigacijom nakon što je Zaposlenik autentifikovan
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  } else if (userIdK != null) {
+                                    // Ako niti jedan od prethodnih nije pronađen, provjeri Klijenta
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(userIdK, 'Klijent');
+
+                                    // Nastavimo s navigacijom nakon što je Klijent autentifikovan
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  print('Error during user authentication: $e');
+                                }
+                              },
+                              child: const Text("Prijavi se"),
+                            ),
                             OutlinedButton(
-  onPressed: () {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Registruj se kao:"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.store),
-                title: const Text("Firma autodijelova"),
-                onTap: () {
-                  Navigator.pop(context); // Zatvaranje dijaloga
-                  Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> FirmaAutodijelovaRegistracijaScreen(firmaAutodijelova: null,) // poziv na drugi screen
-                     ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.store),
-                title: const Text("Autoservis"),
-                onTap: () {
-                  Navigator.pop(context); // Zatvaranje dijaloga
-                  Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> AutoservisRegistracijaScreen(autoservis: null,) // poziv na drugi screen
-                     ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.store),
-                title: const Text("Klijent"),
-                onTap: () {
-                  Navigator.pop(context); // Zatvaranje dijaloga
-                  Navigator.of(context).push(
-                   MaterialPageRoute(builder: (context)=> KlijentRegistracijaScreen(klijent: null,) // poziv na drugi screen
-                     ),
-                  );
-                },
-              ),
-             
-            ],
-          ),
-        );
-      },
-    );
-  },
-  style: OutlinedButton.styleFrom(
-    side: const BorderSide(color: Colors.black),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
-    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-  ),
-  child: const Text(
-    'Registruj se',
-    style: TextStyle(
-      color: Colors.black,
-      fontSize: 14,
-    ),
-  ),
-),
- 
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Registruj se kao:"),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ListTile(
+                                            leading: const Icon(Icons.store),
+                                            title: const Text(
+                                                "Firma autodijelova"),
+                                            onTap: () {
+                                              Navigator.pop(
+                                                  context); // Zatvaranje dijaloga
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        FirmaAutodijelovaRegistracijaScreen(
+                                                          firmaAutodijelova:
+                                                              null,
+                                                        ) // poziv na drugi screen
+                                                    ),
+                                              );
+                                            },
+                                          ),
+                                          ListTile(
+                                            leading: const Icon(Icons.store),
+                                            title: const Text("Autoservis"),
+                                            onTap: () {
+                                              Navigator.pop(
+                                                  context); // Zatvaranje dijaloga
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AutoservisRegistracijaScreen(
+                                                          autoservis: null,
+                                                        ) // poziv na drugi screen
+                                                    ),
+                                              );
+                                            },
+                                          ),
+                                          ListTile(
+                                            leading: const Icon(Icons.store),
+                                            title: const Text("Klijent"),
+                                            onTap: () {
+                                              Navigator.pop(
+                                                  context); // Zatvaranje dijaloga
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        KlijentRegistracijaScreen(
+                                                          klijent: null,
+                                                        ) // poziv na drugi screen
+                                                    ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.black),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 24),
+                              ),
+                              child: const Text(
+                                'Registruj se',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -346,8 +382,9 @@ try {
       ),
     );
   }
- 
-  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false}) {
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {bool obscureText = false}) {
     return SizedBox(
       width: 370, // Narrower input field
       child: TextField(
@@ -363,5 +400,3 @@ try {
     );
   }
 }
- 
- 

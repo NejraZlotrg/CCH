@@ -1,27 +1,32 @@
 ﻿using CarCareHub.Model;
-using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace CarCareHub_.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ChatAutoservisKlijentController : BaseCRUDController<ChatAutoservisKlijent, ChatAKSearchObject, ChatAutoservisKlijentInsert, ChatAutoservisKlijentUpdate>
+    public class ChatAutoservisKlijentController : ControllerBase
     {
-        public ChatAutoservisKlijentController(ILogger<BaseController<CarCareHub.Model.ChatAutoservisKlijent, ChatAKSearchObject>> logger,
-              IChatAutoservisKlijentService chatService) : base(logger, chatService)
+        private readonly IChatAutoservisKlijentService _chatService;
+
+        public ChatAutoservisKlijentController(IChatAutoservisKlijentService chatService)
         {
+            _chatService = chatService;
         }
 
-
-        [HttpPost("posalji")] 
-        public async Task SendMessageAsync(int klijentId, int autoservisId, string poruka, bool poslanoOdKlijenta)
+        [HttpPost("posalji")]
+        public async Task<IActionResult> SendMessageAsync(int klijentId, int autoservisId, string poruka, bool poslanoOdKlijenta)
         {
-            await (_service as IChatAutoservisKlijentService).SendMessageAsync(klijentId, autoservisId, poruka, poslanoOdKlijenta);
-            return;
+            await _chatService.SendMessageAsync(klijentId, autoservisId, poruka, poslanoOdKlijenta);
+            return Ok(new { Message = "Poruka uspješno poslana." });
+        }
 
+        [HttpGet("{klijentId}/{autoservisId}")]
+        public async Task<IActionResult> GetMessagesAsync(int klijentId, int autoservisId)
+        {
+            var poruke = await _chatService.GetMessagesAsync(klijentId, autoservisId);
+            return Ok(poruke);
         }
     }
 }

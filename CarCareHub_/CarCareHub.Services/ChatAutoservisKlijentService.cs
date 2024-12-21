@@ -1,86 +1,42 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
-using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-    public class ChatAutoservisKlijentService : BaseCRUDService<Model.ChatAutoservisKlijent, Database.ChatAutoservisKlijent, ChatAKSearchObject, ChatAutoservisKlijentInsert, ChatAutoservisKlijentUpdate>, IChatAutoservisKlijentService
+    public class ChatAutoservisKlijentService : IChatAutoservisKlijentService
     {
         private readonly CchV2AliContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public ChatAutoservisKlijentService(CchV2AliContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(context, mapper)
+        public ChatAutoservisKlijentService(CchV2AliContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpContextAccessor = httpContextAccessor;
-
         }
 
         // Snimanje poruke u bazu
         public async Task SendMessageAsync(int klijentId, int autoservisId, string poruka, bool poslanoOdKlijenta)
         {
-
-            // Get the logged-in user from the context
             var user = _httpContextAccessor.HttpContext.User;
-
-            // Retrieve the logged-in user's ID from the claims (you can also add other user-specific data)
             var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //var who=user;
 
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int parsedUserId))
             {
-                throw new Exception("User ID is missing from claims. ");
+                throw new Exception("Nevažeći korisnički ID.");
             }
 
-            // Validate and parse userId
-            if (!int.TryParse(userId, out int parsedUserId))
+            var userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.IsNullOrWhiteSpace(userRole))
             {
-                throw new Exception($"User ID '{userId}' is invalid or not a number.");
-            }
-
-            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
-
-            var chatPoruka = new ChatAutoservisKlijentInsert
-            {
-                KlijentId = klijentId,
-                AutoservisId = autoservisId,
-                Poruka = poruka,
-                PoslanoOdKlijenta = poslanoOdKlijenta,
-                VrijemeSlanja = DateTime.UtcNow
-            };
-
-            if (userRole != null)
-            {
-                if (userRole != null)
-                {
-                    // Dodjeljivanje ID-a na osnovu uloge korisnika
-                    switch (userRole)
-                    {
-                        case "Klijent":
-                            chatPoruka.KlijentId = parsedUserId; // Set KlijentId for logged-in client
-                            break;
-                        case "Autoservis":
-                            chatPoruka.AutoservisId = parsedUserId; // Set AutoservisId for logged-in service
-                            break;
-
-                        default:
-                            throw new Exception("Unknown user role.");
-                    }
-                }
-
-                // Ispis koji ID je dodijeljen
-            }
-            else
-            {
-                throw new Exception("User role is not available.");
+                throw new Exception("Uloga korisnika nije dostupna.");
             }
 
             if (string.IsNullOrWhiteSpace(poruka))
@@ -88,21 +44,37 @@ namespace CarCareHub.Services
                 throw new ArgumentException("Poruka ne smije biti prazna.", nameof(poruka));
             }
 
+            var chatPoruka = new Database.ChatAutoservisKlijent
+            {
+                KlijentId = userRole == "Klijent" ? parsedUserId : klijentId,
+                AutoservisId = userRole == "Autoservis" ? parsedUserId : autoservisId,
+                Poruka = poruka,
+                PoslanoOdKlijenta = poslanoOdKlijenta,
+                VrijemeSlanja = DateTime.UtcNow
+            };
 
             try
             {
-                // Mapiranje objekta
-                var temp = _mapper.Map<Database.ChatAutoservisKlijent>(chatPoruka);
-
-                // Dodavanje u bazu
-                _context.ChatAutoservisKlijents.Add(temp);
+                _context.ChatAutoservisKlijents.Add(chatPoruka);
                 await _context.SaveChangesAsync();
+
+
+
             }
             catch (Exception ex)
             {
-                // Logujte grešku ili ponovo bacite izuzetak za praćenje
                 throw new InvalidOperationException("Greška prilikom snimanja poruke u bazu.", ex);
             }
+        }
+
+        // Dohvaćanje poruka između klijenta i autoservisa
+        public async Task<IQueryable<Model.ChatAutoservisKlijent>> GetMessagesAsync(int klijentId, int autoservisId) 
+        {
+            var poruke = _context.ChatAutoservisKlijents
+                .Where(p => p.KlijentId == klijentId && p.AutoservisId == autoservisId);
+
+            var result = poruke.Select(p => _mapper.Map<Model.ChatAutoservisKlijent>(p));
+            return await Task.FromResult(result.AsQueryable());
         }
     }
 }

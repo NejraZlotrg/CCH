@@ -14,6 +14,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
   }
 
+
   Future<SearchResult<T>> get({dynamic filter}) async {
     String url = "$_baseURL$_endpoint";
 

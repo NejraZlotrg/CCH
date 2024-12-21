@@ -182,9 +182,26 @@ builder.Services.AddSignalR();
 
 
 
+// Dodaj CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("", "http://localhost:7209") // Zamijeni sa svojim frontend URL-ovima
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 
 var app = builder.Build();
 
+// Omogući CORS
+app.UseCors("AllowLocalhost");
+
+app.MapControllers();
+app.MapHub<ChatHub>("/chatAutoservisKlijent");
 
 
 
