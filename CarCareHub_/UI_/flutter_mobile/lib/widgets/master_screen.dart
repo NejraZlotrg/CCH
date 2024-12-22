@@ -71,7 +71,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-              builder: (context) => KorpaScreen(),
+              builder: (context) => const KorpaScreen(),
                   ),
                 );
               },

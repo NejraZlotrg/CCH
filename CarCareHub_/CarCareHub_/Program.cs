@@ -178,30 +178,48 @@ builder.Services.AddAuthentication("BasicAuthentication").AddScheme<Authenticati
 builder.Services.AddHttpContextAccessor();
 
 
-builder.Services.AddSignalR();
+
+builder.Services.AddSignalR(options =>
+{
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);  // Povećajte timeout
+});
 
 
+//// Dodaj CORS
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowLocalhost", policy =>
+//    {
+//        policy.WithOrigins("", "http://localhost:7209") // Zamijeni sa svojim frontend URL-ovima
+//              .AllowAnyHeader()
+//              .AllowAnyMethod()
+//              .AllowCredentials();
+//    });
+//});
 
-// Dodaj CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost", policy =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        policy.WithOrigins("", "http://localhost:7209") // Zamijeni sa svojim frontend URL-ovima
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
     });
 });
+
+
 
 
 var app = builder.Build();
 
 // Omogući CORS
-app.UseCors("AllowLocalhost");
+app.UseCors("AllowAll");
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chatAutoservisKlijent");
+
+
+app.UseWebSockets();
 
 
 
@@ -227,18 +245,6 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
         c.RoutePrefix = "swagger"; // Postavite rutu za Swagger UI
     });
-    //}
-
-
-    //////////////////////////////////////////////////////// Facebook SDK
-    //app.UseCors();
-    //app.UseStaticFiles();
-
-    //app.UseRouting();
-    //////////////////////////////////////////////////////// Facebook SDK
-
-
-  //  app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
@@ -247,17 +253,6 @@ app.UseAuthorization();
 
 
 app.MapControllers();
-
-
-    //using (var scope = app.Services.CreateScope())
-    //{
-    //    var dataContext = scope.ServiceProvider.GetRequiredService<CchV2AliContext>();
-
-    //    // dataContext.Database.EnsureCreated();
-    //    var conn = dataContext.Database.GetConnectionString();
-    //    dataContext.Database.Migrate();
-    //}
-
 
 
 
