@@ -2,6 +2,7 @@
 using CarCareHub.Model;
 using CarCareHub.Services.Database;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -76,5 +77,80 @@ namespace CarCareHub.Services
             var result = poruke.Select(p => _mapper.Map<Model.ChatAutoservisKlijent>(p));
             return await Task.FromResult(result.AsQueryable());
         }
+
+        public List<Model.ChatAutoservisKlijent> GetByID_()
+        {
+            var user = _httpContextAccessor.HttpContext.User;
+
+            // Retrieve the logged-in user's ID from the claims (you can also add other user-specific data)
+            var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new Exception("User ID is missing from claims.");
+            }
+
+            // Validate and parse userId
+            if (!int.TryParse(userId, out int parsedUserId))
+            {
+                throw new Exception($"User ID '{userId}' is invalid or not a number.");
+            }
+
+            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userRole != null)
+            {
+                // Reset all IDs to null
+                var noviId = 0;
+                if (userRole == "Klijent")
+                {
+                    noviId = parsedUserId; // Set KlijentId for logged-in client
+
+                    // Use Include before Select
+                    var temp = _context.ChatAutoservisKlijents.AsNoTracking()
+                        .Where(x => x.KlijentId == noviId)
+                        .Include(x => x.Autoservis)  // Include the Autoservis entity before Select
+                        .Include(x => x.Klijent)     // Include the Klijent entity before Select
+                        .GroupBy(x => x.AutoservisId) // Group by AutoservisId
+                        .Select(g => g.First())      // Take the first unique entry
+                        .ToList(); // Execute the query and convert to a list
+
+                    // Ispis koji ID je dodijeljen
+                    Console.WriteLine($"Assigned KlijentId: {noviId} : {userRole}");
+                    Console.WriteLine($"Assigned AutoservisId: {noviId} : {userRole}");
+
+                    // Mapiraj rezultate na odgovarajući model
+                    return _mapper.Map<List<Model.ChatAutoservisKlijent>>(temp);
+                }
+                else if (userRole == "Autoservis")
+                {
+                    noviId = parsedUserId; // Set AutoservisId for logged-in service
+
+                    // Use Include before Select
+                    var temp2 = _context.ChatAutoservisKlijents.AsNoTracking()
+                        .Where(x => x.AutoservisId == noviId)
+                        .Include(x => x.Autoservis)  // Include the Autoservis entity before Select
+                        .Include(x => x.Klijent)     // Include the Klijent entity before Select
+                        .GroupBy(x => x.KlijentId)  // Group by KlijentId
+                        .Select(g => g.First())      // Take the first unique entry
+                        .ToList(); // Execute the query and convert to a list
+
+                    // Ispis koji ID je dodijeljen
+                    Console.WriteLine($"Assigned KlijentId: {noviId} : {userRole}");
+                    Console.WriteLine($"Assigned AutoservisId: {noviId} : {userRole}");
+
+                    // Mapiraj rezultate na odgovarajući model
+                    return _mapper.Map<List<Model.ChatAutoservisKlijent>>(temp2);
+                }
+            }
+            else
+            {
+                throw new Exception("Unknown user role.");
+            }
+
+            return null;
+        }
+
+
     }
 }

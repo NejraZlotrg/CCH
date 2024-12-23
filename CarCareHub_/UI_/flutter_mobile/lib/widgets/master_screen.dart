@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentScreen.dart';
 
@@ -19,6 +20,7 @@ import 'package:flutter_mobile/screens/uloge_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
 import 'package:flutter_mobile/screens/vozilo_screen.dart';
 import 'package:flutter_mobile/screens/zaposlenik_screen.dart';
+import 'package:provider/provider.dart';
 
 class MasterScreenWidget extends StatefulWidget {
   final Widget? child;
@@ -30,6 +32,7 @@ class MasterScreenWidget extends StatefulWidget {
     this.title,
     this.titleWidget,
     super.key,
+    
   });
 
   @override
@@ -37,9 +40,25 @@ class MasterScreenWidget extends StatefulWidget {
 }
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
+  late UserProvider _userProvider;
+  late int userId;
+  late String _role;
+
+
   @override
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+   
+    _userProvider = context.read<UserProvider>();
+    userId = _userProvider.userId;
+    _role=_userProvider.role;
+  
+  build(context);
+  }
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 134, 134, 134), // Siva pozadina za AppBar
         toolbarHeight: 80.0, // Povećana visina AppBar-a
@@ -250,15 +269,29 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+   
+            
              ListTile(
+              
               leading: const Icon(Icons.directions_car),
               title: const Text('chat'),
               onTap: () {
+                   if(_role=='Autoservis'){
+
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const ChatAutoservisKlijentScreen(klijentId: 2, autoservisId: 2,),
+                    builder: (context) => ChatAutoservisKlijentScreen(klijentId: 1, autoservisId:userId,),
+                   
                   ),
-                );
+                ); }
+                else if(_role=="Klijent"){
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
+                   
+                  ),
+                ); }
               },
             ),
             ListTile(

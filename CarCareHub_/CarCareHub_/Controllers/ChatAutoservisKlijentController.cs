@@ -27,6 +27,29 @@ namespace CarCareHub_.Controllers
         {
             var poruke = await _chatService.GetMessagesAsync(klijentId, autoservisId);
             return Ok(poruke);
+        
         }
+        
+        [HttpGet("byLoggedUser")]
+        public IActionResult GetById()
+        {
+            try
+            {
+                var chatList = _chatService.GetByID_();
+                if (chatList == null || chatList.Count == 0)
+                {
+                    return NotFound("No chat records found for the logged-in user.");
+                }
+
+                return Ok(chatList);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
+
     }
 }

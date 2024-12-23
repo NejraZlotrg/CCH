@@ -33,4 +33,23 @@ class ChatAutoservisKlijentProvider extends BaseProvider<chatAutoservisKlijent> 
       print('Error fetching messages: $e');
     }
   }
+
+  
+  Future<List<chatAutoservisKlijent>> getMessagesForLoggedUser() async {
+    try {
+      final url = Uri.parse('http://localhost:7209/api/ChatAutoservisKlijent/byLoggedUser');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> messagesData = jsonDecode(response.body);
+        return messagesData.map((msg) => chatAutoservisKlijent.fromJson(msg)).toList();
+      } else {
+        print('Error fetching messages for logged user: ${response.statusCode}, Body: ${response.body}');
+        throw Exception('Failed to load messages for logged user');
+      }
+    } catch (e) {
+      print('Error fetching messages for logged user: $e');
+      rethrow;
+    }
+  }
 }

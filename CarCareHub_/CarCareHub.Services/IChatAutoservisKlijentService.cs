@@ -10,5 +10,7 @@ namespace CarCareHub.Services
 
         // Metoda za preuzimanje svih poruka između klijenta i autoservisa
         Task<IQueryable<Model.ChatAutoservisKlijent>> GetMessagesAsync(int klijentId, int autoservisId);
+        public List<Model.ChatAutoservisKlijent> GetByID_();
+
     }
 }
