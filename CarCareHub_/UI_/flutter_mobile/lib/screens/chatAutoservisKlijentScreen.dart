@@ -1,30 +1,31 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
 
 class ChatAutoservisKlijentScreen extends StatefulWidget {
-  final int klijentId;
-  final int autoservisId;
-
-  const ChatAutoservisKlijentScreen({
-    super.key,
-    required this.klijentId,
-    required this.autoservisId,
-  });
+  const ChatAutoservisKlijentScreen({super.key});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatAutoservisKlijentScreenState createState() =>
+      _ChatAutoservisKlijentScreenState();
 }
 
-class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
+class _ChatAutoservisKlijentScreenState
+    extends State<ChatAutoservisKlijentScreen> {
   final TextEditingController _messageController = TextEditingController();
-  List<chatAutoservisKlijent> messages = List.empty(growable: true);
+  List<chatAutoservisKlijent> chats = [];
+  List<chatAutoservisKlijent> messages = [];
+  chatAutoservisKlijent? selectedChat;
 
   late ChatAutoservisKlijentProvider chatAutoservisKlijentProvider;
   late HubConnection connection;
@@ -35,10 +36,11 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
   void initState() {
     super.initState();
     chatAutoservisKlijentProvider = context.read<ChatAutoservisKlijentProvider>();
-    GetMessages();
-    runSignalR();
+    fetchChats(); // Fetch chats when initializing
+    runSignalR(); // Start the SignalR connection
   }
 
+  // Run SignalR connection to handle real-time messaging
   Future<void> runSignalR() async {
     connection = HubConnectionBuilder()
         .withUrl('http://localhost:7209/chatAutoservisKlijent')
@@ -51,8 +53,11 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
     });
 
     connection.on('ReceiveMessage', (arguments) {
-      if (arguments != null && arguments.isNotEmpty && arguments[0] is Map<String, dynamic>) {
-        var chatMessage = chatAutoservisKlijent.fromJson(arguments[0] as Map<String, dynamic>);
+      if (arguments != null &&
+          arguments.isNotEmpty &&
+          arguments[0] is Map<String, dynamic>) {
+        var chatMessage =
+            chatAutoservisKlijent.fromJson(arguments[0] as Map<String, dynamic>);
         setState(() {
           messages.add(chatMessage);
         });
@@ -68,40 +73,65 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
       setState(() {
         isConnected = false;
       });
+      print('Error starting SignalR connection: $e');
     }
   }
 
-  Future<void> GetMessages() async {
-    try {
-      var response = await chatAutoservisKlijentProvider.getMessages(widget.klijentId, widget.autoservisId);
+  // Fetch chats for the logged-in user
+ Future<void> fetchChats() async {
+  final userProvider = context.read<UserProvider>();
+  int userId = userProvider.userId;
+
+  try {
+    var response = await chatAutoservisKlijentProvider.getById__(userId);
+
+    // Log the response for debugging
+    print('Fetched chats: $response');
+
+    if (response.isNotEmpty) {
       setState(() {
-        messages = response;
+        chats = response;
       });
-    } catch (e) {
-      print("Error fetching messages: $e");
+    } else {
+      print("No chats available for this user.");
+    }
+  } catch (e) {
+    // Catch different types of errors
+    if (e is SocketException) {
+      print("Network error: Please check your internet connection.");
+    } else if (e is TimeoutException) {
+      print("Request timed out: The server is taking too long to respond.");
+    } else {
+      print("Error fetching chats: $e");
     }
   }
+}
 
-  @override
-  void dispose() {
-    _messageController.dispose();
-    connection.stop();
-    super.dispose();
-  }
 
-  Future<void> sendMessage(int klijentId, int autoservisId, String poruka, bool poslanoOdKlijenta) async {
+  // Send a message via SignalR and backend
+  Future<void> sendMessage(
+      int klijentId, int autoservisId, String poruka, bool poslanoOdKlijenta) async {
     try {
       if (isConnected) {
-        await connection.invoke('SendMessage', args: [klijentId, autoservisId, poruka, poslanoOdKlijenta]);
+        await connection.invoke('SendMessage', args: [
+          klijentId,
+          autoservisId,
+          poruka,
+          poslanoOdKlijenta
+        ]);
         await _sendMessageToBackend(klijentId, autoservisId, poruka, poslanoOdKlijenta);
-        GetMessages();
+       // fetchMessages(autoservisId, klijentId); // Refresh the messages after sending
+      } else {
+        print("SignalR connection is not established.");
       }
     } catch (e) {
       print('Error sending message: $e');
     }
   }
 
-  Future<void> _sendMessageToBackend(int klijentId, int autoservisId, String poruka, bool poslanoOdKlijenta) async {
+  // Send message to backend API
+  Future<void> _sendMessageToBackend(
+      int klijentId, int autoservisId, String poruka, bool poslanoOdKlijenta) async {
     final url = Uri.parse(
       'http://localhost:7209/api/ChatAutoservisKlijent/posalji?klijentId=$klijentId&autoservisId=$autoservisId&poruka=$poruka',
     );
@@ -111,7 +141,7 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
     try {
       final response = await http.post(url, headers: headers);
       if (response.statusCode != 200) {
-        throw Exception('Failed to send message to backend');
+        throw Exception('Failed to send message to backend. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error sending message to backend: $e');
@@ -120,11 +150,11 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<UserProvider>(context);
+    final userProvider = context.watch<UserProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat - Klijent ${widget.klijentId}"),
+        title: Text("Chat - ${userProvider.role} ${userProvider.userId}"),
       ),
       body: Row(
         children: [
@@ -133,18 +163,26 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
             flex: 1, // 1/3 of the width
             child: Container(
               color: Colors.grey.shade200,
-              child: ListView(
-                children: List.generate(
-                  10, // Example static list of chats
-                  (index) => ListTile(
-                    title: Text('Chat $index'),
-                    onTap: () {
-                      // Handle chat selection
-                      print('Selected chat $index');
-                    },
-                  ),
-                ),
-              ),
+              child: chats.isEmpty
+                  ? const Center(child: CircularProgressIndicator()) // Loading state
+                  : ListView.builder(
+                      itemCount: chats.length,
+                      itemBuilder: (context, index) {
+                        final chat = chats[index];
+                        return ListTile(
+                          title: Text(
+                            'Chat with ${chat.klijent.ime} + ${chat.autoservis.naziv}', // Customize the title
+                          ),
+                          selected: selectedChat == chat,
+                          onTap: () {
+                            setState(() {
+                              selectedChat = chat;
+                            });
+                          //  fetchMessages(chat.autoservisId!, chat.klijentId!);
+                          },
+                        );
+                      },
+                    ),
             ),
           ),
 
@@ -155,7 +193,7 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
               children: [
                 Expanded(
                   child: messages.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: Text('Select a chat to view messages'))
                       : ListView.builder(
                           itemCount: messages.length,
                           itemBuilder: (context, index) {
@@ -182,8 +220,13 @@ class _ChatScreenState extends State<ChatAutoservisKlijentScreen> {
                         icon: const Icon(Icons.send),
                         onPressed: () {
                           final message = _messageController.text;
-                          if (message.isNotEmpty) {
-                            sendMessage(widget.klijentId, widget.autoservisId, message, true);
+                          if (message.isNotEmpty && selectedChat != null) {
+                            sendMessage(
+                              selectedChat!.klijentId!,
+                              selectedChat!.autoservisId!,
+                              message,
+                              true,
+                            );
                             _messageController.clear();
                           }
                         },

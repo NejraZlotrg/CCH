@@ -6,6 +6,9 @@ namespace CarCareHub.Model
     {
         public int Id { get; set; }
         public int KlijentId { get; set; }
+
+        public virtual Klijent Klijent { get; set; }
+        public virtual Autoservis Autoservis { get; set; }
         public int AutoservisId { get; set; }
         public string Poruka { get; set; }
         public bool PoslanoOdKlijenta { get; set; }

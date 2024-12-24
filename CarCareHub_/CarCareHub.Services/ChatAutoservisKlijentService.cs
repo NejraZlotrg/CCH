@@ -78,79 +78,125 @@ namespace CarCareHub.Services
             return await Task.FromResult(result.AsQueryable());
         }
 
-        public List<Model.ChatAutoservisKlijent> GetByID_()
+        public List<Model.ChatAutoservisKlijent> GetByID_(int targetId)
         {
             var user = _httpContextAccessor.HttpContext.User;
 
-            // Retrieve the logged-in user's ID from the claims (you can also add other user-specific data)
+            // Retrieve user details from claims
             var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
 
+            Console.WriteLine($"UserID: {userId}");
+            Console.WriteLine($"UserRole: {userRole}");
+
+            // Validate user claims
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new Exception("User ID is missing from claims.");
-            }
 
-            // Validate and parse userId
             if (!int.TryParse(userId, out int parsedUserId))
-            {
-                throw new Exception($"User ID '{userId}' is invalid or not a number.");
-            }
+                throw new Exception($"Invalid User ID: {userId}");
 
-            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
-
-            if (userRole != null)
+            // Determine the role and execute the corresponding logic
+            if (userRole == "Klijent" && targetId == parsedUserId)
             {
-                // Reset all IDs to null
-                var noviId = 0;
-                if (userRole == "Klijent")
+                // Fetch chat records for the logged-in client
+                var chatRecords = _context.ChatAutoservisKlijents.AsNoTracking()
+                    .Where(x => x.KlijentId == parsedUserId)
+                    .Include(x => x.Autoservis) // Include Autoservis entity
+                    .Include(x => x.Klijent)    // Include Klijent entity
+                    .GroupBy(x => x.AutoservisId)
+                    .Select(g => g.First())
+                    .ToList();
+
+                // Check if any records were found
+                if (chatRecords == null || !chatRecords.Any())
                 {
-                    noviId = parsedUserId; // Set KlijentId for logged-in client
-
-                    // Use Include before Select
-                    var temp = _context.ChatAutoservisKlijents.AsNoTracking()
-                        .Where(x => x.KlijentId == noviId)
-                        .Include(x => x.Autoservis)  // Include the Autoservis entity before Select
-                        .Include(x => x.Klijent)     // Include the Klijent entity before Select
-                        .GroupBy(x => x.AutoservisId) // Group by AutoservisId
-                        .Select(g => g.First())      // Take the first unique entry
-                        .ToList(); // Execute the query and convert to a list
-
-                    // Ispis koji ID je dodijeljen
-                    Console.WriteLine($"Assigned KlijentId: {noviId} : {userRole}");
-                    Console.WriteLine($"Assigned AutoservisId: {noviId} : {userRole}");
-
-                    // Mapiraj rezultate na odgovarajući model
-                    return _mapper.Map<List<Model.ChatAutoservisKlijent>>(temp);
+                    Console.WriteLine("No data found for the client.");
+                    throw new Exception("No data found.");
                 }
-                else if (userRole == "Autoservis")
-                {
-                    noviId = parsedUserId; // Set AutoservisId for logged-in service
 
-                    // Use Include before Select
-                    var temp2 = _context.ChatAutoservisKlijents.AsNoTracking()
-                        .Where(x => x.AutoservisId == noviId)
-                        .Include(x => x.Autoservis)  // Include the Autoservis entity before Select
-                        .Include(x => x.Klijent)     // Include the Klijent entity before Select
-                        .GroupBy(x => x.KlijentId)  // Group by KlijentId
-                        .Select(g => g.First())      // Take the first unique entry
-                        .ToList(); // Execute the query and convert to a list
-
-                    // Ispis koji ID je dodijeljen
-                    Console.WriteLine($"Assigned KlijentId: {noviId} : {userRole}");
-                    Console.WriteLine($"Assigned AutoservisId: {noviId} : {userRole}");
-
-                    // Mapiraj rezultate na odgovarajući model
-                    return _mapper.Map<List<Model.ChatAutoservisKlijent>>(temp2);
-                }
+                Console.WriteLine($"Found {chatRecords.Count} records for KlijentId: {parsedUserId}");
+                return _mapper.Map<List<Model.ChatAutoservisKlijent>>(chatRecords);
             }
-            else
+            else if (userRole == "Autoservis" && targetId == parsedUserId)
             {
-                throw new Exception("Unknown user role.");
+                // Fetch chat records for the logged-in autoservis
+                var chatRecords = _context.ChatAutoservisKlijents.AsNoTracking()
+                    .Where(x => x.AutoservisId == parsedUserId)
+                    .Include(x => x.Autoservis) // Include Autoservis entity
+                    .Include(x => x.Klijent)    // Include Klijent entity
+                    .GroupBy(x => x.KlijentId)
+                    .Select(g => g.First())
+                    .ToList();
+
+                // Check if any records were found
+                if (chatRecords == null || !chatRecords.Any())
+                {
+                    Console.WriteLine("No data found for the autoservis.");
+                    throw new Exception("No data found.");
+                }
+
+                Console.WriteLine($"Found {chatRecords.Count} records for AutoservisId: {parsedUserId}");
+                return _mapper.Map<List<Model.ChatAutoservisKlijent>>(chatRecords);
             }
 
-            return null;
+            // If the role or targetId doesn't match, throw an exception
+            throw new Exception("Unauthorized access or unsupported role.");
         }
 
 
+        //    public List<Model.ChatAutoservisKlijent> GetByID_Klijent(int id_autoservis)
+        //    {
+        //        var user = _httpContextAccessor.HttpContext.User;
+
+        //        // Retrieve user details from claims
+        //        var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //        var userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
+
+        //        Console.WriteLine($"UserID: {userId}");
+        //        Console.WriteLine($"UserRole: {userRole}");
+
+        //        // Validate user claims
+        //        if (string.IsNullOrEmpty(userId))
+        //            throw new Exception("User ID is missing from claims.");
+
+        //        if (!int.TryParse(userId, out int parsedUserId))
+        //            throw new Exception($"Invalid User ID: {userId}");
+
+        //        // Check if the user has the Autoservis role and the ID matches
+        //        if (userRole == "Autoservis" && id_autoservis.ToString() == userId)
+        //        {
+        //            // Query the database for relevant records
+        //            var chatAutoservisKlijents = _context.ChatAutoservisKlijents.AsNoTracking()
+        //                .Where(x => x.AutoservisId == parsedUserId)
+        //                .Include(x => x.Autoservis) // Include Autoservis entity
+        //                .Include(x => x.Klijent)    // Include Klijent entity
+        //                .GroupBy(x => x.KlijentId) // Group by KlijentId
+        //                .Select(g => g.First())    // Select the first entry from each group
+        //                .ToList();
+
+        //            // Check if the query returned results
+        //            if (chatAutoservisKlijents == null || !chatAutoservisKlijents.Any())
+        //            {
+        //                Console.WriteLine("No data found.");
+        //                throw new Exception("No data found.");
+        //            }
+
+        //            // Log the number of records found
+        //            Console.WriteLine($"Found {chatAutoservisKlijents.Count} records for AutoservisID: {parsedUserId}");
+
+        //            // Map the results to the model and return
+        //            return _mapper.Map<List<Model.ChatAutoservisKlijent>>(chatAutoservisKlijents);
+        //        }
+
+        //        // Throw an exception for unauthorized access or unsupported role
+        //        throw new Exception("Unauthorized access or unsupported role.");
+        //    }
+
+
+        //}
     }
 }
+
+
+

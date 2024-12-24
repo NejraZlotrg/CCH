@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:http/http.dart' as http;
@@ -92,6 +93,29 @@ abstract class BaseProvider<T> with ChangeNotifier {
     };
   }
 
+// Implementing getById method
+  Future<List<chatAutoservisKlijent>> getById__(int userId) async {
+    final url = Uri.parse(
+      'http://localhost:7209/api/ChatAutoservisKlijent/byLoggedUser?klijent_id=$userId',
+    );
+    final headers = createHeaders();
+
+    try {
+      final response = await http.get(url, headers: headers);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((e) => chatAutoservisKlijent.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load chats: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching chats: $e');
+      rethrow;
+    }
+  }
   // Generisanje query stringa iz mape parametara
   String getQueryString(Map params, {String prefix = '&', bool inRecursion = false}) {
     String query = '';

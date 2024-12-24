@@ -280,7 +280,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
 
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ChatAutoservisKlijentScreen(klijentId: 1, autoservisId:userId,),
+                    // builder: (context) => ChatAutoservisKlijentScreen(klijentId: 1, autoservisId:userId,),
+                    builder: (context) => ChatAutoservisKlijentScreen(),
                    
                   ),
                 ); }
@@ -288,7 +289,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
 
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
+                    builder: (context) => ChatAutoservisKlijentScreen(),
+                    // builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
+
                    
                   ),
                 ); }

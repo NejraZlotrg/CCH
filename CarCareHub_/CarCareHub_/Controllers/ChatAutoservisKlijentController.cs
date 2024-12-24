@@ -31,11 +31,11 @@ namespace CarCareHub_.Controllers
         }
         
         [HttpGet("byLoggedUser")]
-        public IActionResult GetById()
+        public IActionResult GetById_(int klijent_id)
         {
             try
             {
-                var chatList = _chatService.GetByID_();
+                var chatList = _chatService.GetByID_(klijent_id);
                 if (chatList == null || chatList.Count == 0)
                 {
                     return NotFound("No chat records found for the logged-in user.");
@@ -50,6 +50,7 @@ namespace CarCareHub_.Controllers
         }
 
 
+       
 
     }
 }
