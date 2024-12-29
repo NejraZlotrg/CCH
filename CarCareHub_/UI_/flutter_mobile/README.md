@@ -22,4 +22,4 @@ flutter pub run build_runner build watch--delete-conflicting-outputs
 
 
 
-KOD BOJE ARGB 204 SVE, SVIJETLA SIVA
+KOD BOJE ARGB 204 SVE, SVIJETLA SIVa
