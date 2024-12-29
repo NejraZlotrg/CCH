@@ -16,11 +16,24 @@ namespace CarCareHub_.Controllers
         }
 
         [HttpPost("posalji")]
-        public async Task<IActionResult> SendMessageAsync(int klijentId, int autoservisId, string poruka, bool poslanoOdKlijenta)
+        public async Task<IActionResult> SendMessageAsync([FromBody] ChatAutoservisKlijentInsert request)
         {
-            await _chatService.SendMessageAsync(klijentId, autoservisId, poruka, poslanoOdKlijenta);
-            return Ok(new { Message = "Poruka uspješno poslana." });
+            if (request == null)
+            {
+                return BadRequest(new { Message = "Podaci nisu validni." });
+            }
+
+            try
+            {
+                await _chatService.SendMessageAsync(request);
+                return Ok(new { Message = "Poruka uspješno poslana." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
+
 
         [HttpGet("{klijentId}/{autoservisId}")]
         public async Task<IActionResult> GetMessagesAsync(int klijentId, int autoservisId)

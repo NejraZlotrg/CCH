@@ -110,20 +110,53 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     }
   }
 
-  Future<void> fetchUsluge() async {
+ Future<void> fetchUsluge() async {
+  try {
     usluge = await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
+  } catch (e) {
+    if (mounted) {
+      setState(() {
+        // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
+      });
+    }
   }
-  Future<void> fetchZaposlenik() async {
-  if (widget.autoservis?.autoservisId != null) {
-    zaposlenik = await _zaposlenikProvider.getzaposlenikById(widget.autoservis!.autoservisId!);
-  }
-  setState(() {});
 }
-   Future<void> fetchGrad() async {
-    grad = await _gradProvider.getById(widget.autoservis?.gradId ?? 0);
-    setState(() {});
+
+Future<void> fetchZaposlenik() async {
+  try {
+    if (widget.autoservis?.autoservisId != null) {
+      zaposlenik = await _zaposlenikProvider.getzaposlenikById(widget.autoservis!.autoservisId!);
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  } catch (e) {
+    if (mounted) {
+      setState(() {
+        // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
+      });
+    }
   }
+}
+
+Future<void> fetchGrad() async {
+  try {
+    grad = await _gradProvider.getById(widget.autoservis?.gradId ?? 0);
+    if (mounted) {
+      setState(() {});
+    }
+  } catch (e) {
+    if (mounted) {
+      setState(() {
+        // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
+      });
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

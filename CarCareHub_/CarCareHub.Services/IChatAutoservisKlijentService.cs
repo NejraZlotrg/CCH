@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using CarCareHub.Model;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CarCareHub.Services
@@ -6,7 +7,7 @@ namespace CarCareHub.Services
     public interface IChatAutoservisKlijentService
     {
         // Metoda za slanje poruke
-        Task SendMessageAsync(int klijentId, int autoservisId, string message, bool poslanoOdKlijenta);
+        Task SendMessageAsync(ChatAutoservisKlijentInsert request);
 
         // Metoda za preuzimanje svih poruka između klijenta i autoservisa
         Task<IQueryable<Model.ChatAutoservisKlijent>> GetMessagesAsync(int klijentId, int autoservisId);

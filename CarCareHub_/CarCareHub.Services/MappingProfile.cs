@@ -114,6 +114,10 @@ namespace CarCareHub.Services
             CreateMap<Model.ChatAutoservisKlijentUpdate, CarCareHub.Services.Database.ChatAutoservisKlijent>();
             CreateMap<Model.ChatAutoservisKlijentInsert, CarCareHub.Services.Database.ChatAutoservisKlijent>();
 
+            CreateMap<ChatAutoservisKlijent, Model.ChatAutoservisKlijent>()
+            .ForMember(dest => dest.Klijent, opt => opt.MapFrom(src => src.Klijent))
+            .ForMember(dest => dest.Autoservis, opt => opt.MapFrom(src => src.Autoservis));
+
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

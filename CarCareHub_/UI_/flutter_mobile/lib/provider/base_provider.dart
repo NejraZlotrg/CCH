@@ -15,6 +15,9 @@ abstract class BaseProvider<T> with ChangeNotifier {
     _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
   }
 
+   String buildUrl(String path) {
+    return "$_baseURL$_endpoint$path";  // Spaja osnovni URL sa endpointom i dodatnim dijelom
+  }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
     String url = "$_baseURL$_endpoint";
@@ -43,7 +46,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-// Funkcija za dobijanje ID-a korisnika na osnovu korisničkog imena i lozinke
 
 
   // Implementacija getById
@@ -93,29 +95,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     };
   }
 
-// Implementing getById method
-  Future<List<chatAutoservisKlijent>> getById__(int userId) async {
-    final url = Uri.parse(
-      'http://localhost:7209/api/ChatAutoservisKlijent/byLoggedUser?klijent_id=$userId',
-    );
-    final headers = createHeaders();
 
-    try {
-      final response = await http.get(url, headers: headers);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        return data.map((e) => chatAutoservisKlijent.fromJson(e)).toList();
-      } else {
-        throw Exception('Failed to load chats: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching chats: $e');
-      rethrow;
-    }
-  }
   // Generisanje query stringa iz mape parametara
   String getQueryString(Map params, {String prefix = '&', bool inRecursion = false}) {
     String query = '';
