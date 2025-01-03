@@ -6,7 +6,7 @@ import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart'
 import 'package:provider/provider.dart';
 
 class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({Key? key}) : super(key: key);
+  const ChatListScreen({super.key});
 
   @override
   _ChatListScreenState createState() => _ChatListScreenState();

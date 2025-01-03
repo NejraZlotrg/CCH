@@ -4,15 +4,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/zaposlenik.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
+import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
+import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +25,7 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class AutoservisDetailsScreen extends StatefulWidget {
   Autoservis? autoservis;
+
   AutoservisDetailsScreen({super.key, this.autoservis});
 
   @override
@@ -33,6 +38,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   late AutoservisProvider _autoservisProvider;
   late UslugeProvider _uslugaProvider; 
   late ZaposlenikProvider _zaposlenikProvider; 
+
 
   late GradProvider _gradProvider;
 
@@ -158,6 +164,8 @@ Future<void> fetchGrad() async {
 }
 
 
+
+
   @override
   Widget build(BuildContext context) {
   return Scaffold(
@@ -169,6 +177,7 @@ Future<void> fetchGrad() async {
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
             child: Padding(
+              
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
@@ -338,6 +347,48 @@ Future<void> fetchGrad() async {
       child: Column(
         children: [
           const SizedBox(height: 20),
+          Align(
+  alignment: Alignment.centerRight, // Poravnanje na desnu stranu
+  child: Padding(
+    padding: const EdgeInsets.all(10),
+    child: Consumer<UserProvider>(
+  builder: (context, userProvider, child) {
+    // Provjera da li je korisnik klijent
+    if (userProvider.role == "Klijent") {
+      return ElevatedButton(
+        onPressed: () {
+          final klijentId = userProvider.userId; // Dohvati ID logiranog klijenta
+          final autoservisId = widget.autoservis!.autoservisId!;
+
+          // Prikaži popup za unos poruke
+          _showSendMessageDialog(context, klijentId, autoservisId);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.chat, size: 20), // Ikona chata
+            SizedBox(width: 5), // Razmak između ikone i teksta
+            Text("Pošalji poruku"),
+          ],
+        ),
+      );
+    } else {
+      return const SizedBox(); // Prazan widget ako korisnik nije klijent
+    }
+  },
+)
+
+  ),
+),
+
+
           Center(
             child: GestureDetector(
               onTap: _pickImage,
@@ -805,5 +856,63 @@ if (zaposlenikRequest['datumRodjenja'] != null) {
     },
   );
 }
+void _showSendMessageDialog(BuildContext context, int klijentId, int autoservisId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String message = "";
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: const Text("Pošalji poruku"),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  message = value;
+                });
+              },
+              decoration: const InputDecoration(hintText: "Unesite poruku"),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context); // Zatvori dialog
+                  }
+                },
+                child: const Text("Otkaži"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    // Poziv za slanje poruke
+                    await Provider.of<ChatAutoservisKlijentProvider>(
+                      context,
+                      listen: false,
+                    ).sendMessage(klijentId, autoservisId, message);
 
+                    if (mounted && Navigator.canPop(context)) {
+                      Navigator.pop(context); // Zatvori dialog nakon slanja
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Poruka poslana uspješno")),
+                    );
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Greška: ${e.toString()}")),
+                      );
+                    }
+                  }
+                },
+                child: const Text("Pošalji"),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 }

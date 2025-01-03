@@ -11,8 +11,7 @@ class ChatAutoservisKlijentMessagesScreen extends StatefulWidget {
   final chatAutoservisKlijent selectedChat;
 
   const ChatAutoservisKlijentMessagesScreen(
-      {Key? key, required this.selectedChat})
-      : super(key: key);
+      {super.key, required this.selectedChat});
 
   @override
   _ChatMessagesScreenState createState() => _ChatMessagesScreenState();

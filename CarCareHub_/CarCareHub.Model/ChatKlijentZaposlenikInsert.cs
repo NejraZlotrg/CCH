@@ -8,12 +8,10 @@ namespace CarCareHub.Model
 {
     public class ChatKlijentZaposlenikInsert
     {
-       //automatski
-        public DateTime VrijemeZadnjePoruke { get; set; }
-
-
-        public int? ZaposlenikId { get; set; }
-        public int? KlijentId { get; set; }
-       // public virtual ICollection<Poruka> Poruka { get; set; }
+        public int KlijentId { get; set; }
+        public int ZaposlenikId { get; set; }
+        public string Poruka { get; set; }
+        //   public bool PoslanoOdKlijenta { get; set; }
+        public DateTime VrijemeSlanja { get; set; }
     }
 }

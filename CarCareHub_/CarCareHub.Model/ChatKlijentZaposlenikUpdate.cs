@@ -8,7 +8,7 @@ namespace CarCareHub.Model
 {
     public class ChatKlijentZaposlenikUpdate
     {
-        public DateTime VrijemeZadnjePoruke { get; set; }
+        public string Poruka { get; set; }
 
     }
 }
