@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
+import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/zaposlenik.dart'; // Dodaj model za usluge
@@ -13,11 +14,13 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
+import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -228,8 +231,9 @@ Future<void> fetchGrad() async {
 
                   ),
                   // Prikaz zaposlenika
-                  Padding(
+Padding(
   padding: const EdgeInsets.all(10),
+  
   child: zaposlenik.isNotEmpty
       ? Container(
           decoration: BoxDecoration(
@@ -237,27 +241,61 @@ Future<void> fetchGrad() async {
             border: Border.all(color: Colors.grey, width: 1), // Sivi okvir
             borderRadius: BorderRadius.circular(10), // Zaobljeni uglovi
           ),
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text("Ime")),
-              DataColumn(label: Text("Prezime")),
-              DataColumn(label: Text("Email")),
-              DataColumn(label: Text("Broj telefona")),
-            ],
-            rows: zaposlenik.map((zap) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(zap.ime ?? "")),
-                  DataCell(Text(zap.prezime ?? "")),
-                  DataCell(Text(zap.email ?? "")),
-                  DataCell(Text(zap.brojTelefona?.toString() ?? "")),
+          child: Column(
+            children: [
+              DataTable(
+                columns: const [
+                  DataColumn(label: Text("Ime")),
+                  DataColumn(label: Text("Prezime")),
+                  DataColumn(label: Text("Email")),
+                  DataColumn(label: Text("Broj telefona")),
+                  DataColumn(label: Text("")), // Nova kolona za dugme
                 ],
-              );
-            }).toList(),
+                rows: zaposlenik.map((zap) {
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(zap.ime ?? "")),
+                      DataCell(Text(zap.prezime ?? "")),
+                      DataCell(Text(zap.email ?? "")),
+                      DataCell(Text(zap.brojTelefona?.toString() ?? "")),
+                      DataCell(
+                        ElevatedButton(
+                          onPressed: () {
+                           final klijentId = context.read<UserProvider>().userId; // Dohvati ID logiranog klijenta
+
+                            
+                            final zaposleniId = zap.zaposlenikId!; // Dohvati ID zaposlenika
+
+                            // Prikaži popup za unos poruke
+                            _showSendMessageDialog2(context, klijentId, zaposleniId);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.chat, size: 20), // Ikona chata
+                              SizedBox(width: 5), // Razmak između ikone i teksta
+                              Text("Pošaljite poruku"),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ],
           ),
         )
       : const Text("Nema dostupnih zaposlenika za ovaj autoservis."),
 )
+
 ,
                   // Dugme za dodavanje zaposlenika
                   Padding(
@@ -639,6 +677,79 @@ Future<void> fetchGrad() async {
      
     ];
   }
+
+void _showSendMessageDialog2(BuildContext context, int klijentId, int zaposleniId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String message = "";
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: const Text("Pošaljite poruku"),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  message = value; // Ažuriraj poruku kad se unese tekst
+                });
+              },
+              decoration: const InputDecoration(hintText: "Unesite poruku"),
+            ),
+            actions: [
+              // Otkaži dugme
+              TextButton(
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context); // Zatvori dijalog
+                  }
+                },
+                child: const Text("Otkaži"),
+              ),
+              // Pošaljite dugme
+              ElevatedButton(
+                onPressed: () async {
+                  if (message.isNotEmpty) {
+                    try {
+                      // Poziv za slanje poruke
+                      await Provider.of<ChatKlijentZaposlenikProvider>(
+                        context,
+                        listen: false,
+                      ).sendMessage(klijentId, zaposleniId, message);
+
+                      // Zatvori dijalog nakon slanja poruke
+                      if (mounted && Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+
+                      // Obavijesti korisnika o uspjehu
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Poruka poslana uspješno")),
+                      );
+                    } catch (e) {
+                      // Obavijesti korisnika o grešci
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Greška: ${e.toString()}")),
+                        );
+                      }
+                    }
+                  } else {
+                    // Ako poruka nije uneta, obavesti korisnika
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Poruka ne može biti prazna")),
+                    );
+                  }
+                },
+                child: const Text("Pošaljite"),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 
 
 
