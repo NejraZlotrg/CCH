@@ -5,11 +5,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
+import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
@@ -61,12 +63,14 @@ List<BPAutodijeloviAutoservis>? temp;
       'password': widget.firmaAutodijelova?.password ?? '',
       'passwordAgain': widget.firmaAutodijelova?.passwordAgain ?? '',
       'ulogaId': widget.firmaAutodijelova?.ulogaId ?? '',
+      
     };
 
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _gradProvider = context.read<GradProvider>();
     _ulogaProvider = context.read<UlogeProvider>();
     _bpProvider = context.read<BPAutodijeloviAutoservisProvider>();
+
 
 
     initForm();
@@ -132,66 +136,61 @@ Widget build(BuildContext context) {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         // Dugme za spašavanje
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState?.saveAndValidate() ??
-                                false) {
-                              var request = Map.from(
-                                  _formKey.currentState!.value);
-                              request['ulogaId'] = 3;
+                       // Conditionally render the 'Spasi' button only for the admin
+// Only render the ElevatedButton if the user is an Admin
+if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) 
+  ElevatedButton(
+    onPressed: () async {
+      if (_formKey.currentState?.saveAndValidate() ?? false) {
+        var request = Map.from(_formKey.currentState!.value);
+        request['ulogaId'] = 3;
 
-                              // Dodaj sliku u request
-                              if (_imageFile != null) {
-                                final imageBytes =
-                                    await _imageFile!.readAsBytes();
-                                request['slikaProfila'] =
-                                    base64Encode(imageBytes);
-                              }
+        // Add image to request if exists
+        if (_imageFile != null) {
+          final imageBytes = await _imageFile!.readAsBytes();
+          request['slikaProfila'] = base64Encode(imageBytes);
+        }
 
-                              try {
-                                if (widget.firmaAutodijelova == null) {
-                                  await _firmaAutodijelovaProvider.insert(
-                                      request);
-                                } else {
-                                  await _firmaAutodijelovaProvider.update(
-                                      widget.firmaAutodijelova!
-                                          .firmaAutodijelovaID,
-                                      request);
-                                }
-                                // ignore: use_build_context_synchronously
-                                Navigator.pop(context);
-                              } on Exception catch (e) {
-                                showDialog(
-                                  // ignore: use_build_context_synchronously
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: const Text("Greška"),
-                                    content: Text(e.toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
-                                        child: const Text("OK"),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            textStyle: const TextStyle(fontSize: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text("Spasi"),
-                        ),
+        try {
+          if (widget.firmaAutodijelova == null) {
+            await _firmaAutodijelovaProvider.insert(request);
+          } else {
+            await _firmaAutodijelovaProvider.update(
+                widget.firmaAutodijelova!.firmaAutodijelovaID,
+                request);
+          }
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+        } on Exception catch (e) {
+          showDialog(
+            // ignore: use_build_context_synchronously
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text("Greška"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Colors.red,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      textStyle: const TextStyle(fontSize: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    child: const Text("Spasi"),
+  ),
+
 
                         const SizedBox(width: 10),
 
@@ -237,6 +236,7 @@ Widget build(BuildContext context) {
 
   FormBuilder _buildForm() {
     return FormBuilder(
+      
       key: _formKey,
       initialValue: _initialValues,
       child: Column(
@@ -250,8 +250,8 @@ Widget build(BuildContext context) {
                 height: 250,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.grey, width: 2),
+                  color: Colors.black,
+                  border: Border.all(color: Colors.black, width: 2),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -271,7 +271,7 @@ Widget build(BuildContext context) {
                         ),
                       )
                     : const Icon(Icons.camera_alt,
-                        size: 60, color: Colors.grey),
+                        size: 60, color: Colors.black),
               ),
             ),
           ),
@@ -281,214 +281,313 @@ Widget build(BuildContext context) {
       ),
     );
   }
+List<Widget> _buildFormFields() {
+  return [
+    // Osnovni podaci
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Naziv firme",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite naziv firme',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "nazivFirme",
+            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Adresa",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite adresu',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "adresa",
+            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderDropdown(
+            name: 'gradId',
+            decoration: InputDecoration(
+              labelText: 'Grad',
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Izaberite grad',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            initialValue: widget.firmaAutodijelova?.gradId?.toString(),
+            items: gradResult?.result
+                .map((item) => DropdownMenuItem(
+                      alignment: AlignmentDirectional.center,
+                      value: item.gradId.toString(),
+                      child: Text(item.nazivGrada ?? "", style: TextStyle(color: Colors.black)),
+                    ))
+                .toList() ?? [],
+            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
 
+    // Kontakt podaci
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Telefon",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite telefon',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "telefon",
+            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Email",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite email',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "email",
+            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
 
-  List<Widget> _buildFormFields() {
-    return [
-      // Osnovni podaci
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "Naziv firme",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    // Dodatni podaci
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "JIB",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite JIB',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
               ),
-              name: "nazivFirme",
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "Adresa",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
               ),
-              name: "adresa",
             ),
+            style: TextStyle(color: Colors.black),
+            name: "jib",
+            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
-        ],
-      ),
-      const SizedBox(height: 20),
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderDropdown(
-              name: 'gradId',
-              decoration: const InputDecoration(
-                labelText: 'Grad',
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                hintText: 'Izaberite grad',
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "MBS",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite MBS',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, 
+              filled: true, 
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
               ),
-              initialValue: widget.firmaAutodijelova?.gradId?.toString(),
-              items: gradResult?.result
-                      .map((item) => DropdownMenuItem(
-                            alignment: AlignmentDirectional.center,
-                            value: item.gradId.toString(),
-                            child: Text(item.nazivGrada ?? ""),
-                          ))
-                      .toList() ??
-                  [],
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
             ),
+            style: TextStyle(color: Colors.black),
+            name: "mbs",
+            enabled: context.read<UserProvider>().role == "Admin"|| context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
-        ],
-      ),
-      const SizedBox(height: 20),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
 
-      // Kontakt podaci
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "Telefon",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-              name: "telefon",
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-              name: "email",
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-
-      // Dodatni podaci
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "JIB",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-              name: "jib",
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "MBS",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-              name: "mbs",
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-
+    // Sakrivanje korisničkog imena, lozinke i ponovljene lozinke ako nije admin
+    if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) ...[
       Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Korisničko ime",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Korisničko ime",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          name: "username",
-        ),
-      ],
-    ),
-    const SizedBox(height: 20),
-
-    // Red 3: Lozinka
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Lozinka",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          const SizedBox(height: 5),
+          FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Korisničko ime",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite korisničko ime',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "username",
           ),
-          name: "password",
-          obscureText: true,
-        ),
-      ],
-    ),
-    const SizedBox(height: 20),
-
-    // Red 4: Ponovljena Lozinka
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Ponovite lozinku",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          ),
-          name: "passwordAgain",
-          obscureText: true,
-        ),
-      ],
-    ),
+        ],
+      ),
       const SizedBox(height: 20),
-     
-    ];
-  }
+
+      // Red 3: Lozinka
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Lozinka",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          const SizedBox(height: 5),
+          FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Lozinka",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite lozinku',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "password",
+            obscureText: true,
+          ),
+        ],
+      ),
+      const SizedBox(height: 20),
+
+      // Red 4: Ponovljena Lozinka
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Ponovite lozinku",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          const SizedBox(height: 5),
+          FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Ponovite lozinku",
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Ponovo unesite lozinku',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            style: TextStyle(color: Colors.black),
+            name: "passwordAgain",
+            obscureText: true,
+          ),
+        ],
+      ),
+      const SizedBox(height: 20),
+    ],
+  ];
+}
+
 }

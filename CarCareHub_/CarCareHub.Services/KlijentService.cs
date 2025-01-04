@@ -150,7 +150,7 @@ namespace CarCareHub.Services
             if (!_dbContext.Klijents.Any())
             {
                 // Kreirajte listu klijenata za unos
-                var klijentInsert = 
+                var klijentInsert1 = 
             new KlijentInsert
             {
                 Ime = "Marko",
@@ -165,15 +165,34 @@ namespace CarCareHub.Services
                 UlogaId = 4 // Assuming UlogaId corresponds to a specific role in the database
             };
 
-            // You can add more records here
-        
+                var klijentInsert2 =
+           new KlijentInsert
+           {
+               Ime = "Admin",
+               Prezime = "Admin",
+               Email = "marko@example.com",
+               Username = "Admin",
+               Password = "Admin",
+               PasswordAgain = "Admin",
+               Spol = "Muško",
+               BrojTelefona = "38761123456",
+               GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
+               UlogaId = 5 // Assuming UlogaId corresponds to a specific role in the database
+           };
+                // You can add more records here
+
 
                 // Mapirajte svaki Insert model u Database.Klijent entitet
-                var klijentEntities = _mapper.Map<Database.Klijent>(klijentInsert);
-                BeforeInsert(klijentEntities, klijentInsert);
+                var klijentEntities = _mapper.Map<Database.Klijent>(klijentInsert1);
+                BeforeInsert(klijentEntities, klijentInsert1);
 
+                var klijentEntities2 = _mapper.Map<Database.Klijent>(klijentInsert2);
+                BeforeInsert(klijentEntities2, klijentInsert2);
                 // Dodajte klijente u bazu podataka
                 await _dbContext.Klijents.AddRangeAsync(klijentEntities);
+                await _dbContext.SaveChangesAsync();
+
+                await _dbContext.Klijents.AddRangeAsync(klijentEntities2);
                 await _dbContext.SaveChangesAsync();
 
             }

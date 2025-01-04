@@ -29,6 +29,7 @@ class Zaposlenik {
   int? firmaAutodijelovaId;
   final FirmaAutodijelova? firmaAutodijelova;
 
+
   String? passwordAgain;
 
   Zaposlenik({

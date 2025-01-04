@@ -64,4 +64,4 @@ public partial class Autoservis
 
     public virtual ICollection<ChatAutoservisKlijent> ChatPoruke { get; set; } = new List<ChatAutoservisKlijent>();
 
-}
+} //mslm da autoservis treba imati kolekciju vozila a ne id 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/models/grad.dart';
@@ -100,42 +101,54 @@ class _AutoservisRegistracijaScreenState
     setState(() {});
   }
 
-  Future<void> _saveForm() async {
-    _formKey.currentState?.saveAndValidate();
-    var request = Map.from(_formKey.currentState!.value);
+ Future<void> _saveForm() async {
+  // Save and validate form
+  _formKey.currentState?.saveAndValidate();
+  var request = Map.from(_formKey.currentState!.value);
+  request['ulogaId'] = 2;
 
-    // Dodavanje slike (ako postoji)
-    if (_imageFile != null) {
-      final bytes = await _imageFile!.readAsBytes();
-      final base64Image = base64Encode(bytes);
-      request['slikaProfila'] = base64Image; // Dodaj sliku u request
-    }
+  // Add image if exists
+  if (_imageFile != null) {
+    final bytes = await _imageFile!.readAsBytes();
+    final base64Image = base64Encode(bytes);
+    request['slikaProfila'] = base64Image; // Add image to request
+  }
 
-    try {
-      if (widget.autoservis == null) {
-        await _autoservisProvider.insert(request);
-      } else {
-        await _autoservisProvider.update(
-          widget.autoservis!.autoservisId!,
-          request,
-        );
-      }
-    } on Exception catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Error"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            )
-          ],
-        ),
+  try {
+    // If it's a new autoservis, insert it, otherwise update
+    if (widget.autoservis == null) {
+      await _autoservisProvider.insert(request);
+    } else {
+      await _autoservisProvider.update(
+        widget.autoservis!.autoservisId!,
+        request,
       );
     }
+
+    // Navigate to LogInPage after successful operation
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LogInPage()),
+      (Route<dynamic> route) => false,  // This will pop all the previous routes from the stack
+    );
+  } on Exception catch (e) {
+    // Show error dialog if an exception occurs
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

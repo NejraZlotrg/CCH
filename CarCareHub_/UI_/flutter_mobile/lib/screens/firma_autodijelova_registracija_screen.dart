@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/usluge.dart';
@@ -102,42 +103,53 @@ class _FirmaAutodijelovaRegistracijaScreenState
   }
 
   Future<void> _saveForm() async {
-    _formKey.currentState?.saveAndValidate();
-    var request = Map.from(_formKey.currentState!.value);
+  // Save and validate form
+  _formKey.currentState?.saveAndValidate();
+  var request = Map.from(_formKey.currentState!.value);
+  request['ulogaId'] = 3;  // Update role ID as per your requirements
 
-    // Dodavanje slike (ako postoji)
-    if (_imageFile != null) {
-      final bytes = await _imageFile!.readAsBytes();
-      final base64Image = base64Encode(bytes);
-      request['slikaProfila'] = base64Image; // Dodaj sliku u request
-    }
+  // Add image if exists
+  if (_imageFile != null) {
+    final bytes = await _imageFile!.readAsBytes();
+    final base64Image = base64Encode(bytes);
+    request['slikaProfila'] = base64Image; // Add image to request
+  }
 
-    try {
-      if (widget.firmaAutodijelova == null) {
-        await _firmaAutodijelovaProvider.insert(request);
-      } else {
-        await _firmaAutodijelovaProvider.update(
-          widget.firmaAutodijelova!.firmaAutodijelovaID,
-          request,
-        );
-      }
-    } on Exception catch (e) {
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Error"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            )
-          ],
-        ),
+  try {
+    // Insert new data or update existing data based on the condition
+    if (widget.firmaAutodijelova == null) {
+      await _firmaAutodijelovaProvider.insert(request);
+    } else {
+      await _firmaAutodijelovaProvider.update(
+        widget.firmaAutodijelova!.firmaAutodijelovaID,
+        request,
       );
     }
+
+    // Navigate to LogInPage after successful operation
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LogInPage()),
+      (Route<dynamic> route) => false,  // This will pop all previous routes from the stack
+    );
+  } on Exception catch (e) {
+    // Show error dialog if an exception occurs
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -70,9 +70,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'ulogaId': widget.autoservis?.ulogaId?.toString() ?? '',
       'gradId': widget.autoservis?.gradId,
       'username': widget.autoservis?.username,
-      'password': widget.autoservis?.password,
-      'passwordAgain': widget.autoservis?.passwordAgain,
-      "slikaProfila": widget.autoservis?.slikaProfila
+      'password': widget.autoservis?.password ?? '',
+      'passwordAgain': widget.autoservis?.passwordAgain ?? '',
+      "slikaProfila": widget.autoservis?.slikaProfila ?? '',
+      "slikaThumb": widget.autoservis?.slikaThumb ?? ''
+
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
@@ -186,6 +188,7 @@ Future<void> fetchGrad() async {
                 children: [
                   const SizedBox(height: 20),
                   _buildForm(),
+                  
                   Padding(
   padding: const EdgeInsets.all(10),
   child: usluge.isNotEmpty
@@ -215,7 +218,8 @@ Future<void> fetchGrad() async {
       : const Text("Nema dostupnih usluga za ovaj autoservis."),
                   ),
                   // Dugme za dodavanje usluge
-                  Padding(
+                   if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId)  
+                       Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
   onPressed: () => _showAddUslugaDialog(),
@@ -297,7 +301,7 @@ Padding(
 )
 
 ,
-                  // Dugme za dodavanje zaposlenika
+               if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId)    // Dugme za dodavanje zaposlenika
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -314,14 +318,17 @@ Padding(
                   // Spremanje podataka
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                    children: [ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId) 
                       Padding(
                         padding: const EdgeInsets.all(10),
-                        child: ElevatedButton(
+                        child:
+                         ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState?.saveAndValidate() ?? false) {
                               var request = Map.from(_formKey.currentState!.value);
-                              request['ulogaId'] = 3;
+                              request['ulogaId'] = 2;
+                              request['voziloId'] = 1;
+
 
                               // Dodaj sliku u request
                               if (_imageFile != null) {
@@ -466,217 +473,326 @@ Padding(
       ),
     );
   }
+List<Widget> _buildFormFields() {
+  final isAdmin = context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId; // Proveravamo da li je korisnik Admin
 
-
- List<Widget> _buildFormFields() {
-    return [
-      // Osnovni podaci
-      Row(
-        children: [
-          Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Naziv autoservisa",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+  return [
+    // Osnovni podaci
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Naziv autoservisa",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
               ),
-                name: "naziv",
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
               ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
             ),
-                  const SizedBox(width: 20),
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Vlasnik autoservisa",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "vlasnikFirme",
-              ),
-            ),
-          ],
+            name: "naziv",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.naziv ?? "", // Održavanje unetog teksta
+          ),
         ),
-    const SizedBox(height: 20),
-        
-        Row(
-          children: [
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Adresa",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        const SizedBox(width: 20),
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Vlasnik autoservisa",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
               ),
-                name: "adresa",
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
               ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
             ),
-                  const SizedBox(width: 20),
-            Expanded(
-              child: FormBuilderDropdown(
-                name: 'gradId',
-                decoration: const InputDecoration(
-                labelText: 'Grad',
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                hintText: 'Izaberite grad',
-              ),
-                initialValue: widget.autoservis?.gradId != null
-                    ? widget.autoservis!.gradId.toString()
-                    : null,
-                items: gradResult?.result
-                        .map((item) => DropdownMenuItem(
-                              alignment: AlignmentDirectional.center,
-                              value: item.gradId.toString(),
-                              child: Text(item.nazivGrada ?? ""),
-                            ))
-                        .toList() ??
-                    [],
-              ),
-            ),
-          ],
+            name: "vlasnikFirme",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.vlasnikFirme ?? "", // Održavanje unetog teksta
+          ),
         ),
-    const SizedBox(height: 20),
-       
-        Row(
-          children: [
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Telefon",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "telefon",
-              ),
-            ),
-                  const SizedBox(width: 20),
-
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "email",
-              ),
-            ),
-          ],
-        ),
-    const SizedBox(height: 20),
-       
-        Row(
-          children: [
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "JIB",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "jib",
-              ),
-            ),
-                  const SizedBox(width: 20),
-
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "MBS",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "mbs",
-              ),
-            ),
-          ],
-        ),
-    const SizedBox(height: 20),
-   
-       Row(
-          children: [
-         
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Korosničko ime",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "username",
-                initialValue: widget.autoservis?.username,
-              ),
-            ),
-          ],
-        ),
-    const SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Lozinka",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "password",
-                obscureText: true,
-                initialValue: widget.autoservis?.password,
-              ),
-            ),
-                  const SizedBox(width: 20),
-
-            Expanded(
-              child: FormBuilderTextField(
-                decoration: const InputDecoration(
-                labelText: "Ponovite lozinku",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              ),
-                name: "passwordAgain",
-                obscureText: true,
-                initialValue: widget.autoservis?.passwordAgain,
-              ),
-            ),
-          ],
+      ],
     ),
-      const SizedBox(height: 20),
-     
-    ];
-  }
+    const SizedBox(height: 20),
+
+    // Ostala polja
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Adresa",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "adresa",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.adresa ?? "", // Održavanje unetog teksta
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: FormBuilderDropdown(
+            name: 'gradId',
+            decoration: InputDecoration(
+              labelText: 'Grad',
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            initialValue: widget.autoservis?.gradId != null
+                ? widget.autoservis!.gradId.toString()
+                : null,
+            items: gradResult?.result
+                    .map((item) => DropdownMenuItem(
+                          alignment: AlignmentDirectional.center,
+                          value: item.gradId.toString(),
+                          child: Text(item.nazivGrada ?? "", style: TextStyle(color: Colors.black)), // Crni tekst
+                        ))
+                    .toList() ??
+                [],
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar dropdown-a
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Polja za telefon, email, JIB i MBS
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Telefon",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "telefon",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.telefon ?? "", // Održavanje unetog teksta
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Email",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "email",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.email ?? "", // Održavanje unetog teksta
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "JIB",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "jib",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.jib ?? "", // Održavanje unetog teksta
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "MBS",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "mbs",
+            enabled: isAdmin, // Ako nije admin, polje je disabled
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+            initialValue: widget.autoservis?.mbs ?? "", // Održavanje unetog teksta
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Korisničko ime, lozinka i ponovljena lozinka (samo za admina)
+    isAdmin ? Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Korisničko ime",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "username",
+            initialValue: widget.autoservis?.username ?? "", // Održavanje unetog teksta
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+          ),
+        ),
+      ],
+    ) : SizedBox.shrink(), // Sakrivanje za ne-admin korisnike
+
+    const SizedBox(height: 20),
+
+    isAdmin ? Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Lozinka",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "password",
+            initialValue: widget.autoservis?.password ?? "", // Održavanje unetog teksta
+            obscureText: true, // Da lozinka bude sakrivena
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+          ),
+        ),
+      ],
+    ) : SizedBox.shrink(), // Sakrivanje za ne-admin korisnike
+
+    const SizedBox(height: 20),
+
+    isAdmin ? Row(
+      children: [
+        Expanded(
+          child: FormBuilderTextField(
+            decoration: InputDecoration(
+              labelText: "Ponovite lozinku",
+              border: OutlineInputBorder(),
+              fillColor: Colors.white, // Bela pozadina
+              filled: true, // Da pozadina bude ispunjena
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+              ),
+              labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+              hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+            ),
+            name: "passwordAgain",
+            initialValue: "", // Održavanje unetog teksta
+            obscureText: true, // Da lozinka bude sakrivena
+            style: TextStyle(color: Colors.black), // Crni tekst unutar inputa
+
+
+          ),
+        ),
+      ],
+    ) : SizedBox.shrink(), // Sakrivanje za ne-admin korisnike
+  ];
+}
 
 void _showSendMessageDialog2(BuildContext context, int klijentId, int zaposleniId) {
   showDialog(

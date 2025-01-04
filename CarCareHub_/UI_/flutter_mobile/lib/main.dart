@@ -184,6 +184,8 @@ class _LogInPageState extends State<LogInPage> {
                                   final zaposlenikProvider =
                                       ZaposlenikProvider();
                                   final klijentProvider = KlijentProvider();
+                                   final firmaAutodijelovaProvider =
+                                      FirmaAutodijelovaProvider();
 
                                   // Provjera userId kroz sve providere
                                   final userIdA = await autoservisProvider
@@ -195,7 +197,9 @@ class _LogInPageState extends State<LogInPage> {
                                   final userIdK = await klijentProvider
                                       .getIdByUsernameAndPassword(
                                           username, password);
-
+                                  final userIdF = await firmaAutodijelovaProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
                                   // Provjera svih korisnika
                                   if (userIdA != null) {
                                     // Ako je userIdA pronađen
@@ -225,9 +229,29 @@ class _LogInPageState extends State<LogInPage> {
                                     );
                                   } else if (userIdK != null) {
                                     // Ako niti jedan od prethodnih nije pronađen, provjeri Klijenta
-                                    final userProvider =
+                                   if (userIdK !=2)
+                                   { final userProvider =
                                         context.read<UserProvider>();
                                     userProvider.setUser(userIdK, 'Klijent');
+                                  }
+                                   if (userIdK ==2)
+                                   { final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(userIdK, 'Admin');
+                                  }
+                                    // Nastavimo s navigacijom nakon što je Klijent autentifikovan
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  }
+                                  else if (userIdF != null) {
+                                    // Ako niti jedan od prethodnih nije pronađen, provjeri Klijenta
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(userIdF, 'Firma autodijelova');
 
                                     // Nastavimo s navigacijom nakon što je Klijent autentifikovan
                                     Navigator.of(context).push(

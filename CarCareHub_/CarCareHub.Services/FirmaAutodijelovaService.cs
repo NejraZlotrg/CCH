@@ -192,6 +192,15 @@ namespace CarCareHub.Services
             }
         }
 
+        public int? GetIdByUsernameAndPassword(string username, string password)
+        {
+            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
+            var user = _dbContext.FirmaAutodijelovas
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+
+            // Ako korisnik nije pronađen, vraća null.
+            return user?.FirmaAutodijelovaID;
+        }
     }
 }
 
