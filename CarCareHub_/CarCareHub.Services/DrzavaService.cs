@@ -46,7 +46,7 @@ namespace CarCareHub.Services
             return base.AddFilter(query, search);
         }
 
-      
+
 
 
         //public override IQueryable<Database.Drzava> AddFilter(IQueryable<Database.Drzava> query, DrzavaSearchObject search = null)
@@ -65,6 +65,29 @@ namespace CarCareHub.Services
         //    return base.AddFilter(query, search);
         //}
 
+        public async Task AddDrzavaAsync()
+        {
+            // Provjerite da li uloge već postoje u bazi
+            if (!_dbContext.Drzavas.Any())
+            {
+                // Kreirajte listu uloga za unos
+                var ulogeInsert = new List<DrzavaInsert>
+        {
+            new DrzavaInsert {  NazivDrzave = "Bosna i Hercegovina" },
+            new DrzavaInsert {  NazivDrzave = "Hrvatska" },
+            new DrzavaInsert {  NazivDrzave = "Srbija" },
+            new DrzavaInsert {  NazivDrzave = "Makedonija" },
+
+        };
+
+                // Mapirajte svaki Insert model u Database.Uloge entitet
+                var Entities = ulogeInsert.Select(u => _mapper.Map<Database.Drzava>(u)).ToList();
+
+                // Dodajte uloge u bazu podataka
+                await _dbContext.Drzavas.AddRangeAsync(Entities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
 
     }
 }

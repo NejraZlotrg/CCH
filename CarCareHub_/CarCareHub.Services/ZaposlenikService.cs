@@ -59,6 +59,7 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.FirmaAutodijelova);
                 query = query.Include(z => z.Autoservis);
                 query = query.Include(z => z.Grad);
+            
 
             }
             return base.AddInclude(query, search);
@@ -135,6 +136,41 @@ namespace CarCareHub.Services
             return user?.ZaposlenikId;
         }
 
+        public async Task AddZaposlenikAsync()
+        {
+            // Provjerite da li postoji zaposlenik s ulogom "Zaposlenik"
+            if (!_dbContext.Zaposleniks.Any(z => z.UlogaId == 1)) // 1 pretpostavlja ID za ulogu "Zaposlenik"
+            {
+                var noviZaposlenik = new ZaposlenikInsert
+                {
+                    Ime = "Zaposlenik", // Ime zaposlenika
+                    Prezime = "Test", // Prezime zaposlenika
+                    DatumRodjenja = new DateTime(1990, 5, 15), // Datum rođenja
+                    MaticniBroj = 56789, // Matični broj zaposlenika
+                    BrojTelefona = 000000000, // Broj telefona
+                    GradId = 1, // ID grada, pretpostavlja se da grad sa ID 1 postoji
+                    Email = "zaposlenik@test.com", // Email adresa zaposlenika
+                    Username = "zaposlenik", // Korisničko ime
+                    Password = "zaposlenik", // Lozinka
+                    PasswordAgain = "zaposlenik", // Ponovljena lozinka
+                    UlogaId = 1, // Pretpostavlja se da je ID za "Zaposlenik" 1
+                    AutoservisId = 1, // Nijedna veza s autoservisom
+                    FirmaAutodijelovaId = 1 // Nijedna veza s firmom autodijelova
+                };
+
+                // Mapiraj noviZaposlenik u entitet Zaposlenik za bazu podataka
+         
+                var zapEntity = _mapper.Map<Database.Zaposlenik>(noviZaposlenik);
+                BeforeInsert(zapEntity, noviZaposlenik);
+                // Dodajte zaposlenika u bazu podataka
+                await _dbContext.Zaposleniks.AddAsync(zapEntity);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+
+
     }
-    
+
+
 }

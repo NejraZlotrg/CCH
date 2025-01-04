@@ -144,5 +144,40 @@ namespace CarCareHub.Services
             return user?.KlijentId;
         }
 
+        public async Task AddKlijentAsync()
+        {
+            // Provjerite da li klijenti već postoje u bazi
+            if (!_dbContext.Klijents.Any())
+            {
+                // Kreirajte listu klijenata za unos
+                var klijentInsert = 
+            new KlijentInsert
+            {
+                Ime = "Marko",
+                Prezime = "Markovic",
+                Email = "marko@example.com",
+                Username = "klijent",
+                Password = "klijent",
+                PasswordAgain = "klijent",
+                Spol = "Muško",
+                BrojTelefona = "38761123456",
+                GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
+                UlogaId = 4 // Assuming UlogaId corresponds to a specific role in the database
+            };
+
+            // You can add more records here
+        
+
+                // Mapirajte svaki Insert model u Database.Klijent entitet
+                var klijentEntities = _mapper.Map<Database.Klijent>(klijentInsert);
+                BeforeInsert(klijentEntities, klijentInsert);
+
+                // Dodajte klijente u bazu podataka
+                await _dbContext.Klijents.AddRangeAsync(klijentEntities);
+                await _dbContext.SaveChangesAsync();
+
+            }
+        }
+
     }
 }

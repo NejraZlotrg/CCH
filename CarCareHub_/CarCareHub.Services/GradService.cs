@@ -39,5 +39,28 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
+        public async Task AddGradAsync()
+        {
+            // Provjerite da li gradovi već postoje u bazi
+            if (!_dbContext.Grads.Any())
+            {
+                // Kreirajte listu gradova za unos
+                var gradoviInsert = new List<GradInsert>
+        {
+            new GradInsert { NazivGrada = "Sarajevo", DrzavaId = 1 }, // Assuming DrzavaId = 1 corresponds to Bosnia and Herzegovina
+            new GradInsert { NazivGrada = "Zagreb", DrzavaId = 2 }, // DrzavaId = 2 corresponds to Croatia
+            new GradInsert { NazivGrada = "Beograd", DrzavaId = 3 }, // DrzavaId = 3 corresponds to Serbia
+            new GradInsert { NazivGrada = "Skopje", DrzavaId = 4 }  // DrzavaId = 4 corresponds to North Macedonia
+        };
+
+                // Mapirajte svaki Insert model u Database.Grad entitet
+                var gradEntities = gradoviInsert.Select(g => _mapper.Map<Database.Grad>(g)).ToList();
+
+                // Dodajte gradove u bazu podataka
+                await _dbContext.Grads.AddRangeAsync(gradEntities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
     }
 }

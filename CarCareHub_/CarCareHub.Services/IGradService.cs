@@ -5,6 +5,7 @@ namespace CarCareHub.Services
 {
     public interface IGradService : ICRUDService<Grad, GradSearchObject, GradInsert, GradUpdate>
     {
+        Task AddGradAsync();
 
     }
 }

@@ -231,10 +231,67 @@ static async Task SeedUloge(WebApplication app)
     using (var scope = app.Services.CreateScope())
     {
         var ulogeService = scope.ServiceProvider.GetRequiredService<IUlogeService>();
+        var gradService = scope.ServiceProvider.GetRequiredService<IGradService>();
+        var drzavaService = scope.ServiceProvider.GetRequiredService<IDrzavaService>();
 
-        // Pozivanje funkcije za dodavanje uloga
-        await ulogeService.AddUlogeAsync();
+        var voziloService = scope.ServiceProvider.GetRequiredService<IVoziloService>();
+        var klijentService = scope.ServiceProvider.GetRequiredService<IKlijentService>();
+        var firmaService = scope.ServiceProvider.GetRequiredService<IFirmaAutodijelovaService>();
+        var autoservisService = scope.ServiceProvider.GetRequiredService<IAutoservisService>();
+        var zaposlenikService = scope.ServiceProvider.GetRequiredService<IZaposlenikService>();
+
+
+        await SeedUlogeAsync(ulogeService);
+        await SeedDrzavaAsync(drzavaService);
+        await SeedGradAsync(gradService);
+        await SeedVoziloAsync(voziloService);
+
+        await SeedAutoservisAsync(autoservisService);
+        await SeedFirmaAsync(firmaService);
+        await SeedKlijentAsync(klijentService);
+        await SeedZaposlenikAsync(zaposlenikService);
+     
     }
+}
+
+static async Task SeedUlogeAsync(IUlogeService ulogeService)
+{
+    await ulogeService.AddUlogeAsync();
+}
+
+static async Task SeedDrzavaAsync(IDrzavaService drzavaService)
+{
+    await drzavaService.AddDrzavaAsync();
+}
+
+static async Task SeedZaposlenikAsync(IZaposlenikService zaposlenikService)
+{
+    await zaposlenikService.AddZaposlenikAsync();
+}
+
+static async Task SeedGradAsync(IGradService gradService)
+{
+    await gradService.AddGradAsync();
+}
+
+static async Task SeedAutoservisAsync(IAutoservisService autoservisService)
+{
+    await autoservisService.AddAutoserviceAsync();
+}
+
+static async Task SeedVoziloAsync(IVoziloService voziloService)
+{
+    await voziloService.AddVoziloAsync();
+}
+
+static async Task SeedFirmaAsync(IFirmaAutodijelovaService firmaService)
+{
+    await firmaService.AddFirmaAsync();
+}
+
+static async Task SeedKlijentAsync(IKlijentService klijentService)
+{
+    await klijentService.AddKlijentAsync();
 }
 
 if (app.Environment.IsDevelopment())

@@ -5,6 +5,7 @@ namespace CarCareHub.Services
 {
     public interface IDrzavaService : ICRUDService<Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>
     {
-      
+        Task AddDrzavaAsync();
+
     }
 }

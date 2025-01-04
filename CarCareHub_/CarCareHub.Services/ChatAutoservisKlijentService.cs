@@ -74,7 +74,18 @@ namespace CarCareHub.Services
         {
             var poruke = _context.ChatAutoservisKlijents
                 .Include(p => p.Klijent)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.Grad)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.uloga)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.ChatAutoservisKlijent)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.ChatKlijentZaposlenik)  // Učitaj povezani Klijent entitet
                 .Include(p => p.Autoservis)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Autoservis.Uloga)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Autoservis.Vozilo)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Autoservis.Usluges)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Autoservis.Grad)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Autoservis.Grad.Drzava)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Autoservis.Zaposleniks)  // Učitaj povezani Autoservis entitet
+
                 .Where(p => p.KlijentId == klijentId && p.AutoservisId == autoservisId);
 
             // Mapiranje na model

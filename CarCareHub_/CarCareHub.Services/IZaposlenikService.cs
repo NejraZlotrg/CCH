@@ -8,6 +8,8 @@ namespace CarCareHub.Services
         Task<CarCareHub.Model.Zaposlenik> GetByGrad(int id);
         public Task<Model.Zaposlenik> Login(string username, string password);
         public int? GetIdByUsernameAndPassword(string username, string password);
+        Task AddZaposlenikAsync();
+
 
 
     }

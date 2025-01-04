@@ -7,6 +7,8 @@ namespace CarCareHub.Services
     {
         public Task<Model.Klijent> Login(string username, string password);
         public int? GetIdByUsernameAndPassword(string username, string password);
+        Task AddKlijentAsync();
+
 
     }
 }

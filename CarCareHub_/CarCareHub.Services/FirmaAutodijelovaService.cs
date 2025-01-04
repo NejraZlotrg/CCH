@@ -14,6 +14,7 @@ namespace CarCareHub.Services
 {
 
 
+
     public class FirmaAutodijelovaService : BaseCRUDService<Model.FirmaAutodijelova, Database.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>, IFirmaAutodijelovaService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
@@ -158,7 +159,38 @@ namespace CarCareHub.Services
         //    byte[] inArray = algorithm.ComputeHash(dst);
         //    return Convert.ToBase64String(inArray);
         //}
+        public async Task AddFirmaAsync()
+        {
+            // Provjerite da li firme autodijelova već postoje u bazi
+            if (!_dbContext.FirmaAutodijelovas.Any())
+            {
+                // Kreirajte listu firmi autodijelova za unos
+                var firmaAutodijelovaInsert = 
+            new FirmaAutodijelovaInsert
+            {
+                NazivFirme = "Auto Parts Sarajevo",
+                Adresa = "Ulica bb, Sarajevo",
+                GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
+                JIB = "123456789",
+                MBS = "987654321",
+                UlogaId = 3, // Assuming UlogaId corresponds to a specific role in the database
+                Telefon = "38733123456",
+                Email = "kontakt@autoparts.ba",
+                Username = "firma",
+                Password = "firma",
+                PasswordAgain = "firma",
+                SlikaProfila = null // Add profile image byte array if necessary
+            };
 
+                // Mapirajte svaki Insert model u Database.FirmaAutodijelova entitet
+                // Mapirajte svaki Insert model u Database.Autoservis entitet
+                var firmaAutodijelovaEntities = _mapper.Map<Database.FirmaAutodijelova>(firmaAutodijelovaInsert);
+                BeforeInsert(firmaAutodijelovaEntities, firmaAutodijelovaInsert);
+                // Dodajte firme autodijelova u bazu podataka
+                await _dbContext.FirmaAutodijelovas.AddRangeAsync(firmaAutodijelovaEntities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
 
     }
 }

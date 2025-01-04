@@ -12,6 +12,7 @@ namespace CarCareHub.Services
     {
 
         public Task<Model.FirmaAutodijelova> Login(string username, string password);
+        Task AddFirmaAsync();
 
     }
 }

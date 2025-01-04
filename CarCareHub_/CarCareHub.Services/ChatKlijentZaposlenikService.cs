@@ -76,8 +76,26 @@ namespace CarCareHub.Services
         public async Task<IQueryable<Model.ChatKlijentZaposlenik>> GetMessagesAsync(int klijentId, int zaposlenikId)
         {
             var poruke = _context.ChatKlijentZaposleniks
-                .Include(p => p.Klijent)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent).Include(p => p.Klijent.Grad)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.uloga)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.ChatAutoservisKlijent)  // Učitaj povezani Klijent entitet
+                .Include(p => p.Klijent.ChatKlijentZaposlenik)  // Učitaj povezani Klijent entitet // Učitaj povezani Klijent entitet
                 .Include(p => p.Zaposlenik)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Grad)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Grad.Drzava)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Uloga)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis.Uloga)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis.Zaposleniks)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis.Usluges)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis.Vozilo)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis.Grad)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.Autoservis.Grad.Drzava)  // Učitaj povezani Autoservis entitet
+
+                .Include(p => p.Zaposlenik.FirmaAutodijelova)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.FirmaAutodijelova.Uloga)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.FirmaAutodijelova.Grad)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Zaposlenik.FirmaAutodijelova.Grad.Drzava)  // Učitaj povezani Autoservis entitet
                 .Where(p => p.KlijentId == klijentId && p.ZaposlenikId == zaposlenikId);
 
             // Mapiranje na model
@@ -109,12 +127,22 @@ namespace CarCareHub.Services
             {
                 // Fetch chat records for the logged-in client
                 var chatRecords = _context.ChatKlijentZaposleniks.AsNoTracking()
-                    .Where(x => x.KlijentId == parsedUserId)
-                    .Include(x => x.Zaposlenik) // Include Autoservis entity
-                    .Include(x => x.Klijent)    // Include Klijent entity
-                    .GroupBy(x => x.ZaposlenikId)
-                    .Select(g => g.First())
-                    .ToList();
+     .Where(x => x.KlijentId == parsedUserId)
+     .Include(x => x.Zaposlenik) // Include Zaposlenik entity
+     .ThenInclude(z => z.Uloga) // Include Uloga for Zaposlenik
+     .Include(x => x.Zaposlenik.Autoservis) // Include Autoservis for Zaposlenik
+     .ThenInclude(a => a.Usluges) // Include Usluges for Autoservis
+     .Include(x => x.Zaposlenik.Autoservis.Vozilo) // Include Vozilo for Autoservis
+     .Include(x => x.Zaposlenik.Autoservis.Grad) // Include Grad for Autoservis
+     .ThenInclude(g => g.Drzava) // Include Drzava for Grad
+     .Include(x => x.Klijent) // Include Klijent entity
+     .ThenInclude(k => k.uloga) // Include Uloga for Klijent
+     .Include(x => x.Klijent.Grad) // Include Grad for Klijent
+     .ThenInclude(g => g.Drzava) // Include Drzava for Grad
+     .GroupBy(x => x.ZaposlenikId)
+     .Select(g => g.First())
+     .ToList();
+
 
                 // Check if any records were found
                 if (chatRecords == null || !chatRecords.Any())

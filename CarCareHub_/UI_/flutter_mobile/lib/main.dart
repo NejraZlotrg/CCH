@@ -6,6 +6,7 @@ import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
+import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
 
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
@@ -60,6 +61,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => KorpaProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ChatAutoservisKlijentProvider()),
+        ChangeNotifierProvider(create: (_) => ChatKlijentZaposlenikProvider()),
+
       ],
       child: const MyApp(),
     ),

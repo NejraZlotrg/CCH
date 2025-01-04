@@ -5,5 +5,7 @@ namespace CarCareHub.Services
 {
     public interface IVoziloService : ICRUDService<Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>
     {
+        Task AddVoziloAsync();
+
     }
 }

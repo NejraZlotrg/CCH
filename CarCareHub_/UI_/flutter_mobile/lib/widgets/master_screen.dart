@@ -4,6 +4,7 @@ import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentScreen.dart';
+import 'package:flutter_mobile/screens/chatKlijentZaposlenikScreen.dart';
 
 import 'package:flutter_mobile/screens/drzave_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
@@ -275,7 +276,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
              ListTile(
               
               leading: const Icon(Icons.directions_car),
-              title: const Text('chat'),
+              title: const Text('chatAutoservisKlijent'),
               onTap: () {
                    if(_role=='Autoservis'){
 
@@ -291,6 +292,32 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const ChatListScreen(),
+                    // builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
+
+                   
+                  ),
+                ); }
+              },
+            ),
+             ListTile(
+              
+              leading: const Icon(Icons.directions_car),
+              title: const Text('chatKlijentZaposlenik'),
+              onTap: () {
+                   if(_role=='Zaposlenik'){
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    // builder: (context) => ChatAutoservisKlijentScreen(klijentId: 1, autoservisId:userId,),
+                    builder: (context) => const ChatListScreen2(),
+                   
+                  ),
+                ); }
+                else if(_role=="Klijent"){
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ChatListScreen2(),
                     // builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
 
                    

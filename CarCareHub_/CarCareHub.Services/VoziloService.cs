@@ -29,6 +29,29 @@ namespace CarCareHub.Services
             return base.AddFilter(query, search);
         }
 
-     
+        public async Task AddVoziloAsync()
+        {
+            // Provjerite da li vozila već postoje u bazi
+            if (!_dbContext.Vozilos.Any())
+            {
+                // Kreirajte listu vozila za unos
+                var vozilaInsert = new List<VoziloInsert>
+        {
+            new VoziloInsert { MarkaVozila = "Volkswagen" },
+            new VoziloInsert { MarkaVozila = "BMW" },
+            new VoziloInsert { MarkaVozila = "Audi" },
+            new VoziloInsert { MarkaVozila = "Mercedes" }
+        };
+
+                // Mapirajte svaki Insert model u Database.Vozilo entitet
+                var voziloEntities = vozilaInsert.Select(v => _mapper.Map<Database.Vozilo>(v)).ToList();
+
+                // Dodajte vozila u bazu podataka
+                await _dbContext.Vozilos.AddRangeAsync(voziloEntities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+
     }
 }

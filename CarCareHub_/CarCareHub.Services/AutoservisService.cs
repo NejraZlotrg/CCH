@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 namespace CarCareHub.Services
 {
 
+
     public class AutoservisService : BaseCRUDService<Model.Autoservis, Database.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, IAutoservisService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
@@ -56,6 +57,7 @@ namespace CarCareHub.Services
             return base.Insert(insert);
         }
 
+
         public override async Task<Model.Autoservis> Update(int id, Model.AutoservisUpdate update)
         {
             return await base.Update(id, update);
@@ -65,6 +67,7 @@ namespace CarCareHub.Services
         {
             return await base.Delete(id);
         }
+
 
         public override IQueryable<Database.Autoservis> AddInclude(IQueryable<Database.Autoservis> query, AutoservisSearchObject? search = null)
         {
@@ -138,5 +141,42 @@ namespace CarCareHub.Services
             return user?.AutoservisId;
         }
 
+
+        public async Task AddAutoserviceAsync()
+        {
+            // Provjerite da li autoservisi već postoje u bazi
+            if (!_dbContext.Autoservis.Any())
+            {
+                // Kreirajte listu autoservisa za unos
+                var autoservisInsert =
+            new AutoservisInsert
+            {
+                Naziv = "Auto servis Sarajevo",
+                Adresa = "Ulica bb, Sarajevo",
+                GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
+                VlasnikFirme = "John Doe",
+                Telefon = "8733 123 456",
+                Email = "kontakt@autoservis.ba",
+                Username = "autoservis",
+                Password = "autoservis",
+                PasswordAgain = "autoservis",
+                Jib = "123456789",
+                Mbs = "987654321",
+                SlikaProfila = null, // Add profile image byte array if necessary
+                SlikaThumb = null, // Add thumbnail image byte array if necessary
+                UlogaId = 2, // Assuming UlogaId corresponds to a specific role in the database
+                VoziloId = 1 // Assuming VoziloId corresponds to a specific vehicle
+            };
+
+                // Mapirajte svaki Insert model u Database.Autoservis entitet
+                var autoservisEntities = _mapper.Map<Database.Autoservis>(autoservisInsert);
+                BeforeInsert(autoservisEntities, autoservisInsert);
+                // Dodajte autoservise u bazu podataka
+                await _dbContext.Autoservis.AddRangeAsync(autoservisEntities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+      
     }
 }
