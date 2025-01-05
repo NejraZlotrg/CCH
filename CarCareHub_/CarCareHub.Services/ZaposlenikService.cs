@@ -15,13 +15,37 @@ namespace CarCareHub.Services
         public ZaposlenikService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
+     
 
-    
 
         public override async Task BeforeInsert(CarCareHub.Services.Database.Zaposlenik entity, ZaposlenikInsert insert)
         {
-            entity.LozinkaSalt = GenerateSalt();
+
+      
+            // Check if a record with the same username already exists
+            var existingUsername = _dbContext.Zaposleniks
+                    .FirstOrDefaultAsync(a => a.Username == insert.Username);
+
+            if (existingUsername != null)
+            {
+                throw new Exception("Username already exists.");
+            }
+
+            // Check if a record with the same email already exists
+            var existingEmail = _dbContext.Zaposleniks
+                .FirstOrDefaultAsync(a => a.Email == insert.Email);
+
+            if (existingEmail != null)
+            {
+                throw new Exception("Email already exists.");
+            }
+
+            
+        
+
+        entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
+
         }
 
 

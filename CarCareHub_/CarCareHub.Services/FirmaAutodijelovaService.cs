@@ -59,9 +59,33 @@ namespace CarCareHub.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public override Task<Model.FirmaAutodijelova> Insert(Model.FirmaAutodijelovaInsert insert)
-        {
+        
+    public override Task<Model.FirmaAutodijelova> Insert(Model.FirmaAutodijelovaInsert insert)
+
+    {
+        // Check if a record with the same username already exists
+        var existingUsername = _dbContext.FirmaAutodijelovas
+                .FirstOrDefaultAsync(a => a.Username == insert.Username);
+
+            if (existingUsername != null)
+            {
+                throw new Exception("Username already exists.");
+            }
+
+            // Check if a record with the same email already exists
+            var existingEmail = _dbContext.FirmaAutodijelovas
+                .FirstOrDefaultAsync(a => a.Email == insert.Email);
+
+            if (existingEmail != null)
+            {
+                throw new Exception("Email already exists.");
+            }
+
+            // If no duplicates found, proceed to insert the new record
+
+
             return base.Insert(insert);
+
         }
 
         public override async Task<Model.FirmaAutodijelova> Update(int id, Model.FirmaAutodijelovaUpdate update)

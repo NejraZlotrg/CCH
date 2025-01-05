@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/models/zaposlenik.dart';
+import 'package:flutter_mobile/models/grad.dart';
+import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
-import 'package:flutter_mobile/models/grad.dart';
-import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/models/uloge.dart';
-import 'package:flutter_mobile/models/zaposlenik.dart';
-import 'package:flutter_mobile/provider/autoservis_provider.dart';
-import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
-import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
+import 'package:flutter_mobile/provider/autoservis_provider.dart';
+import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ZaposlenikDetailsScreen extends StatefulWidget {
-  Zaposlenik? zaposlenik;
-  ZaposlenikDetailsScreen({super.key, this.zaposlenik});
+  final Zaposlenik? zaposlenik;
+  ZaposlenikDetailsScreen({Key? key, this.zaposlenik}) : super(key: key);
 
   @override
   State<ZaposlenikDetailsScreen> createState() => _ZaposlenikDetailsScreenState();
@@ -25,7 +25,6 @@ class ZaposlenikDetailsScreen extends StatefulWidget {
 
 class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
-  Map<String, dynamic> _initialValues = {};
   late ZaposlenikProvider _zaposlenikProvider;
   late GradProvider _gradProvider;
   late UlogeProvider _ulogeProvider;
@@ -33,30 +32,15 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
 
   SearchResult<Grad>? gradResult;
-  SearchResult<Uloge>? ulogeResult;
+  SearchResult<Uloge>? ulogaResult;
   SearchResult<Autoservis>? autoservisResult;
-  SearchResult<FirmaAutodijelova>? firmaAutodijelovaResult;
+  SearchResult<FirmaAutodijelova>? firmaResult;
+
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _initialValues = {
-      'ime': widget.zaposlenik?.ime,
-      'prezime': widget.zaposlenik?.prezime,
-      'maticniBroj': widget.zaposlenik?.maticniBroj,
-      'brojTelefona': widget.zaposlenik?.brojTelefona,
-      'gradId': widget.zaposlenik?.gradId,
-      'datumRodjenja': widget.zaposlenik?.datumRodjenja,
-      'email': widget.zaposlenik?.email,
-      'username': widget.zaposlenik?.username,
-      'password': widget.zaposlenik?.password,
-      'ulogaId': widget.zaposlenik?.ulogaId,
-      'autoservisId': widget.zaposlenik?.autoservisId,
-      'firmaAutodijelovaId': widget.zaposlenik?.firmaAutodijelovaId,
-      'passwordAgain': widget.zaposlenik?.passwordAgain,
-    };
-
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
     _gradProvider = context.read<GradProvider>();
     _ulogeProvider = context.read<UlogeProvider>();
@@ -67,10 +51,9 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
 
   Future initForm() async {
     gradResult = await _gradProvider.get();
-    ulogeResult = await _ulogeProvider.get();
+    firmaResult = await _firmaAutodijelovaProvider.get();
+    ulogaResult = await _ulogeProvider.get();
     autoservisResult = await _autoservisProvider.get();
-    firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
-
     setState(() {
       isLoading = false;
     });
@@ -78,238 +61,327 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 204, 204, 204),
-      appBar: AppBar(
-        title: Text(widget.zaposlenik?.ime ?? "Detalji zaposlenika"),
+    return MasterScreenWidget(
+      title: widget.zaposlenik?.ime ?? "Detalji zaposlenika",
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : _buildForm(),
+            ],
+          ),
+        ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildForm(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              _formKey.currentState?.saveAndValidate();
-                              var request = Map.from(_formKey.currentState!.value);
+    );
+  }
+Widget _buildForm() {
+  final isAdminOrOwnProfile = context.read<UserProvider>().role == "Admin" || 
+      (context.read<UserProvider>().role == "Zaposlenik" && 
+       context.read<UserProvider>().userId == widget.zaposlenik!.zaposlenikId);
 
-                              // Format date field before sending to the backend
-                              if (request['datumRodjenja'] != null) {
-                                DateTime date = request['datumRodjenja'];
-                                String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-                                request['datumRodjenja'] = formattedDate;
-                              }
+  return FormBuilder(
+    key: _formKey,
+    initialValue: {
+      'ime': widget.zaposlenik?.ime ?? '',
+      'prezime': widget.zaposlenik?.prezime ?? '',
+      'brojTelefona': widget.zaposlenik?.brojTelefona?.toString() ?? '',
+      'gradId': widget.zaposlenik?.gradId?.toString() ?? '',
+      'email': widget.zaposlenik?.email ?? '',
+      'username': widget.zaposlenik?.username ?? '',
+      'password': widget.zaposlenik?.password ?? '',
+      'passwordAgain': widget.zaposlenik?.passwordAgain ?? '',
+      'ulogaId': widget.zaposlenik?.ulogaId?.toString() ?? '',
+      'autoservisId': widget.zaposlenik?.autoservisId?.toString() ?? '',
+      'firmaAutodijelovaId': widget.zaposlenik?.firmaAutodijelovaId?.toString() ?? '',
+    },
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Text Fields
+        FormBuilderTextField(
+          name: 'ime',
+          decoration: InputDecoration(
+            labelText: 'Ime',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite ime',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: TextStyle(color: Colors.black),
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
+        FormBuilderTextField(
+          name: 'prezime',
+          decoration: InputDecoration(
+            labelText: 'Prezime',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite prezime',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: TextStyle(color: Colors.black),
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
+        FormBuilderTextField(
+          name: 'brojTelefona',
+          decoration: InputDecoration(
+            labelText: 'Broj Telefona',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite broj telefona',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          keyboardType: TextInputType.phone,
+          style: TextStyle(color: Colors.black),
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
 
-                              try {
-                                if (widget.zaposlenik == null) {
-                                  await _zaposlenikProvider.insert(request);
-                                } else {
-                                  await _zaposlenikProvider.update(
-                                    widget.zaposlenik!.zaposlenikId!,
-                                    _formKey.currentState?.value,
-                                  );
-                                }
-                              } catch (e) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) => AlertDialog(
-                                    title: const Text("Greška"),
-                                    content: Text(e.toString()),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("OK"),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                              textStyle: const TextStyle(fontSize: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text("Spasi"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+        // Dropdowns
+        FormBuilderDropdown<String>(
+          name: 'gradId',
+          decoration: InputDecoration(
+            labelText: 'Izaberite grad',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Izaberite grad',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: TextStyle(color: Colors.black),
+          items: gradResult?.result?.map((item) {
+            return DropdownMenuItem(
+              value: item.gradId.toString(),
+              child: Text(item.nazivGrada!, style: TextStyle(color: Colors.black)),
+            );
+          }).toList() ?? [],
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
+        FormBuilderDropdown<String>(
+          name: 'ulogaId',
+          decoration: InputDecoration(
+            labelText: 'Izaberite ulogu',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Izaberite ulogu',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: TextStyle(color: Colors.black),
+          items: ulogaResult?.result?.map((item) {
+            return DropdownMenuItem(
+              value: item.ulogaId.toString(),
+              child: Text(item.nazivUloge!, style: TextStyle(color: Colors.black)),
+            );
+          }).toList() ?? [],
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
+
+        // Email and Conditional Inputs
+        FormBuilderTextField(
+          name: 'email',
+          decoration: InputDecoration(
+            labelText: 'Email',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite email',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          keyboardType: TextInputType.emailAddress,
+          style: TextStyle(color: Colors.black),
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
+
+        // Conditional fields for Admin role
+        if (isAdminOrOwnProfile) ...[
+          FormBuilderTextField(
+            name: 'username',
+            decoration: InputDecoration(
+              labelText: 'Username',
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite korisničko ime',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
               ),
             ),
-    );
-  }
-
-  FormBuilder _buildForm() {
-    return FormBuilder(
-      key: _formKey,
-      initialValue: _initialValues,
-      child: Column(
-        children: [
-          const SizedBox(height: 8),
-          ..._buildFormFields(),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildFormFields() {
-    return [
-      // Row 1: Ime and Prezime
-      Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Ime:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                FormBuilderTextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  ),
-                  name: "ime",
-                ),
-              ],
-            ),
+            style: TextStyle(color: Colors.black),
+            enabled: isAdminOrOwnProfile,
           ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Prezime:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                FormBuilderTextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  ),
-                  name: "prezime",
-                ),
-              ],
+          const SizedBox(height: 15),
+          FormBuilderTextField(
+            name: 'password',
+            decoration: InputDecoration(
+              labelText: 'Password',
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Unesite lozinku',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
             ),
+            obscureText: true,
+            style: TextStyle(color: Colors.black),
+            enabled: isAdminOrOwnProfile,
+          ),
+          const SizedBox(height: 15),
+          FormBuilderTextField(
+            name: 'passwordAgain',
+            decoration: InputDecoration(
+              labelText: 'Ponovite lozinku',
+              labelStyle: TextStyle(color: Colors.black),
+              hintText: 'Ponovo unesite lozinku',
+              hintStyle: TextStyle(color: Colors.black),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              ),
+            ),
+            obscureText: true,
+            style: TextStyle(color: Colors.black),
+            enabled: isAdminOrOwnProfile,
           ),
         ],
-      ),
-      const SizedBox(height: 20),
+        const SizedBox(height: 15),
 
-      // Row 2: Matični Broj and Broj Telefona
-      Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Matični Broj:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                FormBuilderTextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  ),
-                  name: "maticniBroj",
-                  keyboardType: TextInputType.number,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Broj Telefona:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                FormBuilderTextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  ),
-                  name: "brojTelefona",
-                  keyboardType: TextInputType.phone,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
+        // Save button
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (isAdminOrOwnProfile) 
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState?.saveAndValidate() ?? false) {
+                      var request = Map.from(_formKey.currentState!.value);
+                      request['ulogaId'] = 1; // Set the default role if necessary
 
-      // Row 3: Grad
-      Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Grad:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                FormBuilderDropdown(
-                  name: 'gradId',
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                    hintText: 'Izaberite grad',
+                      try {
+                        if (widget.zaposlenik == null) {
+                          await _zaposlenikProvider.insert(request);
+                        } else {
+                          await _zaposlenikProvider.update(
+                              widget.zaposlenik!.zaposlenikId!,
+                              request);
+                        }
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      } on Exception catch (e) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text("Greška"),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("OK"),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  items: gradResult?.result
-                          .map((item) => DropdownMenuItem(
-                                alignment: AlignmentDirectional.center,
-                                value: item.gradId.toString(),
-                                child: Text(item.nazivGrada ?? ""),
-                              ))
-                          .toList() ??
-                      [],
+                  child: const Text("Spasi"),
                 ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
-      const SizedBox(height: 20),
+        ),
+      ],
+    ),
+  );
+}
 
-      // Other rows (Email, Username, Password, etc.)
-    ];
-  }
 }

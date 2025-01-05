@@ -9,25 +9,29 @@ part 'zaposlenik.g.dart';
 
 @JsonSerializable()
 class Zaposlenik {
+
   int? zaposlenikId;
   String? ime;
   String? prezime;
   int? maticniBroj;
   int? brojTelefona;
-  final Grad? grad;
-  final int? gradId;
+  Grad? grad;
+  int? gradId;
   DateTime? datumRodjenja;
   String? email;
   String? username;
+  String? password;
+  String? PasswordAgain;
+
+  
   String? lozinkaSalt;
   String? lozinkaHash;
-  String? password;
-  int? ulogaId;
-  final Uloge? uloga;
   int? autoservisId;
-  final Autoservis? autoservis;
+  Autoservis? autoservis;
   int? firmaAutodijelovaId;
-  final FirmaAutodijelova? firmaAutodijelova;
+  FirmaAutodijelova? firmaAutodijelova;
+  int? ulogaId;
+  Uloge? uloga;
 
 
   String? passwordAgain;
@@ -52,6 +56,7 @@ class Zaposlenik {
     this.autoservis,
     this.firmaAutodijelova,
     this.uloga,
+    this.passwordAgain
     
   });
 

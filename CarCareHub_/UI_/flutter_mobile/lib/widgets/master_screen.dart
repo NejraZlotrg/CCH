@@ -128,7 +128,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.directions_car),
+              leading: const Icon(Icons.production_quantity_limits),
               title: const Text('Proizvodi'),
               onTap: () {
                 Navigator.of(context).push(
@@ -138,6 +138,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+           if (context.read<UserProvider>().role == "Admin")
             ListTile(
               leading: const Icon(Icons.build),
               title: const Text('Korisnici'),
@@ -149,8 +150,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
-              leading: const Icon(Icons.map),
+              leading: const Icon(Icons.public),
               title: const Text('Država'),
               onTap: () {
                 Navigator.of(context).push(
@@ -160,8 +162,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
-              leading: const Icon(Icons.map),
+         leading:  const Icon(Icons.directions_car),
               title: const Text('Godiste'),
               onTap: () {
                 Navigator.of(context).push(
@@ -171,6 +174,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
               leading: const Icon(Icons.location_city),
               title: const Text('Grad'),
@@ -182,6 +186,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
               leading: const Icon(Icons.local_offer),
               title: const Text('Usluge'),
@@ -193,6 +198,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
               leading: const Icon(Icons.emoji_people),
               title: const Text('Zaposlenici'),
@@ -204,8 +210,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
-              leading: const Icon(Icons.logout),
+              leading: const Icon(Icons.speed),
               title: const Text('Model'),
               onTap: () {
                 Navigator.of(context).push(
@@ -215,6 +222,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
               leading: const Icon(Icons.directions_car),
               title: const Text('Vozilo'),
@@ -227,7 +235,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
              ListTile(
-              leading: const Icon(Icons.directions_car),
+              leading: const Icon(Icons.build),
               title: const Text('Autoservis'),
               onTap: () {
                 Navigator.of(context).push(
@@ -239,7 +247,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             ),
            
             ListTile(
-              leading: const Icon(Icons.directions_car),
+              leading: const Icon(Icons.car_repair),
               title: const Text('FirmaAutodijelova'),
               onTap: () {
                 Navigator.of(context).push(
@@ -249,8 +257,10 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
-              leading: const Icon(Icons.directions_car),
+              leading: const Icon(Icons.admin_panel_settings)
+,
               title: const Text('Uloge'),
               onTap: () {
                 Navigator.of(context).push(
@@ -260,8 +270,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
             ListTile(
-              leading: const Icon(Icons.directions_car),
+              leading: const Icon(Icons.factory),
               title: const Text('Proizvodjac'),
               onTap: () {
                 Navigator.of(context).push(
@@ -275,8 +286,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             
              ListTile(
               
-              leading: const Icon(Icons.directions_car),
-              title: const Text('chatAutoservisKlijent'),
+              leading: const Icon(Icons.mail),
+              title: const Text('Inbox Autoservisi'),
               onTap: () {
                    if(_role=='Autoservis'){
 
@@ -300,9 +311,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
              ListTile(
-              
-              leading: const Icon(Icons.directions_car),
-              title: const Text('chatKlijentZaposlenik'),
+              leading: const Icon(Icons.mail),
+              title: const Text('Inbox Zaposlenici'),
               onTap: () {
                    if(_role=='Zaposlenik'){
 
@@ -326,7 +336,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
+              leading: const Icon(Icons.exit_to_app),
               title: const Text('Odjava'),
               onTap: () {
                 Navigator.of(context).push(

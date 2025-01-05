@@ -233,11 +233,23 @@ class _LogInPageState extends State<LogInPage> {
                                    { final userProvider =
                                         context.read<UserProvider>();
                                     userProvider.setUser(userIdK, 'Klijent');
+                                     Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
                                   }
                                    if (userIdK ==2)
                                    { final userProvider =
                                         context.read<UserProvider>();
                                     userProvider.setUser(userIdK, 'Admin');
+                                     Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
                                   }
                                     // Nastavimo s navigacijom nakon što je Klijent autentifikovan
                                     Navigator.of(context).push(

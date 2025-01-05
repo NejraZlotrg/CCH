@@ -37,7 +37,8 @@ Zaposlenik _$ZaposlenikFromJson(Map<String, dynamic> json) => Zaposlenik(
       uloga: json['uloga'] == null
           ? null
           : Uloge.fromJson(json['uloga'] as Map<String, dynamic>),
-    )..passwordAgain = json['passwordAgain'] as String?;
+      passwordAgain: json['passwordAgain'] as String?,
+    )..PasswordAgain = json['PasswordAgain'] as String?;
 
 Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
     <String, dynamic>{
@@ -51,14 +52,15 @@ Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
       'datumRodjenja': instance.datumRodjenja?.toIso8601String(),
       'email': instance.email,
       'username': instance.username,
+      'password': instance.password,
+      'PasswordAgain': instance.PasswordAgain,
       'lozinkaSalt': instance.lozinkaSalt,
       'lozinkaHash': instance.lozinkaHash,
-      'password': instance.password,
-      'ulogaId': instance.ulogaId,
-      'uloga': instance.uloga,
       'autoservisId': instance.autoservisId,
       'autoservis': instance.autoservis,
       'firmaAutodijelovaId': instance.firmaAutodijelovaId,
       'firmaAutodijelova': instance.firmaAutodijelova,
+      'ulogaId': instance.ulogaId,
+      'uloga': instance.uloga,
       'passwordAgain': instance.passwordAgain,
     };
