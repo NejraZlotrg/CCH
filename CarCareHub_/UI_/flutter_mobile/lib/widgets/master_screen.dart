@@ -283,11 +283,13 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               },
             ),
    
-            
+             if(_role=='Autoservis' || _role=='Klijent')
              ListTile(
               
               leading: const Icon(Icons.mail),
-              title: const Text('Inbox Autoservisi'),
+             title: Text(
+  _role == 'Klijent' ? 'Inbox Autoservisi' : 'Inbox',
+),
               onTap: () {
                    if(_role=='Autoservis'){
 
@@ -310,9 +312,13 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 ); }
               },
             ),
+             if(_role=='Zaposlenik' || _role=='Klijent')
              ListTile(
-              leading: const Icon(Icons.mail),
-              title: const Text('Inbox Zaposlenici'),
+             leading: const Icon(Icons.mail),
+title: Text(
+  _role == 'Klijent' ? 'Inbox Zaposlenici' : 'Inbox',
+),
+
               onTap: () {
                    if(_role=='Zaposlenik'){
 

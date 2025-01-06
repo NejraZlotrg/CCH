@@ -63,9 +63,8 @@ namespace CarCareHub.Services
     public override Task<Model.FirmaAutodijelova> Insert(Model.FirmaAutodijelovaInsert insert)
 
     {
-        // Check if a record with the same username already exists
-        var existingUsername = _dbContext.FirmaAutodijelovas
-                .FirstOrDefaultAsync(a => a.Username == insert.Username);
+           var existingUsername = _dbContext.FirmaAutodijelovas
+                   .FirstOrDefaultAsync(a => a.Username == insert.Username);
 
             if (existingUsername != null)
             {
@@ -87,6 +86,9 @@ namespace CarCareHub.Services
             return base.Insert(insert);
 
         }
+
+
+    
 
         public override async Task<Model.FirmaAutodijelova> Update(int id, Model.FirmaAutodijelovaUpdate update)
         {

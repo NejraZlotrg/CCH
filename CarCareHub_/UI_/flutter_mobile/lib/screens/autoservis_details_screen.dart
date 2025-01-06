@@ -218,7 +218,7 @@ Future<void> fetchGrad() async {
       : const Text("Nema dostupnih usluga za ovaj autoservis."),
                   ),
                   // Dugme za dodavanje usluge
-                   if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId)  
+                   if (context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Autoservis" && context.read<UserProvider>().userId== widget.autoservis?.autoservisId) ) 
                        Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -301,7 +301,7 @@ Padding(
 )
 
 ,
-               if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId)    // Dugme za dodavanje zaposlenika
+               if (context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Autoservis" && context.read<UserProvider>().userId== widget.autoservis?.autoservisId) )   // Dugme za dodavanje zaposlenika
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -318,7 +318,7 @@ Padding(
                   // Spremanje podataka
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId) 
+                    children: [ if (context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Autoservis" && context.read<UserProvider>().userId== widget.autoservis?.autoservisId) ) 
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child:
@@ -474,7 +474,7 @@ Padding(
     );
   }
 List<Widget> _buildFormFields() {
-  final isAdmin = context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.autoservis?.autoservisId; // Proveravamo da li je korisnik Admin
+  final isAdmin = context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Autoservis" && context.read<UserProvider>().userId== widget.autoservis?.autoservisId) ; // Proveravamo da li je korisnik Admin
 
   return [
     // Osnovni podaci

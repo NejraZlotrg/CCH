@@ -7,6 +7,7 @@ import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
@@ -300,6 +301,7 @@ _loadData();
             Row(
   mainAxisAlignment: MainAxisAlignment.end, // Elemente poravnaj desno
   children: [
+           if (context.read<UserProvider>().role == "Admin")
     ElevatedButton(
       onPressed: () {
         Navigator.of(context).push(

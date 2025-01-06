@@ -13,5 +13,7 @@ namespace CarCareHub.Model
         public string Poruka { get; set; }
         //   public bool PoslanoOdKlijenta { get; set; }
         public DateTime VrijemeSlanja { get; set; }
+        //public bool PoslanoOdKlijenta { get; set; }
+
     }
 }

@@ -177,106 +177,65 @@ class _LogInPageState extends State<LogInPage> {
                                 Authorization.username = username;
                                 Authorization.password = password;
 
-                                try {
-                                  // Inicijalizacija providera
-                                  final autoservisProvider =
-                                      AutoservisProvider();
-                                  final zaposlenikProvider =
-                                      ZaposlenikProvider();
-                                  final klijentProvider = KlijentProvider();
-                                   final firmaAutodijelovaProvider =
-                                      FirmaAutodijelovaProvider();
+                              try {
+  // Inicijalizacija providera
+  final autoservisProvider = AutoservisProvider();
+  final zaposlenikProvider = ZaposlenikProvider();
+  final klijentProvider = KlijentProvider();
+  final firmaAutodijelovaProvider = FirmaAutodijelovaProvider();
 
-                                  // Provjera userId kroz sve providere
-                                  final userIdA = await autoservisProvider
-                                      .getIdByUsernameAndPassword(
-                                          username, password);
-                                  final userIdZ = await zaposlenikProvider
-                                      .getIdByUsernameAndPassword(
-                                          username, password);
-                                  final userIdK = await klijentProvider
-                                      .getIdByUsernameAndPassword(
-                                          username, password);
-                                  final userIdF = await firmaAutodijelovaProvider
-                                      .getIdByUsernameAndPassword(
-                                          username, password);
-                                  // Provjera svih korisnika
-                                  if (userIdA != null) {
-                                    // Ako je userIdA pronađen
-                                    final userProvider =
-                                        context.read<UserProvider>();
-                                    userProvider.setUser(userIdA, 'Autoservis');
+  // Provjera userId kroz sve providere
+  final userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+  final userIdZ = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+  final userIdK = await klijentProvider.getIdByUsernameAndPassword(username, password);
+  final userIdF = await firmaAutodijelovaProvider.getIdByUsernameAndPassword(username, password);
 
-                                    // Nastavimo s navigacijom nakon što je Autoservis korisnik autentifikovan
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductScreen(),
-                                      ),
-                                    );
-                                  } else if (userIdZ != null) {
-                                    // Ako userIdA nije pronađen, provjeri Zaposlenika
-                                    final userProvider =
-                                        context.read<UserProvider>();
-                                    userProvider.setUser(userIdZ, 'Zaposlenik');
+  // Provjera svih korisnika
+  if (userIdA != null) {
+    final userProvider = context.read<UserProvider>();
+    userProvider.setUser(userIdA, 'Autoservis', username);
 
-                                    // Nastavimo s navigacijom nakon što je Zaposlenik autentifikovan
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductScreen(),
-                                      ),
-                                    );
-                                  } else if (userIdK != null) {
-                                    // Ako niti jedan od prethodnih nije pronađen, provjeri Klijenta
-                                   if (userIdK !=2)
-                                   { final userProvider =
-                                        context.read<UserProvider>();
-                                    userProvider.setUser(userIdK, 'Klijent');
-                                     Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductScreen(),
-                                      ),
-                                    );
-                                  }
-                                   if (userIdK ==2)
-                                   { final userProvider =
-                                        context.read<UserProvider>();
-                                    userProvider.setUser(userIdK, 'Admin');
-                                     Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductScreen(),
-                                      ),
-                                    );
-                                  }
-                                    // Nastavimo s navigacijom nakon što je Klijent autentifikovan
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductScreen(),
-                                      ),
-                                    );
-                                  }
-                                  else if (userIdF != null) {
-                                    // Ako niti jedan od prethodnih nije pronađen, provjeri Klijenta
-                                    final userProvider =
-                                        context.read<UserProvider>();
-                                    userProvider.setUser(userIdF, 'Firma autodijelova');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProductScreen(),
+      ),
+    );
+  } else if (userIdZ != null) {
+    final userProvider = context.read<UserProvider>();
+    userProvider.setUser(userIdZ, 'Zaposlenik', username);
 
-                                    // Nastavimo s navigacijom nakon što je Klijent autentifikovan
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductScreen(),
-                                      ),
-                                    );
-                                  }
-                                } catch (e) {
-                                  print('Error during user authentication: $e');
-                                }
-                              },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProductScreen(),
+      ),
+    );
+  } else if (userIdK != null) {
+    final userProvider = context.read<UserProvider>();
+    if (userIdK == 2) {
+      userProvider.setUser(userIdK, 'Admin', username);
+    } else {
+      userProvider.setUser(userIdK, 'Klijent', username);
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProductScreen(),
+      ),
+    );
+  } else if (userIdF != null) {
+    final userProvider = context.read<UserProvider>();
+    userProvider.setUser(userIdF, 'Firma autodijelova', username );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProductScreen(),
+      ),
+    );
+  }
+} catch (e) {
+  print('Error during user authentication: $e');
+}},
+
                               child: const Text("Prijavi se"),
                             ),
                             OutlinedButton(

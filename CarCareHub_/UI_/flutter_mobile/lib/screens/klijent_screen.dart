@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/screens/klijent_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
@@ -130,6 +131,7 @@ Future<void> _loadData() async {
               ),
             ),
             const SizedBox(width: 10),
+                   if (context.read<UserProvider>().role == "Admin")
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).push(

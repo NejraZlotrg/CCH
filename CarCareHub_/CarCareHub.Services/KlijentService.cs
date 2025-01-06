@@ -27,22 +27,7 @@ namespace CarCareHub.Services
 
         public override async Task BeforeInsert(CarCareHub.Services.Database.Klijent entity, KlijentInsert insert)
         {
-            var existingUsername = _dbContext.Klijents
-                .FirstOrDefaultAsync(a => a.Username == insert.Username);
 
-            if (existingUsername != null)
-            {
-                throw new Exception("Username already exists.");
-            }
-
-            // Check if a record with the same email already exists
-            var existingEmail = _dbContext.Klijents
-                .FirstOrDefaultAsync(a => a.Email == insert.Email);
-
-            if (existingEmail != null)
-            {
-                throw new Exception("Email already exists.");
-            }
 
             entity.LozinkaSalt = GenerateSalt(); 
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
@@ -86,19 +71,47 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
-        //public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
+
+        public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
+
+        {
+            var existingUsername = _dbContext.Klijents
+                    .FirstOrDefaultAsync(a => a.Username == insert.Username);
+
+            if (existingUsername != null)
+            {
+                throw new Exception("Username already exists.");
+            }
+
+            // Check if a record with the same email already exists
+            var existingEmail = _dbContext.Klijents
+                .FirstOrDefaultAsync(a => a.Email == insert.Email);
+
+            if (existingEmail != null)
+            {
+                throw new Exception("Email already exists.");
+            }
+
+            // If no duplicates found, proceed to insert the new record
+
+
+            return base.Insert(insert);
+
+        }
+
+        //public override task<model.klijent> insert(model.klijentinsert insert)
         //{
-        //    return base.Insert(insert);
+        //    return base.insert(insert);
         //}
 
-        //public override async Task<Model.Klijent> Update(int id, Model.KlijentUpdate update)
+        //public override async task<model.klijent> update(int id, model.klijentupdate update)
         //{
-        //    return await base.Update(id, update);
+        //    return await base.update(id, update);
         //}
 
-        //public override async Task<Model.Klijent> Delete(int id)
+        //public override async task<model.klijent> delete(int id)
         //{
-        //    return await base.Delete(id);
+        //    return await base.delete(id);
         //}
 
 

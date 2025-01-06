@@ -21,8 +21,14 @@ namespace CarCareHub.Services
         public override async Task BeforeInsert(CarCareHub.Services.Database.Zaposlenik entity, ZaposlenikInsert insert)
         {
 
-      
-            // Check if a record with the same username already exists
+        entity.LozinkaSalt = GenerateSalt();
+            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
+
+        }
+
+        public override Task<Model.Zaposlenik> Insert(Model.ZaposlenikInsert insert)
+
+        {
             var existingUsername = _dbContext.Zaposleniks
                     .FirstOrDefaultAsync(a => a.Username == insert.Username);
 
@@ -40,11 +46,10 @@ namespace CarCareHub.Services
                 throw new Exception("Email already exists.");
             }
 
-            
-        
+            // If no duplicates found, proceed to insert the new record
 
-        entity.LozinkaSalt = GenerateSalt();
-            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
+
+            return base.Insert(insert);
 
         }
 

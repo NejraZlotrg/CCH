@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:flutter_mobile/screens/uloge_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
@@ -100,6 +101,7 @@ class _UlogeScreenState extends State<UlogeScreen> {
                 ),
               ),
               const SizedBox(width: 10),
+                     if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(

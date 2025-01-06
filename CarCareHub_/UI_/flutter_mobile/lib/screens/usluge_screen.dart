@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/usluge.dart'; // Importuj svoju klasu za uslugu
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
  
 import 'package:flutter_mobile/screens/usluge_details_screen.dart'; // Importuj ekran za detalje usluge
@@ -94,6 +95,7 @@ class _UslugeScreenState extends State<UslugeScreen> {
                 ),
               ),
               const SizedBox(width: 10),
+                     if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(

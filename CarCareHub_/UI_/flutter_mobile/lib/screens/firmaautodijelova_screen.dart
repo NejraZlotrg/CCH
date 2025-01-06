@@ -3,6 +3,7 @@ import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/screens/BPAutodijeloviAutoservis_screen.dart';
@@ -125,6 +126,7 @@ Widget _buildSearch() {
               ),
             ),
             const SizedBox(width: 10),
+                   if (context.read<UserProvider>().role == "Admin")
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).push(

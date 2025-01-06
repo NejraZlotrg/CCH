@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/godiste.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/screens/godiste_details_screen.dart';
@@ -124,6 +125,7 @@ Widget _buildSearch() {
               ),
             ),
             const SizedBox(width: 10),
+                   if (context.read<UserProvider>().role == "Admin")
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).push(
