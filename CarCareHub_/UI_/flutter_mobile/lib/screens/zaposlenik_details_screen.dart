@@ -12,6 +12,7 @@ import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,7 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
   SearchResult<FirmaAutodijelova>? firmaResult;
 
   bool isLoading = true;
+  final validator = CreateValidator();
 
   @override
   void initState() {
@@ -104,6 +106,7 @@ Widget _buildForm() {
         // Text Fields
         FormBuilderTextField(
           name: 'ime',
+          validator: validator.required,
           decoration: const InputDecoration(
             labelText: 'Ime',
             labelStyle: TextStyle(color: Colors.black),
@@ -126,6 +129,7 @@ Widget _buildForm() {
         const SizedBox(height: 15),
         FormBuilderTextField(
           name: 'prezime',
+          validator: validator.required,
           decoration: const InputDecoration(
             labelText: 'Prezime',
             labelStyle: TextStyle(color: Colors.black),
@@ -148,6 +152,7 @@ Widget _buildForm() {
         const SizedBox(height: 15),
         FormBuilderTextField(
           name: 'brojTelefona',
+          validator: validator.phoneNumber,
           decoration: const InputDecoration(
             labelText: 'Broj Telefona',
             labelStyle: TextStyle(color: Colors.black),
@@ -173,7 +178,8 @@ Widget _buildForm() {
         // Dropdowns
         FormBuilderDropdown<String>(
           name: 'gradId',
-          decoration: const InputDecoration(
+                   validator: validator.required,
+ decoration: const InputDecoration(
             labelText: 'Izaberite grad',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Izaberite grad',
@@ -200,7 +206,8 @@ Widget _buildForm() {
         ),
         const SizedBox(height: 15),
         FormBuilderDropdown<String>(
-          name: 'ulogaId',
+          name: 'ulogaId',          validator: validator.required,
+
           decoration: const InputDecoration(
             labelText: 'Izaberite ulogu',
             labelStyle: TextStyle(color: Colors.black),
@@ -230,7 +237,8 @@ Widget _buildForm() {
 
         // Email and Conditional Inputs
         FormBuilderTextField(
-          name: 'email',
+          name: 'email',          validator: validator.email,
+
           decoration: const InputDecoration(
             labelText: 'Email',
             labelStyle: TextStyle(color: Colors.black),
@@ -256,7 +264,8 @@ Widget _buildForm() {
         // Conditional fields for Admin role
         if (isAdminOrOwnProfile) ...[
           FormBuilderTextField(
-            name: 'username',
+            name: 'username',          validator: validator.required,
+
             decoration: const InputDecoration(
               labelText: 'Username',
               labelStyle: TextStyle(color: Colors.black),
@@ -278,7 +287,8 @@ Widget _buildForm() {
           ),
           const SizedBox(height: 15),
           FormBuilderTextField(
-            name: 'password',
+            name: 'password',          validator: validator.required,
+
             decoration: const InputDecoration(
               labelText: 'Password',
               labelStyle: TextStyle(color: Colors.black),
@@ -301,7 +311,8 @@ Widget _buildForm() {
           ),
           const SizedBox(height: 15),
           FormBuilderTextField(
-            name: 'passwordAgain',
+            name: 'passwordAgain',          validator: validator.required,
+
             decoration: const InputDecoration(
               labelText: 'Ponovite lozinku',
               labelStyle: TextStyle(color: Colors.black),

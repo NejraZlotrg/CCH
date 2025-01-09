@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
@@ -22,7 +23,7 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
   late VoziloProvider _voziloProvider;
  
   bool isLoading = true;
- 
+ final validator = CreateValidator();
   @override
   void initState() {
     super.initState();
@@ -66,6 +67,15 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                           _formKey.currentState?.saveAndValidate();
  
                           var request = Map.from(_formKey.currentState!.value);
@@ -146,7 +156,9 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
                     filled: true,
                     contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
-                  name: "markaVozila",))
+                  name: "markaVozila",
+                  validator: validator.required
+                  ,))
                  ],
       ),
             const SizedBox(height: 20),

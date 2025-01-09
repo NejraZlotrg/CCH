@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
@@ -21,6 +22,8 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
   late ProizvodjacProvider _proizvodjacProvider;
  
   bool isLoading = true;
+
+  final validator = CreateValidator();
  
   @override
   void initState() {
@@ -65,6 +68,15 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                           _formKey.currentState?.saveAndValidate();
  
                           var request = Map.from(_formKey.currentState!.value);
@@ -136,6 +148,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                         EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
                   name: "nazivProizvodjaca",
+                  validator: validator.required,
                 ),
               ),
             ],

@@ -490,6 +490,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   border: Border.all(color: Colors.grey, width: 2),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
@@ -699,35 +700,36 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
             ),
           ),
           const SizedBox(width: 20),
-          Expanded(
-            child: FormBuilderTextField(
-              decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
-                ),
-                labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
-              ),
-              name: "email",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
-              style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
-              initialValue:
-                  widget.autoservis?.email ?? "", // Održavanje unetog teksta
-              validator: validator.required,
-            ),
-          ),
+Expanded(
+  child: FormBuilderTextField(
+    decoration: const InputDecoration(
+      labelText: "Email",
+      border: OutlineInputBorder(),
+      fillColor: Colors.white, // Bela pozadina
+      filled: true, // Da pozadina bude ispunjena
+      contentPadding:
+          EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black), // Crni okvir
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+            color: Colors.black), // Crni okvir kada je disabled
+      ),
+      labelStyle:
+          TextStyle(color: Colors.black), // Crni tekst za labelu
+      hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+    ),
+    name: "email",
+    enabled: isAdmin, // Ako nije admin, polje je disabled
+    style: const TextStyle(
+        color: Colors.black), // Crni tekst unutar inputa
+    initialValue:
+        widget.autoservis?.email ?? "", // Održavanje unetog teksta
+    validator: validator.email,
+  ),
+),
+
         ],
       ),
       const SizedBox(height: 20),
@@ -1102,7 +1104,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     decoration:
                         const InputDecoration(labelText: "Broj telefona"),
                     keyboardType: TextInputType.phone,
-                    validator: validator.required,
+                    validator: validator.phoneNumber,
                   ),
                   FormBuilderDateTimePicker(
                     name: "datumRodjenja",

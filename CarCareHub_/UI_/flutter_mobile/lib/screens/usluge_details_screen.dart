@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
@@ -20,6 +21,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
   late UslugeProvider _uslugeProvider;
  
   bool isLoading = true;
+  final validator = CreateValidator();
  
   @override
   void initState() {
@@ -63,6 +65,15 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                           if (_formKey.currentState?.saveAndValidate() ?? false) {
                             var request = Map.from(_formKey.currentState!.value);
                             try {
@@ -142,6 +153,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
                   name: "nazivUsluge",
+                  validator: validator.required,
                  // validator: FormBuilderValidators.required(context),
                 ),
               ),

@@ -14,6 +14,7 @@ import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
@@ -45,6 +46,9 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   SearchResult<FirmaAutodijelova>? firmaAutodijelovaResult;
   late ProizvodjacProvider _proizvodjacProvider;
   SearchResult<Proizvodjac>? proizvodjacResult;
+
+      final validator = CreateValidator();
+
 
   @override
   void initState() {
@@ -120,6 +124,15 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                           // Dugme za spašavanje
                           ElevatedButton(
                             onPressed: () async {
+                                  if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                               if (_formKey.currentState?.saveAndValidate() ??
                                   false) {
                                 var request =
@@ -310,6 +323,7 @@ ElevatedButton(
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "sifra",
+        validator: validator.required,
         initialValue: widget.product?.sifra ?? '',
       ),
       const SizedBox(height: 10),
@@ -321,6 +335,7 @@ ElevatedButton(
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "naziv",
+        validator: validator.required,
         initialValue: widget.product?.naziv ?? '',
       ),
       const SizedBox(height: 10),
@@ -332,6 +347,7 @@ ElevatedButton(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "originalniBroj",
+        validator: validator.required,
         initialValue: widget.product?.originalniBroj ?? '',
       ),
       const SizedBox(height: 10),
@@ -343,6 +359,7 @@ ElevatedButton(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "model",
+        validator: validator.required,
         initialValue: widget.product?.modelProizvoda ?? '',
       ),
       const SizedBox(height: 10),
@@ -351,6 +368,7 @@ ElevatedButton(
           Expanded(child:
           FormBuilderDropdown(
             name: 'kategorijaId',
+            validator: validator.required,
             decoration: const InputDecoration(
               labelText: 'Kategorija',
               border: OutlineInputBorder(),
@@ -378,6 +396,7 @@ ElevatedButton(
           Expanded(child:
           FormBuilderDropdown(
             name: 'proizvodjacId',
+            validator: validator.required,
             decoration: const InputDecoration(
               labelText: 'Proizvodjac',
               border: OutlineInputBorder(),
@@ -405,6 +424,7 @@ ElevatedButton(
           Expanded(child:
           FormBuilderDropdown(
             name: 'firmaAutoDijelovaID',
+            validator: validator.required,
             decoration: const InputDecoration(
               labelText: 'FirmaAutoDijelova',
               border: OutlineInputBorder(),
@@ -432,6 +452,7 @@ ElevatedButton(
           Expanded(
             child: FormBuilderDropdown(
               name: 'modelId',
+              validator: validator.required,
               decoration: const InputDecoration(
                 labelText: 'Model',
                 border: OutlineInputBorder(),
@@ -463,6 +484,7 @@ ElevatedButton(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "cijena",
+        validator: validator.required,
         initialValue: widget.product?.cijena.toString(),
       ),
       const SizedBox(height: 10),
@@ -474,6 +496,7 @@ ElevatedButton(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "popust",
+validator: validator.required,
         initialValue: widget.product?.popust.toString(),
       ),
       const SizedBox(height: 10),
@@ -485,6 +508,7 @@ ElevatedButton(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "opis",
+        validator: validator.required,
         initialValue: widget.product?.opis ?? '',
       ),
     ];

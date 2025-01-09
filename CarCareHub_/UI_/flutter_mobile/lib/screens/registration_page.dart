@@ -46,6 +46,7 @@ class RegistrationPage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
+                      
                     ),
                   ),
                 ),

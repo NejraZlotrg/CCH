@@ -417,7 +417,7 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "telefon",
-            validator: validator.required,
+            validator: validator.phoneNumber,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -442,7 +442,7 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "email",
-            validator: validator.required,
+            validator: validator.email,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),

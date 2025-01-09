@@ -39,28 +39,36 @@ class BaseValidator {
 
     return null;
   }
-
-  String? email(dynamic value) {
-    if (value is String?) {
-      if (value == null || value.isEmpty) {
-        return ValidationMessages.required;
-      }
-      return null;
-    }
-
-    if (value == null) {
-      return ValidationMessages.required;
-    }
-
-    var emailRegex =
-        RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}){1,2}$");
-
-    if (!emailRegex.hasMatch(value)) {
-      return ValidationMessages.invalidFormat;
-    }
-
-    return null;
+String? email(dynamic value) {
+  if (value == null || (value is String && value.isEmpty)) {
+    return ValidationMessages.required; // Provjerava required
   }
+
+  // Regex za validaciju emaila
+  var emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+
+  if (value is String && !emailRegex.hasMatch(value)) {
+    return ValidationMessages.invalidFormat; // Neispravan format
+  }
+
+  return null; // Sve je validno
+}
+
+String? phoneNumber(dynamic value) {
+  if (value == null || (value is String && value.isEmpty)) {
+    return ValidationMessages.required; // Provjerava required
+  }
+
+  // Regex za validaciju brojeva telefona
+  var phoneRegex = RegExp(r"^(\+?\d{1,3})(6\d{7,8})$");
+
+  if (value is String && !phoneRegex.hasMatch(value)) {
+    return ValidationMessages.invalidFormat; // Neispravan format
+  }
+
+  return null; // Sve je validno
+}
+
 }
 
 

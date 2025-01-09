@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
@@ -20,7 +21,7 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
   late UlogeProvider _ulogeProvider;
  
   bool isLoading = true;
- 
+ final validator = CreateValidator();
   @override
   void initState() {
     super.initState();
@@ -64,6 +65,15 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                           _formKey.currentState?.saveAndValidate();
  
                           var request = Map.from(_formKey.currentState!.value);
@@ -134,6 +144,7 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
                   name: "nazivUloge",
+                  validator: validator.required,
                 ),
               ),
             ],
