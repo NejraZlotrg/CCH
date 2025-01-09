@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,9 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
   late DrzaveProvider _drzaveProvider;
 
   bool isLoading = true;
+
+    final validator = CreateValidator();
+
 
   @override
   void initState() {
@@ -66,6 +70,16 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                               padding: const EdgeInsets.all(10),
                               child: ElevatedButton(
                                 onPressed: () async {
+                                      // Provjera validacije forme
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                                   _formKey.currentState?.saveAndValidate();
 
                                   var request =
@@ -146,7 +160,8 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
-                  name: "nazivDrzave"))
+                  validator: validator.required,
+                  name: "nazivDrzave")),
         ],
       ),
             const SizedBox(height: 20),

@@ -137,7 +137,7 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
             onPressed: () async {
 
                      Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
+                     MaterialPageRoute(builder: (context)=> const ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
                      ), );
             },
                 style: ElevatedButton.styleFrom(

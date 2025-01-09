@@ -13,6 +13,7 @@ import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,9 @@ class _FirmaAutodijelovaRegistracijaScreenState
   SearchResult<Grad>? gradResult;
   List<Usluge> usluge = [];
   bool isLoading = true;
+
+
+    final validator = CreateValidator();
 
   @override
   void initState() {
@@ -129,7 +133,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
     // Navigate to LogInPage after successful operation
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => LogInPage()),
+      MaterialPageRoute(builder: (context) => const LogInPage()),
       (Route<dynamic> route) => false,  // This will pop all previous routes from the stack
     );
   } on Exception catch (e) {
@@ -173,7 +177,17 @@ class _FirmaAutodijelovaRegistracijaScreenState
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ElevatedButton(
-                            onPressed: _saveForm,
+                            onPressed: (){
+                  if (_formKey.currentState?.validate() ?? false) {
+                    // Forma je validna, nastavite dalje
+                    _saveForm();
+                  } else {
+                    // Forma nije validna
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Molimo popunite obavezna polja")),
+                    );
+                  }
+                },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.red,
@@ -265,7 +279,9 @@ class _FirmaAutodijelovaRegistracijaScreenState
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
+                validator: validator.required,
                 name: "nazivFirme",
+                
               ),
             ],
           ),
@@ -289,6 +305,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "adresa",
+                validator: validator.required,
               ),
             ],
           ),
@@ -315,6 +332,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "username",
+          validator: validator.required,
         ),
       ],
     ),
@@ -338,6 +356,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "password",
+          validator: validator.required,
           obscureText: true,
         ),
       ],
@@ -362,6 +381,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "passwordAgain",
+          validator: validator.required,
           obscureText: true,
         ),
       ],
@@ -383,6 +403,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
               const SizedBox(height: 5),
               FormBuilderDropdown(
                 name: 'gradId',
+                validator: validator.required,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   fillColor: Colors.white,
@@ -428,6 +449,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "email",
+                validator: validator.required,
               ),
             ],
           ),
@@ -451,6 +473,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "telefon",
+                validator: validator.required,
               ),
             ],
           ),
@@ -480,6 +503,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "jib",
+                validator: validator.required,
               ),
             ],
           ),
@@ -503,6 +527,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "mbs",
+                validator: validator.required,
               ),
             ],
           ),

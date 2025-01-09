@@ -16,6 +16,7 @@ import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
 import 'package:flutter_mobile/screens/BPAutodijeloviAutoservis_screen.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +46,9 @@ List<BPAutodijeloviAutoservis>? temp;
   final ImagePicker _picker = ImagePicker();
 
   bool isLoading = true;
+
+    final validator = CreateValidator();
+
   
   get firmaAutodijelova => null;
 
@@ -141,6 +145,16 @@ Widget build(BuildContext context) {
 if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) 
   ElevatedButton(
     onPressed: () async {
+
+         if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
       if (_formKey.currentState?.saveAndValidate() ?? false) {
         var request = Map.from(_formKey.currentState!.value);
         request['ulogaId'] = 3;
@@ -288,7 +302,7 @@ List<Widget> _buildFormFields() {
       children: [
         Expanded(
           child: FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Naziv firme",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite naziv firme',
@@ -304,8 +318,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "nazivFirme",
+            validator: validator.required,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -316,7 +331,7 @@ List<Widget> _buildFormFields() {
       children: [
         Expanded(
           child: FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Adresa",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite adresu',
@@ -332,8 +347,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "adresa",
+            validator: validator.required,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -345,7 +361,8 @@ List<Widget> _buildFormFields() {
         Expanded(
           child: FormBuilderDropdown(
             name: 'gradId',
-            decoration: InputDecoration(
+            validator: validator.required,
+            decoration: const InputDecoration(
               labelText: 'Grad',
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Izaberite grad',
@@ -361,13 +378,13 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             initialValue: widget.firmaAutodijelova?.gradId?.toString(),
             items: gradResult?.result
                 .map((item) => DropdownMenuItem(
                       alignment: AlignmentDirectional.center,
                       value: item.gradId.toString(),
-                      child: Text(item.nazivGrada ?? "", style: TextStyle(color: Colors.black)),
+                      child: Text(item.nazivGrada ?? "", style: const TextStyle(color: Colors.black)),
                     ))
                 .toList() ?? [],
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
@@ -382,7 +399,7 @@ List<Widget> _buildFormFields() {
       children: [
         Expanded(
           child: FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Telefon",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite telefon',
@@ -398,15 +415,16 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "telefon",
+            validator: validator.required,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Email",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite email',
@@ -422,8 +440,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "email",
+            validator: validator.required,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -436,7 +455,7 @@ List<Widget> _buildFormFields() {
       children: [
         Expanded(
           child: FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "JIB",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite JIB',
@@ -452,15 +471,16 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "jib",
+            validator: validator.required,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "MBS",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite MBS',
@@ -476,8 +496,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "mbs",
+            validator: validator.required,
             enabled: context.read<UserProvider>().role == "Admin"|| context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -496,7 +517,7 @@ List<Widget> _buildFormFields() {
           ),
           const SizedBox(height: 5),
           FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Korisničko ime",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite korisničko ime',
@@ -512,8 +533,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "username",
+            validator: validator.required,
           ),
         ],
       ),
@@ -529,7 +551,7 @@ List<Widget> _buildFormFields() {
           ),
           const SizedBox(height: 5),
           FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Lozinka",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite lozinku',
@@ -545,8 +567,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "password",
+            validator: validator.required,
             obscureText: true,
           ),
         ],
@@ -563,7 +586,7 @@ List<Widget> _buildFormFields() {
           ),
           const SizedBox(height: 5),
           FormBuilderTextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: "Ponovite lozinku",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Ponovo unesite lozinku',
@@ -579,8 +602,9 @@ List<Widget> _buildFormFields() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             name: "passwordAgain",
+            validator: validator.required,
             obscureText: true,
           ),
         ],

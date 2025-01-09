@@ -114,8 +114,8 @@ Widget build(BuildContext context) {
                         padding: const EdgeInsets.symmetric(vertical: 8.0), // More vertical space between messages
                         child: Align(
                           alignment: isMessageFromLoggedUser
-                              ? Alignment.centerLeft // Message goes left
-                              : Alignment.centerRight, // Message goes right
+                              ? Alignment.centerRight // Message goes left
+                              : Alignment.centerLeft, // Message goes right
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15.0, vertical: 10.0),
@@ -179,8 +179,8 @@ Widget build(BuildContext context) {
                       // Calling sendMessage function from the provider
                       Provider.of<ChatAutoservisKlijentProvider>(context, listen: false)
                           .sendMessage(
-                              widget.selectedChat.klijentId!,
-                              widget.selectedChat.autoservisId!,
+                              widget.selectedChat.klijentId,
+                              widget.selectedChat.autoservisId,
                               message)
                           .then((_) {
                         _messageController.clear();

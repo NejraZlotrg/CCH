@@ -11,13 +11,17 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:form_validation/form_validation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class AutoservisRegistracijaScreen extends StatefulWidget {
   Autoservis? autoservis;
+  
+ // var validator = CreateValidator();
   AutoservisRegistracijaScreen({super.key, this.autoservis});
 
   @override
@@ -30,14 +34,17 @@ class _AutoservisRegistracijaScreenState
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late AutoservisProvider _autoservisProvider;
-  late UslugeProvider _uslugaProvider;
+ // late UslugeProvider _uslugaProvider;
   late GradProvider _gradProvider;
 
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   SearchResult<Grad>? gradResult;
-  List<Usluge> usluge = [];
+ // List<Usluge> usluge = [];
   bool isLoading = true;
+
+  final validator = CreateValidator();
+
 
   @override
   void initState() {
@@ -59,11 +66,11 @@ class _AutoservisRegistracijaScreenState
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
-    _uslugaProvider = context.read<UslugeProvider>();
+   // _uslugaProvider = context.read<UslugeProvider>();
     _gradProvider = context.read<GradProvider>();
 
     initForm();
-    fetchUsluge();
+   // fetchUsluge();
   }
 
   Future initForm() async {
@@ -95,11 +102,11 @@ class _AutoservisRegistracijaScreenState
     }
   }
 
-  Future<void> fetchUsluge() async {
-    usluge =
-        await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
-    setState(() {});
-  }
+  // Future<void> fetchUsluge() async {
+  //   usluge =
+  //       await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
+  //   setState(() {});
+  // }
 
  Future<void> _saveForm() async {
   // Save and validate form
@@ -128,7 +135,7 @@ class _AutoservisRegistracijaScreenState
     // Navigate to LogInPage after successful operation
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => LogInPage()),
+      MaterialPageRoute(builder: (context) => const LogInPage()),
       (Route<dynamic> route) => false,  // This will pop all the previous routes from the stack
     );
   } on Exception catch (e) {
@@ -172,7 +179,17 @@ class _AutoservisRegistracijaScreenState
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ElevatedButton(
-                            onPressed: _saveForm,
+                            onPressed:()  {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    // Forma je validna, nastavite dalje
+                    _saveForm();
+                  } else {
+                    // Forma nije validna
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Molimo popunite obavezna polja")),
+                    );
+                  }
+                },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.red,
@@ -243,7 +260,8 @@ class _AutoservisRegistracijaScreenState
   }
 
 
-  List<Widget> _buildFormFields() {
+List<Widget> _buildFormFields() {
+
   return [
     // Red 1: Naziv i Vlasnik
     Row(
@@ -266,6 +284,8 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "naziv",
+                validator: validator.required,
+                 // Dodana validacija
               ),
             ],
           ),
@@ -289,6 +309,8 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "vlasnikFirme",
+                validator: validator.required, 
+
               ),
             ],
           ),
@@ -315,6 +337,8 @@ class _AutoservisRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "username",
+          validator: validator.required, 
+
         ),
       ],
     ),
@@ -339,6 +363,8 @@ class _AutoservisRegistracijaScreenState
           ),
           name: "password",
           obscureText: true,
+          validator: validator.required,           
+
         ),
       ],
     ),
@@ -362,6 +388,7 @@ class _AutoservisRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "passwordAgain",
+          validator: validator.required,
           obscureText: true,
         ),
       ],
@@ -389,6 +416,7 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "adresa",
+                validator: validator.required,
               ),
             ],
           ),
@@ -405,6 +433,7 @@ class _AutoservisRegistracijaScreenState
               const SizedBox(height: 5),
               FormBuilderDropdown(
                 name: 'gradId',
+                validator: validator.required,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   fillColor: Colors.white,
@@ -450,6 +479,7 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "email",
+                validator: validator.required,
               ),
             ],
           ),
@@ -473,6 +503,7 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "telefon",
+                validator: validator.required,
               ),
             ],
           ),
@@ -502,6 +533,7 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "jib",
+                validator: validator.required,
               ),
             ],
           ),
@@ -525,6 +557,7 @@ class _AutoservisRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "mbs",
+                validator: validator.required,
               ),
             ],
           ),

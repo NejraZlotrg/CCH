@@ -33,7 +33,7 @@ Future<void> fetchChats() async {
   try {
     var response = await chatKlijentZaposlenikProvider.getById__(userId);
 
-    if (response != null && response.isNotEmpty) {
+    if (response.isNotEmpty) {
       // Iterate over the response to check for nulls and handle them
       for (var chat in response) {
         // Check for null values in the response before accessing them

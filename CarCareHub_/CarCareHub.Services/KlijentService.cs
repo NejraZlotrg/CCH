@@ -75,24 +75,24 @@ namespace CarCareHub.Services
         public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
 
         {
-            var existingUsername = _dbContext.Klijents
-                    .FirstOrDefaultAsync(a => a.Username == insert.Username);
+            //var existingUsername = _dbContext.Klijents
+            //        .FirstOrDefaultAsync(a => a.Username == insert.Username);
 
-            if (existingUsername != null)
-            {
-                throw new Exception("Username already exists.");
-            }
+            //if (existingUsername != null)
+            //{
+            //    throw new Exception("Username already exists.");
+            //}
 
-            // Check if a record with the same email already exists
-            var existingEmail = _dbContext.Klijents
-                .FirstOrDefaultAsync(a => a.Email == insert.Email);
+            //// Check if a record with the same email already exists
+            //var existingEmail = _dbContext.Klijents
+            //    .FirstOrDefaultAsync(a => a.Email == insert.Email);
 
-            if (existingEmail != null)
-            {
-                throw new Exception("Email already exists.");
-            }
+            //if (existingEmail != null)
+            //{
+            //    throw new Exception("Email already exists.");
+            //}
 
-            // If no duplicates found, proceed to insert the new record
+            //// If no duplicates found, proceed to insert the new record
 
 
             return base.Insert(insert);

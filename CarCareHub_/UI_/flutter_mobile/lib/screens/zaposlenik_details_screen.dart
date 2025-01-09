@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 
 class ZaposlenikDetailsScreen extends StatefulWidget {
   final Zaposlenik? zaposlenik;
-  ZaposlenikDetailsScreen({Key? key, this.zaposlenik}) : super(key: key);
+  const ZaposlenikDetailsScreen({super.key, this.zaposlenik});
 
   @override
   State<ZaposlenikDetailsScreen> createState() => _ZaposlenikDetailsScreenState();
@@ -104,7 +104,7 @@ Widget _buildForm() {
         // Text Fields
         FormBuilderTextField(
           name: 'ime',
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Ime',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Unesite ime',
@@ -120,13 +120,13 @@ Widget _buildForm() {
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),
         FormBuilderTextField(
           name: 'prezime',
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Prezime',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Unesite prezime',
@@ -142,13 +142,13 @@ Widget _buildForm() {
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),
         FormBuilderTextField(
           name: 'brojTelefona',
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Broj Telefona',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Unesite broj telefona',
@@ -165,7 +165,7 @@ Widget _buildForm() {
             ),
           ),
           keyboardType: TextInputType.phone,
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),
@@ -173,7 +173,7 @@ Widget _buildForm() {
         // Dropdowns
         FormBuilderDropdown<String>(
           name: 'gradId',
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Izaberite grad',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Izaberite grad',
@@ -189,11 +189,11 @@ Widget _buildForm() {
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
-          style: TextStyle(color: Colors.black),
-          items: gradResult?.result?.map((item) {
+          style: const TextStyle(color: Colors.black),
+          items: gradResult?.result.map((item) {
             return DropdownMenuItem(
               value: item.gradId.toString(),
-              child: Text(item.nazivGrada!, style: TextStyle(color: Colors.black)),
+              child: Text(item.nazivGrada!, style: const TextStyle(color: Colors.black)),
             );
           }).toList() ?? [],
           enabled: isAdminOrOwnProfile,
@@ -201,7 +201,7 @@ Widget _buildForm() {
         const SizedBox(height: 15),
         FormBuilderDropdown<String>(
           name: 'ulogaId',
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Izaberite ulogu',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Izaberite ulogu',
@@ -217,11 +217,11 @@ Widget _buildForm() {
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
-          style: TextStyle(color: Colors.black),
-          items: ulogaResult?.result?.map((item) {
+          style: const TextStyle(color: Colors.black),
+          items: ulogaResult?.result.map((item) {
             return DropdownMenuItem(
               value: item.ulogaId.toString(),
-              child: Text(item.nazivUloge!, style: TextStyle(color: Colors.black)),
+              child: Text(item.nazivUloge!, style: const TextStyle(color: Colors.black)),
             );
           }).toList() ?? [],
           enabled: isAdminOrOwnProfile,
@@ -231,7 +231,7 @@ Widget _buildForm() {
         // Email and Conditional Inputs
         FormBuilderTextField(
           name: 'email',
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Email',
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Unesite email',
@@ -248,7 +248,7 @@ Widget _buildForm() {
             ),
           ),
           keyboardType: TextInputType.emailAddress,
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),
@@ -257,7 +257,7 @@ Widget _buildForm() {
         if (isAdminOrOwnProfile) ...[
           FormBuilderTextField(
             name: 'username',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Username',
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite korisničko ime',
@@ -273,13 +273,13 @@ Widget _buildForm() {
                 borderSide: BorderSide(color: Colors.black),
               ),
             ),
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             enabled: isAdminOrOwnProfile,
           ),
           const SizedBox(height: 15),
           FormBuilderTextField(
             name: 'password',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Password',
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite lozinku',
@@ -296,13 +296,13 @@ Widget _buildForm() {
               ),
             ),
             obscureText: true,
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             enabled: isAdminOrOwnProfile,
           ),
           const SizedBox(height: 15),
           FormBuilderTextField(
             name: 'passwordAgain',
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Ponovite lozinku',
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Ponovo unesite lozinku',
@@ -319,7 +319,7 @@ Widget _buildForm() {
               ),
             ),
             obscureText: true,
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             enabled: isAdminOrOwnProfile,
           ),
         ],

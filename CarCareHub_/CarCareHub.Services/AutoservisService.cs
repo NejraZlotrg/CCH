@@ -54,25 +54,25 @@ namespace CarCareHub.Services
         }
         public override Task<Model.Autoservis> Insert(Model.AutoservisInsert insert)
         {
-            // Check if a record with the same username already exists
-            var existingUsername =  _dbContext.Autoservis
-                .FirstOrDefaultAsync(a => a.Username == insert.Username);
+            //// Check if a record with the same username already exists
+            //var existingUsername =  _dbContext.Autoservis
+            //    .FirstOrDefaultAsync(a => a.Username == insert.Username);
 
-            if (existingUsername != null)
-            {
-                throw new Exception("Username already exists.");
-            }
+            //if (existingUsername != null)
+            //{
+            //    throw new Exception("Username already exists.");
+            //}
 
-            // Check if a record with the same email already exists
-            var existingEmail =  _dbContext.Autoservis
-                .FirstOrDefaultAsync(a => a.Email == insert.Email);
+            //// Check if a record with the same email already exists
+            //var existingEmail =  _dbContext.Autoservis
+            //    .FirstOrDefaultAsync(a => a.Email == insert.Email);
 
-            if (existingEmail != null)
-            {
-                throw new Exception("Email already exists.");
-            }
+            //if (existingEmail != null)
+            //{
+            //    throw new Exception("Email already exists.");
+            //}
 
-            // If no duplicates found, proceed to insert the new record
+            //// If no duplicates found, proceed to insert the new record
 
 
             return base.Insert(insert);

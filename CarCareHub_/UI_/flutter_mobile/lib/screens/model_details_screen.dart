@@ -7,6 +7,7 @@ import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
@@ -30,6 +31,8 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
  
   bool isLoading = true;
  
+
+ final validator = CreateValidator();
   @override
   void initState() {
     super.initState();
@@ -77,6 +80,15 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                         // Dugme za spašavanje
                         ElevatedButton(
                           onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                           if (_formKey.currentState?.saveAndValidate() ?? false) {
                             var request = Map.from(_formKey.currentState!.value);
  
@@ -150,6 +162,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
         Expanded(
           child: FormBuilderDropdown(
             name: 'voziloId',
+            validator: validator.required,
             decoration: InputDecoration(
               labelText: 'Vozilo',
               border: const OutlineInputBorder(),
@@ -180,6 +193,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
         Expanded(
           child: FormBuilderTextField(
             name: "nazivModela",
+            validator: validator.required,
             decoration: const InputDecoration(
               labelText: "Naziv modela",
               border: OutlineInputBorder(),
@@ -193,6 +207,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
         Expanded(
           child: FormBuilderDropdown(
             name: 'godisteId',
+            validator: validator.required,
             decoration: InputDecoration(
               labelText: 'Godiste',
               border: const OutlineInputBorder(),

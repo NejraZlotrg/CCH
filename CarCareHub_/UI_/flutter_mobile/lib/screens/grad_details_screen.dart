@@ -7,6 +7,7 @@ import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,7 @@ class _GradDetailsScreenState extends State<GradDetailsScreen> {
   SearchResult<Drzave>? drzavaResult;
   bool isLoading = true;
 
+final validator = CreateValidator();
   @override
   void initState() {
     super.initState();
@@ -74,6 +76,15 @@ class _GradDetailsScreenState extends State<GradDetailsScreen> {
                         // Dugme za spašavanje
                         ElevatedButton(
                   onPressed: () async {
+                      if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
                     _formKey.currentState?.saveAndValidate();
 
                     var request = Map.from(_formKey.currentState!.value);
@@ -149,6 +160,7 @@ List<Widget> _buildFormFields() {
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
+                  validator: validator.required,
                   name: "nazivGrada"))
         ],
       ),
@@ -158,6 +170,7 @@ List<Widget> _buildFormFields() {
           Expanded(
             child: FormBuilderDropdown(
               name: 'drzavaId',
+              validator: validator.required,
               decoration: const InputDecoration(
                 labelText: 'Drzava',
                 border: OutlineInputBorder(),

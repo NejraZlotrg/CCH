@@ -14,6 +14,7 @@ import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
+import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,8 @@ class _KlijentRegistracijaScreenState
 
   List<Usluge> usluge = [];
   bool isLoading = true;
+
+  final validator = CreateValidator();
 
   @override
   void initState() {
@@ -129,7 +132,17 @@ class _KlijentRegistracijaScreenState
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ElevatedButton(
-                            onPressed: _saveForm,
+                            onPressed: ()  {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    // Forma je validna, nastavite dalje
+                    _saveForm();
+                  } else {
+                    // Forma nije validna
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Molimo popunite obavezna polja")),
+                    );
+                  }
+                },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.red,
@@ -189,6 +202,7 @@ class _KlijentRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "ime",
+                validator: validator.required,
               ),
             ],
           ),
@@ -212,6 +226,7 @@ class _KlijentRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "prezime",
+                validator: validator.required,
               ),
             ],
           ),
@@ -238,6 +253,7 @@ class _KlijentRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "username",
+          validator: validator.required,
         ),
       ],
     ),
@@ -261,6 +277,7 @@ class _KlijentRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "password",
+          validator: validator.required,
           obscureText: true,
         ),
       ],
@@ -285,6 +302,7 @@ class _KlijentRegistracijaScreenState
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "passwordAgain",
+          validator: validator.required,
           obscureText: true,
         ),
       ],
@@ -305,6 +323,7 @@ class _KlijentRegistracijaScreenState
               const SizedBox(height: 5),
               FormBuilderDropdown(
                 name: 'gradId',
+                validator: validator.required,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   fillColor: Colors.white,
@@ -355,6 +374,7 @@ class _KlijentRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "email",
+                validator: validator.required,
               ),
             ],
           ),
@@ -378,6 +398,7 @@ class _KlijentRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "telefon",
+                validator: validator.required,
               ),
             ],
           ),
@@ -407,6 +428,7 @@ class _KlijentRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "spol",
+                validator: validator.required,
               ),
             ],
           ),
