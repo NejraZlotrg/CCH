@@ -45,13 +45,15 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Drzava",
-      child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204),
-        child: Column(
-          children: [
-            _buildSearch(),
-            _buildDataListView(),
-          ],
+      child: SingleChildScrollView( // Dodano SingleChildScrollView
+        child: Container(
+          color: const Color.fromARGB(255, 204, 204, 204),
+          child: Column(
+            children: [
+              _buildSearch(),
+              _buildDataListView(),
+            ],
+          ),
         ),
       ),
     );
@@ -121,31 +123,32 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
                 ),
               ),
               const SizedBox(width: 10),
-                   if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DrzaveDetailsScreen(drzava: null),
+              if (context.read<UserProvider>().role == "Admin")
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DrzaveDetailsScreen(drzava: null),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 8.0),
+                      Text('Dodaj'),
+                    ],
                   ),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
@@ -180,7 +183,8 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
                           if (selected == true) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => DrzaveDetailsScreen(drzava: e),
+                                builder: (context) =>
+                                    DrzaveDetailsScreen(drzava: e),
                               ),
                             );
                           }
