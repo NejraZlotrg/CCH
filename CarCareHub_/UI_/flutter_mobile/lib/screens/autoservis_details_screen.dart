@@ -18,6 +18,7 @@ import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
+import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
@@ -230,7 +231,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
-                          onPressed: () => _showAddUslugaDialog(),
+                          
+                          onPressed: () => 
+                          
+                          _showAddUslugaDialog(),
+                          
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red, // Crvena boja dugmeta
                             foregroundColor: Colors.white, // Bijela boja teksta
@@ -400,7 +405,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
-                                                Navigator.pop(context),
+                                            Navigator.of(context).push(
+  MaterialPageRoute(
+    builder: (context) => const AutoservisScreen(),
+  ),
+),
+
                                             child: const Text("OK"),
                                           )
                                         ],
@@ -696,7 +706,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               style: const TextStyle(
                   color: Colors.black), // Crni tekst unutar inputa
               initialValue:
-                  widget.autoservis?.telefon ?? "", // Održavanje unetog teksta
+                  widget.autoservis?.telefon ?? "",
+                  validator: validator.phoneNumber, // Održavanje unetog teksta
             ),
           ),
           const SizedBox(width: 20),
@@ -762,7 +773,7 @@ Expanded(
                   color: Colors.black), // Crni tekst unutar inputa
               initialValue:
                   widget.autoservis?.jib ?? "", // Održavanje unetog teksta
-              validator: validator.required,
+              validator: validator.jib,
             ),
           ),
           const SizedBox(width: 20),
@@ -792,7 +803,7 @@ Expanded(
                   color: Colors.black), // Crni tekst unutar inputa
               initialValue:
                   widget.autoservis?.mbs ?? "", // Održavanje unetog teksta
-              validator: validator.required,
+              validator: validator.mbs,
             ),
           ),
         ],
@@ -1034,6 +1045,18 @@ Expanded(
             ),
             TextButton(
               onPressed: () async {
+
+                                                    // Provjera validacije forme
+    if (!(uslugaFormKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
+    
                 uslugaFormKey.currentState?.saveAndValidate();
                 var uslugaRequest = Map.from(uslugaFormKey.currentState!.value);
                 uslugaRequest['autoservisId'] = widget.autoservis?.autoservisId;
@@ -1097,7 +1120,7 @@ Expanded(
                     decoration:
                         const InputDecoration(labelText: "Matični broj"),
                     keyboardType: TextInputType.number,
-                    validator: validator.required,
+                    validator: validator.numberOnly,
                   ),
                   FormBuilderTextField(
                     name: "brojTelefona",
@@ -1122,7 +1145,7 @@ Expanded(
                     name: "email",
                     decoration: const InputDecoration(labelText: "Email"),
                     keyboardType: TextInputType.emailAddress,
-                    validator:validator.required,
+                    validator:validator.email,
                   ),
                   FormBuilderTextField(
                     name: "username",
@@ -1181,6 +1204,17 @@ Expanded(
             ),
             TextButton(
               onPressed: () async {
+                                                                  // Provjera validacije forme
+    if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Molimo popunite obavezna polja."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Zaustavi obradu ako validacija nije prošla
+    }
+    
                 zaposlenikFormKey.currentState?.saveAndValidate();
                 var zaposlenikRequest = Map<String, dynamic>.from(
                     zaposlenikFormKey.currentState!.value);

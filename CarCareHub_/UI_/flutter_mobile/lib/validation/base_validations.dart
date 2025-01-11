@@ -39,6 +39,39 @@ class BaseValidator {
 
     return null;
   }
+
+  
+  String? jib(dynamic value) {
+    if (value == null || value == 0 || value == '') {
+      return ValidationMessages.required;
+    }
+
+   // Regex za validaciju emaila
+var jibRegex = RegExp(r"^\d{13}$");
+
+  if (value is String && !jibRegex.hasMatch(value)) {
+    return ValidationMessages.jib; // Neispravan format
+  }
+
+  return null; // Sve je validno
+  }  
+  String? mbs(dynamic value) {
+    if (value == null || value == 0 || value == '') {
+      return ValidationMessages.required;
+    }
+
+   // Regex za validaciju emaila
+var mbsRegex = RegExp(r"^\d{8}$");
+
+  if (value is String && !mbsRegex.hasMatch(value)) {
+    return ValidationMessages.mbs; // Neispravan format
+  }
+
+  return null; // Sve je validno
+  }
+
+
+
 String? email(dynamic value) {
   if (value == null || (value is String && value.isEmpty)) {
     return ValidationMessages.required; // Provjerava required
@@ -63,7 +96,7 @@ String? phoneNumber(dynamic value) {
   var phoneRegex = RegExp(r"^(\+?\d{1,3})(6\d{7,8})$");
 
   if (value is String && !phoneRegex.hasMatch(value)) {
-    return ValidationMessages.invalidFormat; // Neispravan format
+    return ValidationMessages.phoneNumberFormat; // Neispravan format
   }
 
   return null; // Sve je validno

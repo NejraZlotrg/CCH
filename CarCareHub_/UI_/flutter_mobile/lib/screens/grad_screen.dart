@@ -8,7 +8,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class GradScreen extends StatefulWidget {
-  const GradScreen({Key? key}) : super(key: key);
+  const GradScreen({super.key});
 
   @override
   State<GradScreen> createState() => _GradScreenState();

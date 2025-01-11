@@ -31,12 +31,27 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    // Inicijalizacija providera
     _autoservisProvider = context.read<AutoservisProvider>();
     _gradProvider = context.read<GradProvider>();
 
+    // Poziv metoda za učitavanje podataka
     _loadGradovi();
-    _fetchInitialData(); // Dodano inicijalno učitavanje podataka
+    _fetchInitialData();
+
+ 
+    if (mounted) {
+    _fetchInitialData();  // Provera podataka svaki put kada se ekran otvori
+  
+    }
   }
+
+@override
+void didUpdateWidget(covariant AutoservisScreen oldWidget) {
+  super.didUpdateWidget(oldWidget);
+  _fetchInitialData(); // Ponovo učitaj podatke pri svakom povratku
+}
 
   Future<void> _loadGradovi() async {
     var gradoviResult = await _gradProvider.get();
@@ -55,6 +70,7 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
           result = data;
         });
       }
+      await _onSearchPressed();
     } catch (e) {
       print("Error fetching data: $e");
     }
@@ -69,7 +85,9 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
         child: Column(
           children: [
             _buildSearch(),
-            Expanded(child: _buildCardList()),
+            Expanded(
+              child: _buildCardList(),
+            ),
           ],
         ),
       ),
@@ -77,78 +95,94 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
   }
 
   Widget _buildSearch() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(color: Colors.black, width: 1.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: FormBuilder(
-          key: _formKey, // Postavite _formKey na FormBuilder
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Naziv',
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white,
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: FormBuilder(
+            key: _formKey,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          labelText: 'Naziv',
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        controller: _nazivController,
                       ),
-                      controller: _nazivController,
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                 Expanded(
-  child: FormBuilderDropdown<Grad>(
-    name: 'gradId',
-    decoration: InputDecoration(
-      labelText: 'Grad',
-      suffixIcon: const Icon(Icons.location_city),
-      hintText: 'Odaberite grad',
-      hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-      border: const OutlineInputBorder(),
-      filled: true,
-      fillColor: Colors.white,
-    ),
-    items: [
-          DropdownMenuItem<Grad>(
-            value: null, // Dodaje opciju bez vrijednosti
-            child: Text('--'), // Tekst prikazan za ovu opciju
-          ),
-        ] +
-        (gradovi
-                ?.map((grad) => DropdownMenuItem(
-                      value: grad,
-                      child: Text(grad.nazivGrada ?? ""),
-                    ))
-                .toList() ??
-            []),
-  ),
-),
-                ],
-              ),
-              const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (context.read<UserProvider>().role == "Admin")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AutoservisDetailsScreen(autoservis: null),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FormBuilderDropdown<Grad>(
+                        name: 'gradId',
+                        decoration: InputDecoration(
+                          labelText: 'Grad',
+                          suffixIcon: const Icon(Icons.location_city),
+                          hintText: 'Odaberite grad',
+                          hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+                          border: const OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        items: [
+                              const DropdownMenuItem<Grad>(
+                                value: null,
+                                child: Text('--'),
+                              ),
+                            ] +
+                            (gradovi
+                                    ?.map((grad) => DropdownMenuItem(
+                                          value: grad,
+                                          child: Text(grad.nazivGrada ?? ""),
+                                        ))
+                                    .toList() ??
+                                []),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (context.read<UserProvider>().role == "Admin")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AutoservisDetailsScreen(autoservis: null),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                        );
-                      },
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.add, color: Colors.white),
+                            SizedBox(width: 8.0),
+                            Text('Dodaj', style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                    ElevatedButton(
+                      onPressed: _onSearchPressed,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
@@ -158,65 +192,47 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                       ),
                       child: const Row(
                         children: [
-                          Icon(Icons.add, color: Colors.white),
+                          Icon(Icons.search, color: Colors.white),
                           SizedBox(width: 8.0),
-                          Text('Dodaj', style: TextStyle(color: Colors.white)),
+                          Text('Pretraga', style: TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),
-                  ElevatedButton(
-                    onPressed: _onSearchPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.search, color: Colors.white),
-                        SizedBox(width: 8.0),
-                        Text('Pretraga', style: TextStyle(color: Colors.white)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
-
-Future<void> _onSearchPressed() async {
-  var filterParams = {
-    'IsAllIncluded': 'true',
-  };
-
-  if (_nazivController.text.isNotEmpty) {
-    filterParams['naziv'] = _nazivController.text;
+    );
   }
 
-  var gradValue = _formKey.currentState?.fields['gradId']?.value;
-print('Selected Grad: $gradValue'); // Dodano za debug
+  Future<void> _onSearchPressed() async {
+    var filterParams = {
+      'IsAllIncluded': 'true',
+    };
 
-if (gradValue != null && gradValue is Grad) {
-  filterParams['nazivGrada'] = gradValue.nazivGrada!;
-  print('Grad Naziv: ${gradValue.nazivGrada}'); // Dodano za debug
-}
+    if (_nazivController.text.isNotEmpty) {
+      filterParams['naziv'] = _nazivController.text;
+    }
 
-  var data = await _autoservisProvider.get(filter: filterParams);
+    var gradValue = _formKey.currentState?.fields['gradId']?.value;
+    print('Selected Grad: $gradValue'); // Debug
 
-  if (mounted) {
-    setState(() {
-      result = data;
-    });
+    if (gradValue != null && gradValue is Grad) {
+      filterParams['nazivGrada'] = gradValue.nazivGrada!;
+      print('Grad Naziv: ${gradValue.nazivGrada}'); // Debug
+    }
+
+    var data = await _autoservisProvider.get(filter: filterParams);
+
+    if (mounted) {
+      setState(() {
+        result = data;
+      });
+    }
   }
-}
-
 
   Widget _buildCardList() {
     return ListView.builder(
@@ -236,8 +252,7 @@ if (gradValue != null && gradValue is Grad) {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        AutoservisDetailsScreen(autoservis: e),
+                    builder: (context) => AutoservisDetailsScreen(autoservis: e),
                   ),
                 );
               },
