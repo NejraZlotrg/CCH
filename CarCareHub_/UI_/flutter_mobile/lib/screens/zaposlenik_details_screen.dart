@@ -171,6 +171,7 @@ Widget _buildForm() {
           ),
           keyboardType: TextInputType.phone,
           style: const TextStyle(color: Colors.black),
+          initialValue: widget.zaposlenik?.brojTelefona?.toString(),
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),

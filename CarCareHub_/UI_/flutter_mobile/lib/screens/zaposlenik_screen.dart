@@ -193,13 +193,15 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
           ],
           rows: result?.result.map((Zaposlenik e) {
             return DataRow(
-              onSelectChanged: (selected) {
+              onSelectChanged: (selected) async {
                 if (selected == true) {
-                  Navigator.of(context).push(
+                await   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => ZaposlenikDetailsScreen( zaposlenik: e,),
                     ),
                   );
+                    await _loadData();
+
                 }
               },
               cells: [

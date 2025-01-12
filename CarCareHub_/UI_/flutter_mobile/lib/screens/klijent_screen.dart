@@ -131,7 +131,9 @@ class _KlijentScreenState extends State<KlijentScreen> {
                       MaterialPageRoute(
                         builder: (context) => KlijentDetailsScreen(klijent: null),
                       ),
+
                     );
+                    
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -197,14 +199,16 @@ class _KlijentScreenState extends State<KlijentScreen> {
             rows: result?.result
                     .map(
                       (Klijent e) => DataRow(
-                        onSelectChanged: (selected) {
+                        onSelectChanged: (selected) async  {
                           if (selected == true) {
-                            Navigator.of(context).push(
+                           await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
                                     KlijentDetailsScreen(klijent: e),
                               ),
                             );
+                    await _loadData();
+
                           }
                         },
                         cells: [

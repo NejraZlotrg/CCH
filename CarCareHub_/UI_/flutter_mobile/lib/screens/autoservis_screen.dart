@@ -25,54 +25,59 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
 
   SearchResult<Autoservis>? result;
   List<Grad>? gradovi;
+  bool _isDataFetched = false;
+  bool _isLoading = false;
 
   final TextEditingController _nazivController = TextEditingController();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+void didChangeDependencies() {
+  super.didChangeDependencies();
 
-    // Inicijalizacija providera
-    _autoservisProvider = context.read<AutoservisProvider>();
-    _gradProvider = context.read<GradProvider>();
+  _autoservisProvider = context.read<AutoservisProvider>();
+  _gradProvider = context.read<GradProvider>();
 
-    // Poziv metoda za učitavanje podataka
+  if (!_isDataFetched) {
+    _isDataFetched = true;
     _loadGradovi();
-    _fetchInitialData();
-
- 
-    if (mounted) {
-    _fetchInitialData();  // Provera podataka svaki put kada se ekran otvori
-  
-    }
   }
-
-@override
-void didUpdateWidget(covariant AutoservisScreen oldWidget) {
-  super.didUpdateWidget(oldWidget);
-  _fetchInitialData(); // Ponovo učitaj podatke pri svakom povratku
 }
 
-  Future<void> _loadGradovi() async {
+Future<void> _loadGradovi() async {
+  try {
     var gradoviResult = await _gradProvider.get();
     setState(() {
       gradovi = gradoviResult.result;
     });
+    // Nakon učitavanja gradova, odmah učitajte podatke
+    await _fetchInitialData();
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Greška pri učitavanju gradova: $e')),
+    );
   }
+}
+
 
   Future<void> _fetchInitialData() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       var data = await _autoservisProvider.get(filter: {
         'IsAllIncluded': 'true',
       });
-      if (mounted) {
-        setState(() {
-          result = data;
-        });
-      }
-      await _onSearchPressed();
+      setState(() {
+        result = data;
+      });
     } catch (e) {
-      print("Error fetching data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri učitavanju podataka: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -85,9 +90,11 @@ void didUpdateWidget(covariant AutoservisScreen oldWidget) {
         child: Column(
           children: [
             _buildSearch(),
-            Expanded(
-              child: _buildCardList(),
-            ),
+            _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: _buildCardList(),
+                  ),
           ],
         ),
       ),
@@ -218,82 +225,91 @@ void didUpdateWidget(covariant AutoservisScreen oldWidget) {
     }
 
     var gradValue = _formKey.currentState?.fields['gradId']?.value;
-    print('Selected Grad: $gradValue'); // Debug
 
     if (gradValue != null && gradValue is Grad) {
       filterParams['nazivGrada'] = gradValue.nazivGrada!;
-      print('Grad Naziv: ${gradValue.nazivGrada}'); // Debug
     }
 
-    var data = await _autoservisProvider.get(filter: filterParams);
-
-    if (mounted) {
+    try {
+      var data = await _autoservisProvider.get(filter: filterParams);
       setState(() {
         result = data;
       });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri pretrazi: $e')),
+      );
     }
   }
+Widget _buildCardList() {
+  if (result?.result.isEmpty ?? true) {
+    return Center(child: Text('Nema dostupnih autoservisa.'));
+  }
 
-  Widget _buildCardList() {
-    return ListView.builder(
-      itemCount: result?.result.length ?? 0,
-      itemBuilder: (context, index) {
-        var e = result!.result[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: 5,
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(16.0),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AutoservisDetailsScreen(autoservis: e),
-                  ),
-                );
-              },
-              title: Row(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: MemoryImage(base64Decode(e.slikaProfila ?? "")),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
+  return ListView.builder(
+    itemCount: result?.result.length ?? 0,
+    itemBuilder: (context, index) {
+      var e = result!.result[index];
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          elevation: 5,
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(16.0),
+            onTap: () async {
+              // Otvorite detalje i pričekajte povratak
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AutoservisDetailsScreen(autoservis: e),
+                ),
+              );
+              // Nakon povratka, osvježite podatke
+              await _fetchInitialData();
+            },
+            title: Row(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: MemoryImage(base64Decode(e.slikaProfila ?? "")),
+                      fit: BoxFit.cover,
                     ),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  const SizedBox(width: 16.0),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          e.naziv ?? "",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        e.naziv ?? "",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        const SizedBox(height: 8.0),
-                        Text('Adresa: ${e.adresa ?? ""}'),
-                        Text('Grad: ${e.grad?.nazivGrada ?? ""}'),
-                        Text('Telefon: ${e.telefon ?? ""}'),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text('Adresa: ${e.adresa ?? ""}'),
+                      Text('Grad: ${e.grad?.nazivGrada ?? ""}'),
+                      Text('Telefon: ${e.telefon ?? ""}'),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
+  
 }

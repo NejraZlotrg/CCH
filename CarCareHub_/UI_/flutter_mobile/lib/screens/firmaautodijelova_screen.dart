@@ -180,18 +180,19 @@ Widget _buildDataListView() {
             DataColumn(label: Text('SlikaProfila', style: TextStyle(fontStyle: FontStyle.italic))),
           ],
           rows: result?.result
-            .map(
+           .map(
               (FirmaAutodijelova e) => DataRow(
-                onSelectChanged: (selected) {
+                onSelectChanged: (selected) async {
                   if (selected == true) {
-                    Navigator.of(context).push(
+                    await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            FirmaAutodijelovaDetailScreen(
-                              firmaAutodijelova: e,
-                            ),
+                        builder: (context) => FirmaAutodijelovaDetailScreen(
+                          firmaAutodijelova: e,
+                        ),
                       ),
                     );
+                    // Nakon povratka s detalja, osvježite podatke
+                    await _loadData();
                   }
                 },
                 cells: [
