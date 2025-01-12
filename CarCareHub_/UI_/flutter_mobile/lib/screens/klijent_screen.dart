@@ -125,32 +125,33 @@ class _KlijentScreenState extends State<KlijentScreen> {
               ),
               const SizedBox(width: 10),
               if (context.read<UserProvider>().role == "Admin")
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => KlijentDetailsScreen(klijent: null),
-                      ),
+               ElevatedButton(
+  onPressed: () async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => KlijentDetailsScreen(klijent: null),
+      ),
+    );
+    // After returning from the details screen, reload the client list
+    await _loadData();
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.red,
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+  ),
+  child: const Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.add),
+      SizedBox(width: 8.0),
+      Text('Dodaj'),
+    ],
+  ),
+),
 
-                    );
-                    
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add),
-                      SizedBox(width: 8.0),
-                      Text('Dodaj'),
-                    ],
-                  ),
-                ),
             ],
           ),
         ),

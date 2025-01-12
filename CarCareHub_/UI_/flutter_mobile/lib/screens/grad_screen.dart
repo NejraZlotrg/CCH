@@ -119,15 +119,16 @@ class _GradScreenState extends State<GradScreen> {
               ),
               const SizedBox(width: 10),
               if (context.read<UserProvider>().role == "Admin")
-                ElevatedButton(
+                 ElevatedButton(
                   onPressed: () async {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => GradDetailsScreen(
-                          grad: null,
-                        ),
-                      ),
-                    );
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    GradDetailsScreen(grad: null),
+                              ),
+                            );
+                    await _loadData();
+
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red, // Crvena boja dugmeta
@@ -186,17 +187,17 @@ class _GradScreenState extends State<GradScreen> {
               ),
             ],
             rows: (result?.result ?? []).map(
-              (Grad e) => DataRow(
-                onSelectChanged: (selected) {
-                  if (selected == true) {
-                    print('Selected: ${e.gradId}');
-                    // Ovdje možeš dodati navigaciju ili akciju za detalje
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => GradDetailsScreen(grad: e),
-                      ),
-                    );
-                  }
+                      (Grad e) => DataRow(
+                        onSelectChanged: (selected) async  {
+                          if (selected == true) {
+                           await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    GradDetailsScreen(grad: e),
+                              ),
+                            );
+                    await _loadData();
+                     }
                 },
                 cells: [
                   DataCell(Text(e.nazivGrada ?? "")),

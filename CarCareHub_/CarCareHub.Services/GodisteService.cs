@@ -22,7 +22,7 @@ namespace CarCareHub.Services
             
             if (search?.Godiste_!=null)
             {
-                query = query.Where(x => x.Godiste_==search.Godiste_);
+                query = query.Where(x => x.Godiste_.ToString().StartsWith(search.Godiste_.ToString()));
             }
           
             return base.AddFilter(query, search);

@@ -96,14 +96,17 @@ class _UslugeScreenState extends State<UslugeScreen> {
               ),
               const SizedBox(width: 10),
                      if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => UslugeDetailsScreen(usluge: null),
-                    ),
-                  );
-                },
+             ElevatedButton(
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UslugeDetailsScreen(usluge: null),
+                              ),
+                            );
+                    await _loadData();
+
+                  },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -174,30 +177,32 @@ class _UslugeScreenState extends State<UslugeScreen> {
                 rows: result?.result
                     .map(
                       (Usluge e) => DataRow(
-                        cells: [
-                          DataCell(Text(e.nazivUsluge ?? "")),
-                          DataCell(Text(e.cijena?.toString() ?? "")),
-                        ],
-                        onSelectChanged: (selected) {
+                        onSelectChanged: (selected) async  {
                           if (selected == true) {
-                            Navigator.of(context).push(
+                           await  Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => UslugeDetailsScreen(usluge: e),
+                                builder: (context) =>
+                                    UslugeDetailsScreen(usluge: e),
                               ),
                             );
-                          }
-                        },
+                    await _loadData();
+
+
+                  }
+                },
+                cells: [
+                  DataCell(Text(e.nazivUsluge.toString())),
+                  DataCell(Text(e.cijena.toString())),
+
+                ],
+             
                       ),
                     )
                     .toList() ??
-                    [],
-              ),
-            ),
+                [],
           ),
         ),
       ),
-    );
+    )));
   }
 }
- 
- 

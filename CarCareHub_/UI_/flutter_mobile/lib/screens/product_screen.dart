@@ -52,7 +52,7 @@ class _ProductScreenState extends State<ProductScreen> {
     _voziloProvider = context.read<VoziloProvider>();
     _godisteProvider = context.read<GodisteProvider>();
 
-_loadData();
+    _loadData();
     _loadInitialData(); //----- Promijenjeno ime funkcije
 
 
@@ -303,12 +303,14 @@ _loadData();
   children: [
            if (context.read<UserProvider>().role == "Admin")
     ElevatedButton(
-      onPressed: () {
+      onPressed: ()async  {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => const ProductDetailScreen(product: null),
           ),
+         
         );
+                await  _loadData();
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.red, // Crvena boja za dugme
@@ -427,12 +429,14 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
                 : e.cijena ?? 0.0; // Cijena sa popustom uvećana za 5%
 
             return GestureDetector(
-              onTap: () {
+              onTap: () async {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ProductDetailScreen(product: e),
                   ),
+                  
                 );
+                        await  _loadData();
               },
               child: Card(
                 shape: RoundedRectangleBorder(

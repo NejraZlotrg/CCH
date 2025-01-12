@@ -93,6 +93,8 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                                           widget.drzava!.drzavaId!,
                                           _formKey.currentState?.value);
                                     }
+                                         Navigator.pop(context);
+
                                   } on Exception catch (e) {
                                     showDialog(
                                       context: context,

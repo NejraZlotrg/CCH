@@ -23,14 +23,22 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _drzaveProvider = context.read<DrzaveProvider>();
-    _fetchInitialData(); // Poziv funkcije za inicijalno učitavanje
+    _loadData();
+    _fetchInitialData(); // Initial fetch
+  }
+
+  Future<void> _loadData() async {
+    var data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
+    if (mounted) {
+      setState(() {
+        result = data;
+      });
+    }
   }
 
   Future<void> _fetchInitialData() async {
     try {
-      var data = await _drzaveProvider.get(filter: {
-        'IsAllncluded': 'true',
-      });
+      var data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
       if (mounted) {
         setState(() {
           result = data;
@@ -45,7 +53,7 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Drzava",
-      child: SingleChildScrollView( // Dodano SingleChildScrollView
+      child: SingleChildScrollView(
         child: Container(
           color: const Color.fromARGB(255, 204, 204, 204),
           child: Column(
@@ -87,9 +95,7 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
               const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () async {
-                  var filterParams = {
-                    'IsAllncluded': 'true',
-                  };
+                  var filterParams = {'IsAllncluded': 'true'};
 
                   if (_nazivDrzaveController.text.isNotEmpty) {
                     filterParams['nazivDrzave'] = _nazivDrzaveController.text;
@@ -125,13 +131,14 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
               const SizedBox(width: 10),
               if (context.read<UserProvider>().role == "Admin")
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            DrzaveDetailsScreen(drzava: null),
+                        builder: (context) => DrzaveDetailsScreen(drzava: null),
                       ),
                     );
+                    // Reload data after returning from DrzaveDetailsScreen
+                    await _loadData();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -179,14 +186,16 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
             rows: result?.result
                     .map(
                       (Drzave e) => DataRow(
-                        onSelectChanged: (selected) {
+                        onSelectChanged: (selected) async {
                           if (selected == true) {
-                            Navigator.of(context).push(
+                            await Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
                                     DrzaveDetailsScreen(drzava: e),
                               ),
                             );
+                            // Reload data after selecting a row
+                            await _loadData();
                           }
                         },
                         cells: [

@@ -38,6 +38,21 @@ namespace CarCareHub.Services
 
             return Convert.ToBase64String(byteArray);
         }
+
+        public override IQueryable<Database.FirmaAutodijelova> AddFilter(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search = null)
+        {
+
+
+            if (!string.IsNullOrWhiteSpace(search?.NazivFirme))
+            {
+                query = query.Where(x => x.NazivFirme.StartsWith(search.NazivFirme));
+            }
+
+         
+
+            return base.AddFilter(query, search);
+        }
+
         public static string GenerateHash(string salt, string password)
         {
             byte[] src = Convert.FromBase64String(salt);

@@ -157,9 +157,29 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                  // validator: FormBuilderValidators.required(context),
                 ),
               ),
+              
             ],
           ),
           const SizedBox(height: 20),
+           Row(
+            children: [
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    labelText: "Cijena usluge",
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "cijena",
+                  validator: validator.required,
+                 // validator: FormBuilderValidators.required(context),
+                ),
+              ),
+              
+            ],
+          ),
         ],
       ),
     );

@@ -166,12 +166,14 @@ Future<void> _loadGradovi() async {
                   children: [
                     if (context.read<UserProvider>().role == "Admin")
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => AutoservisDetailsScreen(autoservis: null),
-                            ),
-                          );
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AutoservisDetailsScreen(autoservis: null),
+                              ),
+                            );
+                    await _fetchInitialData();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

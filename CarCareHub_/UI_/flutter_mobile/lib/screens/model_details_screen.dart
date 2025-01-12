@@ -99,6 +99,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                                 await _modelProvider.update(
                                     widget.model!.modelId, request);
                               }
+                                Navigator.pop(context);
                             } on Exception catch (e) {
                               showDialog(
                                 context: context,

@@ -55,6 +55,7 @@ var jibRegex = RegExp(r"^\d{13}$");
 
   return null; // Sve je validno
   }  
+
   String? mbs(dynamic value) {
     if (value == null || value == 0 || value == '') {
       return ValidationMessages.required;
@@ -101,6 +102,48 @@ String? phoneNumber(dynamic value) {
 
   return null; // Sve je validno
 }
+
+
+  String? godiste(dynamic value) {
+    if (value == null || value == 0 || value == '') {
+      return ValidationMessages.required;
+    }
+
+   // Regex za validaciju emaila
+var mbsRegex = RegExp(r"^\d{4}$");
+
+  if (value is String && !mbsRegex.hasMatch(value)) {
+    return ValidationMessages.godiste; // Neispravan format
+  }
+
+  return null; // Sve je validno
+  }
+
+
+
+
+  
+  String? lozinkaAgain(dynamic value) {
+    if (value is String?) {
+      if (value == null || value.isEmpty) {
+        return ValidationMessages.required;
+      }
+      return null;
+    }
+
+    if (value is num?) {
+      if (value == null || value == 0) {
+        return ValidationMessages.lozinkaPonovo;
+      }
+      return null;
+    }
+
+    if (value == null) {
+      return ValidationMessages.lozinkaPonovo;
+    }
+
+    return null;
+  }
 
 }
 

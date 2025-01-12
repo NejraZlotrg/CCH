@@ -95,7 +95,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
             onPressed: () async {
               print("podaci proceed");
               var data = await _proizvodjacProvider.get(filter: {
-                'nazivDrzave': _nazivProizvodjacaController.text,
+                'nazivProizvodjaca': _nazivProizvodjacaController.text,
               });
  
               setState(() {
@@ -119,13 +119,15 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
             ),
           ),
           const SizedBox(width: 10),
-                 if (context.read<UserProvider>().role == "Admin")
-          ElevatedButton(
-            onPressed: () async {
- 
-                     Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> ProizvodjacDetailsScreen(proizvodjac: null,) // poziv na drugi screen
-                     ), );
+         ElevatedButton(
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProizvodjacDetailsScreen(proizvodjac: null),
+                              ),
+                            );
+                    await _fetchInitialData();
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, // Crvena boja dugmeta
@@ -169,33 +171,33 @@ Widget _buildDataListView() {
             ),
           ],
           rows: result?.result
-                  .map(
-                    (Proizvodjac e) => DataRow(
-                      cells: [
-                        DataCell(
-                          Text(e.nazivProizvodjaca ?? ""),
-                          onTap: () {
-                            // Navigacija na drugi ekran pri kliku na ćeliju
-                            Navigator.of(context).push(
+                   .map(
+                      (Proizvodjac e) => DataRow(
+                        onSelectChanged: (selected) async  {
+                          if (selected == true) {
+                           await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
                                     ProizvodjacDetailsScreen(proizvodjac: e),
                               ),
                             );
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
+                    await _fetchInitialData();
+
+                  }
+                },
+                cells: [
+                  DataCell(Text(e.nazivProizvodjaca.toString())),
+                ],
+             
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
- 
- 
-}
- 
+
  

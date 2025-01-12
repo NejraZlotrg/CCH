@@ -167,11 +167,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                       title: const Text("Greška"),
                                       content: Text(e.toString()),
                                       actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text("OK"),
-                                        ),
+                                      
+                                        
                                       ],
                                     ),
                                   );
@@ -496,7 +493,6 @@ ElevatedButton(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "popust",
-validator: validator.required,
         initialValue: widget.product?.popust.toString(),
       ),
       const SizedBox(height: 10),
@@ -508,7 +504,7 @@ validator: validator.required,
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "opis",
-        validator: validator.required,
+
         initialValue: widget.product?.opis ?? '',
       ),
     ];

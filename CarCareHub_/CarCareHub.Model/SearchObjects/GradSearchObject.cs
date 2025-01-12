@@ -8,7 +8,7 @@ namespace CarCareHub.Model.SearchObjects
 {
     public class GradSearchObject: BaseSearchObject
     {
-        public string? Naziv { get; set; }
+        public string? NazivGrada { get; set; }
         public bool IsDrzavaIncluded { get; set; }
 
     }

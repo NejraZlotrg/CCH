@@ -103,12 +103,14 @@ class _UlogeScreenState extends State<UlogeScreen> {
               const SizedBox(width: 10),
                      if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => UlogeDetailsScreen(uloge: null),
-                    ),
-                  );
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UlogeDetailsScreen(uloge: null),
+                              ),
+                            );
+                    await _fetchInitialData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -169,22 +171,24 @@ class _UlogeScreenState extends State<UlogeScreen> {
               ),
             ],
             rows: result?.result
-                    .map(
+                   .map(
                       (Uloge e) => DataRow(
-                        cells: [
-                          DataCell(
-                            Text(e.nazivUloge ?? ""),
-                            onTap: () {
-                              // Navigacija na drugi ekran pri kliku na ćeliju
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      UlogeDetailsScreen(uloge: e),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                        onSelectChanged: (selected) async  {
+                          if (selected == true) {
+                           await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UlogeDetailsScreen(uloge: e),
+                              ),
+                            );
+                    await _fetchInitialData();
+
+                  }
+                },
+                cells: [
+                  DataCell(Text(e.nazivUloge.toString())),
+                ],
+             
                       ),
                     )
                     .toList() ??
@@ -195,5 +199,5 @@ class _UlogeScreenState extends State<UlogeScreen> {
     );
   }
 }
- 
+
  

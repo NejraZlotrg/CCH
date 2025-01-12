@@ -90,26 +90,27 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
                                   try {
                                     if (widget.godiste == null) {
                                       await _godisteProvider.insert(request);
+                                      
                                     } else {
                                       await _godisteProvider.update(
                                           widget.godiste!.godisteId!,
                                           _formKey.currentState?.value);
                                     }
+                                         Navigator.pop(context);
+
                                   } on Exception catch (e) {
                                     showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text("error"),
-                                        content: Text(e.toString()),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text("OK"),
-                                          )
-                                        ],
-                                      ),
+                                       context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
                                     );
                                   }
                                 },
@@ -162,7 +163,7 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
-                  validator: validator.required,
+                  validator: validator.godiste,
                   name: "godiste_")
                   )
                   

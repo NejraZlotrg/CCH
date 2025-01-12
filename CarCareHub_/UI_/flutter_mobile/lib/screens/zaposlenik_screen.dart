@@ -108,8 +108,11 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                 if (_imeController.text.isNotEmpty) {
                      filterParams['ime'] = _imeController.text;
                         }
-
+                       if (_prezimeController.text.isNotEmpty) {
+                     filterParams['prezime'] = _prezimeController.text;
+                        }
               var data = await _zaposlenikProvider.get(filter: filterParams);
+
 
               setState(() {
                 result = data;
@@ -133,12 +136,16 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
           ),
           const SizedBox(width: 10),
                  if (context.read<UserProvider>().role == "Admin")
-                    ElevatedButton(
-            onPressed: () async {
+                  ElevatedButton(
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ZaposlenikDetailsScreen(zaposlenik: null),
+                              ),
+                            );
+                    await _loadData();
 
-                     Navigator.of(context).push(
-                     MaterialPageRoute(builder: (context)=> const ZaposlenikDetailsScreen(zaposlenik: null,) // poziv na drugi screen
-                     ), );
             },
                 style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, // Crvena boja dugmeta

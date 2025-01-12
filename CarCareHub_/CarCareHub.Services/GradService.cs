@@ -21,9 +21,9 @@ namespace CarCareHub.Services
         {
   
 
-            if (!string.IsNullOrWhiteSpace(search?.Naziv))
+            if (!string.IsNullOrWhiteSpace(search?.NazivGrada))
             {
-                query = query.Where(x => x.NazivGrada.StartsWith(search.Naziv));
+                query = query.Where(x => x.NazivGrada.StartsWith(search.NazivGrada));
             }
             return base.AddFilter(query, search);
         }

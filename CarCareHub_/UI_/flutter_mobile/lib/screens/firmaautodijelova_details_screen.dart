@@ -181,12 +181,9 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: const Text("Greška"),
-              content: Text(e.toString()),
+              content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("OK"),
-                ),
+               
               ],
             ),
           );
@@ -473,7 +470,7 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "jib",
-            validator: validator.required,
+            validator: validator.jib,
             enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -498,7 +495,7 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "mbs",
-            validator: validator.required,
+            validator: validator.mbs,
             enabled: context.read<UserProvider>().role == "Admin"|| context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
           ),
         ),
@@ -604,7 +601,8 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "passwordAgain",
-            validator: validator.required,
+            validator: validator.lozinkaAgain,
+
             obscureText: true,
           ),
         ],

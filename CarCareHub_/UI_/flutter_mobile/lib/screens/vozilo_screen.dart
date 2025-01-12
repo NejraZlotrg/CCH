@@ -95,13 +95,15 @@ class _VoziloScreenState extends State<VoziloScreen> {
               ),
               const SizedBox(width: 10),
                      if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => VoziloDetailsScreen(vozilo: null),
-                    ),
-                  );
+             ElevatedButton(
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    VoziloDetailsScreen(vozilo: null),
+                              ),
+                            );
+                    await _loadData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -161,23 +163,25 @@ class _VoziloScreenState extends State<VoziloScreen> {
                 ),
               ),
             ],
-            rows: result?.result
+          rows: result?.result
                     .map(
                       (Vozilo e) => DataRow(
-                        cells: [
-                          DataCell(
-                            Text(e.markaVozila ?? ""),
-                            onTap: () {
-                              // Navigacija na drugi ekran pri kliku na ćeliju
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      VoziloDetailsScreen(vozilo: e),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                        onSelectChanged: (selected) async  {
+                          if (selected == true) {
+                           await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    VoziloDetailsScreen(vozilo: e),
+                              ),
+                            );
+                    await _loadData();
+
+                  }
+                },
+                cells: [
+                  DataCell(Text(e.markaVozila.toString())),
+                ],
+             
                       ),
                     )
                     .toList() ??
@@ -188,5 +192,3 @@ class _VoziloScreenState extends State<VoziloScreen> {
     );
   }
 }
- 
- 

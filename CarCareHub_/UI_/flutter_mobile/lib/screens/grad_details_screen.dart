@@ -96,6 +96,7 @@ final validator = CreateValidator();
                         await _gradProvider.update(
                             widget.grad!.gradId!, _formKey.currentState?.value);
                       }
+                        Navigator.pop(context);
                     } on Exception catch (e) {
                       showDialog(
                         context: context,

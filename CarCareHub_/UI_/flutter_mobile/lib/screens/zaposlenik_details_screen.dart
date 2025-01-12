@@ -206,36 +206,7 @@ Widget _buildForm() {
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),
-        FormBuilderDropdown<String>(
-          name: 'ulogaId',          validator: validator.required,
-
-          decoration: const InputDecoration(
-            labelText: 'Izaberite ulogu',
-            labelStyle: TextStyle(color: Colors.black),
-            hintText: 'Izaberite ulogu',
-            hintStyle: TextStyle(color: Colors.black),
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-          ),
-          style: const TextStyle(color: Colors.black),
-          items: ulogaResult?.result.map((item) {
-            return DropdownMenuItem(
-              value: item.ulogaId.toString(),
-              child: Text(item.nazivUloge!, style: const TextStyle(color: Colors.black)),
-            );
-          }).toList() ?? [],
-          enabled: isAdminOrOwnProfile,
-        ),
-        const SizedBox(height: 15),
-
+        
         // Email and Conditional Inputs
         FormBuilderTextField(
           name: 'email',          validator: validator.email,
@@ -312,8 +283,8 @@ Widget _buildForm() {
           ),
           const SizedBox(height: 15),
           FormBuilderTextField(
-            name: 'passwordAgain',          validator: validator.required,
-
+            name: 'passwordAgain',          
+            validator: validator.lozinkaAgain,
             decoration: const InputDecoration(
               labelText: 'Ponovite lozinku',
               labelStyle: TextStyle(color: Colors.black),
@@ -365,12 +336,9 @@ Widget _buildForm() {
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
                             title: const Text("Greška"),
-                            content: Text(e.toString()),
+                                        content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
                             actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("OK"),
-                              ),
+                              
                             ],
                           ),
                         );

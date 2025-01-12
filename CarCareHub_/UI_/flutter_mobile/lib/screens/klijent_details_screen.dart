@@ -81,12 +81,9 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Greška"),
-          content: Text(e.toString()),
+          content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
+         
           ],
         ),
       );
@@ -333,7 +330,7 @@ List<Widget> _buildFormFields() {
           ),
           style: const TextStyle(color: Colors.black),
           name: "passwordAgain",
-          validator: validator.required,
+          validator: validator.lozinkaAgain,
           obscureText: true,
         ),
       ],

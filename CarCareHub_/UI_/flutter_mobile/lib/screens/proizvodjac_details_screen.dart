@@ -90,6 +90,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                                 _formKey.currentState?.value,
                               );
                             }
+                              Navigator.pop(context);
                           } on Exception catch (e) {
                             showDialog(
                               context: context,

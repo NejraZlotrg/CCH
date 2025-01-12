@@ -108,13 +108,16 @@ class _ModelScreenState extends State<ModelScreen> {
               ),
               const SizedBox(width: 10),
                      if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ModelDetailsScreen(model: null),
-                    ),
-                  );
+               ElevatedButton(
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ModelDetailsScreen(model: null),
+                              ),
+                            );
+                    await _loadData();
+
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -188,43 +191,34 @@ Widget _buildDataListView() {
             ),
           ],
           rows: result?.result
-              .map(
-                (Model e) => DataRow(
-                  cells: [
+                 .map(
+                      (Model e) => DataRow(
+                        onSelectChanged: (selected) async  {
+                          if (selected == true) {
+                           await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ModelDetailsScreen(model: e),
+                              ),
+                            );
+                    await _loadData();
+
+                  }
+                },
+                cells: [
                     DataCell(Text(e.nazivModela ?? "")),
                     DataCell(Text(e.vozilo?.markaVozila ?? "")),
                     DataCell(Text(e.godiste?.godiste_?.toString() ?? "")),
                   ],
-                  onSelectChanged: (selected) {
-                    if (selected == true) {
-                      // Ovdje se vrši navigacija na detalje modela
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ModelDetailsScreen(model: e),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              )
-              .toList() ??
-              [],
+ 
+             
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
- 
- 
- 
- 
- 
-}
- 
- 
- 
- 
- 
- 
- 
- 

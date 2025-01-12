@@ -126,15 +126,15 @@ void _onSearchPressed() async {
               ),
               const SizedBox(width: 10),
               if (context.read<UserProvider>().role == "Admin")
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const FirmaAutodijelovaDetailScreen(
-                          firmaAutodijelova: null,
-                        ),
-                      ),
-                    );
+               ElevatedButton(
+                  onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
+                              ),
+                            );
+                    await _loadData();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,

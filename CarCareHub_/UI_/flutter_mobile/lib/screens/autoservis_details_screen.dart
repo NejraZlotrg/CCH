@@ -401,18 +401,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                       builder: (BuildContext context) =>
                                           AlertDialog(
                                         title: const Text("Greška"),
-                                        content: Text(e.toString()),
+                                        content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
                                         actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                            Navigator.of(context).push(
-  MaterialPageRoute(
-    builder: (context) => const AutoservisScreen(),
-  ),
-),
-
-                                            child: const Text("OK"),
-                                          )
+                                          
                                         ],
                                       ),
                                     );
@@ -917,7 +908,7 @@ Expanded(
                     ),
                     name: "passwordAgain",
                     initialValue: "", // Održavanje unetog teksta
-                    validator: validator.required,
+                    validator: validator.lozinkaAgain,
                     obscureText: true, // Da lozinka bude sakrivena
                     style: const TextStyle(
                         color: Colors.black), // Crni tekst unutar inputa
