@@ -331,7 +331,7 @@ Widget _buildForm() {
                         }
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context);
-                      } on Exception catch (e) {
+                      } on Exception {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) => AlertDialog(

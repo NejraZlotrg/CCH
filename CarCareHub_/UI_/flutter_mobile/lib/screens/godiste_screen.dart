@@ -173,6 +173,8 @@ class _GodisteScreenState extends State<GodisteScreen> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical, // Ensure vertical scroll
           child: DataTable(
+                      showCheckboxColumn: false,
+
             columns: const [
               DataColumn(
                 label: Text(

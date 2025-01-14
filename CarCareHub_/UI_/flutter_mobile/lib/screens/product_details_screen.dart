@@ -156,11 +156,9 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                       request,
                                     );
                                   }
-                                  // ignore: use_build_context_synchronously
                                   Navigator.pop(context);
                                 } on Exception catch (e) {
                                   showDialog(
-                                    // ignore: use_build_context_synchronously
                                     context: context,
                                     builder: (BuildContext context) =>
                                         AlertDialog(
@@ -350,12 +348,12 @@ ElevatedButton(
       const SizedBox(height: 10),
       FormBuilderTextField(
         decoration: const InputDecoration(
-            labelText: "Model",
+            labelText: "ModelProizvoda",
             border: OutlineInputBorder(),
             fillColor: Colors.white, // Bela pozadina
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
-        name: "model",
+        name: "modelProizvoda",
         validator: validator.required,
         initialValue: widget.product?.modelProizvoda ?? '',
       ),
@@ -420,7 +418,7 @@ ElevatedButton(
         children: [
           Expanded(child:
           FormBuilderDropdown(
-            name: 'firmaAutoDijelovaID',
+            name: 'firmaAutodijelovaID',
             validator: validator.required,
             decoration: const InputDecoration(
               labelText: 'FirmaAutoDijelova',

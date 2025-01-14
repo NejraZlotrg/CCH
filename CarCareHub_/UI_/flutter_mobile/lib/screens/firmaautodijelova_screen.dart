@@ -172,6 +172,8 @@ Widget _buildDataListView() {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: DataTable(
+                    showCheckboxColumn: false,
+
           columns: const [
             DataColumn(label: Text('firmaAutodijelovaID', style: TextStyle(fontStyle: FontStyle.italic))),
             DataColumn(label: Text('nazivFirme', style: TextStyle(fontStyle: FontStyle.italic))),

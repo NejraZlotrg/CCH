@@ -191,6 +191,8 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
       ),
       child: SingleChildScrollView(
         child: DataTable(
+                    showCheckboxColumn: false,
+
           columns: const [
             DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
             DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold))),

@@ -162,6 +162,8 @@ class _UlogeScreenState extends State<UlogeScreen> {
         ),
         child: SingleChildScrollView(
           child: DataTable(
+                      showCheckboxColumn: false,
+
             columns: const [
               DataColumn(
                 label: Text(

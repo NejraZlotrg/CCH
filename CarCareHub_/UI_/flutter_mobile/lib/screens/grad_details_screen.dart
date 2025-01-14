@@ -179,7 +179,7 @@ List<Widget> _buildFormFields() {
                 filled: true, // Da pozadina bude ispunjena
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                hintText: 'Izaberite grad',
+                hintText: 'Izaberite državu',
               ),
               initialValue: widget.grad?.drzavaId?.toString(),
               items: drzavaResult?.result

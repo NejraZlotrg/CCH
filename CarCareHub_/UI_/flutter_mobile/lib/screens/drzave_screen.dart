@@ -175,6 +175,8 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
         ),
         child: SingleChildScrollView(
           child: DataTable(
+                      showCheckboxColumn: false,
+
             columns: const [
               DataColumn(
                 label: Text(

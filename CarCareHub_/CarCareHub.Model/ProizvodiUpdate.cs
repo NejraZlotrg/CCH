@@ -35,6 +35,7 @@ namespace CarCareHub.Model
         public int? KategorijaId { get; set; }
 
         public int? ProizvodjacId { get; set; }
+        public int? firmaAutodijelovaID { get; set; }
         public int? ModelId { get; set; } // Foreign key
 
 

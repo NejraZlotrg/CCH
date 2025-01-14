@@ -146,7 +146,7 @@ Future<void> _loadGradovi() async {
                         items: [
                               const DropdownMenuItem<Grad>(
                                 value: null,
-                                child: Text('--'),
+                                child: Text('Odaberite grad'),
                               ),
                             ] +
                             (gradovi

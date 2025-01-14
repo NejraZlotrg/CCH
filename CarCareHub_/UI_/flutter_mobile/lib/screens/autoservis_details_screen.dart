@@ -394,7 +394,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                     }
                                     // ignore: use_build_context_synchronously
                                     Navigator.pop(context);
-                                  } on Exception catch (e) {
+                                  } on Exception {
                                     showDialog(
                                       // ignore: use_build_context_synchronously
                                       context: context,

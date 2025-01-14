@@ -76,7 +76,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
         );
       }
       Navigator.pop(context);
-    } on Exception catch (e) {
+    } on Exception {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(

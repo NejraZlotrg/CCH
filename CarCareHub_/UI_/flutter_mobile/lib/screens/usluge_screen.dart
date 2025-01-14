@@ -160,6 +160,8 @@ class _UslugeScreenState extends State<UslugeScreen> {
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical, // Vertikalno skrolovanje
               child: DataTable(
+                          showCheckboxColumn: false,
+
                 columns: const [
                   DataColumn(
                     label: Text(

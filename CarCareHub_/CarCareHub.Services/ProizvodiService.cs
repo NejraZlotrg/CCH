@@ -142,11 +142,12 @@ namespace CarCareHub.Services
             }
             if (search.CijenaOpadajuca == true)
             {
-                query = query.OrderByDescending(h => h.Cijena);
+
+                query = query.OrderByDescending(h => h.CijenaSaPopustom) ; 
             }
             if (search.CijenaRastuca == true)
             {
-                query = query.OrderBy(h => h.Cijena);
+                query = query.OrderBy(h => h.CijenaSaPopustom);
             }
             
 

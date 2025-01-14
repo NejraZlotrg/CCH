@@ -172,6 +172,8 @@ class _GradScreenState extends State<GradScreen> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical, // Dodan vertikalni scroll
           child: DataTable(
+                      showCheckboxColumn: false,
+
             columns: const [
               DataColumn(
                 label: Text(

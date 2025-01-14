@@ -3,12 +3,13 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/godiste.dart';
+import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
+import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
@@ -31,10 +32,12 @@ class _ProductScreenState extends State<ProductScreen> {
   late ModelProvider _modelProvider;
   late VoziloProvider _voziloProvider;
   late GodisteProvider _godisteProvider;
+  late GradProvider _gradProvider;
 
   List<Model>? model;
   List<Vozilo>? vozila; //----- Dodano za vozila
   List<Godiste>? godiste;
+  List<Grad>? grad;
 
   SearchResult<Product>? result;
 
@@ -46,11 +49,13 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     _productProvider = context.read<ProductProvider>();
 
     _modelProvider = context.read<ModelProvider>();
     _voziloProvider = context.read<VoziloProvider>();
     _godisteProvider = context.read<GodisteProvider>();
+    _gradProvider = context.read<GradProvider>();
 
     _loadData();
     _loadInitialData(); //----- Promijenjeno ime funkcije
@@ -71,11 +76,13 @@ class _ProductScreenState extends State<ProductScreen> {
     var modelResult = await _modelProvider.get();
     var vozilaResult = await _voziloProvider.get(); //----- Učitavanje vozila
     var godistaResult = await _godisteProvider.get(); //----- Učitavanje godista
+    var gradResult = await _gradProvider.get(); //----- Učitavanje godista
 
     setState(() {
       model = modelResult.result;
       vozila = vozilaResult.result;
       godiste = godistaResult.result;
+      grad = gradResult.result;
     });
   }
   
@@ -189,16 +196,33 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Lokacija",
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    controller: _gradController,
-                  ),
-                ),
+          child: FormBuilderDropdown<Grad>(
+            name: 'gradId',
+            decoration: InputDecoration(
+              labelText: 'Lokacija',
+              suffixIcon: const Icon(Icons.directions_car),
+              hintText: 'Odaberite grad',
+              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+              border: const OutlineInputBorder(
+              ),
+              filled: true,
+              fillColor: const Color.fromARGB(255, 255, 255, 255),
+            ),
+            items: [
+                              const DropdownMenuItem<Grad>(
+                                value: null,
+                                child: Text('Odaberite grad'),
+                              ),
+                            ] +
+                            (grad
+                    ?.map((grad) => DropdownMenuItem(
+                          value: grad,
+                          child: Text(grad.nazivGrada ?? ""),
+                        ))
+                    .toList() ??
+                []),
+          ),
+        ),
               ],
             ),
             const SizedBox(height: 10),
@@ -232,13 +256,19 @@ class _ProductScreenState extends State<ProductScreen> {
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),
             ),
-            items: vozila
+            items: [
+                              const DropdownMenuItem<Vozilo>(
+                                value: null,
+                                child: Text('Odaberite marku vozila'),
+                              ),
+                            ] +
+                            (vozila
                     ?.map((vozila) => DropdownMenuItem(
                           value: vozila,
                           child: Text(vozila.markaVozila ?? ""),
                         ))
                     .toList() ??
-                [],
+                []),
           ),
         ),
         const SizedBox(width: 16), // Razmak između dropdown-ova
@@ -255,13 +285,19 @@ class _ProductScreenState extends State<ProductScreen> {
               filled: true,
               fillColor: const Color.fromARGB(255, 255, 255, 255),
             ),
-            items: godiste
+            items: [
+                              const DropdownMenuItem<Godiste>(
+                                value: null,
+                                child: Text('Odaberite godiste'),
+                              ),
+                            ] +
+                            (godiste
                     ?.map((godiste) => DropdownMenuItem(
                           value: godiste,
                           child: Text(godiste.godiste_!.toString()),
                         ))
                     .toList() ??
-                [],
+                []),
           ),
         ),
       ],
@@ -270,27 +306,32 @@ class _ProductScreenState extends State<ProductScreen> {
     Row(
       children: [
         Expanded(
-          child: FormBuilderDropdown<Model>(
-            name: 'modelId',
-            decoration: InputDecoration(
-              labelText: 'Model',
-              suffixIcon: const Icon(Icons.dashboard_customize),
-              hintText: 'Odaberite model',
-              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: const OutlineInputBorder(
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            items: model
-                    ?.map((model) => DropdownMenuItem(
-                          value: model,
-                          child: Text(model.nazivModela ?? ""),
-                        ))
-                    .toList() ??
-                [],
-          ),
-        ),
+  child: FormBuilderDropdown<Model>(
+    name: 'modelId',
+    decoration: InputDecoration(
+      labelText: 'Model',
+      suffixIcon: const Icon(Icons.dashboard_customize),
+      hintText: 'Odaberite model',
+      hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+      border: const OutlineInputBorder(),
+      filled: true,
+      fillColor: const Color.fromARGB(255, 255, 255, 255),
+    ),
+    items: [
+      DropdownMenuItem<Model>(
+        value: null,
+        child: Text('Odaberite model'),
+      ),
+    ] +
+    (model
+      ?.map((model) => DropdownMenuItem(
+        value: model,
+        child: Text(model.nazivModela ?? ""),
+      ))
+      .toList() ?? []),
+  ),
+),
+
       ],
     ),
   ],
@@ -301,16 +342,16 @@ class _ProductScreenState extends State<ProductScreen> {
             Row(
   mainAxisAlignment: MainAxisAlignment.end, // Elemente poravnaj desno
   children: [
-           if (context.read<UserProvider>().role == "Admin")
     ElevatedButton(
-      onPressed: ()async  {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ProductDetailScreen(product: null),
-          ),
-         
-        );
-                await  _loadData();
+      onPressed: () async {
+                    await  Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetailScreen(product: null),
+                              ),
+                            );
+                    await _loadData();
+
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.red, // Crvena boja za dugme
@@ -372,10 +413,21 @@ Map<dynamic, dynamic> filterParams = {};
     filterParams['naziv'] = _nazivController.text;
   }
 
+// Dodavanje naziva proizvoda u filter ako je unesen
+  if (_nazivFirmeController.text.isNotEmpty) {
+    filterParams['nazivFirme'] = _nazivFirmeController.text;
+  }
   // Dodavanje filtera za vozilo, ako je odabrano
   var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
   if (selectedVozilo != null && selectedVozilo is Vozilo) {
     filterParams['markaVozila'] = selectedVozilo.markaVozila!;
+  }
+
+
+  // Dodavanje filtera za grad, ako je odabran
+  var selectedGrad = _formKey.currentState?.fields['gradId']?.value;
+  if (selectedGrad != null && selectedGrad is Grad) {
+    filterParams['nazivGrada'] = selectedGrad.nazivGrada!;
   }
 
   // Dodavanje filtera za godiste, ako je odabrano
@@ -385,12 +437,13 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
 }
 
 
-  // Dodavanje modela, ako je odabran
+  // Dodavanje modela, ako je odabran 
   var modelValue = _formKey.currentState?.fields['modelId']?.value;
   if (modelValue != null && modelValue is Model) {
     filterParams['nazivModela'] = modelValue.nazivModela!;
   }
 
+   
   
 
   // Pozivanje API-ja sa filterima
@@ -428,16 +481,16 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
                 ? e.cijenaSaPopustom!
                 : e.cijena ?? 0.0; // Cijena sa popustom uvećana za 5%
 
-            return GestureDetector(
-              onTap: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailScreen(product: e),
-                  ),
-                  
-                );
-                        await  _loadData();
-              },
+           return GestureDetector(
+  onTap: () async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductDetailScreen(product: e),
+      ),
+    );
+    
+    await _loadData(); // Dodao sam ovdje poziv loadData nakon povratka iz navigacije
+  },
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

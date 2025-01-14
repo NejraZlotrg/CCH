@@ -155,6 +155,8 @@ class _VoziloScreenState extends State<VoziloScreen> {
         ),
         child: SingleChildScrollView(
           child: DataTable(
+                      showCheckboxColumn: false,
+
             columns: const [
               DataColumn(
                 label: Text(

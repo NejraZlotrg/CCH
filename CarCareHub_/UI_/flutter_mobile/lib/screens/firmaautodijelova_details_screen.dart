@@ -175,7 +175,7 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
           }
           // ignore: use_build_context_synchronously
           Navigator.pop(context);
-        } on Exception catch (e) {
+        } on Exception {
           showDialog(
             // ignore: use_build_context_synchronously
             context: context,
