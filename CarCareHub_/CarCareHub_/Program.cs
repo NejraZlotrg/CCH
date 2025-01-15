@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CarCareHub_.Hubs;
+using CarCareHub.Model.Configurations;
 
 
 
@@ -134,6 +135,9 @@ builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<InitialProductState>();
 builder.Services.AddTransient<DraftProductState>();
 builder.Services.AddTransient<ActiveProductState>();
+var stripeSettings = builder.Configuration.GetSection("Stripe");
+builder.Services.Configure<StripeConfig>(stripeSettings);
+
 
 
 builder.Services.AddControllers(/* x => {  x.Filters.Add<ErrorFilter>(); }*/);

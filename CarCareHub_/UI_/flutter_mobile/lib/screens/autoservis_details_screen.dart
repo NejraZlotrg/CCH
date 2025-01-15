@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
@@ -376,13 +377,17 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                   request['ulogaId'] = 2;
                                   request['voziloId'] = 1;
 
-                                  // Dodaj sliku u request
-                                  if (_imageFile != null) {
-                                    final imageBytes =
-                                        await _imageFile!.readAsBytes();
-                                    request['slikaProfila'] =
-                                        base64Encode(imageBytes);
-                                  }
+                                if (_imageFile != null  ) {
+  final imageBytes = await _imageFile!.readAsBytes();
+  request['slikaProfila'] = base64Encode(imageBytes);
+} else {
+  // Ako nije poslana, učitaj iz assets-a
+  final assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
+  var imageFile = await rootBundle.load(assetImagePath);
+  final imageBytes = await imageFile.buffer.asUint8List();
+  request['slikaProfila'] = base64Encode(imageBytes);
+}
+
 
                                   try {
                                     if (widget.autoservis == null) {
@@ -399,8 +404,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                       // ignore: use_build_context_synchronously
                                       context: context,
                                       builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text("Greška"),
+                                          const AlertDialog(
+                                        title: Text("Greška"),
                                         content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
                                         actions: [
                                           
@@ -507,9 +512,15 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      )
-                    : const Icon(Icons.camera_alt,
-                        size: 60, color: Colors.grey),
+                      ): Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.camera_alt, size: 60, color: Colors.black),
+              const SizedBox(height: 10),
+              Text('Odaberite sliku',
+                  style: TextStyle(color: Colors.black, fontSize: 16)),
+            ],
+          ),
               ),
             ),
           ),

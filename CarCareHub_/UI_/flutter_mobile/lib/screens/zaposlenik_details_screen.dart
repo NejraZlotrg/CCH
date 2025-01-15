@@ -334,8 +334,8 @@ Widget _buildForm() {
                       } on Exception {
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text("Greška"),
+                          builder: (BuildContext context) => const AlertDialog(
+                            title: Text("Greška"),
                                         content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
                             actions: [
                               

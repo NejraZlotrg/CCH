@@ -34,9 +34,14 @@ import 'package:flutter_mobile/screens/product_screen.dart';
 import 'package:flutter_mobile/screens/registration_page.dart';
 import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY',
+      defaultValue:
+          "pk_test_51Qgz9yCdZMYTHaMlBcpXvZmiujxacKPAz49IXxSYChj3gv2lG5HJJCM2kqeJNEctQXSRAevbENhGTqlkvYW460wi00ZMCqgmp0");
+
   runApp(
     MultiProvider(
       providers: [
@@ -232,9 +237,19 @@ class _LogInPageState extends State<LogInPage> {
       ),
     );
   }
-} catch (e) {
-  print('Error during user authentication: $e');
-}},
+else {
+    // Ako userId nije pronađen, prikazujemo grešku
+    setState(() {
+      errorMessage = "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
+    });
+  }}
+catch (e) {
+  // Obrada grešaka
+  setState(() {
+    errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
+  });
+}
+},
 
                               child: const Text("Prijavi se"),
                             ),

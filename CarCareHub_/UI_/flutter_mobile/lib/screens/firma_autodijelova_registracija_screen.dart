@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
@@ -112,12 +113,17 @@ class _FirmaAutodijelovaRegistracijaScreenState
   var request = Map.from(_formKey.currentState!.value);
   request['ulogaId'] = 3;  // Update role ID as per your requirements
 
-  // Add image if exists
-  if (_imageFile != null) {
-    final bytes = await _imageFile!.readAsBytes();
-    final base64Image = base64Encode(bytes);
-    request['slikaProfila'] = base64Image; // Add image to request
-  }
+      if (_imageFile != null  ) {
+  final imageBytes = await _imageFile!.readAsBytes();
+  request['slikaProfila'] = base64Encode(imageBytes);
+} else {
+  // Ako nije poslana, učitaj iz assets-a
+  final assetImagePath = 'assets/images/firma_prazna_slika.jpg';
+  var imageFile = await rootBundle.load(assetImagePath);
+  final imageBytes = await imageFile.buffer.asUint8List();
+  request['slikaProfila'] = base64Encode(imageBytes);
+}
+
 
   try {
     // Insert new data or update existing data based on the condition
@@ -244,9 +250,15 @@ class _FirmaAutodijelovaRegistracijaScreenState
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      )
-                    : const Icon(Icons.camera_alt,
-                        size: 60, color: Colors.grey),
+                      ): Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.camera_alt, size: 60, color: Colors.black),
+              const SizedBox(height: 10),
+              Text('Odaberite sliku',
+                  style: TextStyle(color: Colors.black, fontSize: 16)),
+            ],
+          ),
               ),
             ),
           ),

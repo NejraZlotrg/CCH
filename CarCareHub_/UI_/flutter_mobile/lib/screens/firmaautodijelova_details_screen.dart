@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
@@ -159,11 +160,17 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
         var request = Map.from(_formKey.currentState!.value);
         request['ulogaId'] = 3;
 
-        // Add image to request if exists
-        if (_imageFile != null) {
-          final imageBytes = await _imageFile!.readAsBytes();
-          request['slikaProfila'] = base64Encode(imageBytes);
-        }
+             if (_imageFile != null  ) {
+  final imageBytes = await _imageFile!.readAsBytes();
+  request['slikaProfila'] = base64Encode(imageBytes);
+} else {
+  // Ako nije poslana, učitaj iz assets-a
+  final assetImagePath = 'assets/images/firma_prazna_slika.jpg';
+  var imageFile = await rootBundle.load(assetImagePath);
+  final imageBytes = await imageFile.buffer.asUint8List();
+  request['slikaProfila'] = base64Encode(imageBytes);
+}
+
 
         try {
           if (widget.firmaAutodijelova == null) {
@@ -179,8 +186,8 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
           showDialog(
             // ignore: use_build_context_synchronously
             context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text("Greška"),
+            builder: (BuildContext context) => const AlertDialog(
+              title: Text("Greška"),
               content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
               actions: [
                
@@ -255,13 +262,13 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
           const SizedBox(height: 20),
           Center(
             child: GestureDetector(
+              
               onTap: _pickImage,
               child: Container(
                 width: 250,
                 height: 250,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.black,
                   border: Border.all(color: Colors.black, width: 2),
                   boxShadow: [
                     BoxShadow(
@@ -280,9 +287,15 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      )
-                    : const Icon(Icons.camera_alt,
-                        size: 60, color: Colors.black),
+                      ): Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.camera_alt, size: 60, color: Colors.black),
+              const SizedBox(height: 10),
+              Text('Odaberite sliku',
+                  style: TextStyle(color: Colors.black, fontSize: 16)),
+            ],
+          ),
               ),
             ),
           ),

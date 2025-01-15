@@ -141,7 +141,7 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                     await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    ZaposlenikDetailsScreen(zaposlenik: null),
+                                    const ZaposlenikDetailsScreen(zaposlenik: null),
                               ),
                             );
                     await _loadData();

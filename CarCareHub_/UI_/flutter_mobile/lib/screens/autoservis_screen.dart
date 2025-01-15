@@ -91,7 +91,7 @@ Future<void> _loadGradovi() async {
           children: [
             _buildSearch(),
             _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: _buildCardList(),
                   ),
@@ -245,7 +245,7 @@ Future<void> _loadGradovi() async {
   }
 Widget _buildCardList() {
   if (result?.result.isEmpty ?? true) {
-    return Center(child: Text('Nema dostupnih autoservisa.'));
+    return const Center(child: Text('Nema dostupnih autoservisa.'));
   }
 
   return ListView.builder(

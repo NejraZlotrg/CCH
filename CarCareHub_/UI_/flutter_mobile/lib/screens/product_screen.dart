@@ -45,6 +45,7 @@ class _ProductScreenState extends State<ProductScreen> {
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _nazivFirmeController = TextEditingController();
   final TextEditingController _gradController = TextEditingController();
+  final TextEditingController _JIBMBScontroller = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -147,6 +148,8 @@ class _ProductScreenState extends State<ProductScreen> {
                           'model': _modelController.text,
                           'nazivFirme': _nazivFirmeController.text,
                           'nazivGrada': _gradController.text,
+                          'jib': _JIBMBScontroller.text,
+                          'mbs': _JIBMBScontroller.text,
                           'cijenaRastuca': true,
                         });
                         setState(() {
@@ -158,6 +161,8 @@ class _ProductScreenState extends State<ProductScreen> {
                           'model': _modelController.text,
                           'nazivFirme': _nazivFirmeController.text,
                           'nazivGrada': _gradController.text,
+                          'jib': _JIBMBScontroller.text,
+                          'mbs': _JIBMBScontroller.text,
                           'cijenaOpadajuca': true,
                         });
                         setState(() {
@@ -184,14 +189,15 @@ class _ProductScreenState extends State<ProductScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                const Expanded(
+                Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "JIB ili MBS",
                       border: OutlineInputBorder(),
                       filled: true,
                       fillColor: Colors.white,
                     ),
+                    controller: _JIBMBScontroller,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -318,7 +324,7 @@ class _ProductScreenState extends State<ProductScreen> {
       fillColor: const Color.fromARGB(255, 255, 255, 255),
     ),
     items: [
-      DropdownMenuItem<Model>(
+      const DropdownMenuItem<Model>(
         value: null,
         child: Text('Odaberite model'),
       ),
@@ -347,7 +353,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    ProductDetailScreen(product: null),
+                                    const ProductDetailScreen(product: null),
                               ),
                             );
                     await _loadData();
@@ -404,6 +410,7 @@ Map<dynamic, dynamic> filterParams = {};
 
     filterParams = {
     'IsAllIncluded': 'true',  // Ovdje navodimo da želimo sve proizvode ako nema specifičnih filtera
+
   };
 
 
@@ -412,6 +419,14 @@ Map<dynamic, dynamic> filterParams = {};
   if (_nazivController.text.isNotEmpty) {
     filterParams['naziv'] = _nazivController.text;
   }
+
+
+  // Dodavanje naziva proizvoda u filter ako je unesen
+  if (_JIBMBScontroller.text.isNotEmpty) {
+    filterParams['JIB_MBS'] = _JIBMBScontroller.text;
+  }
+
+
 
 // Dodavanje naziva proizvoda u filter ako je unesen
   if (_nazivFirmeController.text.isNotEmpty) {
@@ -467,7 +482,7 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, // Tri kolone
-            childAspectRatio: 1, // Omjer za kvadratne kartice
+            childAspectRatio: 1.4, // Omjer za kvadratne kartice
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
           ),
@@ -514,7 +529,7 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
                                       top: Radius.circular(10)),
                                   child: Image.memory(
                                     base64Decode(e.slika!),
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                   ),
                                 )
                               : const Center(child: Text("x")),
@@ -551,8 +566,8 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
                               width:
                                   200, // Ograničava širinu opisa na 60% širine kartice
                               child: Text(
-                                e.opis != null && e.opis!.length > 30
-                                    ? "${e.opis!.substring(0, 30)}..." // Prikazuje samo prvih 30 karaktera
+                                e.opis != null && e.opis!.length > 20
+                                    ? "${e.opis!.substring(0, 20)}..." // Prikazuje samo prvih 30 karaktera
                                     : e.opis ?? "",
                                 style: const TextStyle(
                                   color: Colors.blueGrey,

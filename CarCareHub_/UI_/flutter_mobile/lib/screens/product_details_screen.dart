@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/kategorija.dart';
@@ -145,7 +146,13 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                   request['slika'] = base64Encode(imageBytes);
                                   request['slikaThumb'] =
                                       base64Encode(imageBytes);
-                                }
+                                } else {
+  // Ako nije poslana, učitaj iz assets-a
+  final assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
+  var imageFile = await rootBundle.load(assetImagePath);
+  final imageBytes = await imageFile.buffer.asUint8List();
+  request['slika'] = base64Encode(imageBytes);
+}
 
                                 try {
                                   if (widget.product == null) {
@@ -164,7 +171,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                         AlertDialog(
                                       title: const Text("Greška"),
                                       content: Text(e.toString()),
-                                      actions: [
+                                      actions: const [
                                       
                                         
                                       ],
@@ -230,9 +237,15 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      )
-                    : const Icon(Icons.camera_alt,
-                        size: 60, color: Colors.grey),
+                      ): const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.camera_alt, size: 60, color: Colors.black),
+              SizedBox(height: 10),
+              Text('Odaberite sliku',
+                  style: TextStyle(color: Colors.black, fontSize: 16)),
+            ],
+          ),
               ),
             ),
           ),
