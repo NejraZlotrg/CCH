@@ -12,12 +12,24 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) 
       : _endpoint = endpoint {
-    _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
+    //_baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
+    const apiHost = String.fromEnvironment("API_HOST", defaultValue: "10.0.2.2");
+    const apiPort = String.fromEnvironment("API_PORT", defaultValue: "7209");
+    _baseURL= "http://$apiHost:$apiPort";
   }
 
-   String buildUrl(String path) {
-    return "$_baseURL$_endpoint$path";  // Spaja osnovni URL sa endpointom i dodatnim dijelom
+  
+String buildUrl(String path) {
+  // Osiguravanje da path počinje sa "/"
+  if (!path.startsWith('/')) {
+    path = '/$path';
   }
+
+  // Osiguravanje da endpoint nema višak "/" na kraju
+  String endpoint = _endpoint.endsWith('/') ? _endpoint.substring(0, _endpoint.length - 1) : _endpoint;
+
+  return "$_baseURL$endpoint$path";
+}
 
   Future<SearchResult<T>> get({dynamic filter}) async {
     String url = "$_baseURL$_endpoint";

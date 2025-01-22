@@ -118,8 +118,7 @@ List<BPAutodijeloviAutoservis>? temp;
     }
   }
 
-  
-@override
+  @override
 Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
@@ -137,111 +136,119 @@ Widget build(BuildContext context) {
                   _buildForm(),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         // Dugme za spašavanje
-                       // Conditionally render the 'Spasi' button only for the admin
-// Only render the ElevatedButton if the user is an Admin
-if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) 
-  ElevatedButton(
-    onPressed: () async {
+                        if (context.read<UserProvider>().role == "Admin" ||
+                            context.read<UserProvider>().userId ==
+                                widget.firmaAutodijelova!.firmaAutodijelovaID)
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text("Molimo popunite obavezna polja."),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return; // Zaustavi obradu ako validacija nije prošla
+                              }
+                              if (_formKey.currentState?.saveAndValidate() ??
+                                  false) {
+                                var request =
+                                    Map.from(_formKey.currentState!.value);
+                                request['ulogaId'] = 3;
 
-         if (!(_formKey.currentState?.validate() ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Molimo popunite obavezna polja."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Zaustavi obradu ako validacija nije prošla
-    }
-      if (_formKey.currentState?.saveAndValidate() ?? false) {
-        var request = Map.from(_formKey.currentState!.value);
-        request['ulogaId'] = 3;
+                                if (_imageFile != null) {
+                                  final imageBytes =
+                                      await _imageFile!.readAsBytes();
+                                  request['slikaProfila'] =
+                                      base64Encode(imageBytes);
+                                } else {
+                                  const assetImagePath =
+                                      'assets/images/firma_prazna_slika.jpg';
+                                  var imageFile = await rootBundle
+                                      .load(assetImagePath);
+                                  final imageBytes =
+                                      imageFile.buffer.asUint8List();
+                                  request['slikaProfila'] =
+                                      base64Encode(imageBytes);
+                                }
 
-             if (_imageFile != null  ) {
-  final imageBytes = await _imageFile!.readAsBytes();
-  request['slikaProfila'] = base64Encode(imageBytes);
-} else {
-  // Ako nije poslana, učitaj iz assets-a
-  final assetImagePath = 'assets/images/firma_prazna_slika.jpg';
-  var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = await imageFile.buffer.asUint8List();
-  request['slikaProfila'] = base64Encode(imageBytes);
-}
+                                try {
+                                  if (widget.firmaAutodijelova == null) {
+                                    await _firmaAutodijelovaProvider.insert(
+                                        request);
+                                  } else {
+                                    await _firmaAutodijelovaProvider.update(
+                                        widget.firmaAutodijelova!
+                                            .firmaAutodijelovaID,
+                                        request);
+                                  }
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.pop(context);
+                                } on Exception {
+                                  showDialog(
+                                    // ignore: use_build_context_synchronously
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        const AlertDialog(
+                                      title: Text("Greška"),
+                                      content: Text(
+                                          "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
+                                      actions: [],
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              textStyle: const TextStyle(fontSize: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("Spasi"),
+                          ),
 
-
-        try {
-          if (widget.firmaAutodijelova == null) {
-            await _firmaAutodijelovaProvider.insert(request);
-          } else {
-            await _firmaAutodijelovaProvider.update(
-                widget.firmaAutodijelova!.firmaAutodijelovaID,
-                request);
-          }
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context);
-        } on Exception {
-          showDialog(
-            // ignore: use_build_context_synchronously
-            context: context,
-            builder: (BuildContext context) => const AlertDialog(
-              title: Text("Greška"),
-              content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
-              actions: [
-               
-              ],
-            ),
-          );
-        }
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.white,
-      backgroundColor: Colors.red,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      textStyle: const TextStyle(fontSize: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-    ),
-    child: const Text("Spasi"),
-  ),
-
-
-                        const SizedBox(width: 10),
+                        const SizedBox(height: 10),
 
                         // Dugme za bazu autoservisa
                         ElevatedButton(
-  onPressed: () {
-    // Navigacija na BPAutodijeloviAutoservisScreen i prosleđivanje objekta
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BPAutodijeloviAutoservisScreen(
-          firmaAutodijelova: widget.firmaAutodijelova, // Prosleđivanje objekta
-        ),
-      ),
-    );
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.red, // Crvena boja dugmeta
-    foregroundColor: Colors.white, // Bijela boja teksta
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-  ),
-  child: const Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(Icons.storage),
-      SizedBox(width: 8.0),
-      Text('Baza autoservisa'),
-    ],
-  ),
-),
-
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    BPAutodijeloviAutoservisScreen(
+                                  firmaAutodijelova:
+                                      widget.firmaAutodijelova, // Prosleđivanje objekta
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red, // Crvena boja dugmeta
+                            foregroundColor: Colors.white, // Bijela boja teksta
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.storage),
+                              SizedBox(width: 8.0),
+                              Text('Baza autoservisa'),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -251,6 +258,7 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
           ),
   );
 }
+
 
   FormBuilder _buildForm() {
     return FormBuilder(
@@ -287,11 +295,11 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      ): Column(
+                      ): const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.camera_alt, size: 60, color: Colors.black),
-              const SizedBox(height: 10),
+              Icon(Icons.camera_alt, size: 60, color: Colors.black),
+              SizedBox(height: 10),
               Text('Odaberite sliku',
                   style: TextStyle(color: Colors.black, fontSize: 16)),
             ],
@@ -307,321 +315,272 @@ if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>()
   }
 List<Widget> _buildFormFields() {
   return [
-    // Osnovni podaci
-    Row(
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          child: FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Naziv firme",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite naziv firme',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
+        // Osnovni podaci
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelText: "Naziv firme",
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite naziv firme',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
             ),
-            style: const TextStyle(color: Colors.black),
-            name: "nazivFirme",
-            validator: validator.required,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
           ),
+          style: const TextStyle(color: Colors.black),
+          name: "nazivFirme",
+          validator: validator.required,
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
         ),
+        const SizedBox(height: 20),
+        
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelText: "Adresa",
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite adresu',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          name: "adresa",
+          validator: validator.required,
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
+        ),
+        const SizedBox(height: 20),
+
+        FormBuilderDropdown(
+          name: 'gradId',
+          validator: validator.required,
+          decoration: const InputDecoration(
+            labelText: 'Grad',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Izaberite grad',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          initialValue: widget.firmaAutodijelova?.gradId?.toString(),
+          items: gradResult?.result
+                  .map((item) => DropdownMenuItem(
+                        alignment: AlignmentDirectional.center,
+                        value: item.gradId.toString(),
+                        child: Text(item.nazivGrada ?? "", style: const TextStyle(color: Colors.black)),
+                      ))
+                  .toList() ??
+              [],
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
+        ),
+        const SizedBox(height: 20),
+
+        // Kontakt podaci
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelText: "Telefon",
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite telefon',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          name: "telefon",
+          validator: validator.phoneNumber,
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
+        ),
+        const SizedBox(height: 20),
+
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelText: "Email",
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite email',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          name: "email",
+          validator: validator.email,
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
+        ),
+        const SizedBox(height: 20),
+
+        // Dodatni podaci
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelText: "JIB",
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite JIB',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          name: "jib",
+          validator: validator.jib,
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
+        ),
+        const SizedBox(height: 20),
+
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelText: "MBS",
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite MBS',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          name: "mbs",
+          validator: validator.mbs,
+          enabled: context.read<UserProvider>().role == "Admin" ||
+              context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID,
+        ),
+        const SizedBox(height: 20),
+
+        if (context.read<UserProvider>().role == "Admin" ||
+            context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID)
+          ...[
+            FormBuilderTextField(
+              decoration: const InputDecoration(
+                labelText: "Korisničko ime",
+                labelStyle: TextStyle(color: Colors.black),
+                hintText: 'Unesite korisničko ime',
+                hintStyle: TextStyle(color: Colors.black),
+                border: OutlineInputBorder(),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+              style: const TextStyle(color: Colors.black),
+              name: "username",
+              validator: validator.required,
+            ),
+            const SizedBox(height: 20),
+
+            FormBuilderTextField(
+              decoration: const InputDecoration(
+                labelText: "Lozinka",
+                labelStyle: TextStyle(color: Colors.black),
+                hintText: 'Unesite lozinku',
+                hintStyle: TextStyle(color: Colors.black),
+                border: OutlineInputBorder(),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+              style: const TextStyle(color: Colors.black),
+              name: "password",
+              validator: validator.required,
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+
+            FormBuilderTextField(
+              decoration: const InputDecoration(
+                labelText: "Ponovite lozinku",
+                labelStyle: TextStyle(color: Colors.black),
+                hintText: 'Ponovo unesite lozinku',
+                hintStyle: TextStyle(color: Colors.black),
+                border: OutlineInputBorder(),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+              style: const TextStyle(color: Colors.black),
+              name: "passwordAgain",
+              validator: validator.lozinkaAgain,
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+          ],
       ],
     ),
-    const SizedBox(height: 20),
-    Row(
-      children: [
-        Expanded(
-          child: FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Adresa",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite adresu',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "adresa",
-            validator: validator.required,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 20),
-    Row(
-      children: [
-        Expanded(
-          child: FormBuilderDropdown(
-            name: 'gradId',
-            validator: validator.required,
-            decoration: const InputDecoration(
-              labelText: 'Grad',
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Izaberite grad',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            initialValue: widget.firmaAutodijelova?.gradId?.toString(),
-            items: gradResult?.result
-                .map((item) => DropdownMenuItem(
-                      alignment: AlignmentDirectional.center,
-                      value: item.gradId.toString(),
-                      child: Text(item.nazivGrada ?? "", style: const TextStyle(color: Colors.black)),
-                    ))
-                .toList() ?? [],
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 20),
-
-    // Kontakt podaci
-    Row(
-      children: [
-        Expanded(
-          child: FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Telefon",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite telefon',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "telefon",
-            validator: validator.phoneNumber,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Email",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite email',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "email",
-            validator: validator.email,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 20),
-
-    // Dodatni podaci
-    Row(
-      children: [
-        Expanded(
-          child: FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "JIB",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite JIB',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "jib",
-            validator: validator.jib,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "MBS",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite MBS',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "mbs",
-            validator: validator.mbs,
-            enabled: context.read<UserProvider>().role == "Admin"|| context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 20),
-
-    // Sakrivanje korisničkog imena, lozinke i ponovljene lozinke ako nije admin
-    if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) ...[
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Korisničko ime",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          const SizedBox(height: 5),
-          FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Korisničko ime",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite korisničko ime',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "username",
-            validator: validator.required,
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-
-      // Red 3: Lozinka
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Lozinka",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          const SizedBox(height: 5),
-          FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Lozinka",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite lozinku',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "password",
-            validator: validator.required,
-            obscureText: true,
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-
-      // Red 4: Ponovljena Lozinka
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Ponovite lozinku",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          const SizedBox(height: 5),
-          FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelText: "Ponovite lozinku",
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Ponovo unesite lozinku',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "passwordAgain",
-            validator: validator.lozinkaAgain,
-
-            obscureText: true,
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-    ],
   ];
 }
 

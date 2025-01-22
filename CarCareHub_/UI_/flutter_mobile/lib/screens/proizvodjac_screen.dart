@@ -58,9 +58,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
       ),
     );
   }
-
- 
-  Widget _buildSearch() {
+Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width, // Širina 100% ekrana
     margin: const EdgeInsets.only(
@@ -77,81 +75,84 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-          Expanded(
-            child: TextField(
+            TextField(
               decoration: const InputDecoration(
-                labelText: 'Naziv proizvodjaca',
+                labelText: 'Naziv proizvođača',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
               controller: _nazivProizvodjacaController,
             ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              print("podaci proceed");
-              var data = await _proizvodjacProvider.get(filter: {
-                'nazivProizvodjaca': _nazivProizvodjacaController.text,
-              });
- 
-              setState(() {
-                result = data;
-              });
-            },
-            style: ElevatedButton.styleFrom(
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                print("podaci proceed");
+                var data = await _proizvodjacProvider.get(filter: {
+                  'nazivProizvodjaca': _nazivProizvodjacaController.text,
+                });
+
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, // Crvena boja dugmeta
                 foregroundColor: Colors.white, // Bijela boja teksta
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
                 ),
               ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Pretraga'),
-              ],
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-         ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProizvodjacDetailsScreen(proizvodjac: null),
-                              ),
-                            );
-                    await _fetchInitialData();
-            },
-            style: ElevatedButton.styleFrom(
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProizvodjacDetailsScreen(proizvodjac: null),
+                  ),
+                );
+                await _fetchInitialData();
+              },
+              style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, // Crvena boja dugmeta
                 foregroundColor: Colors.white, // Bijela boja teksta
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
                 ),
               ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
-              ],
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add),
+                  SizedBox(width: 8.0),
+                  Text('Dodaj'),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-      ),)
-    );
-  }
+    ),
+  );
+}
+
 Widget _buildDataListView() {
-  return Container(
+    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
     child: Card(
@@ -198,7 +199,7 @@ Widget _buildDataListView() {
           ),
         ),
       ),
-    );
+      )));
   }
 }
 

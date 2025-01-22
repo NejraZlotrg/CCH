@@ -55,62 +55,59 @@ class _UlogeScreenState extends State<UlogeScreen> {
       ),
     );
   }
- 
-  Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Naziv uloge',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivUlogeController,
+ Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Naziv uloge',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivUlogeController,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _onSearchPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: _onSearchPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
               ),
-              const SizedBox(width: 10),
-                     if (context.read<UserProvider>().role == "Admin")
+            ),
+            const SizedBox(height: 10),
+            if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    UlogeDetailsScreen(uloge: null),
-                              ),
-                            );
-                    await _fetchInitialData();
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => UlogeDetailsScreen(uloge: null),
+                    ),
+                  );
+                  await _fetchInitialData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -128,12 +125,13 @@ class _UlogeScreenState extends State<UlogeScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
  
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};
@@ -151,7 +149,9 @@ class _UlogeScreenState extends State<UlogeScreen> {
   }
  
   Widget _buildDataListView() {
-    return Container(
+     return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(top: 20.0),
       child: Card(
@@ -198,7 +198,7 @@ class _UlogeScreenState extends State<UlogeScreen> {
           ),
         ),
       ),
-    );
+      )));
   }
 }
 

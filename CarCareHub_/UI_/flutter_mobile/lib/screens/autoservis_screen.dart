@@ -101,121 +101,119 @@ Future<void> _loadGradovi() async {
     );
   }
 
-  Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: FormBuilder(
-            key: _formKey,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: const InputDecoration(
-                          labelText: 'Naziv',
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        controller: _nazivController,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: FormBuilderDropdown<Grad>(
-                        name: 'gradId',
-                        decoration: InputDecoration(
-                          labelText: 'Grad',
-                          suffixIcon: const Icon(Icons.location_city),
-                          hintText: 'Odaberite grad',
-                          hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-                          border: const OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        items: [
-                              const DropdownMenuItem<Grad>(
-                                value: null,
-                                child: Text('Odaberite grad'),
-                              ),
-                            ] +
-                            (gradovi
-                                    ?.map((grad) => DropdownMenuItem(
-                                          value: grad,
-                                          child: Text(grad.nazivGrada ?? ""),
-                                        ))
-                                    .toList() ??
-                                []),
-                      ),
-                    ),
-                  ],
+Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Naziv',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-                const SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (context.read<UserProvider>().role == "Admin")
-                      ElevatedButton(
+                controller: _nazivController,
+              ),
+              const SizedBox(height: 10),
+              FormBuilderDropdown<Grad>(
+                name: 'gradId',
+                decoration: InputDecoration(
+                  labelText: 'Grad',
+                  suffixIcon: const Icon(Icons.location_city),
+                  hintText: 'Odaberite grad',
+                  hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+                  border: const OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                items: [
+                      const DropdownMenuItem<Grad>(
+                        value: null,
+                        child: Text('Odaberite grad'),
+                      ),
+                    ] +
+                    (gradovi
+                            ?.map((grad) => DropdownMenuItem(
+                                  value: grad,
+                                  child: Text(grad.nazivGrada ?? ""),
+                                ))
+                            .toList() ??
+                        []),
+              ),
+              const SizedBox(height: 10),
+              if (context.read<UserProvider>().role == "Admin")
+                ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AutoservisDetailsScreen(autoservis: null),
-                              ),
-                            );
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AutoservisDetailsScreen(autoservis: null),
+                      ),
+                    );
                     await _fetchInitialData();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.add, color: Colors.white),
-                            SizedBox(width: 8.0),
-                            Text('Dodaj', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                    ElevatedButton(
-                      onPressed: _onSearchPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.search, color: Colors.white),
-                          SizedBox(width: 8.0),
-                          Text('Pretraga', style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add, color: Colors.white),
+                      SizedBox(width: 8.0),
+                      Text('Dodaj', style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _onSearchPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.search, color: Colors.white),
+                    SizedBox(width: 8.0),
+                    Text('Pretraga', style: TextStyle(color: Colors.white)),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Future<void> _onSearchPressed() async {
     var filterParams = {
@@ -242,8 +240,7 @@ Future<void> _loadGradovi() async {
         SnackBar(content: Text('Greška pri pretrazi: $e')),
       );
     }
-  }
-Widget _buildCardList() {
+  }Widget _buildCardList() {
   if (result?.result.isEmpty ?? true) {
     return const Center(child: Text('Nema dostupnih autoservisa.'));
   }
@@ -273,10 +270,12 @@ Widget _buildCardList() {
               await _fetchInitialData();
             },
             title: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Slika sa lijeve strane
                 Container(
-                  width: 100,
-                  height: 100,
+                  width: 80, // Manja širina slike
+                  height: 80,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: MemoryImage(base64Decode(e.slikaProfila ?? "")),
@@ -286,6 +285,7 @@ Widget _buildCardList() {
                   ),
                 ),
                 const SizedBox(width: 16.0),
+                // Informacije sa desne strane
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,13 +294,24 @@ Widget _buildCardList() {
                         e.naziv ?? "",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 14,
                         ),
                       ),
-                      const SizedBox(height: 8.0),
-                      Text('Adresa: ${e.adresa ?? ""}'),
-                      Text('Grad: ${e.grad?.nazivGrada ?? ""}'),
-                      Text('Telefon: ${e.telefon ?? ""}'),
+                      Text(
+                        'Adresa: ${e.adresa ?? ""}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'Grad: ${e.grad?.nazivGrada ?? ""}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                        ),
+                      ),
+                     
                     ],
                   ),
                 ),
@@ -312,6 +323,7 @@ Widget _buildCardList() {
     },
   );
 }
+
 
   
 }

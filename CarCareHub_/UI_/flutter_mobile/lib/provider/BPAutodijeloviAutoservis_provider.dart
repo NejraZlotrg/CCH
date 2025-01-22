@@ -4,7 +4,7 @@ import 'package:flutter_mobile/provider/base_provider.dart';
 
 
 class BPAutodijeloviAutoservisProvider extends BaseProvider<BPAutodijeloviAutoservis> {
- BPAutodijeloviAutoservisProvider(): super("api/BPAutodijeloviAutoservis"); 
+ BPAutodijeloviAutoservisProvider(): super("/api/BPAutodijeloviAutoservis"); 
 
 
  @override

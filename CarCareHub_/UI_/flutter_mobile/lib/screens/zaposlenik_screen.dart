@@ -52,27 +52,22 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
       ),
     );
   }
-  Widget _buildSearch() {
+Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0, // Dodaje malo sjene za karticu
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-        side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
-        ),
+        side: const BorderSide(color: Colors.black, width: 1.0), // Crni okvir
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-            child: TextField(
+            TextField(
               decoration: InputDecoration(
                 labelText: 'Ime',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -81,10 +76,8 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
               ),
               controller: _imeController,
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
+            const SizedBox(height: 10),
+            TextField(
               decoration: InputDecoration(
                 labelText: "Prezime",
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -93,77 +86,68 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
               ),
               controller: _prezimeController,
             ),
-          ),
-          
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                var filterParams = {'IsAllIncluded': 'true'};
 
-                var filterParams = {
-               'IsAllIncluded': 'true', // Ovaj parametar ostaje
-                   };
-
-                   
-  // Dodavanje filtera samo ako je naziv unesen
                 if (_imeController.text.isNotEmpty) {
-                     filterParams['ime'] = _imeController.text;
-                        }
-                       if (_prezimeController.text.isNotEmpty) {
-                     filterParams['prezime'] = _prezimeController.text;
-                        }
-              var data = await _zaposlenikProvider.get(filter: filterParams);
+                  filterParams['ime'] = _imeController.text;
+                }
+                if (_prezimeController.text.isNotEmpty) {
+                  filterParams['prezime'] = _prezimeController.text;
+                }
 
+                var data = await _zaposlenikProvider.get(filter: filterParams);
 
-              setState(() {
-                result = data;
-              });
-            },
-                          style: ElevatedButton.styleFrom(
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, // Crvena boja dugmeta
                 foregroundColor: Colors.white, // Bijela boja teksta
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
                 ),
-                          ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Pretraga'),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-                 if (context.read<UserProvider>().role == "Admin")
-                  ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ZaposlenikDetailsScreen(zaposlenik: null),
-                              ),
-                            );
-                    await _loadData();
-
-            },
-                style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-                ),),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
-              ],
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
               ),
             ),
-            const SizedBox(width: 10),
-         
+            const SizedBox(height: 10),
+            if (context.read<UserProvider>().role == "Admin")
+              ElevatedButton(
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const ZaposlenikDetailsScreen(zaposlenik: null),
+                    ),
+                  );
+                  await _loadData();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Crvena boja dugmeta
+                  foregroundColor: Colors.white, // Bijela boja teksta
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add),
+                    SizedBox(width: 8.0),
+                    Text('Dodaj'),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -175,7 +159,9 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
 
 
   Widget _buildDataListView() {
-  return Container(
+    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
     width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
     margin: const EdgeInsets.only(
       top: 20.0, // Razmak od vrha
@@ -194,11 +180,8 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                     showCheckboxColumn: false,
 
           columns: const [
-            DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
             DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold))),
             DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Uloga', style: TextStyle(fontWeight: FontWeight.bold))),
           ],
           rows: result?.result.map((Zaposlenik e) {
             return DataRow(
@@ -214,10 +197,7 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                 }
               },
               cells: [
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e.zaposlenikId?.toString() ?? ""),
-                )),
+            
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(e.ime ?? ""),
@@ -226,21 +206,13 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(e.prezime ?? ""),
                 )),
-               DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e.grad?.nazivGrada ?? ""),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e.uloga?.nazivUloge ?? ""),
-                )),
               ],
             );
           }).toList() ?? [],
          ),
       ),
     ),
-  );
+      )));
+}
 }
 
-}

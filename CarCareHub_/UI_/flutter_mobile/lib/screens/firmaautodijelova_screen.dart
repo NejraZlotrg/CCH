@@ -29,7 +29,7 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
+    var data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
     if (mounted) {
       setState(() {
         result = data;
@@ -40,7 +40,7 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   
 void _onSearchPressed() async {
   var filterParams = {
-    'IsAllIncluded': 'true', // Ovaj parametar ostaje
+    'IsAllncluded': 'true', // Ovaj parametar ostaje
   };
 
   // Dodavanje filtera samo ako je naziv unesen
@@ -79,89 +79,9 @@ void _onSearchPressed() async {
       ),
     );
   }
-
-  Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _nazivFirmeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Naziv firme',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: _onSearchPressed, // Koristi novu funkciju
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              if (context.read<UserProvider>().role == "Admin")
-               ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
-                              ),
-                            );
-                    await _loadData();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add),
-                      SizedBox(width: 8.0),
-                      Text('Dodaj'),
-                    ],
-                  ),
-                ),
-              const SizedBox(width: 10),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-Widget _buildDataListView() {
+Widget _buildSearch() {
   return Container(
-    width: MediaQuery.of(context).size.width * 1,
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
     margin: const EdgeInsets.only(top: 20.0),
     child: Card(
       elevation: 4.0,
@@ -169,23 +89,90 @@ Widget _buildDataListView() {
         borderRadius: BorderRadius.circular(1.0),
         side: const BorderSide(color: Colors.black, width: 1.0),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-                    showCheckboxColumn: false,
-
-          columns: const [
-            DataColumn(label: Text('firmaAutodijelovaID', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('nazivFirme', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('adresa', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('grad', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('SlikaProfila', style: TextStyle(fontStyle: FontStyle.italic))),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // TextField za unos Naziv firme
+            TextField(
+              controller: _nazivFirmeController,
+              decoration: const InputDecoration(
+                labelText: 'Naziv firme',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 10), // Razmak između TextField i dugmeta
+            
+            // Dugme za Pretragu
+            ElevatedButton(
+              onPressed: _onSearchPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10), // Razmak između dugmadi
+            
+            // Dugme za Dodavanje (ako je admin)
+            if (context.read<UserProvider>().role == "Admin")
+              ElevatedButton(
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
+                    ),
+                  );
+                  await _loadData();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add),
+                    SizedBox(width: 8.0),
+                    Text('Dodaj'),
+                  ],
+                ),
+              ),
           ],
-          rows: result?.result
-           .map(
-              (FirmaAutodijelova e) => DataRow(
-                onSelectChanged: (selected) async {
-                  if (selected == true) {
+        ),
+      ),
+    ),
+  );
+}Widget _buildDataListView() {
+   return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Column(
+      children: result?.result
+              .map(
+                (FirmaAutodijelova e) => GestureDetector(
+                  onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => FirmaAutodijelovaDetailScreen(
@@ -193,31 +180,73 @@ Widget _buildDataListView() {
                         ),
                       ),
                     );
-                    // Nakon povratka s detalja, osvježite podatke
+                    // Osvježi podatke nakon povratka s detaljnog ekrana
                     await _loadData();
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.firmaAutodijelovaID.toString())),
-                  DataCell(Text(e.nazivFirme ?? "")),
-                  DataCell(Text(e.adresa ?? "")),
-                  DataCell(Text(e.grad?.nazivGrada ?? "")),
-                  DataCell(
-                    e.slikaProfila != null
-                        ? SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: imageFromBase64String(e.slikaProfila!),
-                          )
-                        : const Text(""),
+                  },
+                  child: Card(
+                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    elevation: 4.0, // Vizualni efekat sjene
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Slika
+                          if (e.slikaProfila != null)
+                            SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: imageFromBase64String(e.slikaProfila!),
+                            )
+                          else
+                            const SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Center(child: Text("Nema slike")),
+                            ),
+                          const SizedBox(width: 10),
+                          // Naziv firme, adresa i grad
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Naziv firme (boldirano)
+                                Text(
+                                  e.nazivFirme ?? "Naziv firme nije dostupan",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                // Adresa (normalno formatirano)
+                                Text(
+                                  e.adresa ?? "Adresa nije dostupna",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                // Grad (normalno formatirano)
+                                Text(
+                                  e.grad?.nazivGrada ?? "Grad nije dostupan",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
-              ),
-            )
-            .toList() ?? [],
-        ),
-      ),
+                ),
+              )
+              .toList() ?? [],
     ),
-  );
+  )));
 }
+
+
 }

@@ -53,7 +53,6 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Drzava",
-      child: SingleChildScrollView(
         child: Container(
           color: const Color.fromARGB(255, 204, 204, 204),
           child: Column(
@@ -63,54 +62,80 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 
   Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Naziv drzave',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivDrzaveController,
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Naziv drzave',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivDrzaveController,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                var filterParams = {'IsAllncluded': 'true'};
+
+                if (_nazivDrzaveController.text.isNotEmpty) {
+                  filterParams['nazivDrzave'] = _nazivDrzaveController.text;
+                }
+
+                try {
+                  var data = await _drzaveProvider.get(filter: filterParams);
+                  if (mounted) {
+                    setState(() {
+                      result = data;
+                    });
+                  }
+                } catch (e) {
+                  print("Error fetching filtered data: $e");
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(width: 10),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
                 onPressed: () async {
-                  var filterParams = {'IsAllncluded': 'true'};
-
-                  if (_nazivDrzaveController.text.isNotEmpty) {
-                    filterParams['nazivDrzave'] = _nazivDrzaveController.text;
-                  }
-
-                  try {
-                    var data = await _drzaveProvider.get(filter: filterParams);
-                    if (mounted) {
-                      setState(() {
-                        result = data;
-                      });
-                    }
-                  } catch (e) {
-                    print("Error fetching filtered data: $e");
-                  }
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DrzaveDetailsScreen(drzava: null),
+                    ),
+                  );
+                  // Reload data after returning from DrzaveDetailsScreen
+                  await _loadData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -122,49 +147,23 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.search),
+                    Icon(Icons.add),
                     SizedBox(width: 8.0),
-                    Text('Pretraga'),
+                    Text('Dodaj'),
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
-              if (context.read<UserProvider>().role == "Admin")
-                ElevatedButton(
-                  onPressed: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => DrzaveDetailsScreen(drzava: null),
-                      ),
-                    );
-                    // Reload data after returning from DrzaveDetailsScreen
-                    await _loadData();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add),
-                      SizedBox(width: 8.0),
-                      Text('Dodaj'),
-                    ],
-                  ),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildDataListView() {
-    return Container(
+    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(top: 20.0),
       child: Card(
@@ -173,7 +172,6 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
           borderRadius: BorderRadius.circular(1.0),
           side: const BorderSide(color: Colors.black, width: 1.0),
         ),
-        child: SingleChildScrollView(
           child: DataTable(
                       showCheckboxColumn: false,
 
@@ -208,8 +206,7 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
                     .toList() ??
                 [],
           ),
-        ),
       ),
-    );
+      )));
   }
 }

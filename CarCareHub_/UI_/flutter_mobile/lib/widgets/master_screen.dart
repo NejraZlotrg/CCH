@@ -63,24 +63,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
       
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 134, 134, 134), // Siva pozadina za AppBar
-        toolbarHeight: 80.0, // Povećana visina AppBar-a
+        toolbarHeight: 60.0, // Povećana visina AppBar-a
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Back dugme
-            IconButton(
-              icon: const Icon(Icons.arrow_back, size: 30),
-              onPressed: () {
-                Navigator.pop(context); // Vraća na prethodnu stranicu
-              },
-            ),
             // Naslov
             Expanded(
               child: Center(
                 child: Text(
                   widget.title ?? "",
                   style: const TextStyle(
-                    fontSize: 20, // Veličina fonta
+                    fontSize: 15, // Veličina fonta
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -88,7 +81,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             ),
             // Shopping cart ikona
             IconButton(
-              icon: const Icon(Icons.shopping_cart, size: 30), // Ikona korpe
+              icon: const Icon(Icons.shopping_cart, size: 25), // Ikona korpe
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -99,7 +92,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             ),
             // Wallet ikona
             IconButton(
-              icon: const Icon(Icons.account_balance_wallet_outlined, size: 30), // Ikona novčanika
+              icon: const Icon(Icons.account_balance_wallet_outlined, size: 25), // Ikona novčanika
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -115,18 +108,28 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 134, 134, 134),
-              ),
-              child: Text(
-                'CarCareHub',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
+           DrawerHeader(
+  decoration: const BoxDecoration(
+    color: Color.fromARGB(255, 134, 134, 134),
+  ),
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Image.asset(
+        'assets/images/cch_logo.png', // Putanja do slike
+        width: 100, // Širina slike
+        height: 100, // Visina slike
+      ),
+      const Text(
+        'CarCareHub',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 22,
+        ),
+      ),
+    ],
+  ),
+),
             ListTile(
               leading: const Icon(Icons.production_quantity_limits),
               title: const Text('Proizvodi'),
@@ -341,17 +344,29 @@ title: Text(
                 ); }
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text('Odjava'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LogInPage(),
-                  ),
-                );
-              },
-            ),
+            Container(
+  color: Colors.red, // Crvena pozadina
+  child: ListTile(
+    leading: const Icon(
+      Icons.exit_to_app,
+      color: Colors.white, // Ikona u bijeloj boji
+    ),
+    title: const Text(
+      'Odjava',
+      style: TextStyle(
+        color: Colors.white, // Bijeli tekst
+      ),
+    ),
+    onTap: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const LogInPage(),
+        ),
+      );
+    },
+  ),
+)
+
           ],
         ),
       ),

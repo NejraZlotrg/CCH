@@ -4,13 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductProvider extends BaseProvider<Product> {
-  ProductProvider() : super("api/proizvodi");
-
-
-
-
-
-
+  ProductProvider() : super("/api/proizvodi");
 
   @override
   Product fromJson(data) {

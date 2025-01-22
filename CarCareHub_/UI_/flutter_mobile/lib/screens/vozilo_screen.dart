@@ -50,83 +50,94 @@ class _VoziloScreenState extends State<VoziloScreen> {
   }
  
   Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Marka vozila',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _markaVozilaController,
-                ),
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Marka vozila',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
               ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: _onSearchPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-                     if (context.read<UserProvider>().role == "Admin")
-             ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    VoziloDetailsScreen(vozilo: null),
-                              ),
-                            );
-                    await _loadData();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              controller: _markaVozilaController,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _onSearchPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.search),
+                        SizedBox(width: 8.0),
+                        Text('Pretraga'),
+                      ],
+                    ),
                   ),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => VoziloDetailsScreen(vozilo: null),
+                        ),
+                      );
+                      await _loadData();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add),
+                        SizedBox(width: 8.0),
+                        Text('Dodaj'),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
  
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};

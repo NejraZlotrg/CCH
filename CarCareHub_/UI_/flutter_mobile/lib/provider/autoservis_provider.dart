@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:http/http.dart' as http;
 
 class AutoservisProvider extends BaseProvider<Autoservis> {
-  AutoservisProvider() : super("api/Autoservis"); // izmjena 16.9
+  AutoservisProvider() : super("/api/Autoservis"); // izmjena 16.9
 
   @override
   Autoservis fromJson(data) {
@@ -18,8 +19,11 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
   /// Dobavljanje ID-a na osnovu korisničkog imena i lozinke
  Future<int?> getIdByUsernameAndPassword(String username, String password) async {
   try {
+       // Kreiranje punog URL-a koristeći funkciju buildUrl
+    String url = buildUrl('/get-id?username=$username&password=$password');
+  
     final response = await http.post(
-      Uri.parse('http://localhost:7209/api/Autoservis/get-id?username=$username&password=$password'),  // Tačan API endpoint
+      Uri.parse(url),  // Tačan API endpoint
       headers: {
         "Content-Type": "application/json",  // Potrebno za JSON podatke
       },

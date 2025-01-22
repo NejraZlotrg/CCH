@@ -104,304 +104,255 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: FormBuilder(
-        key: _formKey,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                SizedBox(
-                  width: 410,
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Naziv proizvoda',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    controller: _nazivController,
-                  ),
-                ),
-                const SizedBox(width: 100),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: "Poredaj po cijeni",
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    items: <String>['--', 'Rastuća', 'Opadajuća']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) async {
-                      if (value == 'Rastuća') {
-                        var data = await _productProvider.get(filter: {
-                          'naziv': _nazivController.text,
-                          'model': _modelController.text,
-                          'nazivFirme': _nazivFirmeController.text,
-                          'nazivGrada': _gradController.text,
-                          'jib': _JIBMBScontroller.text,
-                          'mbs': _JIBMBScontroller.text,
-                          'cijenaRastuca': true,
-                        });
-                        setState(() {
-                          result = data;
-                        });
-                      } else if (value == 'Opadajuća') {
-                        var data = await _productProvider.get(filter: {
-                          'naziv': _nazivController.text,
-                          'model': _modelController.text,
-                          'nazivFirme': _nazivFirmeController.text,
-                          'nazivGrada': _gradController.text,
-                          'jib': _JIBMBScontroller.text,
-                          'mbs': _JIBMBScontroller.text,
-                          'cijenaOpadajuca': true,
-                        });
-                        setState(() {
-                          result = data;
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "Naziv firme",
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    controller: _nazivFirmeController,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: "JIB ili MBS",
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    controller: _JIBMBScontroller,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-          child: FormBuilderDropdown<Grad>(
-            name: 'gradId',
-            decoration: InputDecoration(
-              labelText: 'Lokacija',
-              suffixIcon: const Icon(Icons.directions_car),
-              hintText: 'Odaberite grad',
-              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: const OutlineInputBorder(
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            items: [
-                              const DropdownMenuItem<Grad>(
-                                value: null,
-                                child: Text('Odaberite grad'),
-                              ),
-                            ] +
-                            (grad
-                    ?.map((grad) => DropdownMenuItem(
-                          value: grad,
-                          child: Text(grad.nazivGrada ?? ""),
-                        ))
-                    .toList() ??
-                []),
-          ),
-        ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            ExpansionTile(
-              title: const Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Dodatne opcije pretrage",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-              children: [
-                Column(
-  children: [
-    Row(
-      children: [
-        Expanded(
-          child: FormBuilderDropdown<Vozilo>(
-            name: 'voziloId',
-            decoration: InputDecoration(
-              labelText: 'Marka vozila',
-              suffixIcon: const Icon(Icons.directions_car),
-              hintText: 'Odaberite marku vozila',
-              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: const OutlineInputBorder(
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            items: [
-                              const DropdownMenuItem<Vozilo>(
-                                value: null,
-                                child: Text('Odaberite marku vozila'),
-                              ),
-                            ] +
-                            (vozila
-                    ?.map((vozila) => DropdownMenuItem(
-                          value: vozila,
-                          child: Text(vozila.markaVozila ?? ""),
-                        ))
-                    .toList() ??
-                []),
-          ),
-        ),
-        const SizedBox(width: 16), // Razmak između dropdown-ova
-        Expanded(
-          child: FormBuilderDropdown<Godiste>(
-            name: 'godisteId',
-            decoration: InputDecoration(
-              labelText: 'Godiste',
-              suffixIcon: const Icon(Icons.date_range),
-              hintText: 'Odaberite godiste',
-              hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-              border: const OutlineInputBorder(
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            items: [
-                              const DropdownMenuItem<Godiste>(
-                                value: null,
-                                child: Text('Odaberite godiste'),
-                              ),
-                            ] +
-                            (godiste
-                    ?.map((godiste) => DropdownMenuItem(
-                          value: godiste,
-                          child: Text(godiste.godiste_!.toString()),
-                        ))
-                    .toList() ??
-                []),
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 16), // Razmak između redova
-    Row(
-      children: [
-        Expanded(
-  child: FormBuilderDropdown<Model>(
-    name: 'modelId',
-    decoration: InputDecoration(
-      labelText: 'Model',
-      suffixIcon: const Icon(Icons.dashboard_customize),
-      hintText: 'Odaberite model',
-      hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-      border: const OutlineInputBorder(),
-      filled: true,
-      fillColor: const Color.fromARGB(255, 255, 255, 255),
-    ),
-    items: [
-      const DropdownMenuItem<Model>(
-        value: null,
-        child: Text('Odaberite model'),
-      ),
-    ] +
-    (model
-      ?.map((model) => DropdownMenuItem(
-        value: model,
-        child: Text(model.nazivModela ?? ""),
-      ))
-      .toList() ?? []),
-  ),
-),
-
-      ],
-    ),
-  ],
-)
-
-              ],
-            ),
-            Row(
-  mainAxisAlignment: MainAxisAlignment.end, // Elemente poravnaj desno
-  children: [
-    ElevatedButton(
-      onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ProductDetailScreen(product: null),
-                              ),
-                            );
-                    await _loadData();
-
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red, // Crvena boja za dugme
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
+Widget _buildSearch() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: FormBuilder(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.add, color: Colors.white),
-          SizedBox(width: 8.0), // Razmak između ikone i teksta
-          Text('Dodaj', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    ),
-    const SizedBox(width: 10), // Razmak između dva dugmeta
-    ElevatedButton(
+          // Istaknuto polje za naziv proizvoda
+          TextField(
+            decoration: const InputDecoration(
+              labelText: 'Naziv proizvoda',
+              labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            controller: _nazivController,
+          ),          const SizedBox(height: 10),
+
+          // Dropdown za sortiranje po cijeni
+          DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: "Poredaj po cijeni",
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            items: <String>['--', 'Rastuća', 'Opadajuća']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? value) async {
+              if (value == 'Rastuća') {
+                var data = await _productProvider.get(filter: {
+                  'naziv': _nazivController.text,
+                  'model': _modelController.text,
+                  'nazivFirme': _nazivFirmeController.text,
+                  'nazivGrada': _gradController.text,
+                  'jib': _JIBMBScontroller.text,
+                  'mbs': _JIBMBScontroller.text,
+                  'cijenaRastuca': true,
+                });
+                setState(() {
+                  result = data;
+                });
+              } else if (value == 'Opadajuća') {
+                var data = await _productProvider.get(filter: {
+                  'naziv': _nazivController.text,
+                  'model': _modelController.text,
+                  'nazivFirme': _nazivFirmeController.text,
+                  'nazivGrada': _gradController.text,
+                  'jib': _JIBMBScontroller.text,
+                  'mbs': _JIBMBScontroller.text,
+                  'cijenaOpadajuca': true,
+                });
+                setState(() {
+                  result = data;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 10),
+
+ 
+
+          // Dodatne opcije pretrage
+          ExpansionTile(
+            title: const Text(
+              "Dodatne opcije pretrage",
+              style: TextStyle(color: Colors.red),
+            ),
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                          
+          FormBuilderDropdown<Grad>(
+            name: 'gradId',
+            decoration: const InputDecoration(
+              labelText: 'Lokacija',
+              suffixIcon: Icon(Icons.location_on),
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            items: [
+              const DropdownMenuItem<Grad>(
+                value: null,
+                child: Text('Odaberite grad'),
+              ),
+              ...?grad?.map((grad) => DropdownMenuItem(
+                    value: grad,
+                    child: Text(grad.nazivGrada ?? ''),
+                  )),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Polja jedno ispod drugog
+          TextField(
+            decoration: const InputDecoration(
+              labelText: 'Naziv firme',
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            controller: _nazivFirmeController,
+          ),
+          const SizedBox(height: 10),
+          
+          TextField(
+            decoration: const InputDecoration(
+              labelText: 'JIB ili MBS',
+              border: OutlineInputBorder(),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+            controller: _JIBMBScontroller,
+          ),
+          const SizedBox(height: 10),
+
+                  FormBuilderDropdown<Vozilo>(
+                    name: 'voziloId',
+                    decoration: const InputDecoration(
+                      labelText: 'Marka vozila',
+                      suffixIcon: Icon(Icons.directions_car),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    items: [
+                      const DropdownMenuItem<Vozilo>(
+                        value: null,
+                        child: Text('Odaberite marku vozila'),
+                      ),
+                      ...?vozila?.map((vozilo) => DropdownMenuItem(
+                            value: vozilo,
+                            child: Text(vozilo.markaVozila ?? ''),
+                          )),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  FormBuilderDropdown<Godiste>(
+                    name: 'godisteId',
+                    decoration: const InputDecoration(
+                      labelText: 'Godište',
+                      suffixIcon: Icon(Icons.date_range),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    items: [
+                      const DropdownMenuItem<Godiste>(
+                        value: null,
+                        child: Text('Odaberite godište'),
+                      ),
+                      ...?godiste?.map((g) => DropdownMenuItem(
+                            value: g,
+                            child: Text(g.godiste_!.toString()),
+                          )),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  FormBuilderDropdown<Model>(
+                    name: 'modelId',
+                    decoration: const InputDecoration(
+                      labelText: 'Model',
+                      suffixIcon: Icon(Icons.dashboard_customize),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    items: [
+                      const DropdownMenuItem<Model>(
+                        value: null,
+                        child: Text('Odaberite model'),
+                      ),
+                      ...?model?.map((m) => DropdownMenuItem(
+                            value: m,
+                            child: Text(m.nazivModela ?? ''),
+                          )),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          // Dugmad za pretragu
+Align(
+  alignment: Alignment.centerRight,
+  child: SizedBox(
+    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+    child: ElevatedButton.icon(
       onPressed: _onSearchPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red, // Crvena boja za dugme
+        backgroundColor: Colors.red,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
       ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
-        children: [
-          Icon(Icons.search, color: Colors.white),
-          SizedBox(width: 8.0), // Razmak između ikone i teksta
-          Text('Pretraga', style: TextStyle(color: Colors.white)),
+      icon: const Icon(Icons.search, color: Colors.white),
+      label: const Text(
+        "Pretraži",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14, // Veličina teksta
+        ),
+      ),
+    ),
+    
+  ),
+),
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProductDetailScreen(product: null),
+                ),
+              );
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja za dugme
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
+          ),
+        ),
+      ),
+    
+
         ],
       ),
     ),
-  ],
-)
-
-          ],
-        ),
-      ),
-    );
-  }
+  );
+}
 
 Future<void> _onSearchPressed() async {
   print("Pokretanje pretrage: ${_nazivController.text}");
@@ -474,174 +425,152 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
     print("Error during fetching data: $e");
     // Prikazivanje greške ako dođe do problema pri dohvaćanju podataka
   }
+
+
 }
 
-  Widget _buildDataListView() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, // Tri kolone
-            childAspectRatio: 1.4, // Omjer za kvadratne kartice
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-          ),
-          itemCount: result?.result.length ?? 0,
-          itemBuilder: (context, index) {
-            Product e = result!.result[index];
-            bool hasDiscount =
-                e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
-            double originalPrice = e.cijena ?? 0.0;
-            double discountPrice = hasDiscount
-                ? e.cijenaSaPopustom!
-                : e.cijena ?? 0.0; // Cijena sa popustom uvećana za 5%
 
-           return GestureDetector(
-  onTap: () async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ProductDetailScreen(product: e),
-      ),
-    );
-    
-    await _loadData(); // Dodao sam ovdje poziv loadData nakon povratka iz navigacije
-  },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+
+Widget _buildDataListView() {
+  return Expanded(
+    child: SingleChildScrollView(
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.8,
+          crossAxisSpacing: 6.0,
+          mainAxisSpacing: 6.0,
+        ),
+        itemCount: result?.result.length ?? 0,
+        itemBuilder: (context, index) {
+          Product e = result!.result[index];
+          bool hasDiscount = e.cijenaSaPopustom != null &&
+              e.cijenaSaPopustom! > 0 &&
+              e.cijenaSaPopustom! < (e.cijena ?? 0.0);
+          double originalPrice = e.cijena ?? 0.0;
+          double discountPrice = hasDiscount ? e.cijenaSaPopustom! : 0.0;
+
+          return GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ProductDetailScreen(product: e),
                 ),
-                elevation: 4,
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 160,
-                          decoration: const BoxDecoration(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(10)),
+              );
+
+              await _loadData();
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              elevation: 1.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.width * 0.25,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                    ),
+                    child: e.slika != null && e.slika!.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                            child: Image.memory(
+                              base64Decode(e.slika!),
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : const Center(
+                            child: Icon(Icons.image, size: 30, color: Colors.grey),
                           ),
-                          child: e.slika != null && e.slika!.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(10)),
-                                  child: Image.memory(
-                                    base64Decode(e.slika!),
-                                    fit: BoxFit.contain,
-                                  ),
-                                )
-                              : const Center(child: Text("x")),
-                        ),
-                        const SizedBox(
-                            height:
-                                25), // Razmak od 25 piksela između slike i naziva
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            top: 4.0,
-                          ), // Podiže naziv i opis
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Text(
+                      e.naziv ?? "",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Text(
+                      e.opis != null && e.opis!.length > 15
+                          ? "${e.opis!.substring(0, 15)}..."
+                          : e.opis ?? "",
+                      style: const TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 10,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (hasDiscount)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                             child: Text(
-                              e.naziv ?? "",
+                              "${formatNumber(discountPrice)} KM",
                               style: const TextStyle(
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20, // Povećan font naziva
+                                fontSize: 10,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 8.0,
-                              top: 2.0,
-                              bottom: 14.0), // Podiže opis i ograničava širinu
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: SizedBox(
-                              width:
-                                  200, // Ograničava širinu opisa na 60% širine kartice
-                              child: Text(
-                                e.opis != null && e.opis!.length > 20
-                                    ? "${e.opis!.substring(0, 20)}..." // Prikazuje samo prvih 30 karaktera
-                                    : e.opis ?? "",
-                                style: const TextStyle(
-                                  color: Colors.blueGrey,
-                                  fontSize: 15,
-                                  fontWeight:
-                                      FontWeight.normal, // Opis nije boldiran
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow
-                                    .ellipsis, // Omogućava prijelom u novi red
-                              ),
+                        if (hasDiscount) const SizedBox(height: 2),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: hasDiscount
+                                // ignore: deprecated_member_use
+                                ? Colors.blueGrey.withOpacity(0.7)
+                                // ignore: deprecated_member_use
+                                : Colors.blueGrey.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            "${formatNumber(originalPrice)} KM",
+                            style: TextStyle(
+                              color: hasDiscount ? Colors.white70 : Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                              decoration: hasDiscount ? TextDecoration.lineThrough : TextDecoration.none,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          if (hasDiscount)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                "${formatNumber(discountPrice)} KM", // Cijena sa popustom uvećana za 5%
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      14, // Povećan font za cijenu sa popustom
-                                ),
-                              ),
-                            ),
-                          const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              "${formatNumber(originalPrice)} KM",
-                              style: TextStyle(
-                                color:
-                                    hasDiscount ? Colors.white70 : Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13, // Povećan font za cijenu
-                                decoration: hasDiscount
-                                    ? TextDecoration.lineThrough
-                                    : TextDecoration.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(50.0),
-        ),
+            ),
+          );
+        },
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

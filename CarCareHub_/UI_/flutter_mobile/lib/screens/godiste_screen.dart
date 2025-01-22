@@ -52,55 +52,77 @@ class _GodisteScreenState extends State<GodisteScreen> {
       ),
     );
   }
-
-  Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(
-        top: 20.0,
-      ),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(
-            color: Colors.black,
-            width: 1.0,
-          ),
+Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.0,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Godiste:',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivModelaController,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Godiste:',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivModelaController,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                var filterParams = {'IsAllIncluded': 'true'};
+
+                if (_nazivModelaController.text.isNotEmpty) {
+                  filterParams['godiste_'] = _nazivModelaController.text;
+                }
+
+                var data = await _godisteProvider.get(filter: filterParams);
+
+                if (!mounted) return;
+
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(width: 10),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
                 onPressed: () async {
-                  var filterParams = {
-                    'IsAllIncluded': 'true',
-                  };
-
-                  if (_nazivModelaController.text.isNotEmpty) {
-                    filterParams['godiste_'] = _nazivModelaController.text;
-                  }
-
-                  var data = await _godisteProvider.get(filter: filterParams);
-
-                  if (!mounted) return;
-
-                  setState(() {
-                    result = data;
-                  });
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          GodisteDetailsScreen(godiste: null),
+                    ),
+                  );
+                  await _loadData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -112,48 +134,19 @@ class _GodisteScreenState extends State<GodisteScreen> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.search),
+                    Icon(Icons.add),
                     SizedBox(width: 8.0),
-                    Text('Pretraga'),
+                    Text('Dodaj'),
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
-              if (context.read<UserProvider>().role == "Admin")
-                ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GodisteDetailsScreen(godiste: null),
-                              ),
-                            );
-                    await _loadData();
-
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add),
-                      SizedBox(width: 8.0),
-                      Text('Dodaj'),
-                    ],
-                  ),
-                ),
-              const SizedBox(width: 10),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildDataListView() {
     return Container(

@@ -50,74 +50,69 @@ class _ModelScreenState extends State<ModelScreen> {
     );
   }
  
-  Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Marka vozila',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _markaVozilaController,
+Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch, // Za širenje u širinu
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Marka vozila',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _markaVozilaController,
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Naziv modela',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivModelaController,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _onSearchPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Naziv modela',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivModelaController,
-                ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
               ),
-              const SizedBox(width: 10),
+            ),
+            const SizedBox(height: 10),
+            if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
-                onPressed: _onSearchPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-                     if (context.read<UserProvider>().role == "Admin")
-               ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ModelDetailsScreen(model: null),
-                              ),
-                            );
-                    await _loadData();
-
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ModelDetailsScreen(model: null),
+                    ),
+                  );
+                  await _loadData();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -135,12 +130,13 @@ class _ModelScreenState extends State<ModelScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
  
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};
@@ -157,9 +153,11 @@ class _ModelScreenState extends State<ModelScreen> {
       result = data;
     });
   }
- 
-Widget _buildDataListView() {
-  return Container(
+ Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView(
+          scrollDirection: Axis.vertical, // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
     child: Card(
@@ -168,59 +166,58 @@ Widget _buildDataListView() {
         borderRadius: BorderRadius.circular(1.0),
         side: const BorderSide(color: Colors.black, width: 1.0),
       ),
-      child: SingleChildScrollView(
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
+          dataTextStyle: TextStyle(fontSize: 14), // Manja veličina fonta
           columns: const [
+              DataColumn(
+              label: Text(
+                'Marka vozila',
+                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
+              ),
+            ),
             DataColumn(
               label: Text(
                 'Naziv modela',
-                style: TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
               ),
             ),
-            DataColumn(
-              label: Text(
-                'Marka vozila',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Godiste',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
+          
+          
           ],
           rows: result?.result
-                 .map(
-                      (Model e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ModelDetailsScreen(model: e),
-                              ),
-                            );
-                    await _loadData();
-
-                  }
-                },
-                cells: [
-                    DataCell(Text(e.nazivModela ?? "")),
-                    DataCell(Text(e.vozilo?.markaVozila ?? "")),
-                    DataCell(Text(e.godiste?.godiste_?.toString() ?? "")),
+              .map(
+                (Model e) => DataRow(
+                  onSelectChanged: (selected) async {
+                    if (selected == true) {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ModelDetailsScreen(model: e),
+                        ),
+                      );
+                      await _loadData();
+                    }
+                  },
+                  cells: [
+                      DataCell(Text(
+                      e.vozilo?.markaVozila ?? "",
+                      style: TextStyle(fontSize: 14),
+                    )),
+                    DataCell(Text(
+                      e.nazivModela ?? "",
+                      style: TextStyle(fontSize: 14), // Manja veličina fonta za svaku ćeliju
+                    )),
+                  
+                   
                   ],
- 
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+                ),
+              )
+              .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+      ));
+}
+
 }

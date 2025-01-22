@@ -53,111 +53,114 @@ class _KlijentScreenState extends State<KlijentScreen> {
     //  ),
     );
   }
-
-    Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: "Ime",
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _imeController,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: "Prezime",
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _prezimeController,
-                ),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  var filterParams = {'IsAllncluded': 'true'};
-                  if (_imeController.text.isNotEmpty) {
-                    filterParams['ime'] = _imeController.text;
-                  }
-                  if (_prezimeController.text.isNotEmpty) {
-                    filterParams['prezime'] = _prezimeController.text;
-                  }
-                  var data = await _klijentProvider.get(filter: filterParams);
-                  if (!mounted) return;
-                  setState(() {
-                    result = data;
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga'),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              if (context.read<UserProvider>().role == "Admin")
-               ElevatedButton(
-  onPressed: () async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => KlijentDetailsScreen(klijent: null),
+Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
       ),
-    );
-    
-    await _loadData();
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.red,
-    foregroundColor: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: "Ime",
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _imeController,
+             // margin: const EdgeInsets.only(bottom: 10),
+            ),
+            SizedBox(height: 5),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: "Prezime",
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _prezimeController,
+           //   margin: const EdgeInsets.only(bottom: 10),
+            ),
+            Align(
+  alignment: Alignment.centerRight,
+  child: SizedBox(
+    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+    child: ElevatedButton.icon(
+      onPressed:  () async {
+                      var filterParams = {'IsAllncluded': 'true'};
+                      if (_imeController.text.isNotEmpty) {
+                        filterParams['ime'] = _imeController.text;
+                      }
+                      if (_prezimeController.text.isNotEmpty) {
+                        filterParams['prezime'] = _prezimeController.text;
+                      }
+                      var data = await _klijentProvider.get(filter: filterParams);
+                      if (!mounted) return;
+                      setState(() {
+                        result = data;
+                      });
+                    },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
+      ),
+      icon: const Icon(Icons.search, color: Colors.white),
+      label: const Text(
+        "Pretraži",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14, // Veličina teksta
+        ),
+      ),
     ),
-  ),
-  child: const Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(Icons.add),
-      SizedBox(width: 8.0),
-      Text('Dodaj'),
-    ],
+    
   ),
 ),
-
-            ],
+                if (context.read<UserProvider>().role == "Admin")
+Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => KlijentDetailsScreen(klijent: null),
+                ),
+              );
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja za dugme
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
           ),
         ),
       ),
-    );
-  }
+         
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 
   Widget _buildDataListView() {
   return Container(

@@ -2,7 +2,7 @@ import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 
 class UslugeProvider extends BaseProvider<Usluge> {
-  UslugeProvider():super("api/usluge");
+  UslugeProvider():super("/api/usluge");
 
   @override
   Usluge fromJson(data) {

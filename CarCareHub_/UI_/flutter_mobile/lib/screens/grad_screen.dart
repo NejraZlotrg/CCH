@@ -39,177 +39,182 @@ class _GradScreenState extends State<GradScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Grad",
-      child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
-        child: Column(
-          children: [
-            _buildSearch(),
-            _buildDataListView(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearch() {
-    return Container(
-      width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-      margin: const EdgeInsets.only(
-        top: 20.0, // Razmak od vrha
-      ),
-      child: Card(
-        elevation: 4.0, // Dodaje malo sjene za karticu
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-          side: const BorderSide(
-            color: Colors.black, // Crni okvir
-            width: 1.0, // Debljina okvira (1px)
+        child: Container(
+          color: const Color.fromARGB(255, 204, 204, 204),
+          child: Column(
+            children: [
+              _buildSearch(),
+              _buildDataListView(),
+            ],
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Naziv grada',
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  controller: _nazivGradaController,
+    );
+  }
+Widget _buildSearch() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.0,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Naziv grada',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              controller: _nazivGradaController,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                var filterParams = {'IsDrzavaIncluded': 'true'};
+
+                if (_nazivGradaController.text.isNotEmpty) {
+                  filterParams['nazivGrada'] = _nazivGradaController.text;
+                }
+
+                var data = await _gradProvider.get(filter: filterParams);
+
+                if (!mounted) return;
+
+                setState(() {
+                  result = data;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              const SizedBox(width: 10),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search),
+                  SizedBox(width: 8.0),
+                  Text('Pretraga'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (context.read<UserProvider>().role == "Admin")
               ElevatedButton(
                 onPressed: () async {
-                  var filterParams = {
-                    'IsDrzavaIncluded': 'true', // Ovaj parametar ostaje
-                  };
-
-                  // Dodavanje filtera samo ako je naziv unesen
-                  if (_nazivGradaController.text.isNotEmpty) {
-                    filterParams['nazivGrada'] = _nazivGradaController.text;
-                  }
-
-                  var data = await _gradProvider.get(filter: filterParams);
-
-                  if (!mounted) return; // Dodaj ovu proveru
-
-                  setState(() {
-                    result = data;
-                  });
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => GradDetailsScreen(grad: null),
+                    ),
+                  );
+                  await _loadData();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Crvena boja dugmeta
-                  foregroundColor: Colors.white, // Bijela boja teksta
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.search),
+                    Icon(Icons.add),
                     SizedBox(width: 8.0),
-                    Text('Pretraga'),
+                    Text('Dodaj'),
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
-              if (context.read<UserProvider>().role == "Admin")
-                 ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GradDetailsScreen(grad: null),
-                              ),
-                            );
-                    await _loadData();
-
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Crvena boja dugmeta
-                    foregroundColor: Colors.white, // Bijela boja teksta
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+          ],
+        ),
+      ),
+    ),
+  );
+}
+Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
+    child: Card(
+      elevation: 4.0, // Dodaje malo sjene za karticu
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        side: const BorderSide(
+          color: Colors.black, // Crni okvir
+          width: 1.0, // Debljina okvira (1px)
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical, // Dodan vertikalni scroll
+        child: DataTable(
+          showCheckboxColumn: false,
+          columnSpacing: 10, // Manji razmak između kolona
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Naziv grada',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 12, // Smanjen font za naslov kolone
+                ),
+              ),
+            ),
+            DataColumn(
+              label: Text(
+                'Naziv drzave',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 12, // Smanjen font za naslov kolone
+                ),
+              ),
+            ),
+          ],
+          rows: (result?.result ?? []).map(
+            (Grad e) => DataRow(
+              onSelectChanged: (selected) async {
+                if (selected == true) {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => GradDetailsScreen(grad: e),
                     ),
+                  );
+                  await _loadData();
+                }
+              },
+              cells: [
+                DataCell(
+                  Text(
+                    e.nazivGrada ?? "",
+                    style: const TextStyle(fontSize: 12), // Smanjen font za redove
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add), // Ikonica plus
-                      SizedBox(width: 8.0),
-                      Text('Dodaj'),
-                    ],
+                ),
+                DataCell(
+                  Text(
+                    e.drzava?.nazivDrzave ?? "",
+                    style: const TextStyle(fontSize: 12), // Smanjen font za redove
                   ),
                 ),
-              const SizedBox(width: 10),
-            ],
-          ),
+              ],
+            ),
+          ).toList(),
         ),
       ),
-    );
-  }
+    ),
+  )));
+}
 
-  Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width * 1, // Širina 100% ekrana
-      margin: const EdgeInsets.only(
-        top: 20.0, // Razmak od vrha
-      ),
-      child: Card(
-        elevation: 4.0, // Dodaje malo sjene za karticu
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-          side: const BorderSide(
-            color: Colors.black, // Crni okvir
-            width: 1.0, // Debljina okvira (1px)
-          ),
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, // Dodan vertikalni scroll
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Naziv grada',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ),
-              DataColumn(
-                label: Text(
-                  'Naziv drzave',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ),
-            ],
-            rows: (result?.result ?? []).map(
-                      (Grad e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GradDetailsScreen(grad: e),
-                              ),
-                            );
-                    await _loadData();
-                     }
-                },
-                cells: [
-                  DataCell(Text(e.nazivGrada ?? "")),
-                  DataCell(Text(e.drzava?.nazivDrzave ?? "")),
-                ],
-              ),
-            ).toList(),
-          ),
-        ),
-      ),
-    );
-  }
 }

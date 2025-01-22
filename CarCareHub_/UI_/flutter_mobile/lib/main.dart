@@ -99,17 +99,14 @@ class LogInPage extends StatefulWidget {
   // ignore: library_private_types_in_public_api
   _LogInPageState createState() => _LogInPageState();
 }
-
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String?
-      errorMessage; // Poruka greške koja će se prikazati ako login ne uspije
+  String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
-    context.read<ProductProvider>();
-    double containerWidth = MediaQuery.of(context).size.width * 0.8;
+    double containerWidth = MediaQuery.of(context).size.width * 0.9;
 
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -117,7 +114,6 @@ class _LogInPageState extends State<LogInPage> {
         child: SingleChildScrollView(
           child: Container(
             width: containerWidth,
-            height: 500,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16.0),
@@ -129,51 +125,92 @@ class _LogInPageState extends State<LogInPage> {
                 ),
               ],
             ),
-            child: Row(
+            child: Column(
               children: [
-                // Left two-thirds with login form
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Prijavite se na svoj račun',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(16.0),
+                      bottomRight: Radius.circular(16.0),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/cch_logo.png",
+                        height: 80,
+                      ),
+                      const SizedBox(height: 10.0),
+                      const Text(
+                        'Dobrodošli u Car Care Hub!',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
                         ),
-                        const SizedBox(height: 10.0),
-                        const Text(
-                          'Unesite vaše podatke da biste pristupili aplikaciji.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black45,
-                          ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10.0),
+                      const Text(
+                        'Brinemo o vašem vozilu s ljubavlju i pažnjom.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10.0),
+                      const Icon(
+                        Icons.directions_car_filled_outlined,
+                        size: 40,
+                        color: Color.fromARGB(255, 66, 65, 65),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Prijavite se na svoj račun',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      const Text(
+                        'Unesite vaše podatke da biste pristupili aplikaciji.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black45,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 30.0),
+                      _buildTextField(usernameController, 'Korisničko ime'),
+                      const SizedBox(height: 15.0),
+                      _buildTextField(passwordController, 'Lozinka',
+                          obscureText: true),
+                      const SizedBox(height: 10.0),
+                      if (errorMessage != null)
+                        Text(
+                          errorMessage!,
+                          style: const TextStyle(
+                              color: Colors.red, fontSize: 12),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 30.0),
-                        _buildTextField(usernameController, 'Korisničko ime'),
-                        const SizedBox(height: 15.0),
-                        _buildTextField(passwordController, 'Lozinka',
-                            obscureText: true),
-                        const SizedBox(height: 10.0),
-                        if (errorMessage != null) // Prikaz poruke o grešci
-                          Text(
-                            errorMessage!,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 12),
-                            textAlign: TextAlign.center,
-                          ),
-                        const SizedBox(height: 15.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
+                      const SizedBox(height: 15.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
                               onPressed: () async {
                                 var username = usernameController.text;
                                 var password = passwordController.text;
@@ -330,64 +367,17 @@ catch (e) {
                               child: const Text(
                                 'Registruj se',
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Colors.red,
                                   fontSize: 14,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Right one-third with logo and details
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(16.0),
-                        bottomRight: Radius.circular(16.0),
+                        ],
                       ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/cch_logo.png",
-                          height: 100,
-                        ),
-                        const SizedBox(height: 20.0),
-                        const Text(
-                          'Dobrodošli u Car Care Hub!',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10.0),
-                        const Text(
-                          'Brinemo o vašem vozilu s ljubavlju i pažnjom.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20.0),
-                        const Icon(
-                          Icons.directions_car_filled_outlined,
-                          size: 40,
-                          color: Color.fromARGB(255, 66, 65, 65),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
+                
               ],
             ),
           ),
@@ -399,7 +389,7 @@ catch (e) {
   Widget _buildTextField(TextEditingController controller, String label,
       {bool obscureText = false}) {
     return SizedBox(
-      width: 370, // Narrower input field
+      width: MediaQuery.of(context).size.width * 0.8,
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
