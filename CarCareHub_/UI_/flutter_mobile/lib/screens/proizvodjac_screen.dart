@@ -88,60 +88,82 @@ Widget _buildSearch() {
               controller: _nazivProizvodjacaController,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                print("podaci proceed");
-                var data = await _proizvodjacProvider.get(filter: {
-                  'nazivProizvodjaca': _nazivProizvodjacaController.text,
-                });
+           Column(
+  children: [
+    // Dugme za pretragu Proizvođača
+    Align(
+      alignment: Alignment.centerRight,
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            print("podaci proceed");
+            var data = await _proizvodjacProvider.get(filter: {
+              'nazivProizvodjaca': _nazivProizvodjacaController.text,
+            });
 
-                setState(() {
-                  result = data;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+            setState(() {
+              result = data;
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red, // Crvena boja dugmeta
+            foregroundColor: Colors.white, // Bijela boja teksta
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+            ),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search),
+              SizedBox(width: 8.0),
+              Text('Pretraga'),
+            ],
+          ),
+        ),
+      ),
+    ),
+   
+    // Dugme za pretragu Države
+    
+    // Dugme za dodavanje, vidljivo samo za Admin korisnika
+    if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>  DrzaveDetailsScreen(drzava: null),
                 ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8.0),
-                  Text('Pretraga'),
-                ],
+              );
+              // Ponovno učitavanje podataka nakon povratka
+              await _fetchInitialData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ProizvodjacDetailsScreen(proizvodjac: null),
-                  ),
-                );
-                await _fetchInitialData();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add),
-                  SizedBox(width: 8.0),
-                  Text('Dodaj'),
-                ],
-              ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add),
+                SizedBox(width: 8.0),
+                Text('Dodaj'),
+              ],
             ),
+          ),
+        ),
+      ),
+  ],
+)
+
           ],
         ),
       ),

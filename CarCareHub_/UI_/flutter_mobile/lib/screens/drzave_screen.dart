@@ -89,70 +89,88 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
               ),
               controller: _nazivDrzaveController,
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                var filterParams = {'IsAllncluded': 'true'};
+            
+           Column(
+  children: [
+    // Dugme za pretragu
+    Align(
+      alignment: Alignment.centerRight,
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            var filterParams = {'IsAllncluded': 'true'};
 
-                if (_nazivDrzaveController.text.isNotEmpty) {
-                  filterParams['nazivDrzave'] = _nazivDrzaveController.text;
-                }
+            if (_nazivDrzaveController.text.isNotEmpty) {
+              filterParams['nazivDrzave'] = _nazivDrzaveController.text;
+            }
 
-                try {
-                  var data = await _drzaveProvider.get(filter: filterParams);
-                  if (mounted) {
-                    setState(() {
-                      result = data;
-                    });
-                  }
-                } catch (e) {
-                  print("Error fetching filtered data: $e");
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+            try {
+              var data = await _drzaveProvider.get(filter: filterParams);
+              if (mounted) {
+                setState(() {
+                  result = data;
+                });
+              }
+            } catch (e) {
+              print("Error fetching filtered data: $e");
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search),
+              SizedBox(width: 8.0),
+              Text('Pretraga'),
+            ],
+          ),
+        ),
+      ),
+    ),
+    // Dugme za dodavanje, vidljivo samo za Admin korisnika
+    if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>  DrzaveDetailsScreen(drzava: null),
                 ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8.0),
-                  Text('Pretraga'),
-                ],
+              );
+              // Ponovno učitavanje podataka nakon povratka
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
-            const SizedBox(height: 10),
-            if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DrzaveDetailsScreen(drzava: null),
-                    ),
-                  );
-                  // Reload data after returning from DrzaveDetailsScreen
-                  await _loadData();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
-              ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add),
+                SizedBox(width: 8.0),
+                Text('Dodaj'),
+              ],
+            ),
+          ),
+        ),
+      ),
+  ],
+)
+
           ],
         ),
       ),

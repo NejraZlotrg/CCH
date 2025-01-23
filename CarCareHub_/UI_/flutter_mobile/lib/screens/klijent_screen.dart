@@ -78,7 +78,7 @@ Widget _buildSearch() {
               controller: _imeController,
              // margin: const EdgeInsets.only(bottom: 10),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             TextField(
               decoration: const InputDecoration(
                 labelText: "Prezime",
@@ -89,46 +89,51 @@ Widget _buildSearch() {
               controller: _prezimeController,
            //   margin: const EdgeInsets.only(bottom: 10),
             ),
-            Align(
-  alignment: Alignment.centerRight,
-  child: SizedBox(
-    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-    child: ElevatedButton.icon(
-      onPressed:  () async {
-                      var filterParams = {'IsAllncluded': 'true'};
-                      if (_imeController.text.isNotEmpty) {
-                        filterParams['ime'] = _imeController.text;
-                      }
-                      if (_prezimeController.text.isNotEmpty) {
-                        filterParams['prezime'] = _prezimeController.text;
-                      }
-                      var data = await _klijentProvider.get(filter: filterParams);
-                      if (!mounted) return;
-                      setState(() {
-                        result = data;
-                      });
-                    },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
-      ),
-      icon: const Icon(Icons.search, color: Colors.white),
-      label: const Text(
-        "Pretraži",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 14, // Veličina teksta
+         Column(
+  children: [
+    // Dugme za pretragu klijenata
+    Align(
+      alignment: Alignment.centerRight,
+      child: SizedBox(
+        width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+        child: ElevatedButton.icon(
+          onPressed: () async {
+            var filterParams = {'IsAllncluded': 'true'};
+            if (_imeController.text.isNotEmpty) {
+              filterParams['ime'] = _imeController.text;
+            }
+            if (_prezimeController.text.isNotEmpty) {
+              filterParams['prezime'] = _prezimeController.text;
+            }
+
+            var data = await _klijentProvider.get(filter: filterParams);
+            if (!mounted) return;
+
+            setState(() {
+              result = data;
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
+          ),
+          icon: const Icon(Icons.search, color: Colors.white),
+          label: const Text(
+            "Pretraži",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14, // Veličina teksta
+            ),
+          ),
         ),
       ),
     ),
-    
-  ),
-),
-                if (context.read<UserProvider>().role == "Admin")
-Align(
+    // Dugme za dodavanje klijenata (samo za Admin korisnike)
+    if (context.read<UserProvider>().role == "Admin")
+      Align(
         alignment: Alignment.centerRight,
         child: SizedBox(
           width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
@@ -142,17 +147,23 @@ Align(
               await _loadData();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Crvena boja za dugme
+              backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
             icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
+            label: const Text(
+              'Dodaj',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
       ),
+  ],
+)
+
          
           ],
         ),

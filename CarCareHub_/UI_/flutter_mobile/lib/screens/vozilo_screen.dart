@@ -73,64 +73,60 @@ class _VoziloScreenState extends State<VoziloScreen> {
               controller: _markaVozilaController,
             ),
             const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _onSearchPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.search),
-                        SizedBox(width: 8.0),
-                        Text('Pretraga'),
-                      ],
-                    ),
-                  ),
+                     // Dugmad za pretragu
+Align(
+  alignment: Alignment.centerRight,
+  child: SizedBox(
+    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+    child: ElevatedButton.icon(
+      onPressed: _onSearchPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
+      ),
+      icon: const Icon(Icons.search, color: Colors.white),
+      label: const Text(
+        "Pretraži",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14, // Veličina teksta
+        ),
+      ),
+    ),
+    
+  ),
+),
+if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>  VoziloDetailsScreen(vozilo: null),
                 ),
-              ],
+              );
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja za dugme
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => VoziloDetailsScreen(vozilo: null),
-                        ),
-                      );
-                      await _loadData();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add),
-                        SizedBox(width: 8.0),
-                        Text('Dodaj'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
+          ),
+        ),
+      ),
+    
+
           ],
         ),
       ),

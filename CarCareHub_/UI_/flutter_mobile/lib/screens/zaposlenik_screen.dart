@@ -87,67 +87,88 @@ Widget _buildSearch() {
               controller: _prezimeController,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                var filterParams = {'IsAllIncluded': 'true'};
+      Column(
+  mainAxisAlignment: MainAxisAlignment.start, // Razmak između dugmadi
+  children: [
+    // Dugme za pretragu
+    Align(
+      alignment: Alignment.center, 
+       child: SizedBox(
+          width: double.infinity,
+       // Centriranje dugmeta
+      child: ElevatedButton(
+        onPressed: () async {
+          var filterParams = {'IsAllIncluded': 'true'};
 
-                if (_imeController.text.isNotEmpty) {
-                  filterParams['ime'] = _imeController.text;
-                }
-                if (_prezimeController.text.isNotEmpty) {
-                  filterParams['prezime'] = _prezimeController.text;
-                }
+          if (_imeController.text.isNotEmpty) {
+            filterParams['ime'] = _imeController.text;
+          }
+          if (_prezimeController.text.isNotEmpty) {
+            filterParams['prezime'] = _prezimeController.text;
+          }
 
-                var data = await _zaposlenikProvider.get(filter: filterParams);
+          var data = await _zaposlenikProvider.get(filter: filterParams);
 
-                setState(() {
-                  result = data;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-                ),
+          setState(() {
+            result = data;
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.search),
+            SizedBox(width: 8.0),
+            Text('Pretraga'),
+          ],
+        ),
+      ),
+    ),
+    ),
+    
+    
+    // Dugme za dodavanje zaposlenika (samo za Admin korisnike)
+    if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.center, // Centriranje dugmeta
+         child: SizedBox(
+          width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const ZaposlenikDetailsScreen(zaposlenik: null),
               ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8.0),
-                  Text('Pretraga'),
-                ],
-              ),
+            );
+            await _loadData();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            const SizedBox(height: 10),
-            if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const ZaposlenikDetailsScreen(zaposlenik: null),
-                    ),
-                  );
-                  await _loadData();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Crvena boja dugmeta
-                  foregroundColor: Colors.white, // Bijela boja teksta
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
-              ),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add),
+              SizedBox(width: 8.0),
+              Text('Dodaj'),
+            ],
+          ),
+        ),
+    ),)
+  ],
+)
+
           ],
         ),
       ),

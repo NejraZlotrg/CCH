@@ -78,65 +78,82 @@ Widget _buildSearch() {
               controller: _nazivGradaController,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                var filterParams = {'IsDrzavaIncluded': 'true'};
+           Column(
+  children: [
+    // Dugme za pretragu gradova
+    Align(
+      alignment: Alignment.centerRight,
+      child: SizedBox(
+        width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+        child: ElevatedButton.icon(
+          onPressed: () async {
+            var filterParams = {'IsDrzavaIncluded': 'true'};
 
-                if (_nazivGradaController.text.isNotEmpty) {
-                  filterParams['nazivGrada'] = _nazivGradaController.text;
-                }
+            if (_nazivGradaController.text.isNotEmpty) {
+              filterParams['nazivGrada'] = _nazivGradaController.text;
+            }
 
-                var data = await _gradProvider.get(filter: filterParams);
+            var data = await _gradProvider.get(filter: filterParams);
 
-                if (!mounted) return;
+            if (!mounted) return;
 
-                setState(() {
-                  result = data;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8.0),
-                  Text('Pretraga'),
-                ],
-              ),
+            setState(() {
+              result = data;
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
             ),
-            const SizedBox(height: 10),
-            if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => GradDetailsScreen(grad: null),
-                    ),
-                  );
-                  await _loadData();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
+            padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
+          ),
+          icon: const Icon(Icons.search, color: Colors.white),
+          label: const Text(
+            "Pretraži",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14, // Veličina teksta
+            ),
+          ),
+        ),
+      ),
+    ),
+    
+    // Dugme za dodavanje gradova (samo za Admin korisnike)
+    if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => GradDetailsScreen(grad: null),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
+              );
+              // Ponovno učitavanje podataka nakon dodavanja novog grada
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text(
+              'Dodaj',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+  ],
+)
+
           ],
         ),
       ),

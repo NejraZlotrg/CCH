@@ -154,58 +154,60 @@ Widget _buildSearch() {
                         []),
               ),
               const SizedBox(height: 10),
-              if (context.read<UserProvider>().role == "Admin")
-                ElevatedButton(
-                  onPressed: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AutoservisDetailsScreen(autoservis: null),
-                      ),
-                    );
-                    await _fetchInitialData();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add, color: Colors.white),
-                      SizedBox(width: 8.0),
-                      Text('Dodaj', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
+             
+                Align(
+  alignment: Alignment.centerRight,
+  child: SizedBox(
+    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+    child: ElevatedButton.icon(
+      onPressed: _onSearchPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
+      ),
+      icon: const Icon(Icons.search, color: Colors.white),
+      label: const Text(
+        "Pretraži",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14, // Veličina teksta
+        ),
+      ),
+    ),
+    
+  ),
+),
+ if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>  AutoservisDetailsScreen(autoservis: null),
                 ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _onSearchPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search, color: Colors.white),
-                    SizedBox(width: 8.0),
-                    Text('Pretraga', style: TextStyle(color: Colors.white)),
-                  ],
-                ),
+              );
+              await _fetchInitialData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja za dugme
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
+          ),
+        ),
+      ),
+    
+
             ],
           ),
         ),

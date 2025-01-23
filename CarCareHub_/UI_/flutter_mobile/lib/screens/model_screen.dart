@@ -85,51 +85,77 @@ Widget _buildSearch() {
               controller: _nazivModelaController,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _onSearchPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+           Column(
+  children: [
+    // Dugme za pretragu modela
+   Column(
+  children: [
+    // Dugme za pretragu
+    Align(
+      alignment: Alignment.center, // Centriranje dugmeta
+      child: SizedBox(
+        width: double.infinity, // Dugme zauzima cijelu širinu
+        child: ElevatedButton(
+          onPressed: _onSearchPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search),
+              SizedBox(width: 8.0),
+              Text('Pretraga'),
+            ],
+          ),
+        ),
+      ),
+    ),
+    
+
+    // Dugme za dodavanje modela (samo za Admin korisnike)
+    if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.center, // Centriranje dugmeta
+        child: SizedBox(
+          width: double.infinity, // Dugme zauzima cijelu širinu
+          child: ElevatedButton(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ModelDetailsScreen(model: null),
                 ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8.0),
-                  Text('Pretraga'),
-                ],
+              );
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
-            const SizedBox(height: 10),
-            if (context.read<UserProvider>().role == "Admin")
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ModelDetailsScreen(model: null),
-                    ),
-                  );
-                  await _loadData();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
-              ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add),
+                SizedBox(width: 8.0),
+                Text('Dodaj'),
+              ],
+            ),
+          ),
+        ),
+      ),
+  ],
+)
+
+  ],
+)
+
           ],
         ),
       ),
@@ -168,7 +194,7 @@ Widget _buildSearch() {
       ),
         child: DataTable(
           showCheckboxColumn: false,
-          dataTextStyle: TextStyle(fontSize: 14), // Manja veličina fonta
+          dataTextStyle: const TextStyle(fontSize: 14), // Manja veličina fonta
           columns: const [
               DataColumn(
               label: Text(
@@ -201,11 +227,11 @@ Widget _buildSearch() {
                   cells: [
                       DataCell(Text(
                       e.vozilo?.markaVozila ?? "",
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     )),
                     DataCell(Text(
                       e.nazivModela ?? "",
-                      style: TextStyle(fontSize: 14), // Manja veličina fonta za svaku ćeliju
+                      style: const TextStyle(fontSize: 14), // Manja veličina fonta za svaku ćeliju
                     )),
                   
                    

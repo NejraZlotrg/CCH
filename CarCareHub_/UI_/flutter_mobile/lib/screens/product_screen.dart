@@ -8,6 +8,7 @@ import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
@@ -248,6 +249,7 @@ Widget _buildSearch() {
                           )),
                     ],
                   ),
+     
                   const SizedBox(height: 10),
                   FormBuilderDropdown<Godiste>(
                     name: 'godisteId',
@@ -321,6 +323,7 @@ Align(
     
   ),
 ),
+if (context.read<UserProvider>().role == "Admin")
       Align(
         alignment: Alignment.centerRight,
         child: SizedBox(

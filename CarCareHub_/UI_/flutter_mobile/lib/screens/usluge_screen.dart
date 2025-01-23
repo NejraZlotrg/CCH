@@ -75,64 +75,73 @@ class _UslugeScreenState extends State<UslugeScreen> {
               controller: _nazivUslugeController,
             ),
             const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _onSearchPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.search),
-                        SizedBox(width: 8.0),
-                        Text('Pretraga'),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                if (context.read<UserProvider>().role == "Admin")
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => UslugeDetailsScreen(usluge: null),
-                          ),
-                        );
-                        await _loadData();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add),
-                          SizedBox(width: 8.0),
-                          Text('Dodaj'),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ],
+     
+              Column(
+  mainAxisAlignment: MainAxisAlignment.start, // Možete koristiti start ili center, zavisno od željenog efekta
+  children: [
+    // Dugme za pretragu
+             // Dugmad za pretragu
+Align(
+  alignment: Alignment.centerRight,
+  child: SizedBox(
+    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+    child: ElevatedButton.icon(
+      onPressed: _onSearchPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
+      ),
+      icon: const Icon(Icons.search, color: Colors.white),
+      label: const Text(
+        "Pretraži",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14, // Veličina teksta
         ),
       ),
     ),
-  );
+    
+  ),
+),
+if (context.read<UserProvider>().role == "Admin")
+      Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(
+          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>  UslugeDetailsScreen(usluge: null),
+                ),
+              );
+              await _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Crvena boja za dugme
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
+          ),
+        ),
+      ),
+    
+
+  ],
+)
+
+          ]
+      ),
+      
+    ),
+  ));
 }
 
  

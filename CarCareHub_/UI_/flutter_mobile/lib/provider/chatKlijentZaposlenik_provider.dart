@@ -6,7 +6,7 @@ import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
 class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> {
-  ChatKlijentZaposlenikProvider() : super("api/chatKlijentZaposlenik");
+  ChatKlijentZaposlenikProvider() : super("/api/chatKlijentZaposlenik");
 
   @override
   chatKlijentZaposlenik fromJson(data) {

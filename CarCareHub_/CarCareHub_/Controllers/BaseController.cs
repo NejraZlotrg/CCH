@@ -24,7 +24,7 @@ namespace CarCareHub_.Controllers
         }
 
         [HttpGet]
-       // [AllowAnonymous]//----
+        [AllowAnonymous]
         public async Task<ActionResult<PagedResult<T>>> Get([FromQuery] TSearch? search = null)
         {
             //----
