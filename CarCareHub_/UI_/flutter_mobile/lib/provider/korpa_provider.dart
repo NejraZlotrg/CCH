@@ -2,7 +2,7 @@ import 'package:flutter_mobile/models/korpa.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 
 class KorpaProvider extends BaseProvider<Korpa> {
-  KorpaProvider():super("api/korpa");
+  KorpaProvider():super("/api/korpa");
 
   @override
   Korpa fromJson(data) {

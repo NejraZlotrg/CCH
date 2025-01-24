@@ -41,12 +41,8 @@ Future<void> fetchChats() async {
         int? zaposlenikId = chat.zaposlenikId;
 
         // Make sure you handle nulls properly
-        if (zaposlenikId != null) {
-          print('Chat with Klijent ID: $klijentId and Zaposlenik ID: $zaposlenikId');
-        } else {
-          print('Chat data contains null IDs.');
-        }
-      }
+        print('Chat with Klijent ID: $klijentId and Zaposlenik ID: $zaposlenikId');
+            }
 
       setState(() {
         chats = response;

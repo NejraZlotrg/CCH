@@ -271,64 +271,48 @@ class _AutoservisRegistracijaScreenState
     );
   }
 
-
 List<Widget> _buildFormFields() {
-
   return [
     // Red 1: Naziv i Vlasnik
-    Row(
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Naziv autoservisa",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "naziv",
-                validator: validator.required,
-                 // Dodana validacija
-              ),
-            ],
-          ),
+        const Text(
+          "Naziv autoservisa",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Vlasnik firme",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "vlasnikFirme",
-                validator: validator.required, 
-
-              ),
-            ],
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          name: "naziv",
+          validator: validator.required,
+        ),
+        const SizedBox(height: 20), // Razmak između polja
+        const Text(
+          "Vlasnik firme",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "vlasnikFirme",
+          validator: validator.required,
         ),
       ],
     ),
+
     const SizedBox(height: 20),
 
     // Red 2: Korisničko ime
@@ -349,11 +333,11 @@ List<Widget> _buildFormFields() {
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "username",
-          validator: validator.required, 
-
+          validator: validator.required,
         ),
       ],
     ),
+
     const SizedBox(height: 20),
 
     // Red 3: Lozinka
@@ -375,11 +359,11 @@ List<Widget> _buildFormFields() {
           ),
           name: "password",
           obscureText: true,
-          validator: validator.required,           
-
+          validator: validator.required,
         ),
       ],
     ),
+
     const SizedBox(height: 20),
 
     // Red 4: Ponovljena Lozinka
@@ -405,177 +389,142 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
+
     const SizedBox(height: 20),
 
     // Red 5: Adresa i Grad
-    Row(
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Adresa autoservisa",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "adresa",
-                validator: validator.required,
-              ),
-            ],
-          ),
+        const Text(
+          "Adresa autoservisa",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Grad",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderDropdown(
-                name: 'gradId',
-                validator: validator.required,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  hintText: 'Izaberite grad',
-                ),
-                items: gradResult?.result
-                        .map((item) => DropdownMenuItem(
-                              alignment: AlignmentDirectional.center,
-                              value: item.gradId.toString(),
-                              child: Text(item.nazivGrada ?? ""),
-                            ))
-                        .toList() ??
-                    [],
-              ),
-            ],
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          name: "adresa",
+          validator: validator.required,
+        ),
+        const SizedBox(height: 20), // Razmak između polja
+        const Text(
+          "Grad",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderDropdown(
+          name: 'gradId',
+          validator: validator.required,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            hintText: 'Izaberite grad',
+          ),
+          items: gradResult?.result
+                  .map((item) => DropdownMenuItem(
+                        alignment: AlignmentDirectional.center,
+                        value: item.gradId.toString(),
+                        child: Text(item.nazivGrada ?? ""),
+                      ))
+                  .toList() ??
+              [],
         ),
       ],
     ),
+
     const SizedBox(height: 20),
 
     // Red 6: Email i Broj telefona
-    Row(
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Email",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "email",
-                validator: validator.email,
-              ),
-            ],
-          ),
+        const Text(
+          "Email",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Broj telefona",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "telefon",
-                validator: validator.phoneNumber,
-              ),
-            ],
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          name: "email",
+          validator: validator.email,
+        ),
+        const SizedBox(height: 20), // Razmak između polja
+        const Text(
+          "Broj telefona",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "telefon",
+          validator: validator.phoneNumber,
         ),
       ],
     ),
+
     const SizedBox(height: 20),
 
     // Red 7: JIB i MBS
-    Row(
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "JIB",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "jib",
-                validator: validator.jib,
-              ),
-            ],
-          ),
+        const Text(
+          "JIB",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "MBS",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "mbs",
-                validator: validator.mbs,
-              ),
-            ],
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          name: "jib",
+          validator: validator.jib,
+        ),
+        const SizedBox(height: 20), // Razmak između polja
+        const Text(
+          "MBS",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "mbs",
+          validator: validator.mbs,
         ),
       ],
     ),
+
     const SizedBox(height: 20),
   ];
 }

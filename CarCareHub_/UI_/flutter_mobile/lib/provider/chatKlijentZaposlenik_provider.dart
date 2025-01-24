@@ -16,41 +16,47 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
   late HubConnection connection;
   late bool isConnected = false;
 
-  // Ovo je metoda koja pokreće SignalR konekciju i osluškuje poruke
-  Future<void> runSignalR(Function onMessageReceived) async {
-    connection = HubConnectionBuilder()
-        .withUrl('http://localhost:7209/chatKlijentZaposlenik')
-        .build();
 
-    connection.onclose(({Exception? error}) {
-      print('Connection closed: $error');
-      isConnected = false;
-    });
+  String getSignalRUrl(String path) {
+  return buildUrl(path);  // Koristi metodu buildUrl koju već imamo
+}
 
-    // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
-    connection.on('ReceiveMessage', (arguments) {
-      if (arguments != null && arguments.isNotEmpty) {
-        if (arguments[0] != null) {
-          try {
-            var chatMessage = chatKlijentZaposlenik
-                .fromJson(arguments[0] as Map<String, dynamic>);
-            onMessageReceived(chatMessage); // Prosleđujemo poruku u ekran
-          } catch (e) {
-            print("Error parsing message from SignalR: $e");
-          }
+Future<void> runSignalR(Function onMessageReceived) async {
+  String signalRUrl = getSignalRUrl('/chatKlijentZaposlenik');
+  
+  connection = HubConnectionBuilder()
+      .withUrl(signalRUrl)  // Koristi dinamički URL
+      .build();
+
+  connection.onclose(({Exception? error}) {
+    print('Connection closed: $error');
+    isConnected = false;
+  });
+
+  // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
+  connection.on('ReceiveMessage', (arguments) {
+    if (arguments != null && arguments.isNotEmpty) {
+      if (arguments[0] != null) {
+        try {
+          var chatMessage = chatKlijentZaposlenik
+              .fromJson(arguments[0] as Map<String, dynamic>);
+          onMessageReceived(chatMessage); // Prosleđujemo poruku u ekran
+        } catch (e) {
+          print("Error parsing message from SignalR: $e");
         }
       }
-    });
-
-    try {
-      await connection.start();
-      isConnected = true;
-      print("SignalR connection established.");
-    } catch (e) {
-      isConnected = false;
-      print('Error starting SignalR connection: $e');
     }
+  });
+
+  try {
+    await connection.start();
+    isConnected = true;
+    print("SignalR connection established.");
+  } catch (e) {
+    isConnected = false;
+    print('Error starting SignalR connection: $e');
   }
+}
 
 
 

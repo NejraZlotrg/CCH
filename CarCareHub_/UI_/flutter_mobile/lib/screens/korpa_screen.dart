@@ -127,47 +127,111 @@ if(_userProvider.role =='Zaposlenik')
       ),
     );
   }
+Widget _buildDataListView() {
+  // Izračunavamo ukupnu cijenu pre nego što prikažemo podatke
+  double ukupnaCijena = korpaList.fold(0.0, (sum, e) {
+    return sum + (e.ukupnaCijenaProizvoda ?? 0.0);
+  });
 
-  Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(
-            color: Colors.black,
-            width: 1.0,
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Proizvod ID')),
-              DataColumn(label: Text('Klijent ID')),
-              DataColumn(label: Text('Zaposlenik ID')),
-              DataColumn(label: Text('Autoservis ID')),
-              DataColumn(label: Text('Količina')),
-              DataColumn(label: Text('Ukupna cijena')),
-            ],
-            rows: korpaList.map((Korpa e) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(e.proizvodId?.toString() ?? "")),
-                  DataCell(Text(e.klijentId?.toString() ?? "")),
-                  DataCell(Text(e.zaposlenikId?.toString() ?? "")),
-                  DataCell(Text(e.autoservisId?.toString() ?? "")),
-                  DataCell(Text(e.kolicina?.toString() ?? "")),
-                  DataCell(Text(e.ukupnaCijenaProizvoda?.toStringAsFixed(2) ?? "")),
-                ],
-              );
-            }).toList(),
-          ),
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.0,
         ),
       ),
-    );
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Prikazujemo podatke po redovima umesto po kolonama
+            ...korpaList.asMap().map((index, e) {
+              // Prikazujemo Kupca samo prvi put
+              bool isFirst = index == 0;
+              return MapEntry(
+                index,
+                Column(
+                  children: [
+                    // Prikazivanje samo jednog reda za Kupca
+                    if (isFirst) _buildKupacRow(e),
+                    _buildRow('Naziv proizvoda', e.proizvodId),
+                    _buildRow('Količina', e.kolicina),
+                    _buildRow('Cijena', e.ukupnaCijenaProizvoda?.toStringAsFixed(2)),
+                  ],
+                ),
+              );
+            }).values.toList(),
+
+            // Dodajemo Divider iznad ukupne cijene
+            Divider(
+              color: Colors.black,
+              thickness: 1.0,
+              indent: 10.0,
+              endIndent: 10.0,
+            ),
+
+            // Dodajemo red za ukupnu cijenu
+            _buildRow('Ukupna cijena', ukupnaCijena.toStringAsFixed(2)),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildKupacRow(Korpa e) {
+  // Prikazujemo samo onaj ID koji nije null
+  String kupacLabel = 'Kupac: ';
+  if (e.klijentId != null) {
+    kupacLabel += e.klijentId.toString();
+  } else if (e.zaposlenikId != null) {
+    kupacLabel += e.zaposlenikId.toString();
+  } else if (e.autoservisId != null) {
+    kupacLabel += e.autoservisId.toString();
   }
+
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          kupacLabel,
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildRow(String label, dynamic value) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          '$label: ',
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          value?.toString() ?? '',
+          style: TextStyle(fontSize: 16.0),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildFinishOrderButton() {
     return Padding(

@@ -179,68 +179,62 @@ class _KlijentRegistracijaScreenState
     );
   }
 
-  List<Widget> _buildFormFields() {
+ List<Widget> _buildFormFields() {
   return [
-    // Red 1: Naziv i adresa
-    Row(
+    // Red 1: Ime
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Ime:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "ime",
-                validator: validator.required,
-              ),
-            ],
-          ),
+        const Text(
+          "Ime:",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Prezime:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "prezime",
-                validator: validator.required,
-              ),
-            ],
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          name: "ime",
+          validator: validator.required,
         ),
       ],
     ),
     const SizedBox(height: 20),
 
-    // Red 2: grad
+    // Red 2: Prezime
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Korisničko ime",
+          "Prezime:",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "prezime",
+          validator: validator.required,
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 3: Korisničko ime
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Korisničko ime:",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5),
@@ -259,12 +253,12 @@ class _KlijentRegistracijaScreenState
     ),
     const SizedBox(height: 20),
 
-    // Red 3: Lozinka
+    // Red 4: Lozinka
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Lozinka",
+          "Lozinka:",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5),
@@ -284,12 +278,12 @@ class _KlijentRegistracijaScreenState
     ),
     const SizedBox(height: 20),
 
-    // Red 4: Ponovljena Lozinka
+    // Red 5: Ponovljena Lozinka
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Ponovite lozinku",
+          "Ponovite lozinku:",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5),
@@ -309,129 +303,106 @@ class _KlijentRegistracijaScreenState
     ),
     const SizedBox(height: 20),
 
-    // Red 5: Adresa i Grad
-    Row(
+    // Red 6: Grad
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Grad",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderDropdown(
-                name: 'gradId',
-                validator: validator.required,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  hintText: 'Izaberite grad',
-                ),
-                items: gradResult?.result
-                        .map((item) => DropdownMenuItem(
-                              alignment: AlignmentDirectional.center,
-                              value: item.gradId.toString(),
-                              child: Text(item.nazivGrada ?? ""),
-                            ))
-                        .toList() ??
-                    [],
-              ),
-            ],
-          ),
+        const Text(
+          "Grad:",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(width: 20),
-
-
-        
-          
-      ],
-    ),
-    const SizedBox(height: 20),
-
-    // Red 6: Email i Broj telefona
-    Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Email",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "email",
-                validator: validator.email,
-              ),
-            ],
+        const SizedBox(height: 5),
+        FormBuilderDropdown(
+          name: 'gradId',
+          validator: validator.required,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            hintText: 'Izaberite grad',
           ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Broj telefona",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "telefon",
-                validator: validator.phoneNumber,
-              ),
-            ],
-          ),
+          items: gradResult?.result
+                  .map((item) => DropdownMenuItem(
+                        alignment: AlignmentDirectional.center,
+                        value: item.gradId.toString(),
+                        child: Text(item.nazivGrada ?? ""),
+                      ))
+                  .toList() ??
+              [],
         ),
       ],
     ),
     const SizedBox(height: 20),
 
-    // Red 7: JIB i MBS
-    Row(
+    // Red 7: Email
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Spol:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                ),
-                name: "spol",
-                validator: validator.required,
-              ),
-            ],
+        const Text(
+          "Email:",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          name: "email",
+          validator: validator.email,
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 8: Telefon
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Broj telefona:",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "telefon",
+          validator: validator.phoneNumber,
+        ),
+      ],
+    ),
+    const SizedBox(height: 20),
+
+    // Red 9: Spol
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Spol:",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "spol",
+          validator: validator.required,
         ),
       ],
     ),

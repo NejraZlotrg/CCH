@@ -4,7 +4,7 @@ import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:http/http.dart' as http;
 
 class NarudzbaProvider extends BaseProvider<Narudzba> {
-  NarudzbaProvider() : super("api/narudzba");
+  NarudzbaProvider() : super("/api/narudzba");
 
   @override
   Narudzba fromJson(data) {
