@@ -19,8 +19,8 @@ namespace CarCareHub.Model
        
 
 
-        [JsonIgnore]
+        //[JsonIgnore]
 
-        public virtual Proizvod? Proizvod { get; set; }
+        //public virtual Proizvod? Proizvod { get; set; }
     }
 }

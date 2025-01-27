@@ -13,12 +13,12 @@ namespace CarCareHub_.Controllers
 
     public class FirmaAutodijelovaController : BaseCRUDController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>
     {
-
+        private readonly IFirmaAutodijelovaService _firmaAutodijelovaService;
 
         public FirmaAutodijelovaController(ILogger<BaseController<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject>> logger,
             IFirmaAutodijelovaService firmaAutodijelovaService) : base(logger, firmaAutodijelovaService)
         {
-           
+            _firmaAutodijelovaService = firmaAutodijelovaService;
         }
 
 
@@ -46,6 +46,24 @@ namespace CarCareHub_.Controllers
 
             // Ako je korisnik pronađen, vraća ID u formatu JSON.
             return Ok(new { Id = id });
+        }
+        [HttpGet("generate-paid-orders-report")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GeneratePaidOrdersReport()
+        {
+            try
+            {
+                // Pozivamo servisnu metodu koja generiše izvještaj
+                var reportPath = await _firmaAutodijelovaService.GeneratePaidOrdersReportAsync();
+
+                // Vraćamo putanju do generisanog izvještaja
+                return Ok(new { ReportPath = reportPath });
+            }
+            catch (Exception ex)
+            {
+                // U slučaju greške, vraćamo 500 sa porukom o grešci
+                return StatusCode(500, new { Message = "An error occurred while generating the report", Error = ex.Message });
+            }
         }
     }
 }

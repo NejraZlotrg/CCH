@@ -242,8 +242,81 @@ namespace CarCareHub.Services
             // Ako korisnik nije pronađen, vraća null.
             return user?.FirmaAutodijelovaID;
         }
+
+
+
+       
+
+            public async Task<string> GeneratePaidOrdersReportAsync()
+            {
+                // Dobavi sve korpe povezane s narudžbama
+                var korpe = await _dbContext.Korpas
+                    .Include(k => k.NarudzbaStavkas) // Povezujemo stavke narudžbi
+                    .ThenInclude(ns => ns.Proizvod) // Povezujemo proizvode za stavke
+                    .Where(k => k.AutoservisId.HasValue) // Filtriramo samo korpe sa validnim AutoservisId
+                    .ToListAsync();
+
+                // Filtriramo plaćene korpe, povezivanjem sa placanjem
+                var placeneKorpe = korpe
+                    .Where(k => _dbContext.PlacanjeAutoservisDijelovis
+                        .Any(p => p.AutoservisId == k.AutoservisId)) // Povezivanje sa placanjem kroz AutoservisId
+                    .ToList();
+
+                // Izračunaj ukupnu zaradu
+                var ukupnaZarada = placeneKorpe.Sum(k => k.NarudzbaStavkas.Sum(ns => ns.Proizvod?.Cijena * ns.Kolicina ?? 0));
+
+                // Nađi najbolji autoservis (onaj koji je potrošio najviše)
+                var najboljiAutoservis = placeneKorpe
+                    .GroupBy(k => k.AutoservisId)
+                    .OrderByDescending(g => g.Sum(k => k.NarudzbaStavkas.Sum(ns => ns.Proizvod?.Cijena * ns.Kolicina ?? 0)))
+                    .FirstOrDefault();
+
+                var autoservisInfo = najboljiAutoservis != null
+                    ? new
+                    {
+                        Autoservis = najboljiAutoservis.First().Autoservis.Naziv, // Pretpostavljamo da Autoservis ima Naziv
+                        UkupnoPotroseno = najboljiAutoservis.Sum(k => k.NarudzbaStavkas.Sum(ns => ns.Proizvod?.Cijena * ns.Kolicina ?? 0))
+                    }
+                    : null;
+
+                // Generiši izvještaj u CSV formatu
+                var csv = new StringBuilder();
+
+                // Dodaj header
+                csv.AppendLine("Izvještaj o Narudžbama");
+                csv.AppendLine($"Ukupna Zarada: {ukupnaZarada}");
+                csv.AppendLine($"Najbolji Autoservis: {autoservisInfo?.Autoservis ?? "Nema podataka"}");
+                csv.AppendLine($"Ukupno Potrošeno od Najboljeg Autoservisa: {autoservisInfo?.UkupnoPotroseno ?? 0}");
+                csv.AppendLine();
+                csv.AppendLine("Korpe:");
+                csv.AppendLine("Korpa ID, Autoservis, Proizvod, Cijena, Količina, Ukupno, Iznos Plačanja");
+
+                // Dodaj podatke o korpama
+                foreach (var korpa in placeneKorpe)
+                {
+                    var iznosPlacanja = _dbContext.PlacanjeAutoservisDijelovis
+                        .Where(p => p.AutoservisId == korpa.AutoservisId)
+                        .Sum(p => p.Iznos);
+
+                    foreach (var stavka in korpa.NarudzbaStavkas)
+                    {
+                        csv.AppendLine($"{korpa.KorpaId}, {korpa.Autoservis?.Naziv}, {stavka.Proizvod?.Naziv}, {stavka.Proizvod?.Cijena}, {stavka.Kolicina}, {stavka.Proizvod?.Cijena * stavka.Kolicina}, {iznosPlacanja}");
+                    }
+                }
+
+                // Spremi izvještaj u datoteku
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Placene_Korpe_Report.csv");
+
+                await File.WriteAllTextAsync(filePath, csv.ToString());
+
+                return filePath; // Putanja do spremljenog izvještaja
+            }
+        }
+
     }
-}
+
+
+
 
 
        

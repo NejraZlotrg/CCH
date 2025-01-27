@@ -16,5 +16,6 @@ namespace CarCareHub.Services
         public int? GetIdByUsernameAndPassword(string username, string password);
 
 
+        public  Task<string> GeneratePaidOrdersReportAsync();
     }
 }
