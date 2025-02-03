@@ -7,20 +7,20 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
-  static String? _baseURL; // Bazni URL aplikacije
-  final String _endpoint;  // Endpoint za specifične API zahtjeve
+  static String? baseURL; // Bazni URL aplikacije
+  final String endpoint;  // Endpoint za specifične API zahtjeve
 
   BaseProvider(String endpoint) 
-      : _endpoint = endpoint {
-    _baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
+      : endpoint = endpoint {
+    baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
   }
 
    String buildUrl(String path) {
-    return "$_baseURL$_endpoint$path";  // Spaja osnovni URL sa endpointom i dodatnim dijelom
+    return "$baseURL$endpoint$path";  // Spaja osnovni URL sa endpointom i dodatnim dijelom
   }
 
   Future<SearchResult<T>> get({dynamic filter}) async {
-    String url = "$_baseURL$_endpoint";
+    String url = "$baseURL$endpoint";
 
     if (filter != null) {
       String queryString = getQueryString(filter);
@@ -50,7 +50,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   // Implementacija getById
   Future<List<T>> getById(int id) async {
-    String url = "$_baseURL$_endpoint/$id"; // Dodajemo ID u URL
+    String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
@@ -129,7 +129,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   // Metoda za unos novih podataka u API
   Future<T> insert(dynamic request) async {
-    String url = "$_baseURL$_endpoint";
+    String url = "$baseURL$endpoint";
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
 
@@ -146,7 +146,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   // Metoda za ažuriranje postojećih podataka u API-ju
   Future<T> update(int id, [dynamic request]) async {
-    String url = "$_baseURL$_endpoint/$id";
+    String url = "$baseURL$endpoint/$id";
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
 
@@ -160,6 +160,22 @@ abstract class BaseProvider<T> with ChangeNotifier {
       throw Exception("Unknown error");
     }
   }
+
+
+  Future<void> delete(int id) async {
+  String url = "$baseURL$endpoint/delete/$id";
+  Uri uri = Uri.parse(url);
+  Map<String, String> headers = createHeaders();
+
+  http.Response response = await http.delete(uri, headers: headers);
+
+  if (isValidResponse(response)) {
+    // Successful deletion, no content to return
+    return;
+  } else {
+    throw Exception("Unknown error");
+  }
+}
 
   // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {

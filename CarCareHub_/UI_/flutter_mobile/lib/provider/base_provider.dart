@@ -173,6 +173,21 @@ String buildUrl(String path) {
     }
   }
 
+  Future<void> delete(int id) async {
+  String url = "$_baseURL$_endpoint/$id";
+  Uri uri = Uri.parse(url);
+  Map<String, String> headers = createHeaders();
+
+  http.Response response = await http.delete(uri, headers: headers);
+
+  if (isValidResponse(response)) {
+    // Successful deletion, no content to return
+    return;
+  } else {
+    throw Exception("Unknown error");
+  }
+}
+
   // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {
     throw Exception("Method not implemented");

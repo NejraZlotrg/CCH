@@ -23,3 +23,6 @@ flutter pub run build_runner build watch--delete-conflicting-outputs
 
 
 KOD BOJE ARGB 204 SVE, SVIJETLA SIVA
+
+
+ flutter run --dart-define=API_HOST=192.168.x.x //IP ADRESU GLEDAT NA SVAKO POKRETANJE

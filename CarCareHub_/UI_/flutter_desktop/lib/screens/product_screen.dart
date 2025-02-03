@@ -8,6 +8,7 @@ import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
@@ -584,6 +585,49 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
                         ),
                       ],
                     ),
+                    
+                      if (context.read<UserProvider>().role == "Admin" || 
+                      (context.read<UserProvider>().role == "Firma autodijelova" && context.read<UserProvider>().userId == e.firmaAutodijelovaID ))
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (e.stateMachine == "draft") // Ako je stateMachine == "draft", prikaži "Prikazi na profilu"
+                          ElevatedButton(
+                            onPressed: () {
+                              // Logika za "Prikazi na profilu"
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                            ),
+                            child: const Text(
+                              "Prikazi na profilu",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        if (e.stateMachine == "active") // Ako je stateMachine == "active", prikaži "Sakrij proizvod"
+                          ElevatedButton(
+                            onPressed:  () async {
+                              _productProvider.hideProduct(e.proizvodId ?? 0);
+                              await _loadData();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                            ),
+                            child: const Text(
+                              "Sakrij proizvod",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                     Positioned(
                       bottom: 8,
                       right: 8,

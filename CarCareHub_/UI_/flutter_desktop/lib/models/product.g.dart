@@ -36,6 +36,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
           ? null
           : Godiste.fromJson(json['godiste'] as Map<String, dynamic>),
       (json['godisteId'] as num?)?.toInt(),
+      json['stateMachine'] as String?,
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
@@ -59,4 +60,5 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'godiste': instance.godiste,
       'vozilo': instance.vozilo,
       'voziloId': instance.voziloId,
+      'stateMachine': instance.stateMachine,
     };

@@ -66,6 +66,65 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
+                                                      Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                // Potvrda brisanja
+                                bool confirmDelete = await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text("Potvrda brisanja"),
+                                    content: const Text(
+                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text("Otkaži"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        child: const Text("Izbriši"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                // Ako korisnik potvrdi brisanje
+                                if (confirmDelete == true) {
+                                  try {
+                                    await _drzaveProvider.delete(
+                                        widget.drzava!.drzavaId!);
+                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Proizvod uspješno izbrisan."),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Greška prilikom brisanja: ${e.toString()}"),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                textStyle: const TextStyle(fontSize: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text("Izbriši"),
+                            ),
+                          ),
                             Padding(
                               padding: const EdgeInsets.all(10),
                               child: ElevatedButton(

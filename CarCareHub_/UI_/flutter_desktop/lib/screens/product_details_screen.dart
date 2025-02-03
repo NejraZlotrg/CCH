@@ -122,6 +122,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+
                           // Dugme za spašavanje
                           ElevatedButton(
                             onPressed: () async {
