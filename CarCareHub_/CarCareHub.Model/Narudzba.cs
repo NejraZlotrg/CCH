@@ -21,5 +21,6 @@ namespace CarCareHub.Model
 
         public int? PopustId { get; set; }
         public decimal? UkupnaCijenaNarudzbe { get; set; }
+        public bool Vidljivo { get; set; }
     }
 }

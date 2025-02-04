@@ -20,7 +20,7 @@ namespace CarCareHub.Model
         public string? MBS { get; set; }
 
         public string? Telefon { get; set; }
-
+        public bool Vidljivo { get; set; }
         public string? Email { get; set; }
         public string? Username { get; set; }
 

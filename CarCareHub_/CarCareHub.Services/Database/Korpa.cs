@@ -12,7 +12,7 @@ namespace CarCareHub.Services.Database
 
         public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
 
-
+        public bool Vidljivo { get; set; }
         public int? ProizvodId { get; set; }
         public virtual Proizvod? Proizvod { get; set; }
 

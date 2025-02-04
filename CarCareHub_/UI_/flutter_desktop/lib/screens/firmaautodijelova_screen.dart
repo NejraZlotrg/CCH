@@ -29,7 +29,11 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
+    SearchResult<FirmaAutodijelova> data;
+     if (context.read<UserProvider>().role == "Admin")
+     data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+    else 
+     data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
     if (mounted) {
       setState(() {
         result = data;
@@ -51,7 +55,11 @@ void _onSearchPressed() async {
   print("Filter Params: $filterParams"); // Debugging log
 
  try {
-                    var data = await _firmaAutodijelovaProvider.get(filter: filterParams);
+                    SearchResult<FirmaAutodijelova> data;
+                      if (context.read<UserProvider>().role == "Admin")
+                    data = await _firmaAutodijelovaProvider.getAdmin(filter: filterParams);
+                    else 
+                    data = await _firmaAutodijelovaProvider.get(filter: filterParams);
                     if (mounted) {
                       setState(() {
                         result = data;

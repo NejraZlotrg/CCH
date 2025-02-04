@@ -14,7 +14,7 @@ namespace CarCareHub.Model
         public virtual Proizvod? Proizvod { get; set; }
 
         public int? KlijentId { get; set; }
-
+        public bool Vidljivo { get; set; }
         public int? AutoservisId { get; set; }
 
         public int? ZaposlenikId { get; set; }

@@ -45,7 +45,12 @@ void didChangeDependencies() {
 
 Future<void> _loadGradovi() async {
   try {
-    var gradoviResult = await _gradProvider.get();
+    SearchResult<Grad> gradoviResult;
+     if (context.read<UserProvider>().role == "Admin")
+       {  gradoviResult = await _gradProvider.getAdmin(); }
+    else 
+      {   gradoviResult = await _gradProvider.get(); }
+
     setState(() {
       gradovi = gradoviResult.result;
     });
@@ -64,9 +69,12 @@ Future<void> _loadGradovi() async {
       _isLoading = true;
     });
     try {
-      var data = await _autoservisProvider.get(filter: {
-        'IsAllIncluded': 'true',
-      });
+      SearchResult<Autoservis> data;
+        if (context.read<UserProvider>().role == "Admin")
+       data = await _autoservisProvider.getAdmin(filter: { 'IsAllIncluded': 'true',});
+       else 
+
+       data = await _autoservisProvider.get(filter: { 'IsAllIncluded': 'true',});
       setState(() {
         result = data;
       });
@@ -233,7 +241,11 @@ Future<void> _loadGradovi() async {
     }
 
     try {
-      var data = await _autoservisProvider.get(filter: filterParams);
+      SearchResult<Autoservis> data;
+        if (context.read<UserProvider>().role == "Admin")
+       data = await _autoservisProvider.getAdmin(filter: filterParams);
+       else  
+       data = await _autoservisProvider.get(filter: filterParams);
       setState(() {
         result = data;
       });

@@ -12,10 +12,11 @@ namespace CarCareHub.Model
 
         public string? NazivUloge { get; set; }
 
-      // public virtual ICollection<Autoservi> Autoservis { get; set; } = new List<Autoservi>();
+        // public virtual ICollection<Autoservi> Autoservis { get; set; } = new List<Autoservi>();
 
         //public virtual ICollection<FirmaAutodijelova> FirmaAutodijelovas { get; set; } = new List<FirmaAutodijelova>();
 
         //public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
+        public bool Vidljivo { get; set; }
     }
 }

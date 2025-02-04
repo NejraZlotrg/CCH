@@ -10,6 +10,7 @@ public partial class Autoservis
     public int AutoservisId { get; set; }
 
     public string? Naziv { get; set; }
+    public bool Vidljivo { get; set; }
 
     public string? Adresa { get; set; }
 

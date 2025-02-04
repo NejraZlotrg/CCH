@@ -10,4 +10,5 @@ public partial class Drzava
     public string? NazivDrzave { get; set; }
 
     public virtual ICollection<Grad> Grads { get; set; } = new List<Grad>();
+    public bool Vidljivo { get; set; }
 }

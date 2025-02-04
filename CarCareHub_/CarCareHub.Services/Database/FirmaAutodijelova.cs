@@ -15,6 +15,7 @@ public partial class FirmaAutodijelova
     public int? GradId { get; set; }
 
     public string? Telefon { get; set; }
+    public bool Vidljivo { get; set; }
 
     public string? Email { get; set; }
 

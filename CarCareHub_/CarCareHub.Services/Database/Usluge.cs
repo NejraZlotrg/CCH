@@ -8,6 +8,7 @@ public partial class Usluge
     public int UslugeId { get; set; }
 
     public string? NazivUsluge { get; set; }
+    public bool Vidljivo { get; set; }
 
     public string? Opis { get; set; }
 

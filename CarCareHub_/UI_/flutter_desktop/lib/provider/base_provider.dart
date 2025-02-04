@@ -47,6 +47,33 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
 
+  Future<SearchResult<T>> getAdmin({dynamic filter}) async {
+    String url = "$baseURL$endpoint/Admin";
+
+    if (filter != null) {
+      String queryString = getQueryString(filter);
+      url = "$url?$queryString";
+    }
+
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      SearchResult<T> result = SearchResult<T>();
+      result.count = data['count'];
+
+      for (var item in data['result']) {
+        result.result.add(fromJson(item));
+      }
+
+      return result;
+    } else {
+      throw Exception("Unknown error");
+    }
+  }
+
 
   // Implementacija getById
   Future<List<T>> getById(int id) async {

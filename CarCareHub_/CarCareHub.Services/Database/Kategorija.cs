@@ -10,4 +10,5 @@ public partial class Kategorija
     public string? NazivKategorije { get; set; }
 
     public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
+    public bool Vidljivo { get; set; }
 }

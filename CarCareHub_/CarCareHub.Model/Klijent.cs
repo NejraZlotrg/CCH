@@ -17,7 +17,7 @@ namespace CarCareHub.Model
         public string? Username { get; set; }
 
         public string? Email { get; set; }
-
+        public bool Vidljivo { get; set; }
         public string? Password { get; set; }
         public string? LozinkaSalt { get; set; }
         public string? LozinkaHash { get; set; }

@@ -12,6 +12,7 @@ namespace CarCareHub.Services.Database
         public DateTime VrijemeSlanja { get; set; }
 
         // Navigaciona svojstva
+        public bool Vidljivo { get; set; }
         public virtual Klijent Klijent { get; set; }
         public virtual Autoservis Autoservis { get; set; }
     }

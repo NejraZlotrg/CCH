@@ -12,7 +12,7 @@ namespace CarCareHub.Services.Database
         public string? NazivModela { get; set; }
         public int VoziloId { get; set; }
         public Vozilo? Vozilo {get;set;}
-
+        public bool Vidljivo { get; set; }
         public int GodisteId { get; set; }
         public Godiste? Godiste { get; set; }
 

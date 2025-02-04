@@ -10,7 +10,7 @@ public partial class Uloge
     public string? NazivUloge { get; set; }
 
     public virtual ICollection<Autoservis> Autoservis { get; set; } = new List<Autoservis>();
-
+    public bool Vidljivo { get; set; }
     public virtual ICollection<FirmaAutodijelova> FirmaAutodijelovas { get; set; } = new List<FirmaAutodijelova>();
 
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();

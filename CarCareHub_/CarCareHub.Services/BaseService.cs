@@ -19,7 +19,7 @@ namespace CarCareHub.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public virtual async Task<PagedResult<T>> Get(TSearch? search = null)
+        public virtual async Task<PagedResult<T>> GetAdmin(TSearch? search = null)
         {
             var query = _dbContext.Set<TDb>().AsQueryable(); // Dobijanje DbSet-a za entitet
 
@@ -42,6 +42,38 @@ namespace CarCareHub.Services
             result.Result = _mapper.Map<List<T>>(list); // Mapiranje na odgovarajući model
             return result; // Vraćanje rezultata
         }
+
+
+        public virtual async Task<PagedResult<T>> Get(TSearch? search = null)
+        {
+            var query = _dbContext.Set<TDb>().AsQueryable();
+
+            // Dodavanje filtera za 'Vidljivo == true' ako svojstvo postoji
+            var propertyInfo = typeof(TDb).GetProperty("Vidljivo");
+            if (propertyInfo != null && propertyInfo.PropertyType == typeof(bool))
+            {
+                query = query.Where(e => EF.Property<bool>(e, "Vidljivo") == true);
+            }
+
+            PagedResult<T> result = new PagedResult<T>();
+
+            query = AddFilter(query, search);
+            query = AddInclude(query, search);
+
+            result.Count = await query.CountAsync();
+
+            if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
+            {
+                query = query.Skip((search.Page.Value - 1) * search.PageSize.Value)
+                             .Take(search.PageSize.Value);
+            }
+
+            var list = await query.ToListAsync();
+            result.Result = _mapper.Map<List<T>>(list);
+
+            return result;
+        }
+
 
         //public virtual async Task<List<T>> Get(TSearch? search=null)
         // {

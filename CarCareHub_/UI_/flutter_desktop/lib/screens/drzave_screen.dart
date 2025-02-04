@@ -38,7 +38,11 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
 
   Future<void> _fetchInitialData() async {
     try {
-      var data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
+      SearchResult<Drzave> data;
+       if (context.read<UserProvider>().role == "Admin")
+       data = await _drzaveProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+      else 
+       data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
       if (mounted) {
         setState(() {
           result = data;
@@ -102,7 +106,11 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
                   }
 
                   try {
-                    var data = await _drzaveProvider.get(filter: filterParams);
+                    SearchResult<Drzave> data;
+                     if (context.read<UserProvider>().role == "Admin")
+                     data = await _drzaveProvider.getAdmin(filter: filterParams);
+                    else 
+                     data = await _drzaveProvider.get(filter: filterParams);
                     if (mounted) {
                       setState(() {
                         result = data;

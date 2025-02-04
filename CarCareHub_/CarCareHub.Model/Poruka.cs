@@ -20,7 +20,7 @@ namespace CarCareHub.Model
 
         public virtual ChatKlijentZaposlenik? ChatKlijentZaposlenik { get; set; }
 
-
+        public bool Vidljivo { get; set; }
 
     }
 }

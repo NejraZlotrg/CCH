@@ -19,6 +19,7 @@ namespace CarCareHub.Services.Database
         public int? ChatKlijentZaposlenikId { get; set; } // ID razgovora kojem poruka pripada
 
         public virtual ChatKlijentZaposlenik? ChatKlijentZaposlenik { get; set; }
+        public bool Vidljivo { get; set; }
     }
 
 }

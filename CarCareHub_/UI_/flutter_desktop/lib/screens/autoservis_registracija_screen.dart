@@ -9,6 +9,7 @@ import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
@@ -75,7 +76,10 @@ class _AutoservisRegistracijaScreenState
   }
 
   Future initForm() async {
-    gradResult = await _gradProvider.get();
+     if (context.read<UserProvider>().role == "Admin")
+        gradResult = await _gradProvider.get();
+        else 
+      gradResult = await _gradProvider.get();   
     if (widget.autoservis != null && widget.autoservis!.slikaProfila != null) {
       _imageFile =
           await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);

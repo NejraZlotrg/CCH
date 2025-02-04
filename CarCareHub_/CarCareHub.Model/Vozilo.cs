@@ -10,6 +10,7 @@ namespace CarCareHub.Model
     {
         public int VoziloId { get; set; }
         public string? MarkaVozila { get; set; }
+        public bool Vidljivo { get; set; }
 
     }
 }

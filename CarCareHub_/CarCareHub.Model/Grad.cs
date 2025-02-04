@@ -14,6 +14,6 @@ namespace CarCareHub.Model
 
         public int DrzavaId { get; set; }
         public virtual Drzava Drzava { get; set; }
-
+        public bool Vidljivo { get; set; }
     }
 }

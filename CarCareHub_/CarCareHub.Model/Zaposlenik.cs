@@ -17,7 +17,7 @@ namespace CarCareHub.Model
         public int? BrojTelefona { get; set; } //dodala
         public Grad? Grad { get; set; }
         public int? GradId { get; set; }
-
+        public bool Vidljivo { get; set; }
         public DateTime? DatumRodjenja { get; set; }
 
             public string? Email { get; set; }

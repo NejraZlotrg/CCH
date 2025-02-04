@@ -17,7 +17,7 @@ public partial class Proizvod
     public int? KategorijaId { get; set; }
     public virtual Kategorija? Kategorija { get; set; }
     public int? ModelId { get; set; } // Foreign key
-
+    public bool Vidljivo { get; set; }
     public virtual Model? Model { get; set; }
     public int? ProizvodjacId { get; set; }
     public byte[]? Slika { get; set; }

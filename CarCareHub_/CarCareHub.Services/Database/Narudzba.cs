@@ -10,7 +10,7 @@ public partial class Narudzba
     // public int? NarudzbaStavkeId { get; set; }
 
     public DateTime? DatumNarudzbe { get; set; }
-
+    public bool Vidljivo { get; set; }
     public DateTime? DatumIsporuke { get; set; }
     public bool? ZavrsenaNarudzba { get; set; } = false; // Po defaultu je false za privremene narudžbe
                                                          //  public bool? ZavrsenaNarudzba { get; set; }

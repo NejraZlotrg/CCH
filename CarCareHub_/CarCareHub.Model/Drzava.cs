@@ -4,5 +4,6 @@
     {
         public int DrzavaId { get; set; }
         public string? NazivDrzave { get; set; }
+        public bool Vidljivo { get; set; }
     }
 }

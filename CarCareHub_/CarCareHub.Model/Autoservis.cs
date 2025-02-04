@@ -18,7 +18,7 @@ namespace CarCareHub.Model
 
         public string? VlasnikFirme { get; set; }
 
-
+        public bool Vidljivo { get; set; }
         public int? GradId { get; set; }
 
         public string? Telefon { get; set; }

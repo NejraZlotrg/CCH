@@ -18,6 +18,7 @@ namespace CarCareHub.Model
 
         public int? AutoservisId { get; set; }
         public virtual Autoservis? Autoservis { get; set; }
+        public bool Vidljivo { get; set; }
 
     }
 }

@@ -13,7 +13,7 @@ public partial class Klijent
     public string? Prezime { get; set; }
 
     public string? Username { get; set; }
-
+    public bool Vidljivo { get; set; }
     public string? Email { get; set; }
 
     public string? Password { get; set; }

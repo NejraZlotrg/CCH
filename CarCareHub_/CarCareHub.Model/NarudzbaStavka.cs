@@ -18,5 +18,6 @@ namespace CarCareHub.Model
         public int? NarudzbaId { get; set; }
 
         public virtual Narudzba? Narudzba { get; set; }
+        public bool Vidljivo { get; set; }
     }
 }

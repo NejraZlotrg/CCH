@@ -17,7 +17,7 @@ namespace CarCareHub.Model
         public int? Popust { get; set; }
 
         public string? Sifra { get; set; }
-
+        public bool Vidljivo { get; set; }
         public string? OriginalniBroj { get; set; }
 
         public string? ModelProizvoda { get; set; }
