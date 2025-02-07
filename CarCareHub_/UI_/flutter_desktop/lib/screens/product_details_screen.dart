@@ -9,6 +9,7 @@ import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/kategorija.dart';
 import 'package:flutter_mobile/provider/korpa_provider.dart';
@@ -66,11 +67,19 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   }
 
   Future<void> initForm() async {
+    
+  if (context.read<UserProvider>().role == "Admin"){
+    modelResult = await _modelProvider.getAdmin();
+    kategorijaResult = await _kategorijaProvider.getAdmin();
+    firmaAutodijelovaResult = await _firmaAutodijelovaProvider.getAdmin();
+    proizvodjacResult = await _proizvodjacProvider.getAdmin();
+ }
+ else {
     modelResult = await _modelProvider.get();
     kategorijaResult = await _kategorijaProvider.get();
     firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
     proizvodjacResult = await _proizvodjacProvider.get();
-
+ }
     // Check if product exists and slika is not null
     if (widget.product != null && widget.product!.slika != null) {
       // Use the null assertion operator (!) to treat slika as non-null

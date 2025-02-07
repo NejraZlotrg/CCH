@@ -9,6 +9,7 @@ part of 'firmaautodijelova.dart';
 FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
     FirmaAutodijelova(
       (json['firmaAutodijelovaID'] as num).toInt(),
+      json['Vidljivo'] as bool?,
       json['nazivFirme'] as String?,
       json['adresa'] as String?,
       json['email'] as String?,
@@ -42,4 +43,5 @@ Map<String, dynamic> _$FirmaAutodijelovaToJson(FirmaAutodijelova instance) =>
       'username': instance.username,
       'ulogaId': instance.ulogaId,
       'passwordAgain': instance.passwordAgain,
+      'Vidljivo': instance.Vidljivo,
     };

@@ -27,7 +27,11 @@ class _GodisteScreenState extends State<GodisteScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _godisteProvider.get(filter: {'IsAllIncluded': 'true'});
+    SearchResult<Godiste> data;
+    if (context.read<UserProvider>().role == "Admin")
+     data = await _godisteProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+    else 
+      data = await _godisteProvider.get(filter: {'IsAllIncluded': 'true'});
     if (mounted) {
       setState(() {
         result = data;
@@ -93,9 +97,11 @@ class _GodisteScreenState extends State<GodisteScreen> {
                   if (_nazivModelaController.text.isNotEmpty) {
                     filterParams['godiste_'] = _nazivModelaController.text;
                   }
-
-                  var data = await _godisteProvider.get(filter: filterParams);
-
+                  SearchResult<Godiste> data;
+                  if (context.read<UserProvider>().role == "Admin")
+                   data = await _godisteProvider.getAdmin(filter: filterParams);
+                  else 
+                   data = await _godisteProvider.get(filter: filterParams);
                   if (!mounted) return;
 
                   setState(() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/narudzba_stavke.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/narudzba_stavka_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -48,8 +49,12 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
               var filterParams = {
                 'IsAllncluded': 'true', // Parametar za filtriranje
               };
+              SearchResult<NarudzbaStavke> data;
+              if (context.read<UserProvider>().role == "Admin")
+              data = await _narudzbaStavkaProvider.getAdmin(filter: filterParams);
+              else 
+              data = await _narudzbaStavkaProvider.get(filter: filterParams);
 
-              var data = await _narudzbaStavkaProvider.get(filter: filterParams);
               print(data);  // Debugging output
 
 

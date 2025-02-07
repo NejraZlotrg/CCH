@@ -31,13 +31,13 @@ namespace CarCareHub.Services.Migrations
                         column: x => x.AutoservisId,
                         principalTable: "Autoservis",
                         principalColumn: "AutoservisID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_ChatAUtoservisKlijents_Klijent_KlijentId",
                         column: x => x.KlijentId,
                         principalTable: "Klijent",
                         principalColumn: "KlijentID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(

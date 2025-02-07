@@ -8,6 +8,7 @@ part of 'zaposlenik.dart';
 
 Zaposlenik _$ZaposlenikFromJson(Map<String, dynamic> json) => Zaposlenik(
       zaposlenikId: (json['zaposlenikId'] as num?)?.toInt(),
+      Vidljivo: json['Vidljivo'] as bool?,
       ime: json['ime'] as String?,
       prezime: json['prezime'] as String?,
       maticniBroj: (json['maticniBroj'] as num?)?.toInt(),
@@ -54,6 +55,7 @@ Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
       'username': instance.username,
       'password': instance.password,
       'PasswordAgain': instance.PasswordAgain,
+      'Vidljivo': instance.Vidljivo,
       'lozinkaSalt': instance.lozinkaSalt,
       'lozinkaHash': instance.lozinkaHash,
       'autoservisId': instance.autoservisId,

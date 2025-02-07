@@ -4,6 +4,7 @@ import 'package:flutter_mobile/models/godiste.dart';
 import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
@@ -49,8 +50,13 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
   }
  
   Future<void> initForm() async {
+    if (context.read<UserProvider>().role == "Admin"){
+    voziloResult = await _voziloProvider.getAdmin();
+    godisteResult = await _godisteProvider.getAdmin();}
+    else 
+    {
     voziloResult = await _voziloProvider.get();
-    godisteResult = await _godisteProvider.get();
+    godisteResult = await _godisteProvider.get();}
     setState(() {
       isLoading = false;
     });

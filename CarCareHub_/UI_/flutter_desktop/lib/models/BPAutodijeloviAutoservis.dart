@@ -11,10 +11,11 @@ class BPAutodijeloviAutoservis {
   FirmaAutodijelova? firmaAutodijelova; // Veza prema firmi autodijelova
   Autoservis? autoservis; // Veza prema autoservisu
   int? firmaAutodijelovaId; // ID firme autodijelova
+bool? Vidljivo;
   int? autoservisId; // ID autoservisa
 
 
-  BPAutodijeloviAutoservis(this.bpAutodijeloviAutoservisId, this.firmaAutodijelova,this.firmaAutodijelovaId,
+  BPAutodijeloviAutoservis(this.bpAutodijeloviAutoservisId, this.Vidljivo, this.firmaAutodijelova,this.firmaAutodijelovaId,
   this.autoservis, this.autoservisId,);
 
   

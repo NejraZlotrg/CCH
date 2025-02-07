@@ -27,7 +27,11 @@ class _ModelScreenState extends State<ModelScreen> {
     _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Model> data;
+  if (context.read<UserProvider>().role == "Admin")
+  data = await _modelProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  else 
+  data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
   if (mounted) {
     setState(() {
       result = data;
@@ -148,8 +152,12 @@ class _ModelScreenState extends State<ModelScreen> {
       filterParams['nazivModela'] = _nazivModelaController.text;
       filterParams['markaVozila'] = _markaVozilaController.text;
     }
- 
-    var data = await _modelProvider.get(filter: filterParams);
+    SearchResult<Model> data;
+    if (context.read<UserProvider>().role == "Admin")
+     data = await _modelProvider.getAdmin(filter: filterParams);
+    else 
+     data = await _modelProvider.get(filter: filterParams);
+
  
     if (!mounted) return;
  

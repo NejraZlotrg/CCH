@@ -27,7 +27,11 @@ class _GradScreenState extends State<GradScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _gradProvider.get(filter: {'IsDrzavaIncluded': 'true'});
+    SearchResult<Grad> data;
+    if (context.read<UserProvider>().role == "Admin")
+    data = await _gradProvider.getAdmin(filter: {'IsDrzavaIncluded': 'true'});
+    else 
+    data = await _gradProvider.get(filter: {'IsDrzavaIncluded': 'true'});
     if (mounted) {
       setState(() {
         result = data;
@@ -92,9 +96,11 @@ class _GradScreenState extends State<GradScreen> {
                   if (_nazivGradaController.text.isNotEmpty) {
                     filterParams['nazivGrada'] = _nazivGradaController.text;
                   }
-
-                  var data = await _gradProvider.get(filter: filterParams);
-
+                  SearchResult<Grad> data;
+                  if (context.read<UserProvider>().role == "Admin")
+                   data = await _gradProvider.getAdmin(filter: filterParams);
+                  else 
+                   data = await _gradProvider.get(filter: filterParams);
                   if (!mounted) return; // Dodaj ovu proveru
 
                   setState(() {
@@ -152,64 +158,76 @@ class _GradScreenState extends State<GradScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width * 1, // Širina 100% ekrana
-      margin: const EdgeInsets.only(
-        top: 20.0, // Razmak od vrha
-      ),
-      child: Card(
-        elevation: 4.0, // Dodaje malo sjene za karticu
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-          side: const BorderSide(
-            color: Colors.black, // Crni okvir
-            width: 1.0, // Debljina okvira (1px)
-          ),
+  }Widget _buildDataListView() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.0,
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, // Dodan vertikalni scroll
-          child: DataTable(
-                      showCheckboxColumn: false,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Naziv grada',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+            DataColumn(
+              label: Text(
+                'Naziv drzave',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          ],
+          rows: (result?.result ?? []).map(
+            (Grad e) {
+              bool isRed = (e.vidljivo ?? true) == false;
 
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Naziv grada',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ),
-              DataColumn(
-                label: Text(
-                  'Naziv drzave',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ),
-            ],
-            rows: (result?.result ?? []).map(
-                      (Grad e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GradDetailsScreen(grad: e),
-                              ),
-                            );
+              return DataRow(
+                onSelectChanged: (selected) async {
+                  if (selected == true) {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => GradDetailsScreen(grad: e),
+                      ),
+                    );
                     await _loadData();
-                     }
+                  }
                 },
                 cells: [
-                  DataCell(Text(e.nazivGrada ?? "")),
-                  DataCell(Text(e.drzava?.nazivDrzave ?? "")),
+                  DataCell(
+                    Text(
+                      e.nazivGrada ?? "",
+                      style: TextStyle(
+                        color: isRed ? Colors.red : Colors.black,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Text(
+                      e.drzava?.nazivDrzave ?? "",
+                      style: TextStyle(
+                        color: isRed ? Colors.red : Colors.black,
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-            ).toList(),
-          ),
+              );
+            },
+          ).toList(),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -12,6 +12,8 @@ class Product {
   String? naziv;
   String? sifra;
   double? cijena;
+bool? Vidljivo;
+
   int? popust;
   String? slika;
   double? cijenaSaPopustom;
@@ -30,7 +32,7 @@ class Product {
   int? voziloId;
   String? stateMachine;
 
-  Product(this.proizvodId,this.voziloId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.modelId,
+  Product(this.proizvodId, this.Vidljivo, this.voziloId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.modelId,
   this.kategorijaId,this.vozilo, this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutoDijelova,this.model,this.modelProizvoda,this.godiste,this.godisteId,
   this.stateMachine);
 

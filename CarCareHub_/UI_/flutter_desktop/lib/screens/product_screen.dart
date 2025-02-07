@@ -66,7 +66,12 @@ class _ProductScreenState extends State<ProductScreen> {
    // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
   Future<void> _loadData() async {
-  var data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+    SearchResult<Product> data;
+     if (context.read<UserProvider>().role == "Admin")
+     data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+     else 
+     data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+
   if (mounted) {
     setState(() {
       result = data;
@@ -75,11 +80,23 @@ class _ProductScreenState extends State<ProductScreen> {
 }
 
   Future<void> _loadInitialData() async {
-    var modelResult = await _modelProvider.get();
-    var vozilaResult = await _voziloProvider.get(); //----- Učitavanje vozila
-    var godistaResult = await _godisteProvider.get(); //----- Učitavanje godista
-    var gradResult = await _gradProvider.get(); //----- Učitavanje godista
 
+    SearchResult<Model> modelResult;
+    SearchResult<Vozilo> vozilaResult;
+    SearchResult<Godiste> godistaResult;
+    SearchResult<Grad> gradResult;
+     if (context.read<UserProvider>().role == "Admin"){
+    modelResult = await _modelProvider.getAdmin();
+    vozilaResult = await _voziloProvider.getAdmin(); //----- Učitavanje vozila
+    godistaResult = await _godisteProvider.getAdmin(); //----- Učitavanje godista
+    gradResult = await _gradProvider.getAdmin(); //----- Učitavanje godista
+}
+else {
+    modelResult = await _modelProvider.get();
+    vozilaResult = await _voziloProvider.get(); //----- Učitavanje vozila
+    godistaResult = await _godisteProvider.get(); //----- Učitavanje godista
+    gradResult = await _gradProvider.get(); //----- Učitavanje godista
+}
     setState(() {
       model = modelResult.result;
       vozila = vozilaResult.result;
@@ -143,8 +160,10 @@ class _ProductScreenState extends State<ProductScreen> {
                       );
                     }).toList(),
                     onChanged: (String? value) async {
+                      SearchResult<Product> data;
                       if (value == 'Rastuća') {
-                        var data = await _productProvider.get(filter: {
+                         if (context.read<UserProvider>().role == "Admin"){
+                        data = await _productProvider.getAdmin(filter: {
                           'naziv': _nazivController.text,
                           'model': _modelController.text,
                           'nazivFirme': _nazivFirmeController.text,
@@ -152,12 +171,24 @@ class _ProductScreenState extends State<ProductScreen> {
                           'jib': _JIBMBScontroller.text,
                           'mbs': _JIBMBScontroller.text,
                           'cijenaRastuca': true,
-                        });
+                        });} 
+                        else {
+                        data = await _productProvider.get(filter: {
+                          'naziv': _nazivController.text,
+                          'model': _modelController.text,
+                          'nazivFirme': _nazivFirmeController.text,
+                          'nazivGrada': _gradController.text,
+                          'jib': _JIBMBScontroller.text,
+                          'mbs': _JIBMBScontroller.text,
+                          'cijenaRastuca': true,
+                        });} 
                         setState(() {
                           result = data;
-                        });
+                        }); 
                       } else if (value == 'Opadajuća') {
-                        var data = await _productProvider.get(filter: {
+                        SearchResult<Product> data;
+                        if (context.read<UserProvider>().role == "Admin"){
+                        data = await _productProvider.getAdmin(filter: {
                           'naziv': _nazivController.text,
                           'model': _modelController.text,
                           'nazivFirme': _nazivFirmeController.text,
@@ -165,7 +196,17 @@ class _ProductScreenState extends State<ProductScreen> {
                           'jib': _JIBMBScontroller.text,
                           'mbs': _JIBMBScontroller.text,
                           'cijenaOpadajuca': true,
-                        });
+                        });}
+                        else {
+                        data = await _productProvider.get(filter: {
+                          'naziv': _nazivController.text,
+                          'model': _modelController.text,
+                          'nazivFirme': _nazivFirmeController.text,
+                          'nazivGrada': _gradController.text,
+                          'jib': _JIBMBScontroller.text,
+                          'mbs': _JIBMBScontroller.text,
+                          'cijenaOpadajuca': true,
+                        });}
                         setState(() {
                           result = data;
                         });
@@ -464,7 +505,12 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
 
   // Pozivanje API-ja sa filterima
   try {
-    var data = await _productProvider.get(filter: filterParams);
+    SearchResult<Product> data;
+    if (context.read<UserProvider>().role == "Admin")
+     data = await _productProvider.getAdmin(filter: filterParams);
+    else 
+     data = await _productProvider.get(filter: filterParams);
+
 
     if (mounted) {
       setState(() {

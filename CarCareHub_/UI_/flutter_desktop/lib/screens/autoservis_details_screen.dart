@@ -98,9 +98,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
   Future initForm() async {
      if (context.read<UserProvider>().role == "Admin")
-        gradResult = await _gradProvider.getAdmin();
-        else 
-        gradResult = await _gradProvider.get();
+     gradResult = await _gradProvider.getAdmin();
+     else 
+     gradResult = await _gradProvider.get();
     if (widget.autoservis != null && widget.autoservis!.slikaProfila != null) {
       _imageFile =
           await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);

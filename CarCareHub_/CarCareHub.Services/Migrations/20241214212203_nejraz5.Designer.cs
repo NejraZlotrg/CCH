@@ -1035,7 +1035,8 @@ namespace CarCareHub.Services.Migrations
                     b.HasOne("CarCareHub.Services.Database.Uloge", "uloga")
                         .WithMany()
                         .HasForeignKey("UlogaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction
+                        )
                         .IsRequired();
 
                     b.Navigation("Grad");
@@ -1075,13 +1076,13 @@ namespace CarCareHub.Services.Migrations
                     b.HasOne("CarCareHub.Services.Database.Godiste", "Godiste")
                         .WithMany()
                         .HasForeignKey("GodisteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CarCareHub.Services.Database.Vozilo", "Vozilo")
                         .WithMany("Models")
                         .HasForeignKey("VoziloId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Godiste");
@@ -1191,7 +1192,7 @@ namespace CarCareHub.Services.Migrations
                     b.HasOne("CarCareHub.Services.Database.Uloge", "Uloga")
                         .WithMany("Zaposleniks")
                         .HasForeignKey("UlogaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")

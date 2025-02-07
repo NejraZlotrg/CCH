@@ -5,9 +5,10 @@ part 'drzave.g.dart';
 class Drzave {
   int? drzavaId;
   String? nazivDrzave;
+bool? Vidljivo;
 
 
-  Drzave(this.drzavaId, this.nazivDrzave);
+  Drzave(this.drzavaId, this.Vidljivo, this.nazivDrzave);
 
   
   factory Drzave.fromJson(Map<String,dynamic> json) => _$DrzaveFromJson(json);

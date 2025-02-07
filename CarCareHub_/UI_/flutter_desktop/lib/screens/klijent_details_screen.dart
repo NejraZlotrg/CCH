@@ -6,6 +6,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
@@ -54,8 +55,10 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
   }
 
   Future<void> initForm() async {
+    if (context.read<UserProvider>().role == "Admin")
+    gradResult = await _gradProvider.getAdmin();
+    else 
     gradResult = await _gradProvider.get();
-
     setState(() {
       isLoading = false;
     });

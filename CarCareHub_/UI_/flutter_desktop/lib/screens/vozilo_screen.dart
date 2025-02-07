@@ -26,7 +26,12 @@ class _VoziloScreenState extends State<VoziloScreen> {
      _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Vozilo> data;
+  if (context.read<UserProvider>().role == "Admin")
+  data = await _voziloProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  else
+  data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+
   if (mounted) {
     setState(() {
       result = data;
@@ -133,8 +138,13 @@ class _VoziloScreenState extends State<VoziloScreen> {
     if (_markaVozilaController.text.isNotEmpty) {
       filterParams['markaVozila'] = _markaVozilaController.text;
     }
- 
-    var data = await _voziloProvider.get(filter: filterParams);
+
+    SearchResult<Vozilo> data;
+  if (context.read<UserProvider>().role == "Admin")
+     data = await _voziloProvider.getAdmin(filter: filterParams);
+    else
+     data = await _voziloProvider.get(filter: filterParams);
+
  
     if (!mounted) return;
  

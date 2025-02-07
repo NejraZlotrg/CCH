@@ -11,10 +11,12 @@ class Korpa {
   int? zaposlenikId;
   int? kolicina;
   double? ukupnaCijenaProizvoda;
+bool? Vidljivo;
 
   // Konstruktor
   Korpa({
     this.korpaId,
+    this.Vidljivo,
     this.proizvodId,
     this.klijentId,
     this.autoservisId,

@@ -30,9 +30,12 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   }
   Future<void> _fetchInitialData() async {
     try {
-      var data = await _proizvodjacProvider.get(filter: {
-        'IsAllncluded': 'true',
-      });
+      SearchResult<Proizvodjac> data;
+       if (context.read<UserProvider>().role == "Admin")
+       data = await _proizvodjacProvider.getAdmin(filter: {'IsAllncluded': 'true',});
+      else 
+       data = await _proizvodjacProvider.get(filter: {'IsAllncluded': 'true',});
+
       if (mounted) {
         setState(() {
           result = data;
@@ -94,9 +97,12 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
           ElevatedButton(
             onPressed: () async {
               print("podaci proceed");
-              var data = await _proizvodjacProvider.get(filter: {
-                'nazivProizvodjaca': _nazivProizvodjacaController.text,
-              });
+              SearchResult<Proizvodjac> data;
+              if (context.read<UserProvider>().role == "Admin")
+               data = await _proizvodjacProvider.getAdmin(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
+              else 
+               data = await _proizvodjacProvider.get(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
+
  
               setState(() {
                 result = data;

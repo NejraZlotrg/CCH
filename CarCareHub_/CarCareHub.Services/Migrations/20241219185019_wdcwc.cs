@@ -47,7 +47,7 @@ namespace CarCareHub.Services.Migrations
                 column: "AutoservisId",
                 principalTable: "Autoservis",
                 principalColumn: "AutoservisID",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ChatAutoservisKlijents_Klijent_KlijentId",
@@ -55,7 +55,7 @@ namespace CarCareHub.Services.Migrations
                 column: "KlijentId",
                 principalTable: "Klijent",
                 principalColumn: "KlijentID",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         /// <inheritdoc />
@@ -98,7 +98,7 @@ namespace CarCareHub.Services.Migrations
                 column: "AutoservisId",
                 principalTable: "Autoservis",
                 principalColumn: "AutoservisID",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ChatAUtoservisKlijents_Klijent_KlijentId",
@@ -106,7 +106,7 @@ namespace CarCareHub.Services.Migrations
                 column: "KlijentId",
                 principalTable: "Klijent",
                 principalColumn: "KlijentID",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
     }
 }

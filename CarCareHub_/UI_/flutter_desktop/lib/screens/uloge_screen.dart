@@ -27,9 +27,12 @@ class _UlogeScreenState extends State<UlogeScreen> {
   }
    Future<void> _fetchInitialData() async {
     try {
-      var data = await _ulogeProvider.get(filter: {
-        'IsAllncluded': 'true',
-      });
+      SearchResult<Uloge> data;
+      if (context.read<UserProvider>().role == "Admin")
+       data = await _ulogeProvider.getAdmin(filter: {'IsAllncluded': 'true',});
+      else
+       data = await _ulogeProvider.get(filter: {'IsAllncluded': 'true',});
+
       if (mounted) {
         setState(() {
           result = data;
@@ -140,8 +143,12 @@ class _UlogeScreenState extends State<UlogeScreen> {
     if (_nazivUlogeController.text.isNotEmpty) {
       filterParams['nazivUloge'] = _nazivUlogeController.text;
     }
- 
-    var data = await _ulogeProvider.get(filter: filterParams);
+  SearchResult<Uloge> data;
+    if (context.read<UserProvider>().role == "Admin")
+     data = await _ulogeProvider.getAdmin(filter: filterParams);
+    else 
+     data = await _ulogeProvider.get(filter: filterParams);
+
  
     if (!mounted) return;
  

@@ -10,9 +10,11 @@ class Narudzba {
   final DateTime? datumIsporuke;  // Nullable DateTime
   final bool zavrsenaNarudzba;  // Ne nullable, default false
   final double? ukupnaCijenaNarudzbe;  // Nullable decimal type
+bool? Vidljivo;
 
   Narudzba({
     required this.narudzbaId,
+    this.Vidljivo,
     this.datumNarudzbe,  // Može biti null
     this.datumIsporuke,  // Može biti null
     this.zavrsenaNarudzba = false,  // Default value

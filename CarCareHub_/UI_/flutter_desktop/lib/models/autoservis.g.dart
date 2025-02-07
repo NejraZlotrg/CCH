@@ -8,6 +8,7 @@ part of 'autoservis.dart';
 
 Autoservis _$AutoservisFromJson(Map<String, dynamic> json) => Autoservis(
       (json['autoservisId'] as num?)?.toInt(),
+      json['Vidljivo'] as bool?,
       json['naziv'] as String?,
       json['adresa'] as String?,
       json['vlasnikFirme'] as String?,
@@ -44,6 +45,7 @@ Map<String, dynamic> _$AutoservisToJson(Autoservis instance) =>
       'mbs': instance.mbs,
       'slikaProfila': instance.slikaProfila,
       'slikaThumb': instance.slikaThumb,
+      'Vidljivo': instance.Vidljivo,
       'ulogaId': instance.ulogaId,
       'zaposlenikId': instance.zaposlenikId,
       'voziloId': instance.voziloId,

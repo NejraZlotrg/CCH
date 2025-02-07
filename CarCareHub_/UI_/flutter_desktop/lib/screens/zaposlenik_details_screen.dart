@@ -52,10 +52,16 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
   }
 
   Future initForm() async {
+  if (context.read<UserProvider>().role == "Admin") {
+    gradResult = await _gradProvider.getAdmin();
+    firmaResult = await _firmaAutodijelovaProvider.getAdmin();
+    ulogaResult = await _ulogeProvider.getAdmin();
+    autoservisResult = await _autoservisProvider.getAdmin();}
+    else {
     gradResult = await _gradProvider.get();
     firmaResult = await _firmaAutodijelovaProvider.get();
     ulogaResult = await _ulogeProvider.get();
-    autoservisResult = await _autoservisProvider.get();
+    autoservisResult = await _autoservisProvider.get();}
     setState(() {
       isLoading = false;
     });

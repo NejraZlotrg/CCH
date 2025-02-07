@@ -22,6 +22,7 @@ class Zaposlenik {
   String? username;
   String? password;
   String? PasswordAgain;
+bool? Vidljivo;
 
   
   String? lozinkaSalt;
@@ -38,6 +39,7 @@ class Zaposlenik {
 
   Zaposlenik({
     this.zaposlenikId,
+    this.Vidljivo,
     this.ime,
     this.prezime,
     this.maticniBroj,

@@ -18,12 +18,14 @@ class FirmaAutodijelova {
   String? username;
   int? ulogaId;
   String? passwordAgain;
+bool? Vidljivo;
   
 
 
 
   FirmaAutodijelova(
       this.firmaAutodijelovaID,
+      this.Vidljivo,
       this.nazivFirme,
       this.adresa,
       this.email,

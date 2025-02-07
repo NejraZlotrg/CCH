@@ -5,9 +5,10 @@ part 'godiste.g.dart';
 class Godiste {
   int? godisteId;
   int? godiste_;
+bool? Vidljivo;
 
 
-  Godiste(this.godisteId, this.godiste_);
+  Godiste(this.godisteId, this.Vidljivo, this.godiste_);
 
   
   factory Godiste.fromJson(Map<String,dynamic> json) => _$GodisteFromJson(json);

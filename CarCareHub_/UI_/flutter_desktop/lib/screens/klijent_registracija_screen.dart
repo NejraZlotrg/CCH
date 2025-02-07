@@ -9,6 +9,7 @@ import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
@@ -68,8 +69,10 @@ class _KlijentRegistracijaScreenState
   }
 
   Future initForm() async {
+    if (context.read<UserProvider>().role == "Admin")
+    gradResult = await _gradProvider.getAdmin();
+    else 
     gradResult = await _gradProvider.get();
-
     setState(() {
       isLoading = false;
     });

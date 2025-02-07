@@ -30,7 +30,12 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
    _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Zaposlenik> data;
+  if (context.read<UserProvider>().role == "Admin") 
+   data = await _zaposlenikProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  else
+   data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+
   if (mounted) {
     setState(() {
       result = data;
@@ -111,7 +116,12 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                        if (_prezimeController.text.isNotEmpty) {
                      filterParams['prezime'] = _prezimeController.text;
                         }
-              var data = await _zaposlenikProvider.get(filter: filterParams);
+              SearchResult<Zaposlenik> data;
+              if (context.read<UserProvider>().role == "Admin") 
+               data = await _zaposlenikProvider.getAdmin(filter: filterParams);
+              else
+               data = await _zaposlenikProvider.get(filter: filterParams);
+
 
 
               setState(() {

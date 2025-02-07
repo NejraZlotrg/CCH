@@ -27,7 +27,12 @@ class _UslugeScreenState extends State<UslugeScreen> {
      _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Usluge> data;
+  if (context.read<UserProvider>().role == "Admin")
+   data = await _uslugaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  else 
+   data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+
   if (mounted) {
     setState(() {
       result = data;
@@ -135,8 +140,12 @@ class _UslugeScreenState extends State<UslugeScreen> {
     if (_nazivUslugeController.text.isNotEmpty) {
       filterParams['nazivUsluge'] = _nazivUslugeController.text;
     }
- 
-    var data = await _uslugaProvider.get(filter: filterParams);
+    SearchResult<Usluge> data;
+  if (context.read<UserProvider>().role == "Admin")
+     data = await _uslugaProvider.getAdmin(filter: filterParams);
+    else 
+     data = await _uslugaProvider.get(filter: filterParams);
+
  
     if (!mounted) return;
  

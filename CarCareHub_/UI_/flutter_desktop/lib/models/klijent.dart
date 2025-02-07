@@ -16,9 +16,10 @@ class Klijent {
   String? brojTelefona;
   int? gradId;
   int? ulogaId;
+bool? Vidljivo;
 
 
-  Klijent(this.klijentId, this.ime,this.prezime,this.username,this.email,this.password,this.lozinkaSalt,this.lozinkaHash,this.spol,this.brojTelefona,this.gradId,this.passwordAgain);
+  Klijent(this.klijentId, this.Vidljivo, this.ime,this.prezime,this.username,this.email,this.password,this.lozinkaSalt,this.lozinkaHash,this.spol,this.brojTelefona,this.gradId,this.passwordAgain);
 
   
   factory Klijent.fromJson(Map<String,dynamic> json) => _$KlijentFromJson(json);

@@ -67,7 +67,7 @@ namespace CarCareHub.Services.Migrations
                 column: "KlijentId",
                 principalTable: "Klijent",
                 principalColumn: "KlijentID",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
 
         }
 

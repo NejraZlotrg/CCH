@@ -154,13 +154,14 @@ namespace CarCareHub.Services.Migrations
                         column: x => x.GodisteId,
                         principalTable: "Godiste",
                         principalColumn: "GodisteId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction
+                        );
                     table.ForeignKey(
                         name: "FK_Model_Vozilos_VoziloId",
                         column: x => x.VoziloId,
                         principalTable: "Vozilos",
                         principalColumn: "VoziloId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -273,7 +274,7 @@ namespace CarCareHub.Services.Migrations
                         column: x => x.UlogaId,
                         principalTable: "Uloge",
                         principalColumn: "UlogaID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "fk_klijent_grad",
                         column: x => x.gradID,
@@ -439,7 +440,7 @@ namespace CarCareHub.Services.Migrations
                         column: x => x.UlogaId,
                         principalTable: "Uloge",
                         principalColumn: "UlogaID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "fk_firma_zaposlenik",
                         column: x => x.firma_autodijelovaID,

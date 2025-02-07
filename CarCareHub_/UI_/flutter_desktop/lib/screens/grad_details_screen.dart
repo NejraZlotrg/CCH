@@ -5,6 +5,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
@@ -44,7 +45,10 @@ final validator = CreateValidator();
   }
 
   Future initForm() async {
-    drzavaResult = await _drzaveProvider.get();  //////////////////////////////////////////////////////
+     if (context.read<UserProvider>().role == "Admin")
+    drzavaResult = await _drzaveProvider.getAdmin(); 
+    else 
+     drzavaResult = await _drzaveProvider.get(); //////////////////////////////////////////////////////
     print(drzavaResult);
 
     setState(() {  //////////////////////////////////////////////////////

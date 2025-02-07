@@ -8,6 +8,7 @@ part of 'korpa.dart';
 
 Korpa _$KorpaFromJson(Map<String, dynamic> json) => Korpa(
       korpaId: (json['korpaId'] as num?)?.toInt(),
+      Vidljivo: json['Vidljivo'] as bool?,
       proizvodId: (json['proizvodId'] as num?)?.toInt(),
       klijentId: (json['klijentId'] as num?)?.toInt(),
       autoservisId: (json['autoservisId'] as num?)?.toInt(),
@@ -25,4 +26,5 @@ Map<String, dynamic> _$KorpaToJson(Korpa instance) => <String, dynamic>{
       'zaposlenikId': instance.zaposlenikId,
       'kolicina': instance.kolicina,
       'ukupnaCijenaProizvoda': instance.ukupnaCijenaProizvoda,
+      'Vidljivo': instance.Vidljivo,
     };

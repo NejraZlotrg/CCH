@@ -28,7 +28,11 @@ class _KlijentScreenState extends State<KlijentScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
+    SearchResult<Klijent> data;
+    if (context.read<UserProvider>().role == "Admin")
+     data = await _klijentProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+    else 
+     data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
     if (mounted) {
       setState(() {
         result = data;
@@ -101,7 +105,11 @@ class _KlijentScreenState extends State<KlijentScreen> {
                   if (_prezimeController.text.isNotEmpty) {
                     filterParams['prezime'] = _prezimeController.text;
                   }
-                  var data = await _klijentProvider.get(filter: filterParams);
+                  SearchResult<Klijent> data;
+                  if (context.read<UserProvider>().role == "Admin")
+                   data = await _klijentProvider.getAdmin(filter: filterParams);
+                  else 
+                   data = await _klijentProvider.get(filter: filterParams);
                   if (!mounted) return;
                   setState(() {
                     result = data;
