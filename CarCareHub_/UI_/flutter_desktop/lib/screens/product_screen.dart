@@ -67,13 +67,18 @@ class _ProductScreenState extends State<ProductScreen> {
    // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
   Future<void> _loadData() async {
-    SearchResult<Product> data;
-     if (context.read<UserProvider>().role == "Admin")
-     data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-     if(context.read<UserProvider>().role == "Klijent")
-     data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
-     else 
-     data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+  String? userRole = context.read<UserProvider>().role;
+  print("Korisnička uloga: ${userRole ?? 'Nepoznata'}");
+
+  SearchResult<Product> data;
+
+  if (userRole == "Admin") {
+    data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else if (userRole == "Klijent") {
+    data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
 
   if (mounted) {
     setState(() {
@@ -81,6 +86,7 @@ class _ProductScreenState extends State<ProductScreen> {
     });
   }
 }
+
 
   Future<void> _loadInitialData() async {
 

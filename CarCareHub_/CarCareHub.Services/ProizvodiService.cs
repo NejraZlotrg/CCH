@@ -39,10 +39,10 @@ namespace CarCareHub.Services
             return await state.Update(id, update);
         }
 
-        public virtual async Task<PagedResult<Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject? search = null)
+        public virtual async Task<PagedResult<Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject search = null)
         {
-            var query = _dbContext.Set<Proizvod>().AsQueryable(); // Dobijanje DbSet-a za entitet
-
+         
+           var query = _dbContext.Proizvods.Where(x => x.StateMachine == "active" && x.Vidljivo==true);
             PagedResult<Proizvod> result = new PagedResult<Proizvod>();
 
             query = AddFilter(query, search); // Primjenjuje filtere
@@ -57,7 +57,7 @@ namespace CarCareHub.Services
                              .Take(search.PageSize.Value); // Uzimanje traženog broja stavki
             }
 
-            query = _dbContext.Proizvods.Where(x => x.StateMachine == "active");
+           
             var list = await query.ToListAsync(); // Dobijanje rezultata
 
             result.Result = _mapper.Map<List<Proizvod>>(list); // Mapiranje na odgovarajući model

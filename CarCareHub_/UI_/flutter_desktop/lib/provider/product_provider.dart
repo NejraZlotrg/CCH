@@ -39,39 +39,41 @@ class ProductProvider extends BaseProvider<Product> {
       throw Exception("Greška pri sakrivanju proizvoda (status: ${response.statusCode})");
     }
   }
-Future<SearchResult<Product>> getForUsers({dynamic filter}) async {
-  String url = "${BaseProvider.baseURL}$endpoint/activeProducts2";
-ovo izmijentii namjerno je error ostavljen, outanaj nije okej i vijdelti je radi jer je meni memorije nestalo nemogu nista 
-  if (filter != null) {
-    String queryString = getQueryString(filter);
-    url = "$url?$queryString";
-  }
 
-  Uri uri = Uri.parse(url);
-  Map<String, String> headers = createHeaders();
+// Future<SearchResult<Product>> getForUsers({dynamic filter}) async {
+//   try {
+//     String url = "${BaseProvider.baseURL}api/proizvodi/GetForUsers";
 
-  http.Response response = await http.get(uri, headers: headers);
+//     Ako postoje filter parametri, dodaj ih u URL
+//     if (filter != null) {
+//       String queryString = Uri(queryParameters: Map<String, String>.from(filter)).query;
+//       url = "$url?$queryString";
+//     }
 
-  if (isValidResponse(response)) {
-    var data = jsonDecode(response.body);
+//     Uri uri = Uri.parse(url);
+//     var response = await http.get(uri, headers: createHeaders());
 
-    // Parsiranje paginiranih podataka
-    SearchResult<Product> result = SearchResult<Product>();
-    result.count = data['count'];
+//     if (isValidResponse(response)) {
+//       var data = jsonDecode(response.body);
 
-    for (var item in data['result']) {
-      result.result.add(fromJson(item));
-    }
+//       SearchResult<Product> result = SearchResult<Product>();
+//       result.count = data['count'];
 
-    return result;
-  } else {
-    throw Exception("Greška prilikom dohvaćanja aktivnih proizvoda (status: ${response.statusCode})");
-  }
-}
+//       for (var item in data['result']) {
+//         result.result.add(fromJson(item));
+//       }
 
+//       return result;
+//     } else {
+//       throw Exception("Nevalidan odgovor sa servera (status: ${response.statusCode})");
+//     }
+//   } catch (e) {
+//     print("Greška u getForUsers: $e");
+//     throw Exception("Neuspelo dobijanje podataka za korisnike");
+//   }
+// }
 
-  
-
+ovo u komentaru sretii 
   @override
   Product fromJson(data) {
     return Product.fromJson(data);

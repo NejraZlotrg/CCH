@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
+import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:http/http.dart' as http;
@@ -201,7 +202,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
      print("Nemoguće obrisati jer postoje povezani podaci.");
   }
 }
-
   // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {
     throw Exception("Method not implemented");

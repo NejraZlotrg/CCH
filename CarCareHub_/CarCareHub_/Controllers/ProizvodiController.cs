@@ -48,10 +48,15 @@ namespace CarCareHub_.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetForUsers")]
-        public async Task<ActionResult<PagedResult<CarCareHub.Services.Database.Proizvod>>> GetForUsers([FromQuery] ProizvodiSearchObject? search = null)
+        public async Task<ActionResult<PagedResult<CarCareHub.Model.Proizvod>>> GetForUsers([FromQuery] ProizvodiSearchObject search = null)
         {
-            var result = await (_service as IProizvodiService).GetForUsers(search);
-            return Ok(result); // Ovdje vraćaš 200 OK sa rezultatom
+            var result = await (_service as IProizvodiService)?.GetForUsers(search);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
         }
+
     }
 }

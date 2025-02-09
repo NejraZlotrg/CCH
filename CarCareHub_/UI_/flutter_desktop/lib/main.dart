@@ -218,7 +218,8 @@ class _LogInPageState extends State<LogInPage> {
     final userProvider = context.read<UserProvider>();
     if (userIdK == 2) {
       userProvider.setUser(userIdK, 'Admin', username);
-    } else {
+    } 
+    else {
       userProvider.setUser(userIdK, 'Klijent', username);
     }
 
