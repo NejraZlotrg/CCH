@@ -2,6 +2,8 @@
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace CarCareHub.Services
         , IProizvodiService
     {
         public BaseState _baseState { get; set; }
-        public ProizvodiService(BaseState baseState, CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public ProizvodiService(BaseState baseState, CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _baseState = baseState;
         }
@@ -37,7 +39,31 @@ namespace CarCareHub.Services
             return await state.Update(id, update);
         }
 
+        public virtual async Task<PagedResult<Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject? search = null)
+        {
+            var query = _dbContext.Set<Proizvod>().AsQueryable(); // Dobijanje DbSet-a za entitet
 
+            PagedResult<Proizvod> result = new PagedResult<Proizvod>();
+
+            query = AddFilter(query, search); // Primjenjuje filtere
+            query = AddInclude(query, search); // Ako koristiš include za relacije
+
+            result.Count = await query.CountAsync(); // Broj ukupnih stavki
+
+            // Ispravka paginacije
+            if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
+            {
+                query = query.Skip((search.Page.Value - 1) * search.PageSize.Value) // Pravi ispravnu paginaciju
+                             .Take(search.PageSize.Value); // Uzimanje traženog broja stavki
+            }
+
+            query = _dbContext.Proizvods.Where(x => x.StateMachine == "active");
+            var list = await query.ToListAsync(); // Dobijanje rezultata
+
+            result.Result = _mapper.Map<List<Proizvod>>(list); // Mapiranje na odgovarajući model
+            return result; // Vraćanje rezultata
+
+        }
 
         public async Task<Model.Proizvod> Activate(int id)
         {

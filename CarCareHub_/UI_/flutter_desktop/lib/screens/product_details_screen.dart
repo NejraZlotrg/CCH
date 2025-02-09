@@ -163,6 +163,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   final imageBytes = await imageFile.buffer.asUint8List();
   request['slika'] = base64Encode(imageBytes);
 }
+  request['vidljivo'] = true;
+
 
                                 try {
                                   if (widget.product == null) {
@@ -384,27 +386,31 @@ ElevatedButton(
       Row(
         children: [
           Expanded(child:
-          FormBuilderDropdown(
-            name: 'kategorijaId',
-            validator: validator.required,
-            decoration: const InputDecoration(
-              labelText: 'Kategorija',
-              border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              hintText: 'kategorija',
+         FormBuilderDropdown(
+  name: 'kategorijaId',
+  validator: validator.required,
+  decoration: const InputDecoration(
+    labelText: 'Kategorija',
+    border: OutlineInputBorder(),
+    fillColor: Colors.white, // Bela pozadina
+    filled: true, // Da pozadina bude ispunjena
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    hintText: 'Kategorija',
+  ),
+  initialValue: widget.product?.kategorijaId?.toString(),
+  items: kategorijaResult?.result.map((item) {
+        return DropdownMenuItem(
+          value: item.kategorijaId.toString(),
+          child: Text(
+            item.nazivKategorije ?? "",
+            style: TextStyle(
+              color: item.vidljivo == false ? Colors.red : Colors.black,
             ),
-            initialValue: widget.product?.kategorijaId?.toString(),
-            items: kategorijaResult?.result.map((item) {
-                  return DropdownMenuItem(
-                    value: item.kategorijaId.toString(),
-                    child: Text(item.nazivKategorije ?? ""),
-                  );
-                }).toList() ??
-                [],
           ),
+        );
+      }).toList() ?? [],
+)
+
           ),
         ],
       ),
@@ -413,26 +419,30 @@ ElevatedButton(
         children: [
           Expanded(child:
           FormBuilderDropdown(
-            name: 'proizvodjacId',
-            validator: validator.required,
-            decoration: const InputDecoration(
-              labelText: 'Proizvodjac',
-              border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              hintText: 'proizvodjac',
+  name: 'proizvodjacId',
+  validator: validator.required,
+  decoration: const InputDecoration(
+    labelText: 'Proizvođač',
+    border: OutlineInputBorder(),
+    fillColor: Colors.white, // Bela pozadina
+    filled: true, // Da pozadina bude ispunjena
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    hintText: 'Proizvođač',
+  ),
+  initialValue: widget.product?.proizvodjacId?.toString(),
+  items: proizvodjacResult?.result.map((item) {
+        return DropdownMenuItem(
+          value: item.proizvodjacId.toString(),
+          child: Text(
+            item.nazivProizvodjaca ?? "",
+            style: TextStyle(
+              color: item.vidljivo == false ? Colors.red : Colors.black,
             ),
-            initialValue: widget.product?.proizvodjacId?.toString(),
-            items: proizvodjacResult?.result.map((item) {
-                  return DropdownMenuItem(
-                    value: item.proizvodjacId.toString(),
-                    child: Text(item.nazivProizvodjaca ?? ""),
-                  );
-                }).toList() ??
-                [],
           ),
+        );
+      }).toList() ?? [],
+)
+
           ),
         ],
       ),
@@ -440,27 +450,31 @@ ElevatedButton(
       Row(
         children: [
           Expanded(child:
-          FormBuilderDropdown(
-            name: 'firmaAutodijelovaID',
-            validator: validator.required,
-            decoration: const InputDecoration(
-              labelText: 'FirmaAutoDijelova',
-              border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              hintText: 'firmaAutoDijelova',
+         FormBuilderDropdown(
+  name: 'firmaAutodijelovaID',
+  validator: validator.required,
+  decoration: const InputDecoration(
+    labelText: 'Firma Auto Dijelova',
+    border: OutlineInputBorder(),
+    fillColor: Colors.white, // Bela pozadina
+    filled: true, // Da pozadina bude ispunjena
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    hintText: 'Firma Auto Dijelova',
+  ),
+  initialValue: widget.product?.firmaAutodijelovaID?.toString(),
+  items: firmaAutodijelovaResult?.result.map((item) {
+        return DropdownMenuItem(
+          value: item.firmaAutodijelovaID.toString(),
+          child: Text(
+            item.nazivFirme ?? "",
+            style: TextStyle(
+              color: item.vidljivo == false ? Colors.red : Colors.black,
             ),
-            initialValue: widget.product?.firmaAutodijelovaID?.toString(),
-            items: firmaAutodijelovaResult?.result.map((item) {
-                  return DropdownMenuItem(
-                    value: item.firmaAutodijelovaID.toString(),
-                    child: Text(item.nazivFirme ?? ""),
-                  );
-                }).toList() ??
-                [],
           ),
+        );
+      }).toList() ?? [],
+)
+
           ),
         ],
       ),
@@ -469,27 +483,30 @@ ElevatedButton(
         children: [
           Expanded(
             child: FormBuilderDropdown(
-              name: 'modelId',
-              validator: validator.required,
-              decoration: const InputDecoration(
-                labelText: 'Model',
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-
-                hintText: 'Odaberite Model',
-              ),
-              initialValue: widget.product?.model?.modelId.toString(),
-              items: modelResult?.result.map((item) {
-                    return DropdownMenuItem(
-                      value: item.modelId.toString(),
-                      child: Text(item.nazivModela ?? ""),
-                    );
-                  }).toList() ??
-                  [],
+  name: 'modelId',
+  validator: validator.required,
+  decoration: const InputDecoration(
+    labelText: 'Model',
+    border: OutlineInputBorder(),
+    fillColor: Colors.white, // Bela pozadina
+    filled: true, // Da pozadina bude ispunjena
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    hintText: 'Odaberite Model',
+  ),
+  initialValue: widget.product?.model?.modelId.toString(),
+  items: modelResult?.result.map((item) {
+        return DropdownMenuItem(
+          value: item.modelId.toString(),
+          child: Text(
+            item.nazivModela ?? "",
+            style: TextStyle(
+              color: item.vidljivo == false ? Colors.red : Colors.black,
             ),
+          ),
+        );
+      }).toList() ?? [],
+)
+
           ),
         ],
       ),

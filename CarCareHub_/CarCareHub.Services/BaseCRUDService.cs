@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using CarCareHub.Model.SearchObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +14,11 @@ namespace CarCareHub.Services
 {
     public class BaseCRUDService<T, TDb, TSearch, TInsert, TUpdate> : BaseService<T, TDb, TSearch>, ICRUDService<T, TSearch, TInsert, TUpdate> where T : class where TDb : class where TSearch : BaseSearchObject
     {
-        public BaseCRUDService(Database.CchV2AliContext dbContext, IMapper mapper) :base(dbContext,mapper)
-        {
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
+        public BaseCRUDService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) :base(dbContext,mapper)
+        {
+            _httpContextAccessor = httpContextAccessor;
         }
         public virtual async Task BeforeInsert(TDb tdb, TInsert insert)
         {
@@ -56,19 +60,29 @@ namespace CarCareHub.Services
 
         public virtual async Task<T> Delete(int id)
         {
+            var user = _httpContextAccessor.HttpContext.User;
+
+            var userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
             var set = await _dbContext.Set<TDb>().FindAsync(id);
             if (set == null)
-                throw new Exception("ne postoji id");
+                throw new Exception("Ne postoji id");
 
-            try
+            Console.WriteLine($"--------------------------------------------------Rola korisnika: {userRole}");
+            if (userRole == "Admin")
             {
-                // Pokušaj trajnog brisanja
-                _dbContext.Set<TDb>().Remove(set);
-                await _dbContext.SaveChangesAsync();
+                try
+                {
+                    _dbContext.Set<TDb>().Remove(set);
+                    await _dbContext.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Specifična poruka o povezanosti podataka
+                    throw new Exception("Nemoguće obrisati jer postoje povezani podaci.", ex);
+                }
             }
-            catch (DbUpdateException) // Hvatamo grešku ako trajno brisanje nije moguće
+            else
             {
-                // Proverava da li objekat ima svojstvo 'Vidljivo'
                 var propertyInfo = set.GetType().GetProperty("Vidljivo");
                 if (propertyInfo != null && propertyInfo.PropertyType == typeof(bool))
                 {

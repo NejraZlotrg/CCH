@@ -1,5 +1,7 @@
 ﻿using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +16,7 @@ namespace CarCareHub.Services
        Task<Model.Proizvod> Activate(int id);
         Task<Model.Proizvod> Hide(int id);
         Task<List<string>> AllowedActions(int id);
+        Task<PagedResult<CarCareHub.Services.Database.Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject? search = null);
+
     }
 }

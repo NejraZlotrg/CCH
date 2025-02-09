@@ -13,12 +13,12 @@ class chatKlijentZaposlenik {
   final String? poruka;
   final bool? poslanoOdKlijenta;
   final DateTime? vrijemeSlanja;
-bool? Vidljivo;
+bool? vidljivo;
 
   
 
 
-  chatKlijentZaposlenik(this.chatKlijentZaposlenikId, this.Vidljivo, this.klijentId,this.zaposlenikId, this.zaposlenik, this.klijent, 
+  chatKlijentZaposlenik(this.chatKlijentZaposlenikId, this.vidljivo, this.klijentId,this.zaposlenikId, this.zaposlenik, this.klijent, 
   this.poruka,this.poslanoOdKlijenta,this.vrijemeSlanja);
 
   

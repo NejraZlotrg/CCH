@@ -43,7 +43,10 @@ namespace CarCareHub_.Controllers
 
 		[HttpGet("Admin")]
 		//[AllowAnonymous]
-		public async Task<ActionResult<PagedResult<T>>> GetAdmin([FromQuery] TSearch? search = null)
+		public async Task<ActionResult<PagedResult<T>>> GetAdmin
+			
+			
+			([FromQuery] TSearch? search = null)
 		{
 			//----
 

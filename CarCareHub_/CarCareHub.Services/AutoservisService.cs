@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
@@ -47,7 +48,7 @@ namespace CarCareHub.Services
             byte[] inArray = algorithm.ComputeHash(dst);
             return Convert.ToBase64String(inArray);
         }
-        public AutoservisService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public AutoservisService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;

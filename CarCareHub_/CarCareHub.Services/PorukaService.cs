@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,8 @@ namespace CarCareHub.Services
 {
     public class PorukaService: BaseCRUDService<Model.Poruka, Database.Poruka, PorukaSearchObject, PorukaInsert, PorukaUpdate>, IPorukaService
     {
-        public PorukaService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public PorukaService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
+
         {
         }
 

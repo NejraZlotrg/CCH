@@ -156,57 +156,67 @@ class _UlogeScreenState extends State<UlogeScreen> {
       result = data;
     });
   }
- 
-  Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: SingleChildScrollView(
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Naziv uloge',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+ Widget _buildDataListView() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: SingleChildScrollView(
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Naziv uloge',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16, // Veći font za naziv kolone
                 ),
               ),
-            ],
-            rows: result?.result
-                   .map(
-                      (Uloge e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    UlogeDetailsScreen(uloge: e),
-                              ),
-                            );
-                    await _fetchInitialData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.nazivUloge.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+            ),
+          ],
+          rows: result?.result
+                  .map(
+                    (Uloge e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  UlogeDetailsScreen(uloge: e),
+                            ),
+                          );
+                          await _fetchInitialData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.nazivUloge.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                              fontWeight:
+                                  e.vidljivo == false ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
  

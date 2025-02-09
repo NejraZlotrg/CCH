@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CarCareHub.Services.Database;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
@@ -19,7 +20,7 @@ namespace CarCareHub.Services
 
         IMapper _mapper { get; set; }
 
-        public KlijentService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public KlijentService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -192,7 +193,9 @@ namespace CarCareHub.Services
                 Spol = "Muško",
                 BrojTelefona = "38761123456",
                 GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
-                UlogaId = 4 // Assuming UlogaId corresponds to a specific role in the database
+                UlogaId = 4 ,// Assuming UlogaId corresponds to a specific role in the database
+                Vidljivo = true
+
             };
 
                 var klijentInsert2 =
@@ -207,7 +210,8 @@ namespace CarCareHub.Services
                Spol = "Muško",
                BrojTelefona = "38761123456",
                GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
-               UlogaId = 5 // Assuming UlogaId corresponds to a specific role in the database
+               UlogaId = 5, // Assuming UlogaId corresponds to a specific role in the database, 
+               Vidljivo =true
            };
                 // You can add more records here
 

@@ -14,6 +14,7 @@ namespace CarCareHub.Model
 
         public string? Prezime { get; set; }
 
+        public bool? Vidljivo { get; set; }
 
         public string? Email { get; set; }
 

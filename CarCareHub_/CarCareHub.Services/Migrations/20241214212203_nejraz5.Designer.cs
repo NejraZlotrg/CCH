@@ -206,6 +206,7 @@ namespace CarCareHub.Services.Migrations
                     b.Property<int>("DrzavaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+
                         .HasColumnName("DrzavaID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DrzavaId"));
@@ -1035,7 +1036,7 @@ namespace CarCareHub.Services.Migrations
                     b.HasOne("CarCareHub.Services.Database.Uloge", "uloga")
                         .WithMany()
                         .HasForeignKey("UlogaId")
-                        .OnDelete(DeleteBehavior.NoAction
+                        .OnDelete(DeleteBehavior.Cascade
                         )
                         .IsRequired();
 
@@ -1076,13 +1077,13 @@ namespace CarCareHub.Services.Migrations
                     b.HasOne("CarCareHub.Services.Database.Godiste", "Godiste")
                         .WithMany()
                         .HasForeignKey("GodisteId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CarCareHub.Services.Database.Vozilo", "Vozilo")
                         .WithMany("Models")
                         .HasForeignKey("VoziloId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Godiste");
@@ -1192,7 +1193,7 @@ namespace CarCareHub.Services.Migrations
                     b.HasOne("CarCareHub.Services.Database.Uloge", "Uloga")
                         .WithMany("Zaposleniks")
                         .HasForeignKey("UlogaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CarCareHub.Services.Database.Autoservis", "Autoservis")

@@ -15,7 +15,7 @@ namespace CarCareHub.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public KorpaService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper)
+        public KorpaService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }

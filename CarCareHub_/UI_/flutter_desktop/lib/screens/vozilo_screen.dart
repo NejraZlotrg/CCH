@@ -154,53 +154,65 @@ class _VoziloScreenState extends State<VoziloScreen> {
   }
  
   Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: SingleChildScrollView(
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Marka vozila',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: SingleChildScrollView(
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Marka vozila',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16, // Povećan font zaglavlja
                 ),
               ),
-            ],
+            ),
+          ],
           rows: result?.result
-                    .map(
-                      (Vozilo e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    VoziloDetailsScreen(vozilo: e),
-                              ),
-                            );
-                    await _loadData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.markaVozila.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+                  .map(
+                    (Vozilo e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VoziloDetailsScreen(vozilo: e),
+                            ),
+                          );
+                          await _loadData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.markaVozila?.toString() ?? "",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: (e.markaVozila == null || e.markaVozila!.isEmpty)
+                                  ? Colors.red
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

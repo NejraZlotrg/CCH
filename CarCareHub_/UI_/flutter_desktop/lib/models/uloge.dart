@@ -5,10 +5,10 @@ part 'uloge.g.dart';
 class Uloge {
   int? ulogaId;
   String? nazivUloge;
-bool? Vidljivo;
+bool? vidljivo;
 
 
-  Uloge(this.ulogaId, this.Vidljivo, this.nazivUloge);
+  Uloge(this.ulogaId, this.vidljivo, this.nazivUloge);
   
   factory Uloge.fromJson(Map<String,dynamic> json) => _$UlogeFromJson(json);
 

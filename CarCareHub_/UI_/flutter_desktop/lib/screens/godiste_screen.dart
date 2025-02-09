@@ -162,59 +162,62 @@ class _GodisteScreenState extends State<GodisteScreen> {
   }
 
   Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width * 1,
-      margin: const EdgeInsets.only(
-        top: 20.0,
-      ),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(
-            color: Colors.black,
-            width: 1.0,
-          ),
+  return Container(
+    width: MediaQuery.of(context).size.width * 1,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.0,
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, // Ensure vertical scroll
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Godiste: ',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Godiste:',
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
-            ],
-           rows: result?.result
-                    .map(
-                      (Godiste e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GodisteDetailsScreen(godiste: e),
-                              ),
-                            );
-                    await _loadData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.godiste_.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+            ),
+          ],
+          rows: result?.result
+                  .map(
+                    (Godiste e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  GodisteDetailsScreen(godiste: e),
+                            ),
+                          );
+                          await _loadData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.godiste_.toString(),
+                            style: TextStyle(
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

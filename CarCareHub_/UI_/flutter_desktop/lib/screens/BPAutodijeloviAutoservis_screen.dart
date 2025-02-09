@@ -101,35 +101,54 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
     }
 
     return Expanded(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv firme autodijelova',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Naziv autoservisa',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
-          rows: result?.toList()
-                .map(
-                  (BPAutodijeloviAutoservis e) => DataRow(
-                    cells: [
-                      DataCell(Text(e.autoservis?.naziv ?? "")),
-                      DataCell(Text(e.firmaAutodijelova?.nazivFirme ?? "")),
-                    ],
-                  ),
-                )
-                .toList() ?? [],
+  child: SingleChildScrollView(
+    scrollDirection: Axis.vertical,
+    child: DataTable(
+      columns: const [
+        DataColumn(
+          label: Text(
+            'Naziv firme autodijelova',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
         ),
-      ),
-    );
+        DataColumn(
+          label: Text(
+            'Naziv autoservisa',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+      ],
+      rows: result?.toList()
+            .map(
+              (BPAutodijeloviAutoservis e) => DataRow(
+                cells: [
+                  DataCell(
+                    Text(
+                      e.autoservis?.naziv ?? "",
+                      style: TextStyle(
+                        color: e.autoservis?.vidljivo == false 
+                            ? Colors.red 
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Text(
+                      e.firmaAutodijelova?.nazivFirme ?? "",
+                      style: TextStyle(
+                        color: e.firmaAutodijelova?.vidljivo == false 
+                            ? Colors.red 
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+            .toList() ?? [],
+    ),
+  ),
+)
+;
   }
 }

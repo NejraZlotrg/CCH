@@ -73,7 +73,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'jib': widget.autoservis?.jib ?? '',
       'mbs': widget.autoservis?.mbs ?? '',
       'ulogaId': widget.autoservis?.ulogaId?.toString() ?? '',
-      'gradId': widget.autoservis?.gradId,
+      'gradId': widget.autoservis?.gradId ?? null,
       'username': widget.autoservis?.username,
       'password': widget.autoservis?.password ?? '',
       'passwordAgain': widget.autoservis?.passwordAgain ?? '',
@@ -87,7 +87,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
 
-    _gradProvider = context.read<GradProvider>();
+
 
     initForm();
     fetchUsluge();
@@ -163,18 +163,17 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   }
 
   Future<void> fetchGrad() async {
-    try {
-      grad = await _gradProvider.getById(widget.autoservis?.gradId ?? 0);
+   
+      grad = await _gradProvider.getById(widget.autoservis?.gradId ?? null);
+      if (grad.isNotEmpty && grad.first.vidljivo == false) {
+      grad = []; // Postavi na praznu listu ako grad nije vidljiv
+      _initialValues['gradId'] = 'null'; // Resetuj vrednost za dropdown
+  
       if (mounted) {
         setState(() {});
       }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
-        });
-      }
     }
+   
   }
 
   @override
@@ -704,43 +703,45 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           const SizedBox(width: 20),
           Expanded(
             child: FormBuilderDropdown(
-              name: 'gradId',
-              decoration: const InputDecoration(
-                labelText: 'Grad',
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+  name: 'gradId',
+  decoration: const InputDecoration(
+    labelText: 'Grad',
+    border: OutlineInputBorder(),
+    fillColor: Colors.white, // Bela pozadina
+    filled: true, // Da pozadina bude ispunjena
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black), // Crni okvir
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
+    ),
+    labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
+    hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+  ),
+  initialValue: widget.autoservis?.gradId != null
+      ? widget.autoservis!.gradId.toString()
+      : null,
+  items: gradResult?.result
+          .map((item) => DropdownMenuItem(
+                alignment: AlignmentDirectional.center,
+                value: item.gradId.toString(),
+                child: Text(
+                  item.nazivGrada ?? "",
+                  style: TextStyle(
+                    color: item.vidljivo == false
+                        ? Colors.red // Crvena slova za gradove sa vidljivost false
+                        : Colors.black, // Crna slova za ostale gradove
+                  ),
                 ),
-                disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
-                ),
-                labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
-              ),
-              initialValue: widget.autoservis?.gradId != null
-                  ? widget.autoservis!.gradId.toString()
-                  : null,
-              items: gradResult?.result
-                      .map((item) => DropdownMenuItem(
-                            alignment: AlignmentDirectional.center,
-                            value: item.gradId.toString(),
-                            child: Text(item.nazivGrada ?? "",
-                                style: const TextStyle(
-                                    color: Colors.black)), // Crni tekst
-                          ))
-                      .toList() ??
-                  [],
-              enabled: isAdmin, // Ako nije admin, polje je disabled
-              style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar dropdown-a
-              validator: validator.required,
-            ),
+              ))
+          .toList() ??
+      [],
+  enabled: isAdmin, // Ako nije admin, polje je disabled
+  style: const TextStyle(color: Colors.black), // Crni tekst unutar dropdown-a
+  validator: validator.required,
+)
+
           ),
         ],
       ),
@@ -1234,31 +1235,7 @@ Expanded(
                     obscureText: true,
                     validator: validator.required,
                   ),
-                  FormBuilderDropdown(
-                    name: 'gradId',
-                    decoration: InputDecoration(
-                      labelText: 'Grad',
-                      suffix: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _formKey.currentState!.fields['gradId']?.reset();
-                        },
-                      ),
-                      hintText: 'grad',
-                    ),
-                    initialValue: widget.autoservis?.gradId != null
-                        ? widget.autoservis!.gradId.toString()
-                        : null,
-                    items: gradResult?.result
-                            .map((item) => DropdownMenuItem(
-                                  alignment: AlignmentDirectional.center,
-                                  value: item.gradId.toString(),
-                                  child: Text(item.nazivGrada ?? ""),
-                                ))
-                            .toList() ??
-                        [],
-                        validator: validator.required,
-                  ),
+                
                 ],
               ),
             ),

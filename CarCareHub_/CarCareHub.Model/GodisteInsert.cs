@@ -10,5 +10,7 @@ namespace CarCareHub.Model
     {
 //public int GodisteId { get; set; }
         public int? Godiste_ { get; set; }
+        public bool? Vidljivo { get; set; }
+
     }
 }

@@ -8,7 +8,7 @@ part of 'kategorija.dart';
 
 Kategorija _$KategorijaFromJson(Map<String, dynamic> json) => Kategorija(
       (json['kategorijaId'] as num?)?.toInt(),
-      json['Vidljivo'] as bool?,
+      json['vidljivo'] as bool?,
       json['nazivKategorije'] as String?,
     );
 
@@ -16,5 +16,5 @@ Map<String, dynamic> _$KategorijaToJson(Kategorija instance) =>
     <String, dynamic>{
       'kategorijaId': instance.kategorijaId,
       'nazivKategorije': instance.nazivKategorije,
-      'Vidljivo': instance.Vidljivo,
+      'vidljivo': instance.vidljivo,
     };

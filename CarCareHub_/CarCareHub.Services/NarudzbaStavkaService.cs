@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
@@ -17,7 +18,7 @@ namespace CarCareHub.Services
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
 
-        public NarudzbaStavkaService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public NarudzbaStavkaService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;

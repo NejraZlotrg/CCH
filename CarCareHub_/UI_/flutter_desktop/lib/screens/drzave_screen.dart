@@ -170,54 +170,58 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
       ),
     );
   }
-
-  Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: SingleChildScrollView(
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Naziv drzave',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
+Widget _buildDataListView() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: SingleChildScrollView(
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Naziv drzave',
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
-            ],
-            rows: result?.result
-                    .map(
-                      (Drzave e) => DataRow(
-                        onSelectChanged: (selected) async {
-                          if (selected == true) {
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DrzaveDetailsScreen(drzava: e),
-                              ),
-                            );
-                            // Reload data after selecting a row
-                            await _loadData();
-                          }
-                        },
-                        cells: [
-                          DataCell(Text(e.nazivDrzave ?? "")),
-                        ],
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+            ),
+          ],
+          rows: result?.result
+                  .map(
+                    (Drzave e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => DrzaveDetailsScreen(drzava: e),
+                            ),
+                          );
+                          await _loadData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.nazivDrzave ?? "",
+                            style: TextStyle(
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

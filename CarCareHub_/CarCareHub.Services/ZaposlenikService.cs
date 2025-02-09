@@ -7,12 +7,13 @@ using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
     public class ZaposlenikService : BaseCRUDService<Model.Zaposlenik, Database.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, IZaposlenikService
     {
-        public ZaposlenikService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public ZaposlenikService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
      
@@ -200,7 +201,8 @@ namespace CarCareHub.Services
                     PasswordAgain = "zaposlenik", // Ponovljena lozinka
                     UlogaId = 1, // Pretpostavlja se da je ID za "Zaposlenik" 1
                     AutoservisId = 1, // Nijedna veza s autoservisom
-                    FirmaAutodijelovaId = 1 // Nijedna veza s firmom autodijelova
+                    FirmaAutodijelovaId = 1, // Nijedna veza s firmom autodijelova
+                    Vidljivo= true
                 };
 
                 // Mapiraj noviZaposlenik u entitet Zaposlenik za bazu podataka

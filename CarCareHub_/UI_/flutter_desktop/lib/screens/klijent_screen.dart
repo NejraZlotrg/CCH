@@ -167,71 +167,99 @@ class _KlijentScreenState extends State<KlijentScreen> {
     );
   }
 
-  Widget _buildDataListView() {
+ Widget _buildDataListView() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
-    
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(1.0),
         side: const BorderSide(color: Colors.black, width: 1.0),
       ),
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Ime',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+      child: DataTable(
+        showCheckboxColumn: false,
+        columns: const [
+          DataColumn(
+            label: Text(
+              'Ime',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-            DataColumn(
-              label: Text(
-                'Prezime',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+          ),
+          DataColumn(
+            label: Text(
+              'Prezime',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-            DataColumn(
-              label: Text(
-                'Username',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+          ),
+          DataColumn(
+            label: Text(
+              'Username',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-            DataColumn(
-              label: Text(
-                'Email',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+          ),
+          DataColumn(
+            label: Text(
+              'Email',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Klijent e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  KlijentDetailsScreen(klijent: e),
-                            ),
-                          );
-                          await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(Text(e.ime ?? "")),
-                        DataCell(Text(e.prezime ?? "")),
-                        DataCell(Text(e.username ?? "")),
-                        DataCell(Text(e.email ?? "")),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
-        ),
+          ),
+        ],
+        rows: result?.result
+                .map(
+                  (Klijent e) => DataRow(
+                    onSelectChanged: (selected) async {
+                      if (selected == true) {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                KlijentDetailsScreen(klijent: e),
+                          ),
+                        );
+                        await _loadData();
+                      }
+                    },
+                    cells: [
+                      DataCell(
+                        Text(
+                          e.ime ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          e.prezime ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          e.username ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          e.email ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                .toList() ??
+            [],
       ),
+    ),
   );
 }
+
 }

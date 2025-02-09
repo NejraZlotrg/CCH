@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
     public class VoziloService : BaseCRUDService<Model.Vozilo, Database.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>, IVoziloService
     {
-        public VoziloService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public VoziloService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
       

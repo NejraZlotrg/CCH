@@ -8,7 +8,7 @@ part of 'proizvodjac.dart';
 
 Proizvodjac _$ProizvodjacFromJson(Map<String, dynamic> json) => Proizvodjac(
       (json['proizvodjacId'] as num?)?.toInt(),
-      json['Vidljivo'] as bool?,
+      json['vidljivo'] as bool?,
       json['nazivProizvodjaca'] as String?,
     );
 
@@ -16,5 +16,5 @@ Map<String, dynamic> _$ProizvodjacToJson(Proizvodjac instance) =>
     <String, dynamic>{
       'proizvodjacId': instance.proizvodjacId,
       'nazivProizvodjaca': instance.nazivProizvodjaca,
-      'Vidljivo': instance.Vidljivo,
+      'vidljivo': instance.vidljivo,
     };

@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
@@ -46,6 +47,7 @@ namespace CarCareHub.Services
             if (!string.IsNullOrWhiteSpace(search?.NazivFirme))
             {
                 query = query.Where(x => x.NazivFirme.StartsWith(search.NazivFirme));
+                query = query.Include(y => y.Grad);
             }
 
          
@@ -69,7 +71,7 @@ namespace CarCareHub.Services
 
 
 
-        public FirmaAutodijelovaService(CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public FirmaAutodijelovaService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;

@@ -435,37 +435,44 @@ List<Widget> _buildFormFields() {
     Row(
       children: [
         Expanded(
-          child: FormBuilderDropdown(
-            name: 'gradId',
-            validator: validator.required,
-            decoration: const InputDecoration(
-              labelText: 'Grad',
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Izaberite grad',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white, 
-              filled: true, 
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            initialValue: widget.firmaAutodijelova?.gradId?.toString(),
-            items: gradResult?.result
-                .map((item) => DropdownMenuItem(
-                      alignment: AlignmentDirectional.center,
-                      value: item.gradId.toString(),
-                      child: Text(item.nazivGrada ?? "", style: const TextStyle(color: Colors.black)),
-                    ))
-                .toList() ?? [],
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
-          ),
-        ),
+  child: FormBuilderDropdown(
+    name: 'gradId',
+    validator: validator.required,
+    decoration: const InputDecoration(
+      labelText: 'Grad',
+      labelStyle: TextStyle(color: Colors.black),
+      hintText: 'Izaberite grad',
+      hintStyle: TextStyle(color: Colors.black),
+      border: OutlineInputBorder(),
+      fillColor: Colors.white,
+      filled: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+      ),
+    ),
+    style: const TextStyle(color: Colors.black),
+    initialValue: widget.firmaAutodijelova?.gradId?.toString(),
+    items: gradResult?.result
+            .map((item) => DropdownMenuItem(
+                  alignment: AlignmentDirectional.center,
+                  value: item.gradId.toString(),
+                  child: Text(
+                    item.nazivGrada ?? "",
+                    style: TextStyle(
+                      color: item.vidljivo == false ? Colors.red : Colors.black,
+                    ),
+                  ),
+                ))
+            .toList() ??
+        [],
+    enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+  ),
+)
+
       ],
     ),
     const SizedBox(height: 20),

@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace CarCareHub.Services
 {
     public class UlogeService : BaseCRUDService<Model.Uloge, Database.Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>, IUlogeService
     {
-        public UlogeService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public UlogeService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
 
@@ -34,11 +35,11 @@ namespace CarCareHub.Services
                 // Kreirajte listu uloga za unos
                 var ulogeInsert = new List<UlogeInsert>
         {
-            new UlogeInsert { NazivUloge = "Zaposlenik" },
-            new UlogeInsert { NazivUloge = "Autoservis" },
-            new UlogeInsert { NazivUloge = "Firma autodijelova" },
-            new UlogeInsert { NazivUloge = "Klijent" },
-            new UlogeInsert { NazivUloge = "Admin" }
+            new UlogeInsert { NazivUloge = "Zaposlenik" , Vidljivo=true},
+            new UlogeInsert { NazivUloge = "Autoservis" , Vidljivo=true},
+            new UlogeInsert { NazivUloge = "Firma autodijelova" , Vidljivo=true},
+            new UlogeInsert { NazivUloge = "Klijent", Vidljivo=true },
+            new UlogeInsert { NazivUloge = "Admin", Vidljivo=true }
 
         };
 

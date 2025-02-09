@@ -183,71 +183,75 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
 
 
 
-
-  Widget _buildDataListView() {
+Widget _buildDataListView() {
   return Container(
-    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
+    width: MediaQuery.of(context).size.width, // Pun ekranski prikaz
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
+      elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        borderRadius: BorderRadius.circular(8.0), // Zaobljeniji uglovi kartice
         side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
+          color: Colors.black,
+          width: 1.0,
         ),
       ),
       child: SingleChildScrollView(
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
           columns: const [
-            DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Uloga', style: TextStyle(fontWeight: FontWeight.bold))),
+           
+            DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+            DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+            DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+            DataColumn(label: Text('Uloga', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
           ],
           rows: result?.result.map((Zaposlenik e) {
             return DataRow(
               onSelectChanged: (selected) async {
                 if (selected == true) {
-                await   Navigator.of(context).push(
+                  await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ZaposlenikDetailsScreen( zaposlenik: e,),
+                      builder: (context) => ZaposlenikDetailsScreen(zaposlenik: e),
                     ),
                   );
-                    await _loadData();
-
+                  await _loadData();
                 }
               },
               cells: [
+                
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.zaposlenikId?.toString() ?? ""),
+                  child: Text(
+                    e.ime ?? "-",
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 )),
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.ime ?? ""),
+                  child: Text(
+                    e.prezime ?? "-",
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 )),
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.prezime ?? ""),
-                )),
-               DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(e.grad?.nazivGrada ?? ""),
+                  child: Text(
+                    e.grad?.nazivGrada ?? "-",
+                    style: const TextStyle(color: Colors.blueGrey),
+                  ),
                 )),
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.uloga?.nazivUloge ?? ""),
+                  child: Text(
+                    e.uloga?.nazivUloge ?? "-",
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 )),
               ],
             );
           }).toList() ?? [],
-         ),
+        ),
       ),
     ),
   );

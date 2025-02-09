@@ -118,7 +118,7 @@ final validator = CreateValidator();
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text("Greška prilikom brisanja: ${e.toString()}"),
+                                        content: Text("Nemoguće obrisati jer postoje povezani podaci."),
                                       ),
                                     );
                                   }
@@ -232,30 +232,35 @@ List<Widget> _buildFormFields() {
         const SizedBox(height: 20),
       Row(
         children: [
-          Expanded(
-            child: FormBuilderDropdown(
-              name: 'drzavaId',
-              validator: validator.required,
-              decoration: const InputDecoration(
-                labelText: 'Drzava',
-                border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                hintText: 'Izaberite državu',
-              ),
-              initialValue: widget.grad?.drzavaId?.toString(),
-              items: drzavaResult?.result
-                      .map((item) => DropdownMenuItem(
-                            alignment: AlignmentDirectional.center,
-                            value: item.drzavaId.toString(),
-                            child: Text(item.nazivDrzave ?? ""),
-                          ))
-                      .toList() ??
-                  [],
-            ),
-          ),
+         Expanded(
+  child: FormBuilderDropdown(
+    name: 'drzavaId',
+    validator: validator.required,
+    decoration: const InputDecoration(
+      labelText: 'Država',
+      border: OutlineInputBorder(),
+      fillColor: Colors.white,
+      filled: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      hintText: 'Izaberite državu',
+    ),
+    initialValue: widget.grad?.drzavaId?.toString(),
+    items: drzavaResult?.result
+            .map((item) => DropdownMenuItem(
+                  alignment: AlignmentDirectional.center,
+                  value: item.drzavaId.toString(),
+                  child: Text(
+                    item.nazivDrzave ?? "",
+                    style: TextStyle(
+                      color: item.vidljivo == false ? Colors.red : Colors.black,
+                    ),
+                  ),
+                ))
+            .toList() ??
+        [],
+  ),
+)
+
         ],
       ),
             const SizedBox(height: 20),

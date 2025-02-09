@@ -76,7 +76,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
 
   // Implementacija getById
-  Future<List<T>> getById(int id) async {
+  Future<List<T>> getById(int? id) async {
     String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
 
     Uri uri = Uri.parse(url);
@@ -162,7 +162,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     String jsonRequest = jsonEncode(request);
     http.Response response = await http.post(uri, headers: headers, body: jsonRequest);
-
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
       return fromJson(data);
@@ -170,7 +169,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
       throw Exception("Unknown error");
     }
   }
-
   // Metoda za ažuriranje postojećih podataka u API-ju
   Future<T> update(int id, [dynamic request]) async {
     String url = "$baseURL$endpoint/$id";
@@ -200,7 +198,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     // Successful deletion, no content to return
     return;
   } else {
-    throw Exception("Unknown error");
+     print("Nemoguće obrisati jer postoje povezani podaci.");
   }
 }
 

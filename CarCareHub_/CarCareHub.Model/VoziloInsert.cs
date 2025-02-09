@@ -10,6 +10,8 @@ namespace CarCareHub.Model
     {
         public string? MarkaVozila { get; set; }
 
+        public bool? Vidljivo { get; set; }
+
 
     }
 }

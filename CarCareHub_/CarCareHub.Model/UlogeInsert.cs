@@ -9,6 +9,8 @@ namespace CarCareHub.Model
     public class UlogeInsert
     {
         public string? NazivUloge { get; set; }
+        public bool? Vidljivo { get; set; }
+
 
     }
 }

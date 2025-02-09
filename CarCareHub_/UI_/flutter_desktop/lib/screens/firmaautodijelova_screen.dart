@@ -31,12 +31,14 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   Future<void> _loadData() async {
     SearchResult<FirmaAutodijelova> data;
      if (context.read<UserProvider>().role == "Admin")
-     data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+     data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
     else 
-     data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
+     data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
     if (mounted) {
       setState(() {
         result = data;
+        
+ 
       });
     }
   }
@@ -167,7 +169,8 @@ void _onSearchPressed() async {
       ),
     );
   }
-Widget _buildDataListView() {
+  
+  Widget _buildDataListView() {
   return Container(
     width: MediaQuery.of(context).size.width * 1,
     margin: const EdgeInsets.only(top: 20.0),
@@ -180,52 +183,66 @@ Widget _buildDataListView() {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
           columns: const [
-            DataColumn(label: Text('firmaAutodijelovaID', style: TextStyle(fontStyle: FontStyle.italic))),
             DataColumn(label: Text('nazivFirme', style: TextStyle(fontStyle: FontStyle.italic))),
             DataColumn(label: Text('adresa', style: TextStyle(fontStyle: FontStyle.italic))),
             DataColumn(label: Text('grad', style: TextStyle(fontStyle: FontStyle.italic))),
             DataColumn(label: Text('SlikaProfila', style: TextStyle(fontStyle: FontStyle.italic))),
           ],
           rows: result?.result
-           .map(
-              (FirmaAutodijelova e) => DataRow(
-                onSelectChanged: (selected) async {
-                  if (selected == true) {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => FirmaAutodijelovaDetailScreen(
-                          firmaAutodijelova: e,
+                  .map(
+                    (FirmaAutodijelova e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FirmaAutodijelovaDetailScreen(
+                                firmaAutodijelova: e,
+                              ),
+                            ),
+                          );
+                          await _loadData();
+                        }
+                      },
+                      cells: [
+                        
+                        DataCell(Text(
+                          e.nazivFirme ?? "",
+                          style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
+                        )),
+                        DataCell(Text(
+                          e.adresa ?? "",
+                          style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
+                        )),
+                       DataCell(
+  Text(
+    e.grad?.nazivGrada ?? "",
+    style: TextStyle(color: e.grad?.vidljivo == false ? Colors.red : Colors.black),
+  ),
+  
+),
+
+                        DataCell(
+                          e.slikaProfila != null
+                              ? SizedBox(
+                                  width: 100,
+                                  height: 100,
+                                  child: imageFromBase64String(e.slikaProfila!),
+                                )
+                              : Text(
+                                  "",
+                                  style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
+                                ),
                         ),
-                      ),
-                    );
-                    // Nakon povratka s detalja, osvježite podatke
-                    await _loadData();
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.firmaAutodijelovaID.toString())),
-                  DataCell(Text(e.nazivFirme ?? "")),
-                  DataCell(Text(e.adresa ?? "")),
-                  DataCell(Text(e.grad?.nazivGrada ?? "")),
-                  DataCell(
-                    e.slikaProfila != null
-                        ? SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: imageFromBase64String(e.slikaProfila!),
-                          )
-                        : const Text(""),
-                  ),
-                ],
-              ),
-            )
-            .toList() ?? [],
+                      ],
+                    ),
+                  )
+                  .toList() ?? [],
         ),
       ),
     ),
   );
 }
+
 }

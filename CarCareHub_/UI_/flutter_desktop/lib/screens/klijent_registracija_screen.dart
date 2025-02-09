@@ -315,38 +315,43 @@ class _KlijentRegistracijaScreenState
     // Red 5: Adresa i Grad
     Row(
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Grad",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              FormBuilderDropdown(
-                name: 'gradId',
-                validator: validator.required,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  hintText: 'Izaberite grad',
-                ),
-                items: gradResult?.result
-                        .map((item) => DropdownMenuItem(
-                              alignment: AlignmentDirectional.center,
-                              value: item.gradId.toString(),
-                              child: Text(item.nazivGrada ?? ""),
-                            ))
-                        .toList() ??
-                    [],
-              ),
-            ],
-          ),
+       Expanded(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "Grad",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 5),
+      FormBuilderDropdown(
+        name: 'gradId',
+        validator: validator.required,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          hintText: 'Izaberite grad',
         ),
+        items: gradResult?.result
+                .map((item) => DropdownMenuItem(
+                      alignment: AlignmentDirectional.center,
+                      value: item.gradId.toString(),
+                      child: Text(
+                        item.nazivGrada ?? "",
+                        style: TextStyle(
+                          color: item.vidljivo == false ? Colors.red : Colors.black,
+                        ),
+                      ),
+                    ))
+                .toList() ?? 
+            [],
+      ),
+    ],
+  ),
+)
+,
         const SizedBox(width: 20),
 
 

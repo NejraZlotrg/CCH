@@ -156,7 +156,8 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
       ),)
     );
   }
-Widget _buildDataListView() {
+
+  Widget _buildDataListView() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
@@ -168,44 +169,55 @@ Widget _buildDataListView() {
       ),
       child: SingleChildScrollView(
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
           columns: const [
             DataColumn(
               label: Text(
                 'Naziv proizvođača',
-                style: TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16, // Veći font za naslov kolone
+                ),
               ),
             ),
           ],
           rows: result?.result
-                   .map(
-                      (Proizvodjac e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProizvodjacDetailsScreen(proizvodjac: e),
-                              ),
-                            );
-                    await _fetchInitialData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.nazivProizvodjaca.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+                  .map(
+                    (Proizvodjac e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProizvodjacDetailsScreen(proizvodjac: e),
+                            ),
+                          );
+                          await _fetchInitialData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.nazivProizvodjaca.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                              fontWeight:
+                                  e.vidljivo == false ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
  

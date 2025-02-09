@@ -9,6 +9,8 @@ namespace CarCareHub.Model
     public class ProizvodjacInsert
     {
         public string? NazivProizvodjaca { get; set; }
+        public bool? Vidljivo { get; set; }
+
 
     }
 }

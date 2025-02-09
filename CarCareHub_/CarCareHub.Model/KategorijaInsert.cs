@@ -9,6 +9,8 @@ namespace CarCareHub.Model
     public class KategorijaInsert
     {
         public string? NazivKategorije { get; set; }
+        public bool? Vidljivo { get; set; }
+
 
     }
 }

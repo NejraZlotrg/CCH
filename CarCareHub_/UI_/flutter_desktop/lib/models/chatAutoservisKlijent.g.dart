@@ -10,7 +10,7 @@ chatAutoservisKlijent _$chatAutoservisKlijentFromJson(
         Map<String, dynamic> json) =>
     chatAutoservisKlijent(
       (json['id'] as num).toInt(),
-      json['Vidljivo'] as bool?,
+      json['vidljivo'] as bool?,
       (json['klijentId'] as num).toInt(),
       (json['autoservisId'] as num).toInt(),
       Autoservis.fromJson(json['autoservis'] as Map<String, dynamic>),
@@ -31,5 +31,5 @@ Map<String, dynamic> _$chatAutoservisKlijentToJson(
       'poruka': instance.poruka,
       'poslanoOdKlijenta': instance.poslanoOdKlijenta,
       'vrijemeSlanja': instance.vrijemeSlanja.toIso8601String(),
-      'Vidljivo': instance.Vidljivo,
+      'vidljivo': instance.vidljivo,
     };

@@ -46,5 +46,12 @@ namespace CarCareHub_.Controllers
             return await (_service as IProizvodiService).AllowedActions(id);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetForUsers")]
+        public async Task<ActionResult<PagedResult<CarCareHub.Services.Database.Proizvod>>> GetForUsers([FromQuery] ProizvodiSearchObject? search = null)
+        {
+            var result = await (_service as IProizvodiService).GetForUsers(search);
+            return Ok(result); // Ovdje vraćaš 200 OK sa rezultatom
+        }
     }
 }

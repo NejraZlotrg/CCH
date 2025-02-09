@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CarCareHub.Services
 {
     public class ModelService :BaseCRUDService<Model.Model, Database.Model, ModelSearchObject, ModelInsert, ModelUpdate>, IModelService
     {
-        public ModelService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public ModelService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
     {
     }
 

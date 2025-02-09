@@ -12,10 +12,10 @@ class NarudzbaStavke {
   final Product? proizvod;
   final Narudzba? narudzba;
   final int? narudzbaId;
-bool? Vidljivo;
+bool? vidljivo;
 
 
-  NarudzbaStavke(this.proizvodId, this.Vidljivo, this.kolicina, this.ukupnaCijenaProizvoda,this.proizvod,this.narudzba,this.narudzbaId);
+  NarudzbaStavke(this.proizvodId, this.vidljivo, this.kolicina, this.ukupnaCijenaProizvoda,this.proizvod,this.narudzba,this.narudzbaId);
 
   
   factory NarudzbaStavke.fromJson(Map<String,dynamic> json) => _$NarudzbaStavkeFromJson(json);

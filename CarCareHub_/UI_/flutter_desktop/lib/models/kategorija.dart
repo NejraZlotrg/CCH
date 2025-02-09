@@ -6,9 +6,9 @@ part 'kategorija.g.dart';
 class Kategorija {
   int? kategorijaId;
   String? nazivKategorije;
-bool? Vidljivo;
+bool? vidljivo;
 
-  Kategorija(this.kategorijaId, this.Vidljivo, this.nazivKategorije);
+  Kategorija(this.kategorijaId, this.vidljivo, this.nazivKategorije);
 
   
   factory Kategorija.fromJson(Map<String,dynamic> json) => _$KategorijaFromJson(json);

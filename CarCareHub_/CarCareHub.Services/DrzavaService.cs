@@ -3,6 +3,7 @@ using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -11,7 +12,7 @@ namespace CarCareHub.Services
 
     public class DrzavaService : BaseCRUDService<Model.Drzava, Database.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>, IDrzavaService
     {
-        public DrzavaService(Database.CchV2AliContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public DrzavaService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
         public override Task<Model.Drzava> Insert(Model.DrzavaInsert insert)
@@ -73,10 +74,10 @@ namespace CarCareHub.Services
                 // Kreirajte listu uloga za unos
                 var ulogeInsert = new List<DrzavaInsert>
         {
-            new DrzavaInsert {  NazivDrzave = "Bosna i Hercegovina" },
-            new DrzavaInsert {  NazivDrzave = "Hrvatska" },
-            new DrzavaInsert {  NazivDrzave = "Srbija" },
-            new DrzavaInsert {  NazivDrzave = "Makedonija" },
+            new DrzavaInsert {  NazivDrzave = "Bosna i Hercegovina" , Vidljivo=true},
+            new DrzavaInsert {  NazivDrzave = "Hrvatska", Vidljivo=true },
+            new DrzavaInsert {  NazivDrzave = "Srbija", Vidljivo=true },
+            new DrzavaInsert {  NazivDrzave = "Makedonija" , Vidljivo=true },
 
         };
 

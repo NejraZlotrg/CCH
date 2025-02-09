@@ -11,10 +11,10 @@ class Model {
   final Vozilo? vozilo;
   final int? godisteId;
   final Godiste? godiste;
-bool? Vidljivo;
+bool? vidljivo;
 
 
-  Model(this.modelId, this.Vidljivo, this.nazivModela, this.vozilo, this.voziloId,this.godisteId,this.godiste);
+  Model(this.modelId, this.vidljivo, this.nazivModela, this.vozilo, this.voziloId,this.godisteId,this.godiste);
 
   
   factory Model.fromJson(Map<String,dynamic> json) => _$ModelFromJson(json);

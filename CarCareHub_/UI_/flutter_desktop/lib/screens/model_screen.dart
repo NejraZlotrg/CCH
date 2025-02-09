@@ -166,7 +166,8 @@ class _ModelScreenState extends State<ModelScreen> {
     });
   }
  
-Widget _buildDataListView() {
+ 
+ Widget _buildDataListView() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
@@ -178,8 +179,7 @@ Widget _buildDataListView() {
       ),
       child: SingleChildScrollView(
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
           columns: const [
             DataColumn(
               label: Text(
@@ -201,34 +201,53 @@ Widget _buildDataListView() {
             ),
           ],
           rows: result?.result
-                 .map(
-                      (Model e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ModelDetailsScreen(model: e),
-                              ),
-                            );
-                    await _loadData();
-
-                  }
-                },
-                cells: [
-                    DataCell(Text(e.nazivModela ?? "")),
-                    DataCell(Text(e.vozilo?.markaVozila ?? "")),
-                    DataCell(Text(e.godiste?.godiste_?.toString() ?? "")),
-                  ],
- 
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+                  .map(
+                    (Model e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ModelDetailsScreen(model: e),
+                            ),
+                          );
+                          await _loadData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.nazivModela ?? "",
+                            style: TextStyle(
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Text(
+                            e.vozilo?.markaVozila ?? "",
+                            style: TextStyle(
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                            ),
+                          ),
+                        ),
+                        DataCell(
+                          Text(
+                            e.godiste?.godiste_?.toString() ?? "",
+                            style: TextStyle(
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

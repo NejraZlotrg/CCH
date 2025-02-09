@@ -52,10 +52,10 @@ namespace CarCareHub.Services.ProizvodiStateMachine
             
             await _dbContext.SaveChangesAsync();
 
-            var bus = RabbitHutch.CreateBus("host=localhost:5673");
+            //var bus = RabbitHutch.CreateBus("host=localhost:5672");
             var MappedEntity = _mapper.Map<Model.Proizvod>(set);
             ProizvodiActivated message = new ProizvodiActivated { Proizvod = MappedEntity };
-            bus.PubSub.Publish(message);
+            //bus.PubSub.Publish(message);
             return MappedEntity;
 
         }

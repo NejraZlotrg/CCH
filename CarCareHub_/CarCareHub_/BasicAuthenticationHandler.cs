@@ -111,7 +111,11 @@ namespace CarCareHub_
                 }
                 else if (user is Klijent)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, "Klijent"));
+                    if(userId=="2")
+                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                    else
+                        claims.Add(new Claim(ClaimTypes.Role, "Klijent"));
+                    
                 }
 
                 // Kreiranje identiteta i autentifikacijskog ticketa

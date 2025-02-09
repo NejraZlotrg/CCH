@@ -10,5 +10,7 @@ namespace CarCareHub.Model
     {
         public string? NazivDrzave { get; set; }
         // Možete dodati druga svojstva po potrebi
+        public bool? Vidljivo { get; set; }
+
     }
 }

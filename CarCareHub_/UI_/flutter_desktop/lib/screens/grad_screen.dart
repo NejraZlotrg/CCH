@@ -158,7 +158,9 @@ class _GradScreenState extends State<GradScreen> {
         ),
       ),
     );
-  }Widget _buildDataListView() {
+  }
+  
+  Widget _buildDataListView() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),

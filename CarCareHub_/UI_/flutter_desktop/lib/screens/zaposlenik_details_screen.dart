@@ -205,9 +205,15 @@ Widget _buildForm() {
           style: const TextStyle(color: Colors.black),
           items: gradResult?.result.map((item) {
             return DropdownMenuItem(
-              value: item.gradId.toString(),
-              child: Text(item.nazivGrada!, style: const TextStyle(color: Colors.black)),
-            );
+  value: item.gradId.toString(),
+  child: Text(
+    item.nazivGrada ?? "",
+    style: TextStyle(
+      color: item.vidljivo == false ? Colors.red : Colors.black,
+    ),
+  ),
+);
+
           }).toList() ?? [],
           enabled: isAdminOrOwnProfile,
         ),

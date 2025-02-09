@@ -153,67 +153,91 @@ class _UslugeScreenState extends State<UslugeScreen> {
       result = data;
     });
   }
- 
-  Widget _buildDataListView() {
-    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.only(top: 20.0),
-          child: Card(
-            elevation: 4.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1.0),
-              side: const BorderSide(color: Colors.black, width: 1.0),
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical, // Vertikalno skrolovanje
-              child: DataTable(
-                          showCheckboxColumn: false,
-
-                columns: const [
-                  DataColumn(
-                    label: Text(
-                      'Naziv usluge',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+ Widget _buildDataListView() {
+  return Expanded(
+    child: SingleChildScrollView(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        margin: const EdgeInsets.only(top: 20.0),
+        child: Card(
+          elevation: 4.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1.0),
+            side: const BorderSide(color: Colors.black, width: 1.0),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: DataTable(
+              showCheckboxColumn: false,
+              columns: const [
+                DataColumn(
+                  label: Text(
+                    'Naziv usluge',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16, // Veći font za zaglavlje
                     ),
                   ),
-                  DataColumn(
-                    label: Text(
-                      'Cijena',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Cijena',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16, // Veći font za zaglavlje
                     ),
                   ),
-                ],
-                rows: result?.result
-                    .map(
-                      (Usluge e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    UslugeDetailsScreen(usluge: e),
+                ),
+              ],
+              rows: result?.result
+                      .map(
+                        (Usluge e) => DataRow(
+                          onSelectChanged: (selected) async {
+                            if (selected == true) {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UslugeDetailsScreen(usluge: e),
+                                ),
+                              );
+                              await _loadData();
+                            }
+                          },
+                          cells: [
+                            DataCell(
+                              Text(
+                                e.nazivUsluge ?? "",
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            );
-                    await _loadData();
-
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.nazivUsluge.toString())),
-                  DataCell(Text(e.cijena.toString())),
-
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
+                            ),
+                            DataCell(
+                              Text(
+                                "${e.cijena?.toStringAsFixed(2)} KM",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: (e.cijena ?? 0) <= 0
+                                      ? Colors.red
+                                      : Colors.black,
+                                  fontWeight: (e.cijena ?? 0) <= 0
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList() ??
+                  [],
+            ),
           ),
         ),
       ),
-    )));
-  }
+    ),
+  );
+}
+
 }

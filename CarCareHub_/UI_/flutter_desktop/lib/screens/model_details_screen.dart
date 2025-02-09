@@ -227,36 +227,42 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
     // Osnovni podaci
     Row(
       children: [
-        Expanded(
-          child: FormBuilderDropdown(
-            name: 'voziloId',
-            validator: validator.required,
-            decoration: InputDecoration(
-              labelText: 'Vozilo',
-              border: const OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _formKey.currentState!.fields['voziloId']?.reset();
-                },
-              ),
-            ),
-            initialValue: widget.model?.vozilo?.voziloId != null
-                ? widget.model!.vozilo?.voziloId.toString()
-                : null,
-            items: voziloResult?.result
-                    .map((item) => DropdownMenuItem(
-                          alignment: AlignmentDirectional.center,
-                          value: item.voziloId.toString(),
-                          child: Text(item.markaVozila ?? ""),
-                        ))
-                    .toList() ??
-                [],
-          ),
-        ),
+       Expanded(
+  child: FormBuilderDropdown(
+    name: 'voziloId',
+    validator: validator.required,
+    decoration: InputDecoration(
+      labelText: 'Vozilo',
+      border: const OutlineInputBorder(),
+      fillColor: Colors.white,
+      filled: true,
+      contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      suffixIcon: IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: () {
+          _formKey.currentState!.fields['voziloId']?.reset();
+        },
+      ),
+    ),
+    initialValue: widget.model?.vozilo?.voziloId != null
+        ? widget.model!.vozilo?.voziloId.toString()
+        : null,
+    items: voziloResult?.result
+            .map((item) => DropdownMenuItem(
+                  alignment: AlignmentDirectional.center,
+                  value: item.voziloId.toString(),
+                  child: Text(
+                    item.markaVozila ?? "",
+                    style: TextStyle(
+                      color: item.vidljivo == false ? Colors.red : Colors.black,
+                    ),
+                  ),
+                ))
+            .toList() ?? 
+        [],
+  ),
+)
+,
         const SizedBox(width: 20),
         Expanded(
           child: FormBuilderTextField(
@@ -274,33 +280,39 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
         const SizedBox(width: 20),
         Expanded(
           child: FormBuilderDropdown(
-            name: 'godisteId',
-            validator: validator.required,
-            decoration: InputDecoration(
-              labelText: 'Godiste',
-              border: const OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _formKey.currentState!.fields['godisteId']?.reset();
-                },
-              ),
-            ),
-            initialValue: widget.model?.godiste?.godisteId != null
-                ? widget.model!.godiste?.godisteId.toString()
-                : null,
-            items: godisteResult?.result
-                    .map((item) => DropdownMenuItem(
-                          alignment: AlignmentDirectional.center,
-                          value: item.godisteId.toString(),
-                          child: Text(item.godiste_.toString()),
-                        ))
-                    .toList() ??
-                [],
-          ),
+  name: 'godisteId',
+  validator: validator.required,
+  decoration: InputDecoration(
+    labelText: 'Godiste',
+    border: const OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.close),
+      onPressed: () {
+        _formKey.currentState!.fields['godisteId']?.reset();
+      },
+    ),
+  ),
+  initialValue: widget.model?.godiste?.godisteId != null
+      ? widget.model!.godiste?.godisteId.toString()
+      : null,
+  items: godisteResult?.result
+          .map((item) => DropdownMenuItem(
+                alignment: AlignmentDirectional.center,
+                value: item.godisteId.toString(),
+                child: Text(
+                  item.godiste_.toString(),
+                  style: TextStyle(
+                    color: item.vidljivo == false ? Colors.red : Colors.black,
+                  ),
+                ),
+              ))
+          .toList() ??
+      [],
+)
+
         ),
       ],
     ),

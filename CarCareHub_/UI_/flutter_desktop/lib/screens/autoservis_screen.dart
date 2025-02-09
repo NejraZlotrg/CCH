@@ -140,32 +140,40 @@ Future<void> _loadGradovi() async {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: FormBuilderDropdown<Grad>(
-                        name: 'gradId',
-                        decoration: InputDecoration(
-                          labelText: 'Grad',
-                          suffixIcon: const Icon(Icons.location_city),
-                          hintText: 'Odaberite grad',
-                          hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-                          border: const OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
+  child: FormBuilderDropdown<Grad>(
+    name: 'gradId',
+    decoration: InputDecoration(
+      labelText: 'Grad',
+      suffixIcon: const Icon(Icons.location_city),
+      hintText: 'Odaberite grad',
+      hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+      border: const OutlineInputBorder(),
+      filled: true,
+      fillColor: Colors.white,
+    ),
+    items: [
+          const DropdownMenuItem<Grad>(
+            value: null,
+            child: Text('Odaberite grad'),
+          ),
+        ] +
+        (gradovi
+                ?.map((grad) => DropdownMenuItem(
+                      value: grad,
+                      child: Text(
+                        grad.nazivGrada ?? "",
+                        style: TextStyle(
+                          color: grad.vidljivo == false
+                              ? Colors.red // Crveno za nevidljive gradove
+                              : Colors.black, // Crno za ostale
                         ),
-                        items: [
-                              const DropdownMenuItem<Grad>(
-                                value: null,
-                                child: Text('Odaberite grad'),
-                              ),
-                            ] +
-                            (gradovi
-                                    ?.map((grad) => DropdownMenuItem(
-                                          value: grad,
-                                          child: Text(grad.nazivGrada ?? ""),
-                                        ))
-                                    .toList() ??
-                                []),
                       ),
-                    ),
+                    ))
+                .toList() ??
+            []),
+  ),
+)
+
                   ],
                 ),
                 const SizedBox(height: 5),
@@ -255,7 +263,8 @@ Future<void> _loadGradovi() async {
       );
     }
   }
-Widget _buildCardList() {
+
+  Widget _buildCardList() {
   if (result?.result.isEmpty ?? true) {
     return const Center(child: Text('Nema dostupnih autoservisa.'));
   }
@@ -264,24 +273,29 @@ Widget _buildCardList() {
     itemCount: result?.result.length ?? 0,
     itemBuilder: (context, index) {
       var e = result!.result[index];
+      bool isHidden = e.vidljivo == false;
+      Color textColor = isHidden ? Colors.red : Colors.black;
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Card(
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
+            side: BorderSide(
+              color: isHidden ? Colors.red : Colors.transparent,
+              width: 2,
+            ),
           ),
           elevation: 5,
           child: ListTile(
             contentPadding: const EdgeInsets.all(16.0),
             onTap: () async {
-              // Otvorite detalje i pričekajte povratak
               await Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => AutoservisDetailsScreen(autoservis: e),
                 ),
               );
-              // Nakon povratka, osvježite podatke
               await _fetchInitialData();
             },
             title: Row(
@@ -304,15 +318,16 @@ Widget _buildCardList() {
                     children: [
                       Text(
                         e.naziv ?? "",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      Text('Adresa: ${e.adresa ?? ""}'),
-                      Text('Grad: ${e.grad?.nazivGrada ?? ""}'),
-                      Text('Telefon: ${e.telefon ?? ""}'),
+                      Text('Adresa: ${e.adresa ?? ""}', style: TextStyle(color: textColor)),
+                      Text('Grad: ${e.grad?.nazivGrada ?? ""}', style: TextStyle(color: textColor)),
+                      Text('Telefon: ${e.telefon ?? ""}', style: TextStyle(color: textColor)),
                     ],
                   ),
                 ),

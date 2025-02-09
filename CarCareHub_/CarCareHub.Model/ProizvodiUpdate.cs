@@ -15,6 +15,8 @@ namespace CarCareHub.Model
         public string? Naziv { get; set; }
 
         public decimal? Cijena { get; set; }
+        public bool? Vidljivo { get; set; }
+
         public int? Popust { get; set; }
 
         [NotMapped]
