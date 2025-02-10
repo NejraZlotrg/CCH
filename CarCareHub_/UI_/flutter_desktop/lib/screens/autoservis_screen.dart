@@ -326,7 +326,7 @@ Future<void> _loadGradovi() async {
                       ),
                       const SizedBox(height: 8.0),
                       Text('Adresa: ${e.adresa ?? ""}', style: TextStyle(color: textColor)),
-                      Text('Grad: ${e.grad?.nazivGrada ?? ""}', style: TextStyle(color: textColor)),
+                      Text('Grad: ${e.grad?.nazivGrada ?? ""}',  style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black)),
                       Text('Telefon: ${e.telefon ?? ""}', style: TextStyle(color: textColor)),
                     ],
                   ),

@@ -67,17 +67,29 @@ namespace CarCareHub.Services
             if (set == null)
                 throw new Exception("Ne postoji id");
 
-            Console.WriteLine($"--------------------------------------------------Rola korisnika: {userRole}");
+
             if (userRole == "Admin")
             {
                 try
                 {
                     _dbContext.Set<TDb>().Remove(set);
                     await _dbContext.SaveChangesAsync();
+
                 }
                 catch (DbUpdateException ex)
                 {
-                    // Specifična poruka o povezanosti podataka
+                    var propertyInfo = set.GetType().GetProperty("Vidljivo");
+                    if (propertyInfo != null && propertyInfo.PropertyType == typeof(bool))
+                    {
+                        bool vidljivo = (bool)propertyInfo.GetValue(set);
+                        if (vidljivo)
+                        {
+                            propertyInfo.SetValue(set, false);
+                            _dbContext.Set<TDb>().Update(set);
+                            await _dbContext.SaveChangesAsync();
+                        }
+                    }
+                    else 
                     throw new Exception("Nemoguće obrisati jer postoje povezani podaci.", ex);
                 }
             }

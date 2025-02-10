@@ -73,7 +73,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'jib': widget.autoservis?.jib ?? '',
       'mbs': widget.autoservis?.mbs ?? '',
       'ulogaId': widget.autoservis?.ulogaId?.toString() ?? '',
-      'gradId': widget.autoservis?.gradId ?? null,
+      'gradId': widget.autoservis?.gradId ?? '',
       'username': widget.autoservis?.username,
       'password': widget.autoservis?.password ?? '',
       'passwordAgain': widget.autoservis?.passwordAgain ?? '',
@@ -164,10 +164,10 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
   Future<void> fetchGrad() async {
    
-      grad = await _gradProvider.getById(widget.autoservis?.gradId ?? null);
+      grad = await _gradProvider.getById(widget.autoservis?.gradId);
       if (grad.isNotEmpty && grad.first.vidljivo == false) {
       grad = []; // Postavi na praznu listu ako grad nije vidljiv
-      _initialValues['gradId'] = 'null'; // Resetuj vrednost za dropdown
+      _initialValues['gradId']; // Resetuj vrednost za dropdown
   
       if (mounted) {
         setState(() {});
@@ -703,44 +703,42 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           const SizedBox(width: 20),
           Expanded(
             child: FormBuilderDropdown(
-  name: 'gradId',
-  decoration: const InputDecoration(
-    labelText: 'Grad',
-    border: OutlineInputBorder(),
-    fillColor: Colors.white, // Bela pozadina
-    filled: true, // Da pozadina bude ispunjena
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black), // Crni okvir
+    name: 'gradId',
+    validator: validator.required,
+    decoration: const InputDecoration(
+      labelText: 'Grad',
+      labelStyle: TextStyle(color: Colors.black),
+      hintText: 'Izaberite grad',
+      hintStyle: TextStyle(color: Colors.black),
+      border: OutlineInputBorder(),
+      fillColor: Colors.white,
+      filled: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+      ),
     ),
-    disabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black), // Crni okvir kada je disabled
-    ),
-    labelStyle: TextStyle(color: Colors.black), // Crni tekst za labelu
-    hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
-  ),
-  initialValue: widget.autoservis?.gradId != null
-      ? widget.autoservis!.gradId.toString()
-      : null,
-  items: gradResult?.result
-          .map((item) => DropdownMenuItem(
-                alignment: AlignmentDirectional.center,
-                value: item.gradId.toString(),
-                child: Text(
-                  item.nazivGrada ?? "",
-                  style: TextStyle(
-                    color: item.vidljivo == false
-                        ? Colors.red // Crvena slova za gradove sa vidljivost false
-                        : Colors.black, // Crna slova za ostale gradove
+    style: const TextStyle(color: Colors.black),
+    initialValue: widget.autoservis?.gradId?.toString(),
+    items: gradResult?.result
+            .map((item) => DropdownMenuItem(
+                  alignment: AlignmentDirectional.center,
+                  value: item.gradId.toString(),
+                  child: Text(
+                    item.nazivGrada ?? "",
+                    style: TextStyle(
+                      color:  Colors.black,
+                    ),
+                    
                   ),
-                ),
-              ))
-          .toList() ??
-      [],
-  enabled: isAdmin, // Ako nije admin, polje je disabled
-  style: const TextStyle(color: Colors.black), // Crni tekst unutar dropdown-a
-  validator: validator.required,
-)
+                ))
+            .toList() ??
+        [],
+    enabled: context.read<UserProvider>().role == "Admin" || ( context.read<UserProvider>().role == "Autoservis" && context.read<UserProvider>().userId == widget.autoservis!.autoservisId), // Enable if Admin
+  ),
 
           ),
         ],

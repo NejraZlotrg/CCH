@@ -169,7 +169,6 @@ void _onSearchPressed() async {
       ),
     );
   }
-  
   Widget _buildDataListView() {
   return Container(
     width: MediaQuery.of(context).size.width * 1,
@@ -206,7 +205,6 @@ void _onSearchPressed() async {
                         }
                       },
                       cells: [
-                        
                         DataCell(Text(
                           e.nazivFirme ?? "",
                           style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
@@ -215,14 +213,10 @@ void _onSearchPressed() async {
                           e.adresa ?? "",
                           style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
                         )),
-                       DataCell(
-  Text(
-    e.grad?.nazivGrada ?? "",
-    style: TextStyle(color: e.grad?.vidljivo == false ? Colors.red : Colors.black),
-  ),
-  
-),
-
+                        DataCell(Text(
+                          e.grad?.nazivGrada ?? "",
+                          style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
+                        )),
                         DataCell(
                           e.slikaProfila != null
                               ? SizedBox(

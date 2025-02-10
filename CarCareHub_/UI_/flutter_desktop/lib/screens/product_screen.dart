@@ -66,24 +66,31 @@ class _ProductScreenState extends State<ProductScreen> {
 
    // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
-  Future<void> _loadData() async {
-  String? userRole = context.read<UserProvider>().role;
-  print("Korisnička uloga: ${userRole ?? 'Nepoznata'}");
+ Future<void> _loadData() async {
+  try {
+    String? userRole = context.read<UserProvider>().role;
+    print("Korisnička uloga: ${userRole ?? 'Nepoznata'}");
 
-  SearchResult<Product> data;
+    SearchResult<Product> data;
 
-  if (userRole == "Admin") {
-    data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-  } else if (userRole == "Klijent") {
-    data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
-  } else {
-    data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
-  }
+    switch (userRole) {
+      case "Admin":
+        data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+        break;
+      case "Klijent":
+        data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
+        break;
+      default:
+        data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+    }
 
-  if (mounted) {
-    setState(() {
-      result = data;
-    });
+    if (mounted) {
+      setState(() {
+        result = data;
+      });
+    }
+  } catch (e) {
+    print("Došlo je do greške prilikom učitavanja podataka: $e");
   }
 }
 

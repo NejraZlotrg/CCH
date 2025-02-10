@@ -150,7 +150,7 @@ Widget build(BuildContext context) {
                         // Dugme za spašavanje
                        // Conditionally render the 'Spasi' button only for the admin
 // Only render the ElevatedButton if the user is an Admin
-if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) 
+if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID))
                           Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
@@ -397,7 +397,7 @@ List<Widget> _buildFormFields() {
             style: const TextStyle(color: Colors.black),
             name: "nazivFirme",
             validator: validator.required,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID),
           ),
         ),
       ],
@@ -426,7 +426,7 @@ List<Widget> _buildFormFields() {
             style: const TextStyle(color: Colors.black),
             name: "adresa",
             validator: validator.required,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID),
           ),
         ),
       ],
@@ -469,7 +469,7 @@ List<Widget> _buildFormFields() {
                 ))
             .toList() ??
         [],
-    enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId == widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+    enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID), // Enable if Admin
   ),
 )
 
@@ -501,7 +501,7 @@ List<Widget> _buildFormFields() {
             style: const TextStyle(color: Colors.black),
             name: "telefon",
             validator: validator.phoneNumber,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID), // Enable if Admin
           ),
         ),
         const SizedBox(width: 10),
@@ -526,7 +526,7 @@ List<Widget> _buildFormFields() {
             style: const TextStyle(color: Colors.black),
             name: "email",
             validator: validator.email,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID),// Enable if Admin
           ),
         ),
       ],
@@ -557,7 +557,7 @@ List<Widget> _buildFormFields() {
             style: const TextStyle(color: Colors.black),
             name: "jib",
             validator: validator.jib,
-            enabled: context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID),// Enable if Admin
           ),
         ),
         const SizedBox(width: 10),
@@ -582,7 +582,7 @@ List<Widget> _buildFormFields() {
             style: const TextStyle(color: Colors.black),
             name: "mbs",
             validator: validator.mbs,
-            enabled: context.read<UserProvider>().role == "Admin"|| context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID, // Enable if Admin
+            enabled: context.read<UserProvider>().role == "Admin"|| ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID), // Enable if Admin
           ),
         ),
       ],
@@ -590,7 +590,7 @@ List<Widget> _buildFormFields() {
     const SizedBox(height: 20),
 
     // Sakrivanje korisničkog imena, lozinke i ponovljene lozinke ako nije admin
-    if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID) ...[
+    if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID)) ...[
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
