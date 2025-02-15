@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CarCareHub.Model;
 using CarCareHub.Services.Database;
+using CarCareHub_.Hubs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -15,12 +17,14 @@ namespace CarCareHub.Services
         private readonly CchV2AliContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatAutoservisKlijentService(CchV2AliContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public ChatAutoservisKlijentService(CchV2AliContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<ChatHub> hubContext)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpContextAccessor = httpContextAccessor;
+            _hubContext = hubContext;
         }
 
         // Snimanje poruke u bazu
@@ -61,7 +65,11 @@ namespace CarCareHub.Services
 
             try
             {
-                _context.ChatAutoservisKlijents.Add(chatPoruka);
+                await _context.ChatAutoservisKlijents.AddAsync(chatPoruka);
+
+                await _hubContext.Clients.All.SendAsync($"ReceiveMessageAutoservisKlijent#{chatPoruka.KlijentId}/{chatPoruka.AutoservisId}");
+                await _hubContext.Clients.All.SendAsync($"ReceiveMessageAutoservisKlijent#{chatPoruka.AutoservisId}/{chatPoruka.KlijentId}");
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -70,30 +78,42 @@ namespace CarCareHub.Services
             }
         }
 
-        public async Task<IQueryable<Model.ChatAutoservisKlijent>> GetMessagesAsync(int klijentId, int autoservisId)
+        public async Task<IQueryable<PorukaDTO>> GetMessagesAsync(int klijentId, int autoservisId)
         {
             var poruke = _context.ChatAutoservisKlijents
                 .Include(p => p.Klijent)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.Grad)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.uloga)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.ChatAutoservisKlijent)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.ChatKlijentZaposlenik)  // Učitaj povezani Klijent entitet
                 .Include(p => p.Autoservis)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Autoservis.Uloga)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Autoservis.Vozilo)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Autoservis.Usluges)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Autoservis.Grad)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Autoservis.Grad.Drzava)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Autoservis.Zaposleniks)  // Učitaj povezani Autoservis entitet
 
                 .Where(p => p.KlijentId == klijentId && p.AutoservisId == autoservisId);
 
             // Mapiranje na model
-            var result = poruke.Select(p => _mapper.Map<Model.ChatAutoservisKlijent>(p));
+            var result = poruke.Select(p => new PorukaDTO
+            {
+                Id = p.Id,
+                KlijentId=p.KlijentId,
+                KlijentIme = p.Klijent.Ime,
+                AutoservisId=p.AutoservisId,
+                AutoservisNaziv=p.Autoservis.Naziv,
+                Poruka=p.Poruka,
+                PoslanoOdKlijenta=p.PoslanoOdKlijenta,
+                VrijemeSlanja=p.VrijemeSlanja
 
-            return await Task.FromResult(result.AsQueryable());
+            }
+            ).ToList();
+            return result.AsQueryable();
         }
 
+        public class PorukaDTO
+        {
+            public int Id { get; set; }
+            public int KlijentId { get; set; }
+            public string KlijentIme { get; set; }
+            public string AutoservisNaziv { get; set; }
+            public int AutoservisId { get; set; }
+            public string Poruka { get; set; }
+            public bool PoslanoOdKlijenta { get; set; }
+            public DateTime VrijemeSlanja { get; set; }
+        }
         public List<Model.ChatAutoservisKlijent> GetByID_(int targetId)
         {
             var user = _httpContextAccessor.HttpContext.User;

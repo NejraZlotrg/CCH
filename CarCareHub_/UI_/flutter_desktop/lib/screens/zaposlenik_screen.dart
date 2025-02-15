@@ -31,10 +31,11 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
   }
  Future<void> _loadData() async {
   SearchResult<Zaposlenik> data;
-  if (context.read<UserProvider>().role == "Admin") 
-   data = await _zaposlenikProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-  else
-   data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _zaposlenikProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
 
   if (mounted) {
     setState(() {
@@ -59,11 +60,9 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
   }
   Widget _buildSearch() {
   return Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
-    child: Card(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
       elevation: 4.0, // Dodaje malo sjene za karticu
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
@@ -117,10 +116,11 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
                      filterParams['prezime'] = _prezimeController.text;
                         }
               SearchResult<Zaposlenik> data;
-              if (context.read<UserProvider>().role == "Admin") 
-               data = await _zaposlenikProvider.getAdmin(filter: filterParams);
-              else
-               data = await _zaposlenikProvider.get(filter: filterParams);
+              if (context.read<UserProvider>().role == "Admin") {
+                data = await _zaposlenikProvider.getAdmin(filter: filterParams);
+              } else {
+                data = await _zaposlenikProvider.get(filter: filterParams);
+              }
 
 
 
@@ -184,8 +184,10 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
 
 
 Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width, // Pun ekranski prikaz
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
     margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
@@ -253,7 +255,7 @@ Widget _buildDataListView() {
           }).toList() ?? [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

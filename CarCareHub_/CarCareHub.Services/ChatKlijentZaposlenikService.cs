@@ -2,7 +2,9 @@
 using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
+using CarCareHub_.Hubs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,12 +20,16 @@ namespace CarCareHub.Services
         private readonly CchV2AliContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatKlijentZaposlenikService(CchV2AliContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public ChatKlijentZaposlenikService(CchV2AliContext context, IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
+            IHubContext<ChatHub> hubContext)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpContextAccessor = httpContextAccessor;
+            _hubContext = hubContext;
         }
 
         // Snimanje poruke u bazu
@@ -64,7 +70,11 @@ namespace CarCareHub.Services
 
             try
             {
-                _context.ChatKlijentZaposleniks.Add(chatPoruka);
+                await _context.ChatKlijentZaposleniks.AddAsync(chatPoruka);
+
+                await _hubContext.Clients.All.SendAsync($"ReceiveMessageZaposlenikKlijent#{chatPoruka.KlijentId}/{chatPoruka.ZaposlenikId}");
+                await _hubContext.Clients.All.SendAsync($"ReceiveMessageZaposlenikKlijent#{chatPoruka.ZaposlenikId}/{chatPoruka.KlijentId}");
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -101,7 +111,7 @@ namespace CarCareHub.Services
             // Mapiranje na model
             var result = poruke.Select(p => _mapper.Map<Model.ChatKlijentZaposlenik>(p));
 
-            return await Task.FromResult(result.AsQueryable());
+            return result;
         }
 
         public List<Model.ChatKlijentZaposlenik> GetByID_(int targetId)

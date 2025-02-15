@@ -69,10 +69,11 @@ class _KlijentRegistracijaScreenState
   }
 
   Future initForm() async {
-    if (context.read<UserProvider>().role == "Admin")
-    gradResult = await _gradProvider.getAdmin();
-    else 
-    gradResult = await _gradProvider.get();
+    if (context.read<UserProvider>().role == "Admin") {
+      gradResult = await _gradProvider.getAdmin();
+    } else {
+      gradResult = await _gradProvider.get();
+    }
     setState(() {
       isLoading = false;
     });

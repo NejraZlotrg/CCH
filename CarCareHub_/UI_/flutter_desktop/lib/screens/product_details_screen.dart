@@ -158,9 +158,9 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                       base64Encode(imageBytes);
                                 } else {
   // Ako nije poslana, učitaj iz assets-a
-  final assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
+  const assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
   var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = await imageFile.buffer.asUint8List();
+  final imageBytes = imageFile.buffer.asUint8List();
   request['slika'] = base64Encode(imageBytes);
 }
   request['vidljivo'] = true;

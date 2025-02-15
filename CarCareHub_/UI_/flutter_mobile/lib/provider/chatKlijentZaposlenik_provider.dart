@@ -21,44 +21,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
   return buildUrl(path);  // Koristi metodu buildUrl koju već imamo
 }
 
-Future<void> runSignalR(Function onMessageReceived) async {
-  String signalRUrl = getSignalRUrl('/chatKlijentZaposlenik');
-  
-  connection = HubConnectionBuilder()
-      .withUrl(signalRUrl)  // Koristi dinamički URL
-      .build();
-
-  connection.onclose(({Exception? error}) {
-    print('Connection closed: $error');
-    isConnected = false;
-  });
-
-  // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
-  connection.on('ReceiveMessage', (arguments) {
-    if (arguments != null && arguments.isNotEmpty) {
-      if (arguments[0] != null) {
-        try {
-          var chatMessage = chatKlijentZaposlenik
-              .fromJson(arguments[0] as Map<String, dynamic>);
-          onMessageReceived(chatMessage); // Prosleđujemo poruku u ekran
-        } catch (e) {
-          print("Error parsing message from SignalR: $e");
-        }
-      }
-    }
-  });
-
-  try {
-    await connection.start();
-    isConnected = true;
-    print("SignalR connection established.");
-  } catch (e) {
-    isConnected = false;
-    print('Error starting SignalR connection: $e');
-  }
-}
-
-
 
   // Dohvatiti poruke između klijenta i zaposleik-a sa backend-a
   Future<List<chatKlijentZaposlenik>> getMessages(int klijentId, int zaposlenikId) async {

@@ -70,11 +70,11 @@ Future<void> _loadGradovi() async {
     });
     try {
       SearchResult<Autoservis> data;
-        if (context.read<UserProvider>().role == "Admin")
-       data = await _autoservisProvider.getAdmin(filter: { 'IsAllIncluded': 'true',});
-       else 
-
-       data = await _autoservisProvider.get(filter: { 'IsAllIncluded': 'true',});
+        if (context.read<UserProvider>().role == "Admin") {
+          data = await _autoservisProvider.getAdmin(filter: { 'IsAllIncluded': 'true',});
+        } else {
+          data = await _autoservisProvider.get(filter: { 'IsAllIncluded': 'true',});
+        }
       setState(() {
         result = data;
       });
@@ -250,10 +250,11 @@ Future<void> _loadGradovi() async {
 
     try {
       SearchResult<Autoservis> data;
-        if (context.read<UserProvider>().role == "Admin")
-       data = await _autoservisProvider.getAdmin(filter: filterParams);
-       else  
-       data = await _autoservisProvider.get(filter: filterParams);
+        if (context.read<UserProvider>().role == "Admin") {
+          data = await _autoservisProvider.getAdmin(filter: filterParams);
+        } else {
+          data = await _autoservisProvider.get(filter: filterParams);
+        }
       setState(() {
         result = data;
       });

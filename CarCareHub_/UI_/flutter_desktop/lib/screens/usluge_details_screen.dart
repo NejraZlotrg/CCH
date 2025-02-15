@@ -45,17 +45,21 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title: widget.usluge?.nazivUsluge ?? "Detalji usluge",
-      child: SingleChildScrollView(
+     return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.usluge?.nazivUsluge ?? "Detalji usluge"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
               const SizedBox(height: 20),
-              isLoading
-                  ? const CircularProgressIndicator()
-                  : _buildForm(),
+              isLoading ? const CircularProgressIndicator() : _buildForm(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Row(
@@ -68,6 +72,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                                 // Potvrda brisanja
                                 bool confirmDelete = await showDialog(
                                   context: context,
+                   
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
@@ -91,7 +96,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                                 if (confirmDelete == true) {
                                   try {
                                     await _uslugeProvider.delete(
-                                        widget.usluge!.uslugeId!);
+                                        widget.usluge!.uslugeId);
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -189,8 +194,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
               ),
             ],
           ),
-        ),
-      ),
+        ),)
     );
   }
  

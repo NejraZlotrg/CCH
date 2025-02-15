@@ -69,9 +69,15 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title: widget.zaposlenik?.ime ?? "Detalji zaposlenika",
-      child: SingleChildScrollView(
+   return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.zaposlenik?.ime ?? "Detalji zaposlenika"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

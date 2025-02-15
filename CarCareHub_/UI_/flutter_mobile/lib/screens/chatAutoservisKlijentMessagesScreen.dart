@@ -30,15 +30,41 @@ class _ChatMessagesScreenState
   void initState() {
     super.initState();
     fetchMessages(); // Pozivamo fetchMessages iz provider-a
-    Provider.of<ChatAutoservisKlijentProvider>(context, listen: false)
-        .runSignalR((chatMessage) {
-          // Ovdje ćemo obraditi novu poruku i dodati je u listu
-          setState(() {
-            messages.add(chatMessage);
-          });
-          // Automatsko skrolovanje na dno kad stigne nova poruka
-          _scrollToBottom();
-        });
+    runSignalR();
+  }
+
+   Future<void> runSignalR() async {
+    connection = HubConnectionBuilder()
+        .withUrl('http://192.168.0.10:7209/chat-hub')
+        .build();
+
+    connection.onclose(({Exception? error}) {
+      print('Connection closed: $error');
+      isConnected = false;
+    });
+
+    var klijentId = widget.selectedChat.klijentId;
+    var autoservisId = widget.selectedChat.autoservisId;
+
+    // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
+    connection.on('ReceiveMessageAutoservisKlijent#${autoservisId}/${klijentId}', (arguments) {
+      fetchMessages();
+    });
+
+    connection.on('ReceiveMessageAutoservisKlijent#${klijentId}/${autoservisId}', (arguments) {
+     
+      print('dosla poruka');
+      fetchMessages();
+    });
+
+    try {
+      await connection.start();
+      isConnected = true;
+      print("SignalR connection established.");
+    } catch (e) {
+      isConnected = false;
+      print('Error starting SignalR connection: $e');
+    }
   }
 
   // Fetch messages for the selected chat

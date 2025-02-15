@@ -16,6 +16,7 @@ import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/screens/product_details_screen.dart';
+import 'package:flutter_mobile/screens/product_read_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +70,7 @@ class _ProductScreenState extends State<ProductScreen> {
  Future<void> _loadData() async {
   try {
     String? userRole = context.read<UserProvider>().role;
-    print("Korisnička uloga: ${userRole ?? 'Nepoznata'}");
+    print("Korisnička uloga: ${userRole}");
 
     SearchResult<Product> data;
 
@@ -433,7 +434,7 @@ else {
                     await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const ProductDetailScreen(product: null),
+                                    const ProductReadScreen(product: null),
                               ),
                             );
                     await _loadData();
@@ -544,10 +545,11 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
   // Pozivanje API-ja sa filterima
   try {
     SearchResult<Product> data;
-    if (context.read<UserProvider>().role == "Admin")
-     data = await _productProvider.getAdmin(filter: filterParams);
-    else 
-     data = await _productProvider.get(filter: filterParams);
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _productProvider.getAdmin(filter: filterParams);
+    } else {
+      data = await _productProvider.get(filter: filterParams);
+    }
 
 
     if (mounted) {
@@ -583,7 +585,7 @@ Widget _buildDataListView() {
             onTap: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => ProductDetailScreen(product: e),
+                  builder: (context) => ProductReadScreen(product: e),
                 ),
               );
               await _loadData(); // Osvježi podatke nakon povratka

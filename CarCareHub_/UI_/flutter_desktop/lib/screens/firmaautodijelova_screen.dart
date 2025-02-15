@@ -30,10 +30,11 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
 
   Future<void> _loadData() async {
     SearchResult<FirmaAutodijelova> data;
-     if (context.read<UserProvider>().role == "Admin")
-     data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
-    else 
-     data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
+     if (context.read<UserProvider>().role == "Admin") {
+       data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+     } else {
+       data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
+     }
     if (mounted) {
       setState(() {
         result = data;
@@ -58,10 +59,11 @@ void _onSearchPressed() async {
 
  try {
                     SearchResult<FirmaAutodijelova> data;
-                      if (context.read<UserProvider>().role == "Admin")
-                    data = await _firmaAutodijelovaProvider.getAdmin(filter: filterParams);
-                    else 
-                    data = await _firmaAutodijelovaProvider.get(filter: filterParams);
+                      if (context.read<UserProvider>().role == "Admin") {
+                        data = await _firmaAutodijelovaProvider.getAdmin(filter: filterParams);
+                      } else {
+                        data = await _firmaAutodijelovaProvider.get(filter: filterParams);
+                      }
                     if (mounted) {
                       setState(() {
                         result = data;
@@ -169,10 +171,16 @@ void _onSearchPressed() async {
       ),
     );
   }
-  Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width * 1,
-    margin: const EdgeInsets.only(top: 20.0),
+
+
+
+
+ Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -235,7 +243,7 @@ void _onSearchPressed() async {
                   .toList() ?? [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

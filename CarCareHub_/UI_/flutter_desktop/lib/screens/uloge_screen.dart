@@ -28,10 +28,11 @@ class _UlogeScreenState extends State<UlogeScreen> {
    Future<void> _fetchInitialData() async {
     try {
       SearchResult<Uloge> data;
-      if (context.read<UserProvider>().role == "Admin")
-       data = await _ulogeProvider.getAdmin(filter: {'IsAllncluded': 'true',});
-      else
-       data = await _ulogeProvider.get(filter: {'IsAllncluded': 'true',});
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _ulogeProvider.getAdmin(filter: {'IsAllncluded': 'true',});
+      } else {
+        data = await _ulogeProvider.get(filter: {'IsAllncluded': 'true',});
+      }
 
       if (mounted) {
         setState(() {
@@ -144,10 +145,11 @@ class _UlogeScreenState extends State<UlogeScreen> {
       filterParams['nazivUloge'] = _nazivUlogeController.text;
     }
   SearchResult<Uloge> data;
-    if (context.read<UserProvider>().role == "Admin")
-     data = await _ulogeProvider.getAdmin(filter: filterParams);
-    else 
-     data = await _ulogeProvider.get(filter: filterParams);
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _ulogeProvider.getAdmin(filter: filterParams);
+    } else {
+      data = await _ulogeProvider.get(filter: filterParams);
+    }
 
  
     if (!mounted) return;
@@ -156,10 +158,15 @@ class _UlogeScreenState extends State<UlogeScreen> {
       result = data;
     });
   }
+
+
+
  Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -213,7 +220,7 @@ class _UlogeScreenState extends State<UlogeScreen> {
               [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

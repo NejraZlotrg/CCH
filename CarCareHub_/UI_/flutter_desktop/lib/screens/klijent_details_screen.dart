@@ -55,10 +55,11 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
   }
 
   Future<void> initForm() async {
-    if (context.read<UserProvider>().role == "Admin")
-    gradResult = await _gradProvider.getAdmin();
-    else 
-    gradResult = await _gradProvider.get();
+    if (context.read<UserProvider>().role == "Admin") {
+      gradResult = await _gradProvider.getAdmin();
+    } else {
+      gradResult = await _gradProvider.get();
+    }
     setState(() {
       isLoading = false;
     });
@@ -145,7 +146,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                                 if (confirmDelete == true) {
                                   try {
                                     await _klijentProvider.delete(
-                                        widget.klijent!.klijentId!);
+                                        widget.klijent!.klijentId);
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

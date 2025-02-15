@@ -27,10 +27,11 @@ class _VoziloScreenState extends State<VoziloScreen> {
   }
  Future<void> _loadData() async {
   SearchResult<Vozilo> data;
-  if (context.read<UserProvider>().role == "Admin")
-  data = await _voziloProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-  else
-  data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _voziloProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
 
   if (mounted) {
     setState(() {
@@ -140,10 +141,11 @@ class _VoziloScreenState extends State<VoziloScreen> {
     }
 
     SearchResult<Vozilo> data;
-  if (context.read<UserProvider>().role == "Admin")
-     data = await _voziloProvider.getAdmin(filter: filterParams);
-    else
-     data = await _voziloProvider.get(filter: filterParams);
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _voziloProvider.getAdmin(filter: filterParams);
+  } else {
+    data = await _voziloProvider.get(filter: filterParams);
+  }
 
  
     if (!mounted) return;
@@ -154,9 +156,11 @@ class _VoziloScreenState extends State<VoziloScreen> {
   }
  
   Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -197,7 +201,6 @@ class _VoziloScreenState extends State<VoziloScreen> {
                             e.markaVozila?.toString() ?? "",
                             style: TextStyle(
                               fontSize: 15,
-                              fontWeight: FontWeight.bold,
                               color: (e.markaVozila == null || e.markaVozila!.isEmpty)
                                   ? Colors.red
                                   : Colors.black,
@@ -211,7 +214,7 @@ class _VoziloScreenState extends State<VoziloScreen> {
               [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

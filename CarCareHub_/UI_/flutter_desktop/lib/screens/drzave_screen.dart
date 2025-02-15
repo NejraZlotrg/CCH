@@ -39,10 +39,11 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Future<void> _fetchInitialData() async {
     try {
       SearchResult<Drzave> data;
-       if (context.read<UserProvider>().role == "Admin")
-       data = await _drzaveProvider.getAdmin(filter: {'IsAllncluded': 'true'});
-      else 
-       data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
+       if (context.read<UserProvider>().role == "Admin") {
+         data = await _drzaveProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+       } else {
+         data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
+       }
       if (mounted) {
         setState(() {
           result = data;
@@ -57,7 +58,6 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Drzava",
-      child: SingleChildScrollView(
         child: Container(
           color: const Color.fromARGB(255, 204, 204, 204),
           child: Column(
@@ -67,7 +67,6 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -107,10 +106,11 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
 
                   try {
                     SearchResult<Drzave> data;
-                     if (context.read<UserProvider>().role == "Admin")
-                     data = await _drzaveProvider.getAdmin(filter: filterParams);
-                    else 
-                     data = await _drzaveProvider.get(filter: filterParams);
+                     if (context.read<UserProvider>().role == "Admin") {
+                       data = await _drzaveProvider.getAdmin(filter: filterParams);
+                     } else {
+                       data = await _drzaveProvider.get(filter: filterParams);
+                     }
                     if (mounted) {
                       setState(() {
                         result = data;
@@ -170,10 +170,14 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
       ),
     );
   }
+
+
 Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -220,7 +224,7 @@ Widget _buildDataListView() {
               [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

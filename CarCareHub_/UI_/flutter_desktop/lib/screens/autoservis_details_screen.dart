@@ -97,10 +97,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   }
 
   Future initForm() async {
-     if (context.read<UserProvider>().role == "Admin")
-     gradResult = await _gradProvider.getAdmin();
-     else 
-     gradResult = await _gradProvider.get();
+     if (context.read<UserProvider>().role == "Admin") {
+       gradResult = await _gradProvider.getAdmin();
+     } else {
+       gradResult = await _gradProvider.get();
+     }
     if (widget.autoservis != null && widget.autoservis!.slikaProfila != null) {
       _imageFile =
           await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);
@@ -447,9 +448,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   request['slikaProfila'] = base64Encode(imageBytes);
 } else {
   // Ako nije poslana, učitaj iz assets-a
-  final assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
+  const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
   var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = await imageFile.buffer.asUint8List();
+  final imageBytes = imageFile.buffer.asUint8List();
   request['slikaProfila'] = base64Encode(imageBytes);
 }
 
@@ -577,11 +578,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      ): Column(
+                      ): const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.camera_alt, size: 60, color: Colors.black),
-              const SizedBox(height: 10),
+              Icon(Icons.camera_alt, size: 60, color: Colors.black),
+              SizedBox(height: 10),
               Text('Odaberite sliku',
                   style: TextStyle(color: Colors.black, fontSize: 16)),
             ],
@@ -729,7 +730,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   value: item.gradId.toString(),
                   child: Text(
                     item.nazivGrada ?? "",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color:  Colors.black,
                     ),
                     

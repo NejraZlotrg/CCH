@@ -1,6 +1,7 @@
 ﻿using CarCareHub.Model;
 using System.Linq;
 using System.Threading.Tasks;
+using static CarCareHub.Services.ChatAutoservisKlijentService;
 
 namespace CarCareHub.Services
 {
@@ -10,7 +11,7 @@ namespace CarCareHub.Services
         Task SendMessageAsync(ChatAutoservisKlijentInsert request);
 
         // Metoda za preuzimanje svih poruka između klijenta i autoservisa
-        Task<IQueryable<Model.ChatAutoservisKlijent>> GetMessagesAsync(int klijentId, int autoservisId);
+        Task<IQueryable<PorukaDTO>> GetMessagesAsync(int klijentId, int autoservisId);
 
         public List<Model.ChatAutoservisKlijent> GetByID_(int targetId);
 

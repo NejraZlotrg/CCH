@@ -10,6 +10,7 @@ import 'package:flutter_mobile/screens/drzave_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
 import 'package:flutter_mobile/screens/godiste_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
+import 'package:flutter_mobile/screens/kategorije_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/korpa_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
@@ -278,6 +279,17 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const ProizvodjacScreen(),
+                  ),
+                );
+              },
+            ),
+                        ListTile(
+              leading: const Icon(Icons.factory),
+              title: const Text('Kategorija'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const KategorijaScreen(),
                   ),
                 );
               },

@@ -28,10 +28,11 @@ class _GradScreenState extends State<GradScreen> {
 
   Future<void> _loadData() async {
     SearchResult<Grad> data;
-    if (context.read<UserProvider>().role == "Admin")
-    data = await _gradProvider.getAdmin(filter: {'IsDrzavaIncluded': 'true'});
-    else 
-    data = await _gradProvider.get(filter: {'IsDrzavaIncluded': 'true'});
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _gradProvider.getAdmin(filter: {'IsDrzavaIncluded': 'true'});
+    } else {
+      data = await _gradProvider.get(filter: {'IsDrzavaIncluded': 'true'});
+    }
     if (mounted) {
       setState(() {
         result = data;
@@ -97,10 +98,11 @@ class _GradScreenState extends State<GradScreen> {
                     filterParams['nazivGrada'] = _nazivGradaController.text;
                   }
                   SearchResult<Grad> data;
-                  if (context.read<UserProvider>().role == "Admin")
-                   data = await _gradProvider.getAdmin(filter: filterParams);
-                  else 
-                   data = await _gradProvider.get(filter: filterParams);
+                  if (context.read<UserProvider>().role == "Admin") {
+                    data = await _gradProvider.getAdmin(filter: filterParams);
+                  } else {
+                    data = await _gradProvider.get(filter: filterParams);
+                  }
                   if (!mounted) return; // Dodaj ovu proveru
 
                   setState(() {
@@ -160,10 +162,12 @@ class _GradScreenState extends State<GradScreen> {
     );
   }
   
-  Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -229,7 +233,7 @@ class _GradScreenState extends State<GradScreen> {
           ).toList(),
         ),
       ),
-    ),
+    ),))
   );
 }
 }

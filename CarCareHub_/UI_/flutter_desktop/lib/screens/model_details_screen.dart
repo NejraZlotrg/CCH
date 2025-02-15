@@ -114,7 +114,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                                 if (confirmDelete == true) {
                                   try {
                                     await _modelProvider.delete(
-                                        widget.model!.modelId!);
+                                        widget.model!.modelId);
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

@@ -220,7 +220,8 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 
 app.MapControllers();
-app.MapHub<ChatHub>("/chatAutoservisKlijent");
+app.MapHub<ChatHub>("/chat-hub");
+//app.MapHub<ChatHub>("/chatKlijentZaposlenik");
 
 
 app.UseWebSockets();

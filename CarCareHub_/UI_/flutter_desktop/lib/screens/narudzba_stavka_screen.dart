@@ -50,10 +50,11 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
                 'IsAllncluded': 'true', // Parametar za filtriranje
               };
               SearchResult<NarudzbaStavke> data;
-              if (context.read<UserProvider>().role == "Admin")
-              data = await _narudzbaStavkaProvider.getAdmin(filter: filterParams);
-              else 
-              data = await _narudzbaStavkaProvider.get(filter: filterParams);
+              if (context.read<UserProvider>().role == "Admin") {
+                data = await _narudzbaStavkaProvider.getAdmin(filter: filterParams);
+              } else {
+                data = await _narudzbaStavkaProvider.get(filter: filterParams);
+              }
 
               print(data);  // Debugging output
 

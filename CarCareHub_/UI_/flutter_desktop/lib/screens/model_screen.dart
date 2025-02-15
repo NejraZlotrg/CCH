@@ -28,10 +28,11 @@ class _ModelScreenState extends State<ModelScreen> {
   }
  Future<void> _loadData() async {
   SearchResult<Model> data;
-  if (context.read<UserProvider>().role == "Admin")
-  data = await _modelProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-  else 
-  data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _modelProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
   if (mounted) {
     setState(() {
       result = data;
@@ -153,10 +154,11 @@ class _ModelScreenState extends State<ModelScreen> {
       filterParams['markaVozila'] = _markaVozilaController.text;
     }
     SearchResult<Model> data;
-    if (context.read<UserProvider>().role == "Admin")
-     data = await _modelProvider.getAdmin(filter: filterParams);
-    else 
-     data = await _modelProvider.get(filter: filterParams);
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _modelProvider.getAdmin(filter: filterParams);
+    } else {
+      data = await _modelProvider.get(filter: filterParams);
+    }
 
  
     if (!mounted) return;
@@ -168,9 +170,11 @@ class _ModelScreenState extends State<ModelScreen> {
  
  
  Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -246,7 +250,7 @@ class _ModelScreenState extends State<ModelScreen> {
               [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

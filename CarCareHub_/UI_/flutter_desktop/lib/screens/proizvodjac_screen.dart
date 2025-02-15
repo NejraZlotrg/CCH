@@ -31,10 +31,11 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   Future<void> _fetchInitialData() async {
     try {
       SearchResult<Proizvodjac> data;
-       if (context.read<UserProvider>().role == "Admin")
-       data = await _proizvodjacProvider.getAdmin(filter: {'IsAllncluded': 'true',});
-      else 
-       data = await _proizvodjacProvider.get(filter: {'IsAllncluded': 'true',});
+       if (context.read<UserProvider>().role == "Admin") {
+         data = await _proizvodjacProvider.getAdmin(filter: {'IsAllncluded': 'true',});
+       } else {
+         data = await _proizvodjacProvider.get(filter: {'IsAllncluded': 'true',});
+       }
 
       if (mounted) {
         setState(() {
@@ -98,10 +99,11 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
             onPressed: () async {
               print("podaci proceed");
               SearchResult<Proizvodjac> data;
-              if (context.read<UserProvider>().role == "Admin")
-               data = await _proizvodjacProvider.getAdmin(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
-              else 
-               data = await _proizvodjacProvider.get(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
+              if (context.read<UserProvider>().role == "Admin") {
+                data = await _proizvodjacProvider.getAdmin(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
+              } else {
+                data = await _proizvodjacProvider.get(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
+              }
 
  
               setState(() {
@@ -157,10 +159,12 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
     );
   }
 
-  Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+ Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -214,7 +218,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
               [],
         ),
       ),
-    ),
+    ),))
   );
 }
 

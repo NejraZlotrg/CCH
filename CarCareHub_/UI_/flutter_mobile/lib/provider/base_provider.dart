@@ -28,6 +28,8 @@ String buildUrl(String path) {
   // Osiguravanje da endpoint nema višak "/" na kraju
   String endpoint = _endpoint.endsWith('/') ? _endpoint.substring(0, _endpoint.length - 1) : _endpoint;
 
+  print(_baseURL);
+
   return "$_baseURL$endpoint$path";
 }
 

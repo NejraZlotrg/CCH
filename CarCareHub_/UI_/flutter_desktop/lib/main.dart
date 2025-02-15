@@ -38,6 +38,8 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY',
       defaultValue:
           "pk_test_51Qgz9yCdZMYTHaMlBcpXvZmiujxacKPAz49IXxSYChj3gv2lG5HJJCM2kqeJNEctQXSRAevbENhGTqlkvYW460wi00ZMCqgmp0");

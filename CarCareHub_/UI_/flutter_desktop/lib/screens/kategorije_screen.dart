@@ -1,38 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/godiste.dart';
+import 'package:flutter_mobile/models/drzave.dart';
+import 'package:flutter_mobile/models/kategorija.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
-import 'package:flutter_mobile/provider/godiste_provider.dart';
-import 'package:flutter_mobile/screens/godiste_details_screen.dart';
+import 'package:flutter_mobile/provider/drzave_provider.dart';
+import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/screens/drzave_details_screen.dart';
+import 'package:flutter_mobile/screens/kategorija_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
-class GodisteScreen extends StatefulWidget {
-  const GodisteScreen({super.key});
+class KategorijaScreen extends StatefulWidget {
+  const KategorijaScreen({super.key});
 
   @override
-  State<GodisteScreen> createState() => _GodisteScreenState();
+  State<KategorijaScreen> createState() => _KategorijaScreenState();
 }
 
-class _GodisteScreenState extends State<GodisteScreen> {
-  late GodisteProvider _godisteProvider;
-  SearchResult<Godiste>? result;
-  final TextEditingController _nazivModelaController = TextEditingController();
+class _KategorijaScreenState extends State<KategorijaScreen> {
+  late KategorijaProvider _kategorijaProvider;
+  SearchResult<Kategorija>? result;
+  final TextEditingController _nazivKategorijeController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _godisteProvider = context.read<GodisteProvider>();
+    _kategorijaProvider = context.read<KategorijaProvider>();
     _loadData();
+    _fetchInitialData(); // Initial fetch
   }
 
   Future<void> _loadData() async {
-    SearchResult<Godiste> data;
-    if (context.read<UserProvider>().role == "Admin") {
-      data = await _godisteProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-    } else {
-      data = await _godisteProvider.get(filter: {'IsAllIncluded': 'true'});
-    }
+    var data = await _kategorijaProvider.get();
     if (mounted) {
       setState(() {
         result = data;
@@ -40,11 +39,29 @@ class _GodisteScreenState extends State<GodisteScreen> {
     }
   }
 
+  Future<void> _fetchInitialData() async {
+    try {
+      SearchResult<Kategorija> data;
+       if (context.read<UserProvider>().role == "Admin") {
+         data = await _kategorijaProvider.getAdmin();
+       } else {
+         data = await _kategorijaProvider.get();
+       }
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Godiste",
-        child: Container(
+      title: "Kategorija",
+       child: Container(
           color: const Color.fromARGB(255, 204, 204, 204),
           child: Column(
             children: [
@@ -52,24 +69,19 @@ class _GodisteScreenState extends State<GodisteScreen> {
               _buildDataListView(),
             ],
           ),
-      ),
+        ),
     );
   }
 
   Widget _buildSearch() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(
-        top: 20.0,
-      ),
+      margin: const EdgeInsets.only(top: 20.0),
       child: Card(
         elevation: 4.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(
-            color: Colors.black,
-            width: 1.0,
-          ),
+          side: const BorderSide(color: Colors.black, width: 1.0),
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -78,35 +90,38 @@ class _GodisteScreenState extends State<GodisteScreen> {
               Expanded(
                 child: TextField(
                   decoration: const InputDecoration(
-                    labelText: 'Godiste:',
+                    labelText: 'Naziv drzave',
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Colors.white,
                   ),
-                  controller: _nazivModelaController,
+                  controller: _nazivKategorijeController,
                 ),
               ),
               const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () async {
-                  var filterParams = {
-                    'IsAllIncluded': 'true',
-                  };
+                  var filterParams = {'IsAllncluded': 'true'};
 
-                  if (_nazivModelaController.text.isNotEmpty) {
-                    filterParams['godiste_'] = _nazivModelaController.text;
+                  if (_nazivKategorijeController.text.isNotEmpty) {
+                    filterParams['nazivDrzave'] = _nazivKategorijeController.text;
                   }
-                  SearchResult<Godiste> data;
-                  if (context.read<UserProvider>().role == "Admin") {
-                    data = await _godisteProvider.getAdmin(filter: filterParams);
-                  } else {
-                    data = await _godisteProvider.get(filter: filterParams);
-                  }
-                  if (!mounted) return;
 
-                  setState(() {
-                    result = data;
-                  });
+                  try {
+                    SearchResult<Kategorija> data;
+                     if (context.read<UserProvider>().role == "Admin") {
+                       data = await _kategorijaProvider.getAdmin(filter: filterParams);
+                     } else {
+                       data = await _kategorijaProvider.get(filter: filterParams);
+                     }
+                    if (mounted) {
+                      setState(() {
+                        result = data;
+                      });
+                    }
+                  } catch (e) {
+                    print("Error fetching filtered data: $e");
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -128,14 +143,13 @@ class _GodisteScreenState extends State<GodisteScreen> {
               if (context.read<UserProvider>().role == "Admin")
                 ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GodisteDetailsScreen(godiste: null),
-                              ),
-                            );
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => KategorijaDetailsScreen(kategorija: null),
+                      ),
+                    );
+                    // Reload data after returning from DrzaveDetailsScreen
                     await _loadData();
-
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -153,7 +167,6 @@ class _GodisteScreenState extends State<GodisteScreen> {
                     ],
                   ),
                 ),
-              const SizedBox(width: 10),
             ],
           ),
         ),
@@ -161,6 +174,7 @@ class _GodisteScreenState extends State<GodisteScreen> {
     );
   }
 
+  
 Widget _buildDataListView() {
   return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
       child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
@@ -171,32 +185,28 @@ Widget _buildDataListView() {
       elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(
-          color: Colors.black,
-          width: 1.0,
-        ),
+        side: const BorderSide(color: Colors.black, width: 1.0),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+      child: SingleChildScrollView( // Dodajemo SingleChildScrollView za omogućavanje skrolovanja
+        scrollDirection: Axis.vertical, // Postavljamo vertikalno skrolovanje
         child: DataTable(
           showCheckboxColumn: false,
           columns: const [
             DataColumn(
               label: Text(
-                'Godiste:',
+                'Naziv kategorije',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
           ],
           rows: result?.result
                   .map(
-                    (Godiste e) => DataRow(
+                    (Kategorija e) => DataRow(
                       onSelectChanged: (selected) async {
                         if (selected == true) {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  GodisteDetailsScreen(godiste: e),
+                              builder: (context) => KategorijaDetailsScreen(kategorija: e),
                             ),
                           );
                           await _loadData();
@@ -205,7 +215,7 @@ Widget _buildDataListView() {
                       cells: [
                         DataCell(
                           Text(
-                            e.godiste_.toString(),
+                            e.nazivKategorije ?? "",
                             style: TextStyle(
                               color: e.vidljivo == false ? Colors.red : Colors.black,
                             ),

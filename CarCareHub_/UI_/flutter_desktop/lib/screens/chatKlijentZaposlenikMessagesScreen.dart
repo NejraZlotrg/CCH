@@ -30,15 +30,39 @@ class _ChatMessagesScreenState
   void initState() {
     super.initState();
     fetchMessages(); // Pozivamo fetchMessages iz provider-a
-    Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false)
-        .runSignalR((chatMessage) {
-          // Ovdje ćemo obraditi novu poruku i dodati je u listu
-          setState(() {
-            messages.add(chatMessage);
-          });
-          // Automatsko skrolovanje na dno kad stigne nova poruka
-          _scrollToBottom();
-        });
+    runSignalR();
+  }
+
+  Future<void> runSignalR() async {
+    connection = HubConnectionBuilder()
+        .withUrl('http://localhost:7209/chatKlijentZaposlenik')
+        .build();
+
+    connection.onclose(({Exception? error}) {
+      print('Connection closed: $error');
+      isConnected = false;
+    });
+
+    var klijentId = widget.selectedChat.klijentId;
+    var zaposlenikId = widget.selectedChat.zaposlenikId;
+
+    // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
+    connection.on('ReceiveMessageZaposlenikKlijent#${zaposlenikId}/${klijentId}', (arguments) {
+      fetchMessages();
+    });
+
+    connection.on('ReceiveMessageZaposlenikKlijent#${klijentId}/${zaposlenikId}', (arguments) {
+      fetchMessages();
+    });
+
+    try {
+      await connection.start();
+      isConnected = true;
+      print("SignalR connection established.");
+    } catch (e) {
+      isConnected = false;
+      print('Error starting SignalR connection: $e');
+    }
   }
 
   // Fetch messages for the selected chat

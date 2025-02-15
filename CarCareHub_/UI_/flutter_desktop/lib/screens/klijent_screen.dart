@@ -29,10 +29,11 @@ class _KlijentScreenState extends State<KlijentScreen> {
 
   Future<void> _loadData() async {
     SearchResult<Klijent> data;
-    if (context.read<UserProvider>().role == "Admin")
-     data = await _klijentProvider.getAdmin(filter: {'IsAllncluded': 'true'});
-    else 
-     data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _klijentProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+    } else {
+      data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
+    }
     if (mounted) {
       setState(() {
         result = data;
@@ -46,7 +47,6 @@ class _KlijentScreenState extends State<KlijentScreen> {
       title: "Klijent",
       child: Container(
         color: const Color.fromARGB(255, 204, 204, 204),
-       // child: SingleChildScrollView( // Omogućava vertikalno skrolanje cijelog ekrana
           child: Column(
             children: [
               _buildSearch(),
@@ -54,7 +54,6 @@ class _KlijentScreenState extends State<KlijentScreen> {
             ],
           ),
         ),
-    //  ),
     );
   }
 
@@ -106,10 +105,11 @@ class _KlijentScreenState extends State<KlijentScreen> {
                     filterParams['prezime'] = _prezimeController.text;
                   }
                   SearchResult<Klijent> data;
-                  if (context.read<UserProvider>().role == "Admin")
-                   data = await _klijentProvider.getAdmin(filter: filterParams);
-                  else 
-                   data = await _klijentProvider.get(filter: filterParams);
+                  if (context.read<UserProvider>().role == "Admin") {
+                    data = await _klijentProvider.getAdmin(filter: filterParams);
+                  } else {
+                    data = await _klijentProvider.get(filter: filterParams);
+                  }
                   if (!mounted) return;
                   setState(() {
                     result = data;
@@ -167,10 +167,12 @@ class _KlijentScreenState extends State<KlijentScreen> {
     );
   }
 
- Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -258,7 +260,7 @@ class _KlijentScreenState extends State<KlijentScreen> {
                 .toList() ??
             [],
       ),
-    ),
+        ))),
   );
 }
 

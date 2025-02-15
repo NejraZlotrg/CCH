@@ -28,10 +28,11 @@ class _UslugeScreenState extends State<UslugeScreen> {
   }
  Future<void> _loadData() async {
   SearchResult<Usluge> data;
-  if (context.read<UserProvider>().role == "Admin")
-   data = await _uslugaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-  else 
-   data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _uslugaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
 
   if (mounted) {
     setState(() {
@@ -141,10 +142,11 @@ class _UslugeScreenState extends State<UslugeScreen> {
       filterParams['nazivUsluge'] = _nazivUslugeController.text;
     }
     SearchResult<Usluge> data;
-  if (context.read<UserProvider>().role == "Admin")
-     data = await _uslugaProvider.getAdmin(filter: filterParams);
-    else 
-     data = await _uslugaProvider.get(filter: filterParams);
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _uslugaProvider.getAdmin(filter: filterParams);
+  } else {
+    data = await _uslugaProvider.get(filter: filterParams);
+  }
 
  
     if (!mounted) return;
@@ -209,7 +211,6 @@ class _UslugeScreenState extends State<UslugeScreen> {
                                 e.nazivUsluge ?? "",
                                 style: const TextStyle(
                                   fontSize: 15,
-                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
