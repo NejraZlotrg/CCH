@@ -187,7 +187,7 @@ Future<void> _loadGradovi() async {
                     await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    AutoservisReadScreen(autoservis: null),
+                                    AutoservisDetailsScreen(autoservis: null),
                               ),
                             );
                     await _fetchInitialData();

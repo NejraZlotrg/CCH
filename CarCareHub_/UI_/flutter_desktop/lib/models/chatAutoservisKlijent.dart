@@ -7,16 +7,15 @@ part 'chatAutoservisKlijent.g.dart';
 class chatAutoservisKlijent {
   int id;
   int klijentId;
-  Klijent klijent;
+  String klijentIme;
   int autoservisId;
-  Autoservis autoservis;
+  String autoservisNaziv;
   String? poruka;
   bool poslanoOdKlijenta;
   DateTime vrijemeSlanja;
-bool? vidljivo;
+//bool? vidljivo;
 
-
-  chatAutoservisKlijent(this.id, this.vidljivo,  this.klijentId,this.autoservisId, this.autoservis, this.klijent, 
+  chatAutoservisKlijent(this.id,  this.klijentId,this.autoservisId, this.autoservisNaziv, this.klijentIme, 
   this.poruka,this.poslanoOdKlijenta,this.vrijemeSlanja);
 
   

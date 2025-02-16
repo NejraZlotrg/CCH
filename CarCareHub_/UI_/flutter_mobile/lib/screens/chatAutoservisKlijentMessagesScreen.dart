@@ -35,7 +35,7 @@ class _ChatMessagesScreenState
 
    Future<void> runSignalR() async {
     connection = HubConnectionBuilder()
-        .withUrl('http://192.168.0.10:7209/chat-hub')
+        .withUrl('http://192.168.0.131:7209/chat-hub')
         .build();
 
     connection.onclose(({Exception? error}) {
@@ -76,17 +76,20 @@ class _ChatMessagesScreenState
         widget.selectedChat.autoservisId,
       );
 
-      setState(() {
-        messages = fetchedMessages;
-      });
+      if (mounted) { // Sprječava crash ako je widget unmountovan
+        setState(() {
+          messages = fetchedMessages;
+        });
 
-      // Automatsko skrolovanje na dno kad se učitaju poruke
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom();
+        });
+      }
 
     } catch (e) {
-      print('Error fetching messages: $e');
+      if (mounted) { // Provjeri da li je widget još uvijek aktivan
+        print('Error fetching messages: $e');
+      }
     }
   }
 
@@ -111,7 +114,7 @@ Widget build(BuildContext context) {
 
     appBar: AppBar(
       title: Text(
-        'Chat with ${widget.selectedChat.klijent.ime} - ${widget.selectedChat.autoservis.naziv}',
+        'Chat with ${widget.selectedChat.klijentIme} - ${widget.selectedChat.autoservisNaziv}',
         textAlign: TextAlign.center, // Ensures the title text itself is centered
       ),
       backgroundColor: Colors.grey[400], // Set the AppBar background color to grey

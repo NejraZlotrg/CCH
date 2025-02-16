@@ -5,20 +5,19 @@ part 'chatKlijentZaposlenik.g.dart';
 
 @JsonSerializable()
 class chatKlijentZaposlenik {
-   final int chatKlijentZaposlenikId;
-  final int? klijentId;
-  final Klijent? klijent;
-  final Zaposlenik? zaposlenik;
-  final int? zaposlenikId;
-  final String? poruka;
-  final bool? poslanoOdKlijenta;
-  final DateTime? vrijemeSlanja;
-bool? vidljivo;
-
-  
+  int id;
+  int klijentId;
+  String klijentIme;
+  int zaposlenikId;
+  String zaposlenikIme;
+  String? poruka;
+  bool poslanoOdKlijenta;
+  DateTime vrijemeSlanja;
+//bool? vidljivo;
 
 
-  chatKlijentZaposlenik(this.chatKlijentZaposlenikId, this.vidljivo, this.klijentId,this.zaposlenikId, this.zaposlenik, this.klijent, 
+
+  chatKlijentZaposlenik(this.id, this.klijentId,this.zaposlenikId, this.zaposlenikIme,this.klijentIme,
   this.poruka,this.poslanoOdKlijenta,this.vrijemeSlanja);
 
   

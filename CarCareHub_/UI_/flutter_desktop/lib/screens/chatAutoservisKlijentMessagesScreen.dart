@@ -67,8 +67,21 @@ class _ChatMessagesScreenState
     }
   }
 
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+
+    if (isConnected) {
+      connection.stop(); // Zaustavi SignalR konekciju
+    }
+    
+    super.dispose();
+  }
+
+
   // Fetch messages for the selected chat
-  Future<void> fetchMessages() async {
+Future<void> fetchMessages() async {
     try {
       final provider = Provider.of<ChatAutoservisKlijentProvider>(context, listen: false);
       final fetchedMessages = await provider.getMessages(
@@ -76,20 +89,22 @@ class _ChatMessagesScreenState
         widget.selectedChat.autoservisId,
       );
 
-      setState(() {
-        messages = fetchedMessages;
-      });
+      if (mounted) { // Sprječava crash ako je widget unmountovan
+        setState(() {
+          messages = fetchedMessages;
+        });
 
-      // Automatsko skrolovanje na dno kad se učitaju poruke
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom();
+        });
+      }
 
     } catch (e) {
-      print('Error fetching messages: $e');
+      if (mounted) { // Provjeri da li je widget još uvijek aktivan
+        print('Error fetching messages: $e');
+      }
     }
   }
-
   // Funckija koja skroluje na dno
   void _scrollToBottom() {
     // Provjeravamo da li je lista poruka prazna
@@ -111,7 +126,7 @@ Widget build(BuildContext context) {
 
     appBar: AppBar(
       title: Text(
-        'Chat with ${widget.selectedChat.klijent.ime} - ${widget.selectedChat.autoservis.naziv}',
+        'Chat with ${widget.selectedChat.klijentIme} - ${widget.selectedChat.autoservisNaziv}',
         textAlign: TextAlign.center, // Ensures the title text itself is centered
       ),
       backgroundColor: Colors.grey[400], // Set the AppBar background color to grey
@@ -206,6 +221,7 @@ Widget build(BuildContext context) {
                       Provider.of<ChatAutoservisKlijentProvider>(context, listen: false)
                           .sendMessage(
                               widget.selectedChat.klijentId,
+
                               widget.selectedChat.autoservisId,
                               message)
                           .then((_) {

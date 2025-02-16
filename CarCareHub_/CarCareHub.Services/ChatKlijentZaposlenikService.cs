@@ -83,38 +83,48 @@ namespace CarCareHub.Services
             }
         }
 
-        public async Task<IQueryable<Model.ChatKlijentZaposlenik>> GetMessagesAsync(int klijentId, int zaposlenikId)
+        public async Task<IQueryable<PorukaKZDTO>> GetMessagesAsync(int klijentId, int zaposlenikId)
         {
             var poruke = _context.ChatKlijentZaposleniks
-                .Include(p => p.Klijent).Include(p => p.Klijent.Grad)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.uloga)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.ChatAutoservisKlijent)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Klijent.ChatKlijentZaposlenik)  // Učitaj povezani Klijent entitet // Učitaj povezani Klijent entitet
-                .Include(p => p.Zaposlenik)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Grad)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Grad.Drzava)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Uloga)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis.Uloga)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis.Zaposleniks)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis.Usluges)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis.Vozilo)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis.Grad)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.Autoservis.Grad.Drzava)  // Učitaj povezani Autoservis entitet
-
-                .Include(p => p.Zaposlenik.FirmaAutodijelova)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.FirmaAutodijelova.Uloga)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.FirmaAutodijelova.Grad)  // Učitaj povezani Autoservis entitet
-                .Include(p => p.Zaposlenik.FirmaAutodijelova.Grad.Drzava)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Klijent)
+                .Include(p => p.Zaposlenik)
                 .Where(p => p.KlijentId == klijentId && p.ZaposlenikId == zaposlenikId);
 
             // Mapiranje na model
-            var result = poruke.Select(p => _mapper.Map<Model.ChatKlijentZaposlenik>(p));
+           // var result = poruke.Select(p => _mapper.Map<Model.ChatKlijentZaposlenik>(p));
 
-            return result;
+            var result = poruke.Select(p => new PorukaKZDTO
+            {
+                Id = p.ChatKlijentZaposlenikId,
+                KlijentId = p.KlijentId,
+                KlijentIme = p.Klijent.Ime,
+                ZaposlenikId = p.ZaposlenikId,
+                ZaposlenikIme = p.Zaposlenik.Ime,
+                Poruka = p.Poruka,
+                PoslanoOdKlijenta = p.PoslanoOdKlijenta,
+                VrijemeSlanja = p.VrijemeSlanja
+
+            }
+             ).ToList();
+            return result.AsQueryable();
         }
 
-        public List<Model.ChatKlijentZaposlenik> GetByID_(int targetId)
+
+
+        public class PorukaKZDTO
+        {
+            public int Id { get; set; }
+            public int KlijentId { get; set; }
+            public string KlijentIme { get; set; }
+            public string ZaposlenikIme { get; set; }
+            public int ZaposlenikId { get; set; }
+            public string Poruka { get; set; }
+            public bool PoslanoOdKlijenta { get; set; }
+            public DateTime VrijemeSlanja { get; set; }
+        }
+
+
+        public List<PorukaKZDTO> GetByID_(int targetId)
         {
             var user = _httpContextAccessor.HttpContext.User;
 
@@ -126,43 +136,33 @@ namespace CarCareHub.Services
             Console.WriteLine($"UserRole: {userRole}");
 
             // Validate user claims
-            if (string.IsNullOrEmpty(userId))
-                throw new Exception("User ID is missing from claims.");
-
-            if (!int.TryParse(userId, out int parsedUserId))
-                throw new Exception($"Invalid User ID: {userId}");
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int parsedUserId))
+                throw new Exception("Invalid or missing User ID.");
 
             // Determine the role and execute the corresponding logic
             if (userRole == "Klijent" && targetId == parsedUserId)
             {
                 // Fetch chat records for the logged-in client
                 var chatRecords = _context.ChatKlijentZaposleniks.AsNoTracking()
-     .Where(x => x.KlijentId == parsedUserId)
-     .Include(x => x.Zaposlenik) // Include Zaposlenik entity
-     .ThenInclude(z => z.Uloga) // Include Uloga for Zaposlenik
-     .Include(x => x.Zaposlenik.Autoservis) // Include Autoservis for Zaposlenik
-     .ThenInclude(a => a.Usluges) // Include Usluges for Autoservis
-     .Include(x => x.Zaposlenik.Autoservis.Vozilo) // Include Vozilo for Autoservis
-     .Include(x => x.Zaposlenik.Autoservis.Grad) // Include Grad for Autoservis
-     .ThenInclude(g => g.Drzava) // Include Drzava for Grad
-     .Include(x => x.Klijent) // Include Klijent entity
-     .ThenInclude(k => k.uloga) // Include Uloga for Klijent
-     .Include(x => x.Klijent.Grad) // Include Grad for Klijent
-     .ThenInclude(g => g.Drzava) // Include Drzava for Grad
-     .GroupBy(x => x.ZaposlenikId)
-     .Select(g => g.First())
-     .ToList();
-
+                    .Where(x => x.KlijentId == parsedUserId)
+                    .Include(x => x.Zaposlenik)
+                    .Include(x => x.Klijent)
+                    .GroupBy(x => x.ZaposlenikId)
+                    .Select(g => g.First())
+                    .ToList();
 
                 // Check if any records were found
-                if (chatRecords == null || !chatRecords.Any())
-                {
-                    Console.WriteLine("No data found for the client.");
+                                if (!chatRecords.Any())
                     throw new Exception("No data found.");
-                }
 
-                Console.WriteLine($"Found {chatRecords.Count} records for KlijentId: {parsedUserId}");
-                return _mapper.Map<List<Model.ChatKlijentZaposlenik>>(chatRecords);
+
+                return chatRecords.Select(x => new PorukaKZDTO
+                {
+                    KlijentId = x.Klijent.KlijentId,
+                    KlijentIme = x.Klijent.Ime,  // Samo ime umjesto cijelog objekta
+                    ZaposlenikId = x.Zaposlenik.ZaposlenikId,
+                    ZaposlenikIme = x.Zaposlenik.Ime,// Samo naziv umjesto cijelog objekta
+                }).ToList();
             }
             else if (userRole == "Zaposlenik" && targetId == parsedUserId)
             {
@@ -176,14 +176,19 @@ namespace CarCareHub.Services
                     .ToList();
 
                 // Check if any records were found
-                if (chatRecords == null || !chatRecords.Any())
+                if (!chatRecords.Any())
                 {
                     Console.WriteLine("No data found for the zaposlenik.");
                     throw new Exception("No data found.");
                 }
 
-                Console.WriteLine($"Found {chatRecords.Count} records for ZaposlenikId: {parsedUserId}");
-                return _mapper.Map<List<Model.ChatKlijentZaposlenik>>(chatRecords);
+                return chatRecords.Select(x => new PorukaKZDTO
+                {
+                    KlijentId = x.Klijent.KlijentId,
+                    KlijentIme = x.Klijent.Ime,
+                    ZaposlenikId = x.Zaposlenik.ZaposlenikId,
+                    ZaposlenikIme = x.Zaposlenik.Ime
+                }).ToList();
             }
 
             // If the role or targetId doesn't match, throw an exception

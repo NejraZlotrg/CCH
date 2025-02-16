@@ -35,7 +35,7 @@ class _ChatMessagesScreenState
 
   Future<void> runSignalR() async {
     connection = HubConnectionBuilder()
-        .withUrl('http://localhost:7209/chatKlijentZaposlenik')
+        .withUrl('http://localhost:7209/chat-hub')
         .build();
 
     connection.onclose(({Exception? error}) {
@@ -65,29 +65,32 @@ class _ChatMessagesScreenState
     }
   }
 
+
   // Fetch messages for the selected chat
-  Future<void> fetchMessages() async {
+Future<void> fetchMessages() async {
     try {
       final provider = Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false);
       final fetchedMessages = await provider.getMessages(
-        widget.selectedChat.klijentId!,
-        widget.selectedChat.zaposlenikId!,
+        widget.selectedChat.klijentId,
+        widget.selectedChat.zaposlenikId,
       );
 
-      setState(() {
-        messages = fetchedMessages;
-      });
+      if (mounted) { // Sprječava crash ako je widget unmountovan
+        setState(() {
+          messages = fetchedMessages;
+        });
 
-      // Automatsko skrolovanje na dno kad se učitaju poruke
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom();
+        });
+      }
 
     } catch (e) {
-      print('Error fetching messages: $e');
+      if (mounted) { // Provjeri da li je widget još uvijek aktivan
+        print('Error fetching messages: $e');
+      }
     }
   }
-
   // Funckija koja skroluje na dno
   void _scrollToBottom() {
     // Provjeravamo da li je lista poruka prazna
@@ -96,6 +99,8 @@ class _ChatMessagesScreenState
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
+
+
   @override
 Widget build(BuildContext context) {
   final userProvider = context.read<UserProvider>();
@@ -105,7 +110,7 @@ Widget build(BuildContext context) {
     backgroundColor: Colors.grey[300], // Set background color of the entire screen to light gray
     appBar: AppBar(
       title: Text(
-        'Chat with ${widget.selectedChat.klijent?.ime} - ${widget.selectedChat.zaposlenik?.ime} ${widget.selectedChat.zaposlenik?.prezime}',
+        'Chat with ${widget.selectedChat.klijentId} - ${widget.selectedChat.zaposlenikIme}',
         textAlign: TextAlign.center, // Ensures the title text itself is centered
       ),
       backgroundColor: Colors.grey[400], // Set the AppBar background color to grey
@@ -199,8 +204,8 @@ Widget build(BuildContext context) {
                       // Calling sendMessage function from the provider
                       Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false)
                           .sendMessage(
-                              widget.selectedChat.klijentId!,
-                              widget.selectedChat.zaposlenikId!,
+                              widget.selectedChat.klijentId,
+                              widget.selectedChat.zaposlenikId,
                               message)
                           .then((_) {
                         _messageController.clear();

@@ -35,7 +35,7 @@ class _ChatMessagesScreenState
 
   Future<void> runSignalR() async {
     connection = HubConnectionBuilder()
-        .withUrl('http://192.168.0.10:7209/chatKlijentZaposlenik')
+        .withUrl('http://192.168.0.131:7209/chat-hub')
         .build();
 
     connection.onclose(({Exception? error}) {
@@ -70,8 +70,8 @@ class _ChatMessagesScreenState
     try {
       final provider = Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false);
       final fetchedMessages = await provider.getMessages(
-        widget.selectedChat.klijentId!,
-        widget.selectedChat.zaposlenikId!,
+        widget.selectedChat.klijentId,
+        widget.selectedChat.zaposlenikId,
       );
 
       setState(() {
@@ -105,7 +105,7 @@ Widget build(BuildContext context) {
     backgroundColor: Colors.grey[300], // Set background color of the entire screen to light gray
     appBar: AppBar(
       title: Text(
-        'Chat with ${widget.selectedChat.klijent?.ime} - ${widget.selectedChat.zaposlenik?.ime} ${widget.selectedChat.zaposlenik?.prezime}',
+        'Chat with ${widget.selectedChat.klijentIme} - ${widget.selectedChat.zaposlenikIme}',
         textAlign: TextAlign.center, // Ensures the title text itself is centered
       ),
       backgroundColor: Colors.grey[400], // Set the AppBar background color to grey
@@ -199,8 +199,8 @@ Widget build(BuildContext context) {
                       // Calling sendMessage function from the provider
                       Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false)
                           .sendMessage(
-                              widget.selectedChat.klijentId!,
-                              widget.selectedChat.zaposlenikId!,
+                              widget.selectedChat.klijentId,
+                              widget.selectedChat.zaposlenikId,
                               message)
                           .then((_) {
                         _messageController.clear();
