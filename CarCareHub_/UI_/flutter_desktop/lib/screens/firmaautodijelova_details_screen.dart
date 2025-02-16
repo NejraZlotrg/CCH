@@ -199,7 +199,7 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
+                                backgroundColor: const Color.fromARGB(255, 249, 12, 12), // Crvena boja za brisanje
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -265,7 +265,7 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
     },
     style: ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
-      backgroundColor: Colors.red,
+      backgroundColor: const Color.fromARGB(255, 253, 23, 6),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       textStyle: const TextStyle(fontSize: 16),
       shape: RoundedRectangleBorder(
@@ -292,7 +292,7 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
     );
   },
   style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.red, // Crvena boja dugmeta
+    backgroundColor: const Color.fromARGB(255, 248, 26, 10), // Crvena boja dugmeta
     foregroundColor: Colors.white, // Bijela boja teksta
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.0),

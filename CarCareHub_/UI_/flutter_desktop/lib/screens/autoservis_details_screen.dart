@@ -243,7 +243,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           _showAddUslugaDialog(),
                           
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red, // Crvena boja dugmeta
+                            backgroundColor: const Color.fromARGB(255, 251, 26, 10), // Crvena boja dugmeta
                             foregroundColor: Colors.white, // Bijela boja teksta
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -300,7 +300,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                                     klijentId, zaposleniId);
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
+                                                backgroundColor: const Color.fromARGB(255, 247, 28, 13),
                                                 foregroundColor: Colors.white,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
@@ -341,7 +341,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         child: ElevatedButton(
                           onPressed: () => _showAddZaposlenikDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red, // Crvena boja dugmeta
+                            backgroundColor: const Color.fromARGB(255, 253, 27, 11), // Crvena boja dugmeta
                             foregroundColor: Colors.white, // Bijela boja teksta
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -407,7 +407,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
+                                backgroundColor: const Color.fromARGB(255, 249, 11, 11), // Crvena boja za brisanje
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -483,7 +483,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: Colors.red,
+                                backgroundColor: const Color.fromARGB(255, 253, 23, 7),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -529,7 +529,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                               context, klijentId, autoservisId);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: const Color.fromARGB(255, 248, 26, 10),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),

@@ -5,6 +5,7 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
+import 'package:flutter_mobile/screens/firmaautodijelova_read_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -121,7 +122,7 @@ void _onSearchPressed() async {
               ElevatedButton(
                 onPressed: _onSearchPressed, // Koristi novu funkciju
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: const Color.fromARGB(255, 245, 32, 17),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -143,13 +144,13 @@ void _onSearchPressed() async {
                     await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
+                                    FirmaAutodijelovaReadScreen(firmaAutodijelova: null),
                               ),
                             );
                     await _loadData();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: const Color.fromARGB(255, 249, 29, 13),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -204,7 +205,7 @@ void _onSearchPressed() async {
                         if (selected == true) {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => FirmaAutodijelovaDetailScreen(
+                              builder: (context) => FirmaAutodijelovaReadScreen(
                                 firmaAutodijelova: e,
                               ),
                             ),
