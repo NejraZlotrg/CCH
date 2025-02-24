@@ -14,10 +14,15 @@ namespace CarCareHub.Model
         public virtual Proizvod? Proizvod { get; set; }
 
         public int? KlijentId { get; set; }
+
+        public virtual Klijent? Klijent { get; set; }
         public bool Vidljivo { get; set; }
         public int? AutoservisId { get; set; }
+        public virtual Autoservis? Autoservis { get; set; }
 
         public int? ZaposlenikId { get; set; }
+        public virtual Zaposlenik? Zaposlenik { get; set; }
+
 
         // Metoda za prikazivanje samo ne-null ID-ova
         public Dictionary<string, int?> GetNonNullIds()

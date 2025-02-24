@@ -156,6 +156,7 @@ namespace CarCareHub.Services
 
             // Dohvati trenutnu prijavljenu ulogu korisnika
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+            query = query.Include(x => x.Proizvod);
 
             // Filtriranje na temelju korisničke uloge
             if (userRole != null)
@@ -165,16 +166,19 @@ namespace CarCareHub.Services
                     case "Klijent":
                         // Ako je korisnik Klijent, filtriraj samo po KlijentId
                         query = query.Where(x => x.KlijentId == id);
+                        query = query.Include(x => x.Klijent);
                         break;
 
                     case "Zaposlenik":
                         // Ako je korisnik Zaposlenik, filtriraj samo po ZaposlenikId
                         query = query.Where(x => x.ZaposlenikId == id);
+                        query = query.Include(x => x.Zaposlenik);
                         break;
 
                     case "Autoservis":
                         // Ako je korisnik Autoservis, filtriraj samo po AutoservisId
                         query = query.Where(x => x.AutoservisId == id);
+                        query = query.Include(x => x.Autoservis);
                         break;
 
                     default:
