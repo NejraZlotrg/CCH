@@ -283,6 +283,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 );
               },
             ),
+               if (context.read<UserProvider>().role == "Admin")
                         ListTile(
               leading: const Icon(Icons.factory),
               title: const Text('Kategorija'),

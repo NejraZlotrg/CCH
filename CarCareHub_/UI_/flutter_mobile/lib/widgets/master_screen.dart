@@ -124,7 +124,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         'CarCareHub',
         style: TextStyle(
           color: Colors.black,
-          fontSize: 22,
+          fontSize: 20,
         ),
       ),
     ],

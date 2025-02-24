@@ -22,6 +22,7 @@ import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class FirmaAutodijelovaReadScreen extends StatefulWidget {
    FirmaAutodijelova? firmaAutodijelova;
    FirmaAutodijelovaReadScreen({super.key, this.firmaAutodijelova});
@@ -33,12 +34,9 @@ class FirmaAutodijelovaReadScreen extends StatefulWidget {
 
 class _FirmaAutodijelovaDetailScreenState
     extends State<FirmaAutodijelovaReadScreen> {
-  final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
   late GradProvider _gradProvider;
-  late UlogeProvider _ulogaProvider;
-  late BPAutodijeloviAutoservisProvider _bpProvider;
   SearchResult<FirmaAutodijelova>? result;
   List<Grad> grad = [];
 
@@ -47,7 +45,6 @@ class _FirmaAutodijelovaDetailScreenState
 SearchResult<BPAutodijeloviAutoservis>? bpResult;
 List<BPAutodijeloviAutoservis>? temp;
   File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
 
   bool isLoading = true;
 
@@ -76,8 +73,6 @@ List<BPAutodijeloviAutoservis>? temp;
 
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _gradProvider = context.read<GradProvider>();
-    _ulogaProvider = context.read<UlogeProvider>();
-    _bpProvider = context.read<BPAutodijeloviAutoservisProvider>();
 
 
     fetchGrad();
@@ -107,14 +102,6 @@ List<BPAutodijeloviAutoservis>? temp;
     return file;
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
 
 
   Future initForm() async {
@@ -144,11 +131,11 @@ List<BPAutodijeloviAutoservis>? temp;
     SearchResult<FirmaAutodijelova> data;
     if (context.read<UserProvider>().role == "Admin") {
       data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-       gradResult = await _gradProvider.getAdmin();
+       gradResult = await _gradProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
 
     } else {
       data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
-       gradResult = await _gradProvider.get();
+       gradResult = await _gradProvider.get(filter: {'IsAllIncluded': 'true'});
 
     }
 

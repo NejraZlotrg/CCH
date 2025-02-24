@@ -18,6 +18,7 @@ import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/narudzba_stavka_provider.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
+import 'package:flutter_mobile/provider/placanje_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
@@ -67,6 +68,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ChatAutoservisKlijentProvider()),
         ChangeNotifierProvider(create: (_) => ChatKlijentZaposlenikProvider()),
+        ChangeNotifierProvider(create: (_) => PlacanjeProvider()),
 
       ],
       child: const MyApp(),

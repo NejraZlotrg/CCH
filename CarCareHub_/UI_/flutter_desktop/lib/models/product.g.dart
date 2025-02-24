@@ -25,10 +25,10 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
           : Vozilo.fromJson(json['vozilo'] as Map<String, dynamic>),
       (json['firmaAutodijelovaID'] as num?)?.toInt(),
       (json['proizvodjacId'] as num?)?.toInt(),
-      json['firmaAutoDijelova'] == null
+      json['firmaAutodijelova'] == null
           ? null
           : FirmaAutodijelova.fromJson(
-              json['firmaAutoDijelova'] as Map<String, dynamic>),
+              json['firmaAutodijelova'] as Map<String, dynamic>),
       json['model'] == null
           ? null
           : Model.fromJson(json['model'] as Map<String, dynamic>),
@@ -38,6 +38,12 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
           : Godiste.fromJson(json['godiste'] as Map<String, dynamic>),
       (json['godisteId'] as num?)?.toInt(),
       json['stateMachine'] as String?,
+      json['kategorija'] == null
+          ? null
+          : Kategorija.fromJson(json['kategorija'] as Map<String, dynamic>),
+      json['proizvodjac'] == null
+          ? null
+          : Proizvodjac.fromJson(json['proizvodjac'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
@@ -54,9 +60,11 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'opis': instance.opis,
       'modelId': instance.modelId,
       'kategorijaId': instance.kategorijaId,
+      'kategorija': instance.kategorija,
       'firmaAutodijelovaID': instance.firmaAutodijelovaID,
-      'firmaAutoDijelova': instance.firmaAutoDijelova,
+      'firmaAutodijelova': instance.firmaAutodijelova,
       'proizvodjacId': instance.proizvodjacId,
+      'proizvodjac': instance.proizvodjac,
       'model': instance.model,
       'godisteId': instance.godisteId,
       'godiste': instance.godiste,

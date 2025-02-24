@@ -429,33 +429,32 @@ else {
             Row(
   mainAxisAlignment: MainAxisAlignment.end, // Elemente poravnaj desno
   children: [
-    ElevatedButton(
-      onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ProductReadScreen(product: null),
-                              ),
-                            );
-                    await _loadData();
-
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red, // Crvena boja za dugme
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
+    if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().role == "Firma autodijelova")
+      ElevatedButton(
+        onPressed: () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const ProductDetailScreen(product: null),
+            ),
+          );
+          await _loadData();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red, // Crvena boja za dugme
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
+          children: [
+            Icon(Icons.add, color: Colors.white),
+            SizedBox(width: 8.0), // Razmak između ikone i teksta
+            Text('Dodaj', style: TextStyle(color: Colors.white)),
+          ],
+        ),
       ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
-        children: [
-          Icon(Icons.add, color: Colors.white),
-          SizedBox(width: 8.0), // Razmak između ikone i teksta
-          Text('Dodaj', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    ),
     const SizedBox(width: 10), // Razmak između dva dugmeta
     ElevatedButton(
       onPressed: _onSearchPressed,
@@ -477,6 +476,7 @@ else {
     ),
   ],
 )
+
 
           ],
         ),
@@ -700,7 +700,7 @@ Widget _buildDataListView() {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               ),
               child: const Text(
-                "Sakri proizvod",
+                "Sakrij proizvod",
                 style: TextStyle(fontSize: 12),
               ),
             ),

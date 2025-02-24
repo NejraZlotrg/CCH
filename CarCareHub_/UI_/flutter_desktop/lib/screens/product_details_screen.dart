@@ -191,6 +191,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                   );
                                 }
                               }
+
+
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
@@ -457,7 +459,7 @@ ElevatedButton(
     labelText: 'Firma Auto Dijelova',
     border: OutlineInputBorder(),
     fillColor: Colors.white, // Bela pozadina
-    filled: true, // Da pozadina bude ispunjena
+    filled: true, // Da pozadina bude ispunjenae
     contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
     hintText: 'Firma Auto Dijelova',
   ),

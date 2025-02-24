@@ -13,21 +13,22 @@ class PlacanjeProvider extends BaseProvider<PlacanjeInsert> {
     return PlacanjeInsert(ukupno: 0); // Napraviti .g fajl onaj
   }
 
-  Future<RezultatPlacanja> create(PlacanjeInsert request) async {
-    final response = await http.post(
-      Uri.parse('http://localhost:7209/api/placanjeAutoservisDijelovi/plati'),  // Tačan API endpoint
-      headers: createHeaders(),
-      body: jsonEncode({
-        'ukupno': request.ukupno
-      }),
-    );
+Future<RezultatPlacanja> create(PlacanjeInsert request) async {
+  final response = await http.post(
+    Uri.parse('http://192.168.0.131:7209/api/placanjeAutoservisDijelovi/plati'),
+    headers: createHeaders(),
+    body: jsonEncode({
+      'ukupno': request.ukupno.toInt()
+    }),
+  );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data;
-      } 
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    return RezultatPlacanja.fromJson(data); // Ispravno mapiranje u model
+  } 
 
-    throw response;
-  }
+  throw Exception("Greška prilikom plaćanja: ${response.body}");
+}
+
 
 }

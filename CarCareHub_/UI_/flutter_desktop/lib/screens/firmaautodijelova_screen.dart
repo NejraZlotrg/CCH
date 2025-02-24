@@ -144,7 +144,7 @@ void _onSearchPressed() async {
                     await  Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    FirmaAutodijelovaReadScreen(firmaAutodijelova: null),
+                                    FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
                               ),
                             );
                     await _loadData();
