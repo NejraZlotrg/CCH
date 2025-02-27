@@ -8,6 +8,7 @@ part of 'model.dart';
 
 Model _$ModelFromJson(Map<String, dynamic> json) => Model(
       (json['modelId'] as num).toInt(),
+      json['vidljivo'] as bool?,
       json['nazivModela'] as String?,
       json['vozilo'] == null
           ? null
@@ -26,4 +27,5 @@ Map<String, dynamic> _$ModelToJson(Model instance) => <String, dynamic>{
       'vozilo': instance.vozilo,
       'godisteId': instance.godisteId,
       'godiste': instance.godiste,
+      'vidljivo': instance.vidljivo,
     };

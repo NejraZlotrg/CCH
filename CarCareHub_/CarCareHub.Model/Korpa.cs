@@ -5,6 +5,7 @@ namespace CarCareHub.Model
 {
     public class Korpa
     {
+        public int KorpaId { get; set; }
         public int? ProizvodId { get; set; }
 
         public int? Kolicina { get; set; }

@@ -19,7 +19,7 @@ class Autoservis {
   String? mbs;
   String? slikaProfila;
   String? slikaThumb;
-
+bool? vidljivo;
   
   int? ulogaId;
   int? zaposlenikId;
@@ -28,7 +28,7 @@ class Autoservis {
   final Grad? grad;
 
 
-  Autoservis(this.autoservisId, this.naziv,this.adresa,this.vlasnikFirme, this.gradId,this.slikaThumb, this.telefon, this.password,
+  Autoservis(this.autoservisId, this.vidljivo, this.naziv,this.adresa,this.vlasnikFirme, this.gradId,this.slikaThumb, this.telefon, this.password,
   this.email, this.jib, this.mbs, this.slikaProfila, this.ulogaId, this.voziloId, this.grad,this.passwordAgain,this.username);
 
   

@@ -5,7 +5,7 @@ import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:http/http.dart' as http;
 
 class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
-  FirmaAutodijelovaProvider():super("api/firmaAutodijelova");
+  FirmaAutodijelovaProvider():super("/api/firmaAutodijelova");
 
   @override
   FirmaAutodijelova fromJson(data) {
@@ -15,8 +15,12 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
 
  Future<int?> getIdByUsernameAndPassword(String username, String password) async {
   try {
+        // Kreiranje punog URL-a koristeći funkciju buildUrl
+    String url = buildUrl('/get-id?username=$username&password=$password');
+   
+
     final response = await http.post(
-      Uri.parse('http://localhost:7209/api/firmaAutodijelova/get-id?username=$username&password=$password'),  // Tačan API endpoint
+      Uri.parse(url),  // Tačan API endpoint
       headers: {
         "Content-Type": "application/json",  // Potrebno za JSON podatke
       },

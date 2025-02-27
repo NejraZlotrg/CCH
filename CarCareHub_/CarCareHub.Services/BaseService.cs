@@ -120,14 +120,34 @@ namespace CarCareHub.Services
 
         public virtual async Task<T> GetByID(int id)
         {
+
             var temp =  await _dbContext.Set<TDb>().FindAsync(id);
             return _mapper.Map<T>(temp);
         }
 
         public virtual async Task<List<T>> GetByID_(int id)
         {
+            // Fetch the entity from the database
             var temp = await _dbContext.Set<TDb>().FindAsync(id);
-            return _mapper.Map<List<T>>(temp);
+
+            // Check if the entity is not null
+            if (temp != null)
+            {
+                // Check if the 'Vidljivo' property exists and is true
+                var propertyInfo = typeof(TDb).GetProperty("Vidljivo");
+                if (propertyInfo != null && propertyInfo.PropertyType == typeof(bool))
+                {
+                    bool isVidljivo = (bool)propertyInfo.GetValue(temp);
+                    if (isVidljivo)
+                    {
+                        // Map the entity to the desired type and return it as a list
+                        return new List<T> { _mapper.Map<T>(temp) };
+                    }
+                }
+            }
+
+            // If the entity is null or 'Vidljivo' is false, return an empty list
+            return new List<T>();
         }
 
     }

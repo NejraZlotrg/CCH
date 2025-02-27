@@ -33,7 +33,7 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.0.15 # Provjeri najnoviju verziju
   form_validation: ^3.2.0
-
+  badges: ^2.0.3
 
 
 

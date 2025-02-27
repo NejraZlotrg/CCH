@@ -6,7 +6,7 @@ import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
 class ChatAutoservisKlijentProvider extends BaseProvider<chatAutoservisKlijent> {
-  ChatAutoservisKlijentProvider() : super("api/chatAutoservisKlijent");
+  ChatAutoservisKlijentProvider() : super("/api/chatAutoservisKlijent");
 
   @override
   chatAutoservisKlijent fromJson(data) {
@@ -16,16 +16,22 @@ class ChatAutoservisKlijentProvider extends BaseProvider<chatAutoservisKlijent> 
   late HubConnection connection;
   late bool isConnected = false;
 
-  // Ovo je metoda koja pokreće SignalR konekciju i osluškuje poruke
-  Future<void> runSignalR(Function onMessageReceived) async {
-    connection = HubConnectionBuilder()
-        .withUrl('http://localhost:7209/chatAutoservisKlijent')
-        .build();
+  String getSignalRUrl(String path) {
+  return buildUrl(path);  // Koristi metodu buildUrl koju već imamo
+}
 
-    connection.onclose(({Exception? error}) {
-      print('Connection closed: $error');
-      isConnected = false;
-    });
+  // Ovo je metoda koja pokreće SignalR konekciju i osluškuje poruke
+Future<void> runSignalR(Function onMessageReceived) async {
+  String signalRUrl = getSignalRUrl('/chatAutoservisKlijent'); // Prilagođeno s BaseProvider metodom
+  connection = HubConnectionBuilder()
+      .withUrl(signalRUrl)  // Koristi URL dobiven iz BaseProvider
+      .build();
+
+  connection.onclose(({Exception? error}) {
+    print('Connection closed: $error');
+    isConnected = false;
+  });
+
 
     // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
     connection.on('ReceiveMessage', (arguments) {

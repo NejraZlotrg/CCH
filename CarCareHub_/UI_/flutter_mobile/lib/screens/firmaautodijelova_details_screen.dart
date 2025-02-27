@@ -82,8 +82,15 @@ List<BPAutodijeloviAutoservis>? temp;
   }
 
   Future<void> initForm() async {
+     if (context.read<UserProvider>().role == "Admin"){
+    gradResult = await _gradProvider.getAdmin();
+    ulogaResult = await _ulogaProvider.getAdmin();
+     }
+    else 
+    {
     gradResult = await _gradProvider.get();
     ulogaResult = await _ulogaProvider.get();
+     }
     temp = await _bpProvider.getById(widget.firmaAutodijelova?.firmaAutodijelovaID ?? 0);
 
 

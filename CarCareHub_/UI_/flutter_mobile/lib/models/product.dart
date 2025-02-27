@@ -1,7 +1,9 @@
 
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/godiste.dart';
+import 'package:flutter_mobile/models/kategorija.dart';
 import 'package:flutter_mobile/models/model.dart';
+import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'product.g.dart';
@@ -12,6 +14,8 @@ class Product {
   String? naziv;
   String? sifra;
   double? cijena;
+bool? vidljivo;
+
   int? popust;
   String? slika;
   double? cijenaSaPopustom;
@@ -20,17 +24,21 @@ class Product {
   String? opis;
   int? modelId;
   int? kategorijaId;
+  final Kategorija? kategorija;
   int? firmaAutodijelovaID;
-  final FirmaAutodijelova? firmaAutoDijelova;
+  final FirmaAutodijelova? firmaAutodijelova;
   int? proizvodjacId;
+  final Proizvodjac? proizvodjac;
   final Model? model;
   int? godisteId;
   final Godiste? godiste;
   final Vozilo? vozilo;
   int? voziloId;
+  String? stateMachine;
 
-  Product(this.proizvodId,this.voziloId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.modelId,
-  this.kategorijaId,this.vozilo, this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutoDijelova,this.model,this.modelProizvoda,this.godiste,this.godisteId);
+  Product(this.proizvodId, this.vidljivo, this.voziloId,this.naziv,this.sifra,this.cijena,this.popust,this.slika,this.cijenaSaPopustom,this.originalniBroj,this.opis,this.modelId,
+  this.kategorijaId,this.vozilo, this.firmaAutodijelovaID,this.proizvodjacId,this.firmaAutodijelova,this.model,this.modelProizvoda,this.godiste,this.godisteId,
+  this.stateMachine,this.kategorija,this.proizvodjac);
 
   factory Product.fromJson(Map<String,dynamic> json) => _$ProductFromJson(json);
 

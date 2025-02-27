@@ -8,6 +8,7 @@ part of 'narudzba.dart';
 
 Narudzba _$NarudzbaFromJson(Map<String, dynamic> json) => Narudzba(
       narudzbaId: (json['narudzbaId'] as num).toInt(),
+      vidljivo: json['vidljivo'] as bool?,
       datumNarudzbe: json['datumNarudzbe'] == null
           ? null
           : DateTime.parse(json['datumNarudzbe'] as String),
@@ -24,4 +25,5 @@ Map<String, dynamic> _$NarudzbaToJson(Narudzba instance) => <String, dynamic>{
       'datumIsporuke': instance.datumIsporuke?.toIso8601String(),
       'zavrsenaNarudzba': instance.zavrsenaNarudzba,
       'ukupnaCijenaNarudzbe': instance.ukupnaCijenaNarudzbe,
+      'vidljivo': instance.vidljivo,
     };

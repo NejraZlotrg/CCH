@@ -5,6 +5,7 @@ import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
+import 'package:flutter_mobile/screens/firmaautodijelova_read_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -29,10 +30,17 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
+    SearchResult<FirmaAutodijelova> data;
+     if (context.read<UserProvider>().role == "Admin") {
+       data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+     } else {
+       data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
+     }
     if (mounted) {
       setState(() {
         result = data;
+        
+ 
       });
     }
   }
@@ -179,7 +187,7 @@ if (context.read<UserProvider>().role == "Admin")
                   onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => FirmaAutodijelovaDetailScreen(
+                        builder: (context) => FirmaAutodijelovaReadScreen(
                           firmaAutodijelova: e,
                         ),
                       ),

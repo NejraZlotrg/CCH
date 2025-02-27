@@ -27,6 +27,7 @@ Korpa _$KorpaFromJson(Map<String, dynamic> json) => Korpa(
       zaposlenik: json['zaposlenik'] == null
           ? null
           : Zaposlenik.fromJson(json['zaposlenik'] as Map<String, dynamic>),
+      vidljivo: json['vidljivo'] as bool?,
     );
 
 Map<String, dynamic> _$KorpaToJson(Korpa instance) => <String, dynamic>{
@@ -41,4 +42,5 @@ Map<String, dynamic> _$KorpaToJson(Korpa instance) => <String, dynamic>{
       'zaposlenik': instance.zaposlenik,
       'kolicina': instance.kolicina,
       'ukupnaCijenaProizvoda': instance.ukupnaCijenaProizvoda,
+      'vidljivo': instance.vidljivo,
     };

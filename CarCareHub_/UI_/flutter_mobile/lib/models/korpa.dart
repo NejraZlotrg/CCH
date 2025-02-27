@@ -19,6 +19,8 @@ class Korpa {
   Zaposlenik? zaposlenik;
   int? kolicina;
   double? ukupnaCijenaProizvoda;
+bool? vidljivo;
+
 
   // Konstruktor
   Korpa({
@@ -32,7 +34,8 @@ class Korpa {
     this.autoservis,
     this.klijent,
     this.proizvod,
-    this.zaposlenik
+    this.zaposlenik,
+    this.vidljivo
   });
 
   // Factory metoda za deserializaciju JSON-a u Korpa objekt

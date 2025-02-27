@@ -5,8 +5,8 @@ part 'vozilo.g.dart';
 class Vozilo {
   int? voziloId;
   String? markaVozila;
-
-  Vozilo(this.voziloId, this.markaVozila);
+bool? vidljivo;
+  Vozilo(this.voziloId, this.vidljivo, this.markaVozila);
 
   
   factory Vozilo.fromJson(Map<String,dynamic> json) => _$VoziloFromJson(json);

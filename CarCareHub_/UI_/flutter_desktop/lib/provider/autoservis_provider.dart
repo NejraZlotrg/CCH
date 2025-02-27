@@ -15,11 +15,15 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
     return await getById(id); // Pozivanje funkcije getById iz osnovnog provider-a
   }
 
+
   /// Dobavljanje ID-a na osnovu korisničkog imena i lozinke
  Future<int?> getIdByUsernameAndPassword(String username, String password) async {
   try {
+       // Kreiranje punog URL-a koristeći funkciju buildUrl
+    String url = buildUrl('/get-id?username=$username&password=$password');
+  
     final response = await http.post(
-      Uri.parse('http://localhost:7209/api/Autoservis/get-id?username=$username&password=$password'),  // Tačan API endpoint
+      Uri.parse(url),  // Tačan API endpoint
       headers: {
         "Content-Type": "application/json",  // Potrebno za JSON podatke
       },

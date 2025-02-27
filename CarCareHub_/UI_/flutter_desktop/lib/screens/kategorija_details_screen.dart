@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/kategorija.dart';
-import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/provider/kategorija_provider.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';

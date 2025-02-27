@@ -12,7 +12,7 @@ import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
-import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/provider/kategorija_provider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';

@@ -9,6 +9,7 @@ part of 'narudzba_stavke.dart';
 NarudzbaStavke _$NarudzbaStavkeFromJson(Map<String, dynamic> json) =>
     NarudzbaStavke(
       (json['proizvodId'] as num?)?.toInt(),
+      json['vidljivo'] as bool?,
       (json['kolicina'] as num?)?.toInt(),
       (json['ukupnaCijenaProizvoda'] as num?)?.toDouble(),
       json['proizvod'] == null
@@ -28,4 +29,5 @@ Map<String, dynamic> _$NarudzbaStavkeToJson(NarudzbaStavke instance) =>
       'proizvod': instance.proizvod,
       'narudzba': instance.narudzba,
       'narudzbaId': instance.narudzbaId,
+      'vidljivo': instance.vidljivo,
     };

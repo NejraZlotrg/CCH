@@ -22,7 +22,7 @@ namespace CarCareHub.Services
 
         public async void KreirajNarudzbu(long userId)
         {
-            var korpa = await _dbContext.Korpas.Where(x => x.KlijentId == userId).ToListAsync(); // 10
+            var korpa = await _dbContext.Korpas.Where(x => x.KlijentId == userId).ToListAsync(); 
 
             var narudzba = new Narudzba();
 
@@ -195,7 +195,6 @@ namespace CarCareHub.Services
 
             return _mapper.Map<List<Model.Korpa>>(result);
         }
-
 
     }
 

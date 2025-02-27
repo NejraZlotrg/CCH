@@ -67,6 +67,17 @@ class _ChatMessagesScreenState
     }
   }
 
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+
+    if (isConnected) {
+      connection.stop(); // Zaustavi SignalR konekciju
+    }
+    
+    super.dispose();
+  }
   // Fetch messages for the selected chat
   Future<void> fetchMessages() async {
     try {

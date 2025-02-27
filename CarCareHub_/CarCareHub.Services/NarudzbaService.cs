@@ -35,6 +35,7 @@ namespace CarCareHub.Services
             var narudzba = new CarCareHub.Services.Database.Narudzba();
             narudzba.DatumNarudzbe = DateTime.Now;
             narudzba.DatumIsporuke = DateTime.Now.AddDays(2);
+            narudzba.Vidljivo = true;
             await _dbContext.AddAsync(narudzba);
 
             await _dbContext.SaveChangesAsync();

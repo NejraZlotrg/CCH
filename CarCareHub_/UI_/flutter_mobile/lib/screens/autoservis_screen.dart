@@ -8,6 +8,7 @@ import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_details_screen.dart';
+import 'package:flutter_mobile/screens/autoservis_read_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -265,7 +266,7 @@ Widget _buildSearch() {
               // Otvorite detalje i pričekajte povratak
               await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => AutoservisDetailsScreen(autoservis: e),
+                  builder: (context) => AutoservisReadScreen(autoservis: e),
                 ),
               );
               // Nakon povratka, osvježite podatke

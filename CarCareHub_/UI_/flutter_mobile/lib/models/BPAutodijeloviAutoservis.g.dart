@@ -10,6 +10,7 @@ BPAutodijeloviAutoservis _$BPAutodijeloviAutoservisFromJson(
         Map<String, dynamic> json) =>
     BPAutodijeloviAutoservis(
       (json['bpAutodijeloviAutoservisId'] as num?)?.toInt(),
+      json['vidljivo'] as bool?,
       json['firmaAutodijelova'] == null
           ? null
           : FirmaAutodijelova.fromJson(
@@ -28,5 +29,6 @@ Map<String, dynamic> _$BPAutodijeloviAutoservisToJson(
       'firmaAutodijelova': instance.firmaAutodijelova,
       'autoservis': instance.autoservis,
       'firmaAutodijelovaId': instance.firmaAutodijelovaId,
+      'vidljivo': instance.vidljivo,
       'autoservisId': instance.autoservisId,
     };

@@ -10,7 +10,7 @@ import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
-import 'package:flutter_mobile/provider/kategorija.dart';
+import 'package:flutter_mobile/provider/kategorija_provider.dart';
 import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';

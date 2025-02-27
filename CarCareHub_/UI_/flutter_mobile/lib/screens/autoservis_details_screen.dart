@@ -78,7 +78,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'password': widget.autoservis?.password ?? '',
       'passwordAgain': widget.autoservis?.passwordAgain ?? '',
       "slikaProfila": widget.autoservis?.slikaProfila ?? '',
-      "slikaThumb": widget.autoservis?.slikaThumb ?? ''
+      "slikaThumb": widget.autoservis?.slikaThumb ?? '',
+      "vidljivo": widget.autoservis?.vidljivo
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
@@ -87,7 +88,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
 
-    _gradProvider = context.read<GradProvider>();
+
 
     initForm();
     fetchUsluge();
@@ -97,7 +98,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   }
 
   Future initForm() async {
-    gradResult = await _gradProvider.get();
+     if (context.read<UserProvider>().role == "Admin") {
+       gradResult = await _gradProvider.getAdmin();
+     } else {
+       gradResult = await _gradProvider.get();
+     }
     if (widget.autoservis != null && widget.autoservis!.slikaProfila != null) {
       _imageFile =
           await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);
@@ -135,7 +140,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
         });
       }
     }
@@ -153,25 +157,23 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
         });
       }
     }
   }
 
   Future<void> fetchGrad() async {
-    try {
-      grad = await _gradProvider.getById(widget.autoservis?.gradId ?? 0);
+   
+      grad = await _gradProvider.getById(widget.autoservis!.gradId ?? 0);
+      if (grad.isNotEmpty && grad.first.vidljivo == false) {
+      grad = []; // Postavi na praznu listu ako grad nije vidljiv
+      _initialValues['gradId']; // Resetuj vrednost za dropdown
+  
       if (mounted) {
         setState(() {});
       }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
-        });
-      }
     }
+   
   }
 
   @override
@@ -192,38 +194,41 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     const SizedBox(height: 20),
                     _buildForm(),
 
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: usluge.isNotEmpty
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white, // Bela pozadina
-                                border: Border.all(
-                                    color: Colors.grey, width: 1), // Sivi okvir
-                                borderRadius: BorderRadius.circular(
-                                    10), // Zaobljeni uglovi
-                              ),
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text("Naziv usluge")),
-                                  DataColumn(label: Text("Cijena")),
-                                  DataColumn(label: Text("Opis")),
-                                ],
-                                rows: usluge.map((usluga) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(usluga.nazivUsluge ?? "")),
-                                      DataCell(Text(
-                                          usluga.cijena?.toString() ?? "")),
-                                      DataCell(Text(usluga.opis ?? "")),
-                                    ],
-                                  );
-                                }).toList(),
-                              ),
-                            )
-                          : const Text(
-                              "Nema dostupnih usluga za ovaj autoservis."),
-                    ),
+                  Padding(
+  padding: const EdgeInsets.all(10),
+  child: usluge.isNotEmpty
+      ? Container(
+          decoration: BoxDecoration(
+            color: Colors.white, // Bela pozadina
+            border: Border.all(
+                color: Colors.grey, width: 1), // Sivi okvir
+            borderRadius: BorderRadius.circular(
+                10), // Zaobljeni uglovi
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+            child: DataTable(
+              columns: const [
+                DataColumn(label: Text("Naziv usluge")),
+                DataColumn(label: Text("Cijena")),
+                DataColumn(label: Text("Opis")),
+              ],
+              rows: usluge.map((usluga) {
+                return DataRow(
+                  cells: [
+                    DataCell(Text(usluga.nazivUsluge ?? "")),
+                    DataCell(Text(
+                        usluga.cijena?.toString() ?? "")),
+                    DataCell(Text(usluga.opis ?? "")),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        )
+      : const Text(
+          "Nema dostupnih usluga za ovaj autoservis."),
+),
                     // Dugme za dodavanje usluge
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
@@ -248,84 +253,41 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         ),
                       ),
                     // Prikaz zaposlenika
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: zaposlenik.isNotEmpty
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white, // Bela pozadina
-                                border: Border.all(
-                                    color: Colors.grey, width: 1), // Sivi okvir
-                                borderRadius: BorderRadius.circular(
-                                    10), // Zaobljeni uglovi
-                              ),
-                              child: Column(
-                                children: [
-                                  DataTable(
-                                    columns: const [
-                                      DataColumn(label: Text("Ime")),
-                                      DataColumn(label: Text("Prezime")),
-                                      DataColumn(label: Text("Email")),
-                                      DataColumn(label: Text("Broj telefona")),
-                                      DataColumn(
-                                          label:
-                                              Text("")), // Nova kolona za dugme
-                                    ],
-                                    rows: zaposlenik.map((zap) {
-                                      return DataRow(
-                                        cells: [
-                                          DataCell(Text(zap.ime ?? "")),
-                                          DataCell(Text(zap.prezime ?? "")),
-                                          DataCell(Text(zap.email ?? "")),
-                                          DataCell(Text(
-                                              zap.brojTelefona?.toString() ??
-                                                  "")),
-                                          DataCell(
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                final klijentId = context
-                                                    .read<UserProvider>()
-                                                    .userId; // Dohvati ID logiranog klijenta
-
-                                                final zaposleniId = zap
-                                                    .zaposlenikId!; // Dohvati ID zaposlenika
-
-                                                // Prikaži popup za unos poruke
-                                                _showSendMessageDialog2(context,
-                                                    klijentId, zaposleniId);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                              ),
-                                              child: const Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(Icons.chat,
-                                                      size: 20), // Ikona chata
-                                                  SizedBox(
-                                                      width:
-                                                          5), // Razmak između ikone i teksta
-                                                  Text("Pošaljite poruku"),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : const Text(
-                              "Nema dostupnih zaposlenika za ovaj autoservis."),
-                    ),
+                   Padding(
+  padding: const EdgeInsets.all(10),
+  child: zaposlenik.isNotEmpty
+      ? Container(
+          decoration: BoxDecoration(
+            color: Colors.white, // Bela pozadina
+            border: Border.all(
+                color: Colors.grey, width: 1), // Sivi okvir
+            borderRadius: BorderRadius.circular(
+                10), // Zaobljeni uglovi
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+            child: DataTable(
+              columns: const [
+                DataColumn(label: Text("Ime")),
+                DataColumn(label: Text("Prezime")),
+                DataColumn(label: Text("Email")),
+                DataColumn(label: Text("Broj telefona")),
+              ],
+              rows: zaposlenik.map((zap) {
+                return DataRow(
+                  cells: [
+                    DataCell(Text(zap.ime ?? "")),
+                    DataCell(Text(zap.prezime ?? "")),
+                    DataCell(Text(zap.email ?? "")),
+                    DataCell(Text("0${zap.brojTelefona?.toString() ?? ""}")),                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        )
+      : const Text(
+          "Nema dostupnih zaposlenika za ovaj autoservis."),
+),
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==

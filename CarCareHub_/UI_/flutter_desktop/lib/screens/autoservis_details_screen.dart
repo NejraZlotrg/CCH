@@ -78,7 +78,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'password': widget.autoservis?.password ?? '',
       'passwordAgain': widget.autoservis?.passwordAgain ?? '',
       "slikaProfila": widget.autoservis?.slikaProfila ?? '',
-      "slikaThumb": widget.autoservis?.slikaThumb ?? ''
+      "slikaThumb": widget.autoservis?.slikaThumb ?? '',
+      "vidljivo": widget.autoservis?.vidljivo
     };
 
     _autoservisProvider = context.read<AutoservisProvider>();
@@ -139,7 +140,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
         });
       }
     }
@@ -157,7 +157,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          // Možete dodati logiku za rukovanje greškom ovdje, ako je potrebno.
         });
       }
     }

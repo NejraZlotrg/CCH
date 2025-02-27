@@ -11,7 +11,7 @@ class BPAutodijeloviAutoservisScreen extends StatefulWidget {
   final FirmaAutodijelova? firmaAutodijelova; // Primanje objekta FirmaAutodijelova
 
   const BPAutodijeloviAutoservisScreen({super.key, this.firmaAutodijelova});
-
+  
   @override
   State<BPAutodijeloviAutoservisScreen> createState() =>
       _BPAutodijeloviAutoservisScreenState();
@@ -54,82 +54,84 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title: "Baza autoservisa",
-      child: Column(
-        children: [
-          _buildSearch(),  // Ako želiš da zadržiš dugme za pretragu, zadrži ovo
-          _buildDataListView(),
-        ],
-      ),
+Widget build(BuildContext context) {
+  return MasterScreenWidget(
+    title: "Baza autoservisa",
+    child: Column(
+      children: [
+        _buildSearch(), // Search bar at the top
+        _buildDataListView(), // List of items below
+      ],
+    ),
+  );
+}
+
+Widget _buildSearch() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      children: [
+        Expanded(
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Pretraži...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onChanged: (value) {
+              // Add search logic here if needed
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        ElevatedButton(
+          onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
+            await _fetchData();
+          },
+          child: const Text('Pretraga'),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildDataListView() {
+  if (isLoading) {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  if (result == null || result!.isEmpty) {
+    return const Center(
+      child: Text("Nema podataka za prikaz."),
     );
   }
 
-  Widget _buildSearch() {
-    return Padding(
+  return Expanded(
+    child: ListView.builder(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              setState(() {
-                isLoading = true;
-              });
-
-              await _fetchData();
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Pretraga'),
-              ],
+      itemCount: result!.length,
+      itemBuilder: (context, index) {
+        final item = result![index];
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          elevation: 2,
+          child: ListTile(
+            title: Text(
+              item.autoservis?.naziv ?? "Nema naziva autoservisa",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              item.firmaAutodijelova?.nazivFirme ?? "Nema naziva firme autodijelova",
             ),
           ),
-          const SizedBox(width: 10),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDataListView() {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return Expanded(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv firme autodijelova',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Naziv autoservisa',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
-          rows: result?.toList()
-                .map(
-                  (BPAutodijeloviAutoservis e) => DataRow(
-                    cells: [
-                      DataCell(Text(e.autoservis?.naziv ?? "")),
-                      DataCell(Text(e.firmaAutodijelova?.nazivFirme ?? "")),
-                    ],
-                  ),
-                )
-                .toList() ?? [],
-        ),
-      ),
-    );
-  }
+        );
+      },
+    ),
+  );
+}
 }

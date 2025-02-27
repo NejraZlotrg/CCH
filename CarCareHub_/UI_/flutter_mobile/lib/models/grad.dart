@@ -8,9 +8,10 @@ class Grad {
   String? nazivGrada;
   final int? drzavaId;
   final Drzave? drzava;
+bool? vidljivo;
 
 
-  Grad(this.gradId, this.nazivGrada, this.drzavaId, this.drzava);
+  Grad(this.gradId, this.nazivGrada, this.vidljivo, this.drzavaId, this.drzava);
 
   
   factory Grad.fromJson(Map<String,dynamic> json) => _$GradFromJson(json);
