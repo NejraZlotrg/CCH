@@ -67,6 +67,23 @@ class ProductProvider extends BaseProvider<Product> {
     }
   }
 
+  // Dodajemo custom funkciju za brisanje draft proizvoda
+  Future<Product> deleteDraftProduct(int id) async {
+    String url = "${BaseProvider.baseURL}$endpoint/DeleteDraftProizvod?id=$id"; 
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+
+    http.Response response = await http.delete(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+      throw Exception("Greška pri brisanju draft proizvoda (status: ${response.statusCode})");
+    }
+  }
+
+
   @override
   Product fromJson(data) {
     return Product.fromJson(data);

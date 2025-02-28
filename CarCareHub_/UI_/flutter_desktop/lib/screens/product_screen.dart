@@ -612,7 +612,7 @@ Widget _buildDataListView() {
                         child: e.slika != null && e.slika!.isNotEmpty
                             ? Image.memory(
                                 base64Decode(e.slika!),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 width: double.infinity,
                               )
                             : const Center(child: Text("Nema slike")),

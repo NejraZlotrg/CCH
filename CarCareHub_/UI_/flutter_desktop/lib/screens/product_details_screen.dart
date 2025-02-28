@@ -34,10 +34,8 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   late ProductProvider _productProvider;
-  late KorpaProvider _korpaProvider;
 
   bool isLoading = true;
-  int _quantity = 1;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   late ModelProvider _modelProvider;
@@ -56,7 +54,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     _productProvider = context.read<ProductProvider>();
-    _korpaProvider = context.read<KorpaProvider>();
 
     _modelProvider = context.read<ModelProvider>();
     _kategorijaProvider = context.read<KategorijaProvider>();
@@ -133,79 +130,82 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                         children: [
 
                           // Dugme za spašavanje
-                          ElevatedButton(
-                            onPressed: () async {
-                                  if (!(_formKey.currentState?.validate() ?? false)) {
+                         ElevatedButton(
+  onPressed: () async {
+    // Check if the form is valid
+    if (!(_formKey.currentState?.validate() ?? false)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Molimo popunite obavezna polja."),
           duration: Duration(seconds: 2),
         ),
       );
-      return; // Zaustavi obradu ako validacija nije prošla
+      return; // Stop processing if validation fails
     }
-                              if (_formKey.currentState?.saveAndValidate() ??
-                                  false) {
-                                var request =
-                                    Map.from(_formKey.currentState!.value);
 
-                                // Dodaj sliku u request
-                                if (_imageFile != null) {
-                                  final imageBytes =
-                                      await _imageFile!.readAsBytes();
-                                  request['slika'] = base64Encode(imageBytes);
-                                  request['slikaThumb'] =
-                                      base64Encode(imageBytes);
-                                } else {
-  // Ako nije poslana, učitaj iz assets-a
-  const assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
-  var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = imageFile.buffer.asUint8List();
-  request['slika'] = base64Encode(imageBytes);
-}
-  request['vidljivo'] = true;
+    // Check the stateMachine value
+    if (widget.product?.stateMachine == "active") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Proizvod mora biti sakriven."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return; // Stop processing if stateMachine is "active"
+    }
 
+    // Proceed only if stateMachine is "draft"
+      if (_formKey.currentState?.saveAndValidate() ?? false) {
+        var request = Map.from(_formKey.currentState!.value);
 
-                                try {
-                                  if (widget.product == null) {
-                                    await _productProvider.insert(request);
-                                  } else {
-                                    await _productProvider.update(
-                                      widget.product!.proizvodId!,
-                                      request,
-                                    );
-                                  }
-                                  Navigator.pop(context);
-                                } on Exception catch (e) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
-                                      title: const Text("Greška"),
-                                      content: Text(e.toString()),
-                                      actions: const [
-                                      
-                                        
-                                      ],
-                                    ),
-                                  );
-                                }
-                              }
+        // Add image to the request
+        if (_imageFile != null) {
+          final imageBytes = await _imageFile!.readAsBytes();
+          request['slika'] = base64Encode(imageBytes);
+          request['slikaThumb'] = base64Encode(imageBytes);
+        } else {
+          // If no image is provided, load from assets
+          const assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
+          var imageFile = await rootBundle.load(assetImagePath);
+          final imageBytes = imageFile.buffer.asUint8List();
+          request['slika'] = base64Encode(imageBytes);
+        }
 
+        request['vidljivo'] = true;
 
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              textStyle: const TextStyle(fontSize: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text("Spasi"),
-                          ),
+        try {
+          if (widget.product == null) {
+            await _productProvider.insert(request);
+          } else {
+            await _productProvider.update(
+              widget.product!.proizvodId!,
+              request,
+            );
+          }
+          Navigator.pop(context);
+        } on Exception catch (e) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text("Greška"),
+              content: Text(e.toString()),
+              actions: const [],
+            ),
+          );
+        }
+      }
+  },
+  style: ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.red,
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    textStyle: const TextStyle(fontSize: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+  child: const Text("Spasi"),
+),
                         ],
                       ),
                     ),
@@ -266,69 +266,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
           const SizedBox(height: 20),
           ..._buildFormFields(), // Adding the form fields here
           const SizedBox(height: 10),
- 
-          // Quantity selector
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () {
-                  setState(() {
-                    if (_quantity >= 1) _quantity--;
-                  });
-                },
-              ),
-              Text('$_quantity', style: const TextStyle(fontSize: 20)),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    _quantity++;
-                  });
-                },
-              ),
-              const SizedBox(width: 10),
-              // Add to cart button
-ElevatedButton(
-  onPressed: () async {
-    if (widget.product?.proizvodId != null) {
-      final int productId = widget.product!.proizvodId!;
 
-      // Formiraj zahtjev
-      var request = Map.from(_formKey.currentState!.value);
-      request['proizvodId'] = productId;
-      request['kolicina'] = _quantity;
-
-      try {
-        await _korpaProvider.insert(request);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Proizvod dodan u korpu.")),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Greška: ${e.toString()}")),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Proizvod nije validan.")),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.white,
-    backgroundColor: Colors.red,
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    textStyle: const TextStyle(fontSize: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-  ),
-  child: const Text("Dodaj u korpu"),
-),
-
-            ],
-          ),
         ],
       ),
     );

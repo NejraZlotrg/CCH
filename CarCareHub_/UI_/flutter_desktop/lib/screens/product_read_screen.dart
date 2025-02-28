@@ -39,7 +39,6 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
 
   bool isLoading = true;
   int _quantity = 1;
-  File? _imageFile;
   late ModelProvider _modelProvider;
   SearchResult<Model>? modelResult;
   late KategorijaProvider _kategorijaProvider;
@@ -81,21 +80,11 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
     // Check if product exists and slika is not null
     if (widget.product != null && widget.product!.slika != null) {
       // Use the null assertion operator (!) to treat slika as non-null
-      _imageFile = await _getImageFileFromBase64(widget.product!.slika!);
     }
 
     setState(() {
       isLoading = false;
     });
-  }
-
-// Function to convert base64 image to File
-  Future<File> _getImageFileFromBase64(String base64String) async {
-    final bytes = base64Decode(base64String);
-    final tempDir = await Directory.systemTemp.createTemp();
-    final file = File('${tempDir.path}/image.png');
-    await file.writeAsBytes(bytes);
-    return file;
   }
 
   Future<void> _fetchInitialData() async {
@@ -163,56 +152,131 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
                   ),
                 ),
 
-                // Quantity selector
-
-                // Dugme "Uredi" na dnu, vidljivo samo adminima
-                Consumer<UserProvider>(
-                  builder: (context, userProvider, child) {
-                    if (userProvider.role == "Admin") {
-                      return Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: double.infinity, // Dugme preko cele širine
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Navigacija na ekran za uređivanje
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProductDetailScreen(
-                                        product: widget.product!,
-                                      ),
-                                    ),
-                                  ).then((_) async {
-                                    await _fetchInitialData();
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 245, 19, 3),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15), // Veće dugme
-                                ),
-                                child: const Text(
-                                  "Uredi",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
+                // Dugme "Uredi" i "Izbriši proizvod" na dnu, vidljivo samo adminima
+Consumer<UserProvider>(
+  builder: (context, userProvider, child) {
+    if (userProvider.role == "Admin" || (userProvider.role == "Firma autodijelova" && userProvider.userId == widget.product?.firmaAutodijelovaID)) {
+      return Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            // Dugme "Uredi"
+            SizedBox(
+              width: double.infinity, // Dugme preko cele širine
+              child: ElevatedButton(
+                onPressed: () {
+                  // Navigacija na ekran za uređivanje
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailScreen(
+                        product: widget.product!,
+                      ),
+                    ),
+                  ).then((_) async {
+                    await _fetchInitialData();
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 245, 19, 3),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15), // Veće dugme
                 ),
+                child: const Text(
+                  "Uredi",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10), // Razmak između dugmadi
+            // Dugme "Izbriši proizvod"
+           SizedBox(
+  width: double.infinity, // Dugme preko cele širine
+  child: ElevatedButton.icon(
+    onPressed: () async {
+      // Check the stateMachine value
+      if (widget.product?.stateMachine == "active") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Proizvod mora biti sakriven."),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return; // Stop processing if stateMachine is "active"
+      }
+
+      // Potvrda brisanja
+      bool confirmDelete = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Potvrdite brisanje"),
+          content: const Text("Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Otkaži"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text("Izbriši"),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmDelete == true) {
+        try {
+          // Poziv metode za brisanje draft proizvoda
+          await Provider.of<ProductProvider>(context, listen: false)
+              .deleteDraftProduct(widget.product!.proizvodId!);
+
+          // Prikaži poruku o uspješnom brisanju
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Proizvod je uspješno izbrisan."),
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Vrati se na prethodni ekran
+          Navigator.pop(context);
+        } catch (e) {
+          // Prikaži poruku o grešci
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Greška pri brisanju proizvoda: $e"),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.red, // Crvena boja za dugme brisanja
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 15), // Veće dugme
+    ),
+    icon: const Icon(Icons.delete), // Ikona za smeće
+    label: const Text(
+      "Izbriši proizvod",
+      style: TextStyle(fontSize: 18),
+    ),
+  ),
+),
+          ],
+        ),
+      );
+    } else {
+      return const SizedBox();
+    }
+  },
+),
               ],
             ),
     );
@@ -230,44 +294,20 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
             child: Column(
               children: [
                 // Image Container
-                Container(
-                  width: 300, // Povećana širina slike
-                  height: 300, // Povećana visina slike
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 5,
+                 SizedBox(
+                      width: 300,
+                      height: 300,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: widget.product!.slika != null
+                            ? Image.memory(
+                                base64Decode(widget.product!.slika!),
+                                fit: BoxFit.contain,
+                                width: double.infinity,
+                              )
+                            : const Center(child: Text("Nema slike")),
                       ),
-                    ],
-                  ),
-                  child: _imageFile != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.file(
-                            _imageFile!,
-                            width: 300,
-                            height: 300,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.camera_alt,
-                                size: 70, color: Colors.black), // Veća ikona
-                            SizedBox(height: 15),
-                            Text('Nema slike',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18)), // Veći tekst
-                          ],
-                        ),
-                ),
+                    ),
                 const SizedBox(
                   height: 10,
                 ),
