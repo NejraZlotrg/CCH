@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/korpa.dart';
@@ -21,6 +23,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
   List<Korpa> korpaList = [];
   late int userId;
+  late double ukupnaCijena;
 
   @override
   void didChangeDependencies() {
@@ -128,46 +131,191 @@ if(_userProvider.role =='Zaposlenik')
     );
   }
 
-  Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(
-            color: Colors.black,
-            width: 1.0,
-          ),
+Widget _buildDataListView() {
+  // Calculate total price based on updated quantity
+  ukupnaCijena = korpaList.fold(0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
+
+  return SingleChildScrollView(
+    child: Column(
+      mainAxisSize: MainAxisSize.min, // Let the Column shrink to fit its children
+      children: [
+        ListView.builder(
+          shrinkWrap: true, // Let the ListView take only as much height as needed
+          physics: const NeverScrollableScrollPhysics(), // Disable inner scrolling if the parent scrolls
+          padding: const EdgeInsets.all(8.0),
+          itemCount: korpaList.length,
+          itemBuilder: (context, index) {
+            final e = korpaList[index];
+            return Column(
+              children: [
+                if (index == 0) _buildKupacRow(e),
+                Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 140.0),
+                  elevation: 4.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: e.proizvod?.slika != null && e.proizvod!.slika!.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Image.memory(
+                                    base64Decode(e.proizvod!.slika!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : const Center(
+                                  child: Icon(Icons.image, size: 20, color: Colors.grey),
+                                ),
+                        ),
+                        const SizedBox(width: 16.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                e.proizvod?.naziv ?? 'Nema naziva',
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8.0),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove),
+                                    onPressed: () {
+                                      if (e.kolicina! > 1) {
+                                        _updateQuantity(e, -1);
+                                      }
+                                    },
+                                  ),
+                                  Text(
+                                    e.kolicina.toString(),
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () {
+                                      _updateQuantity(e, 1);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text(
+                                'Cijena: ${e.ukupnaCijenaProizvoda?.toStringAsFixed(2) ?? '0.00'} KM',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Trashcan Icon on the right
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline),
+                          iconSize: 40,
+                          onPressed: () {
+                            // Do nothing on press
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
-        child: SingleChildScrollView(
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Proizvod ID')),
-              DataColumn(label: Text('Klijent ID')),
-              DataColumn(label: Text('Zaposlenik ID')),
-              DataColumn(label: Text('Autoservis ID')),
-              DataColumn(label: Text('Količina')),
-              DataColumn(label: Text('Ukupna cijena')),
+        // Add 100px padding on left and right for the "Ukupna cijena" row
+        Padding(
+          padding: const EdgeInsets.only(left: 140.0, right: 140.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Ukupna cijena',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '${ukupnaCijena.toStringAsFixed(2)} KM',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
-            rows: korpaList.map((Korpa e) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(e.proizvodId?.toString() ?? "")),
-                  DataCell(Text(e.klijentId?.toString() ?? "")),
-                  DataCell(Text(e.zaposlenikId?.toString() ?? "")),
-                  DataCell(Text(e.autoservisId?.toString() ?? "")),
-                  DataCell(Text(e.kolicina?.toString() ?? "")),
-                  DataCell(Text(e.ukupnaCijenaProizvoda?.toStringAsFixed(2) ?? "")),
-                ],
-              );
-            }).toList(),
           ),
         ),
+      ],
+    ),
+  );
+}
+
+void _updateQuantity(Korpa e, int change) {
+  setState(() {
+    // Ensure kolicina is not null and doesn't go below 1
+    if (e.kolicina != null && e.kolicina! + change >= 1) {
+      e.kolicina = e.kolicina! + change; // Add change to kolicina
+
+      // Check if discount is valid and apply accordingly
+      if (e.proizvod?.popust != null && e.proizvod!.popust! > 0) {
+        // Use price with discount if available
+        e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijenaSaPopustom ?? 0.0);
+      } else {
+        // Use regular price if no discount or popust is 0
+        e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijena ?? 0.0);
+      }
+
+      // Recalculate total price for the entire cart
+      ukupnaCijena = korpaList.fold(0.0, (sum, item) => sum + (item.ukupnaCijenaProizvoda ?? 0.0));
+    }
+  });
+}
+
+
+ Widget _buildKupacRow(Korpa e) {
+    // Prikazujemo samo onaj ID koji nije null
+    String kupacLabel = 'Kupac: ';
+    if (e.klijentId != null) {
+      kupacLabel += "${e.klijent!.ime!} ${e.klijent!.prezime}";
+    } else if (e.zaposlenikId != null) {
+      kupacLabel += "${e.zaposlenik!.ime!} ${e.zaposlenik!.prezime}";
+    } else if (e.autoservisId != null) {
+      kupacLabel += e.autoservis!.naziv!;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            kupacLabel,
+            style: const TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
+
 
   Widget _buildFinishOrderButton() {
     return Padding(
