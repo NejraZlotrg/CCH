@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/narudzba.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
-//import 'package:flutter_mobile/screens/product_details_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
@@ -17,44 +16,57 @@ class NarudzbaScreen extends StatefulWidget {
 class _NarudzbaScreenState extends State<NarudzbaScreen> {
   late NarudzbaProvider _narudzbaProvider;
   SearchResult<Narudzba>? result;
- // final TextEditingController _nazivController = TextEditingController();
- // final TextEditingController _modelController= TextEditingController();
+  bool isLoading = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _narudzbaProvider = context.read<NarudzbaProvider>();
-    
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      var data = await _narudzbaProvider.get();
+      setState(() {
+        result = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Greška prilikom učitavanja narudžbi: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Narudzbe",
-      child: Column(
-        children: [
-         
-          _buildDataListView(),
-        ],
-      ),
+      title: "Narudžbe",
+      child: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildDataListView(),
+                ],
+              ),
+            ),
     );
   }
 
-  
   Widget _buildDataListView() {
-    return Expanded(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: DataTable(
+          columnSpacing: 20,
           columns: const [
             DataColumn(
               label: Text(
-                'Narudzba ID',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Datum narudzbe',
+                'Datum narudžbe',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
@@ -66,31 +78,36 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
             ),
             DataColumn(
               label: Text(
-                'Zavrsena narudzba',
+                'Ukupna cijena narudžbe',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ),
-           
-           
+            DataColumn(
+              label: Text(
+                'Završena',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
           ],
           rows: result?.result
                   .map(
                     (Narudzba e) => DataRow(
-                     /* onSelectChanged: (selected) {
-                        if(selected == true) {
-                          print('selected: ${e.narudzbaId}');
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context)=> ProductDetailScreen(product: e,) // poziv na drugi screen
-                          ), );
-                        }
-
-                      },*/
                       cells: [
-                        DataCell(Text(e.zavrsenaNarudzba.toString())),
-                        DataCell(Text(e.datumIsporuke.toString())),
-                        DataCell(Text(e.datumIsporuke.toString())),
-                        
-                        DataCell(Text(e.zavrsenaNarudzba.toString())),
+                        DataCell(Text(e.datumNarudzbe != null
+                            ? formatDate(e.datumNarudzbe!)
+                            : 'N/A')),
+                        DataCell(Text(e.datumIsporuke != null
+                            ? formatDate(e.datumIsporuke!)
+                            : 'N/A')),
+                        DataCell(Text(e.ukupnaCijenaNarudzbe != null
+                            ? '${e.ukupnaCijenaNarudzbe!.toStringAsFixed(2)} KM'
+                            : 'N/A')),
+                        DataCell(
+                          Icon(
+                            e.zavrsenaNarudzba ? Icons.check_circle : Icons.cancel,
+                            color: e.zavrsenaNarudzba ? Colors.green : Colors.red,
+                          ),
+                        ),
                       ],
                     ),
                   )
@@ -99,5 +116,9 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
         ),
       ),
     );
+  }
+
+  String formatDate(DateTime date) {
+    return "${date.day}.${date.month}.${date.year}";
   }
 }

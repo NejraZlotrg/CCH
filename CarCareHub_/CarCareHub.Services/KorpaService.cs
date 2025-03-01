@@ -197,6 +197,75 @@ namespace CarCareHub.Services
             return _mapper.Map<List<Model.Korpa>>(result);
         }
 
+        public virtual async Task<bool> DeleteProizvodIzKorpe(int? korpaId, int? proizvodId)
+        {
+            // Pronađi stavku u korpi koja ima dati proizvodId
+            var korpa = await _dbContext.Set<CarCareHub.Services.Database.Korpa>()
+                                        .FirstOrDefaultAsync(k => k.KorpaId == korpaId && k.ProizvodId == proizvodId);
+
+            if (korpa == null)
+                throw new Exception("Proizvod ne postoji u korpi");
+
+            // Obriši korpu (jer ona predstavlja vezu između proizvoda i korisnika)
+            _dbContext.Set<CarCareHub.Services.Database.Korpa>().Remove(korpa);
+            await _dbContext.SaveChangesAsync();
+
+            return true; // Vraća true ako je uspešno obrisano
+        }
+        public virtual async Task<bool> OčistiKorpu(int? klijentId, int? zaposlenikId, int? autoservisId)
+        {
+            IQueryable<CarCareHub.Services.Database.Korpa> query = _dbContext.Set<CarCareHub.Services.Database.Korpa>();
+
+            if (klijentId.HasValue)
+            {
+                query = query.Where(k => k.KlijentId == klijentId);
+            }
+            else if (zaposlenikId.HasValue)
+            {
+                query = query.Where(k => k.ZaposlenikId == zaposlenikId);
+            }
+            else if (autoservisId.HasValue)
+            {
+                query = query.Where(k => k.AutoservisId == autoservisId);
+            }
+            else
+            {
+                return false; // Ako nijedan parametar nije poslan, nema šta da brišemo
+            }
+
+            var korpaItems = await query.ToListAsync();
+
+            if (!korpaItems.Any())
+                return false; // Ako nema stavki za brisanje, vrati false
+
+            _dbContext.Set<CarCareHub.Services.Database.Korpa>().RemoveRange(korpaItems);
+            await _dbContext.SaveChangesAsync();
+
+            return true;
+        }
+
+
+
+        public async Task<bool> UpdateKolicina(int? korpaId, int? proizvodId, int novaKolicina)
+        {
+            var korpaStavka = await _dbContext.Korpas
+                .FirstOrDefaultAsync(x => x.KorpaId == korpaId && x.ProizvodId == proizvodId);
+
+            if (korpaStavka == null)
+            {
+                throw new Exception("Stavka u korpi nije pronađena.");
+            }
+
+          
+            korpaStavka.Kolicina = novaKolicina;
+            korpaStavka.UkupnaCijenaProizvoda= korpaStavka?.Proizvod?.CijenaSaPopustom != null ? korpaStavka.Proizvod.CijenaSaPopustom * novaKolicina : korpaStavka?.Proizvod?.Cijena * novaKolicina;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+
+
     }
 
 }

@@ -36,20 +36,34 @@ namespace CarCareHub.Services
             narudzba.DatumNarudzbe = DateTime.Now;
             narudzba.DatumIsporuke = DateTime.Now.AddDays(2);
             narudzba.Vidljivo = true;
+            narudzba.UkupnaCijenaNarudzbe = 0;
             await _dbContext.AddAsync(narudzba);
 
+
             await _dbContext.SaveChangesAsync();
+            decimal ukupnaCijena = 0;
 
             foreach (var item in korpe)
             {
-                var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
+                var proizvod = await _dbContext.Proizvods.FindAsync(item.ProizvodId);
+                if (proizvod != null)
                 {
-                    ProizvodId = item.ProizvodId,
-                    NarudzbaId = narudzba.NarudzbaId,
-                   Kolicina = item.Kolicina.HasValue ? item.Kolicina.Value : 1
-                };
+                    decimal cijenaProizvoda = proizvod.Cijena ?? 0;  // Ako je null, postavi na 0
+                    int kolicina = item.Kolicina ?? 1;  // Ako je null, podrazumijevana količina je 1
+                    decimal ukupnaStavka = cijenaProizvoda * kolicina;
 
-                narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
+                    ukupnaCijena += ukupnaStavka; // Dodaj u ukupnu cijenu
+
+                    var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
+                    {
+                        ProizvodId = item.ProizvodId,
+                        NarudzbaId = narudzba.NarudzbaId,
+                        Kolicina = kolicina,
+                      
+                    };
+
+                    narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
+                }
             }
             // Datum kada je narudžba kreirana (univerzalno vreme)
             // Datum kada je narudžba kreirana (univerzalno vreme)
@@ -58,19 +72,20 @@ namespace CarCareHub.Services
             // Datum kada je predviđena isporuka (lokalno vreme sa predviđenim rokom isporuke za 7 dana)
             insert.DatumIsporuke = DateTime.Now.AddDays(7);  // Čuva se kao DateTime, lokalno vreme
 
-            // Ako treba da pošaljete ili prikažete podatke u specifičnom formatu, koristite:
-            //string? datumNarudzbeStr = insert.DatumNarudzbe.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-            //string datumIsporukeStr = insert.DatumIsporuke.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                // Ako treba da pošaljete ili prikažete podatke u specifičnom formatu, koristite:
+                //string? datumNarudzbeStr = insert.DatumNarudzbe.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                //string datumIsporukeStr = insert.DatumIsporuke.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
 
+                narudzba.UkupnaCijenaNarudzbe = ukupnaCijena;
 
-
-            _mapper.Map<Database.Narudzba>(insert);
+                _mapper.Map<Database.Narudzba>(insert);
 
             await _dbContext.SaveChangesAsync();
 
             return _mapper.Map<Model.Narudzba>(narudzba);
-        }
+            }
+        
 
         public override async Task<Model.Narudzba> Update(int id, Model.NarudzbaUpdate update)
         {

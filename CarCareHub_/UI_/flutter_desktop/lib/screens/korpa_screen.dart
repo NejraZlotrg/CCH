@@ -6,6 +6,7 @@ import 'package:flutter_mobile/models/korpa.dart';
 import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/screens/narudzba_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -37,17 +38,33 @@ class _KorpaScreenState extends State<KorpaScreen> {
   }
 
   Future<void> _loadData() async {
-    try {
-      List<Korpa> data = await _korpaProvider.getById(userId);
-      setState(() {
-        korpaList = data;
-      });
-    } catch (e) {
-      print('Greška prilikom učitavanja podataka iz korpe: $e');
-    }
+  try {
+    List<Korpa> data = await _korpaProvider.getById(userId);
+
+    setState(() {
+      korpaList = data;
+
+      // Osiguraj da je ukupnaCijenaProizvoda postavljena
+      for (var item in korpaList) {
+        if (item.ukupnaCijenaProizvoda == null) {
+          item.ukupnaCijenaProizvoda = item.kolicina! *
+              (item.proizvod?.popust != null && item.proizvod!.popust! > 0
+                  ? (item.proizvod?.cijenaSaPopustom ?? 0.0)
+                  : (item.proizvod?.cijena ?? 0.0));
+        }
+      }
+
+      // Ponovno izračunavanje ukupne cijene
+      ukupnaCijena = korpaList.fold(0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
+    });
+  } catch (e) {
+    print('Greška prilikom učitavanja podataka iz korpe: $e');
   }
+}
+
 
   Future<void> _finishOrder() async {
+    
     try {
       // Dohvati ID korisnika na osnovu tipa korisnika
       int? klijentId;
@@ -65,6 +82,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
         "firmaAutodijelovaId": null,
         "zavrsenaNarudzba": true,
         "popustId": null,
+       "ukupnaCijenaNarudzbe":ukupnaCijena
       };
 
       // Poziv metode za unos narudžbe
@@ -80,6 +98,8 @@ if(_userProvider.role =='Autoservis')
         "ZaposlenikId": null,
         "zavrsenaNarudzba": true,
         "popustId": null,
+        "ukupnaCijenaNarudzbe":ukupnaCijena
+
       };
 
       // Poziv metode za unos narudžbe
@@ -95,8 +115,9 @@ if(_userProvider.role =='Zaposlenik')
         "ZaposlenikId": _userProvider.userId,
         "zavrsenaNarudzba": true,
         "popustId": null,
-      };
+        "ukupnaCijenaNarudzbe":ukupnaCijena
 
+      };
       // Poziv metode za unos narudžbe
       await _narudzbaProvider.insert(narudzbaObjekat);
 }
@@ -107,6 +128,11 @@ if(_userProvider.role =='Zaposlenik')
 
       // Osvježavanje korpe nakon kreiranja narudžbe
       await _loadData();
+         // Navigacija na ekran narudžbi
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => NarudzbaScreen()),
+    );
     } catch (e) {
       print('Greška prilikom kreiranja narudžbe: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -193,43 +219,67 @@ Widget _buildDataListView() {
                               ),
                               const SizedBox(height: 8.0),
                               Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove),
-                                    onPressed: () {
-                                      if (e.kolicina! > 1) {
-                                        _updateQuantity(e, -1);
-                                      }
-                                    },
-                                  ),
-                                  Text(
-                                    e.kolicina.toString(),
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () {
-                                      _updateQuantity(e, 1);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                'Cijena: ${e.ukupnaCijenaProizvoda?.toStringAsFixed(2) ?? '0.00'} KM',
-                                style: const TextStyle(fontSize: 14),
-                              ),
+  children: [
+    IconButton(
+      icon: const Icon(Icons.remove),
+      onPressed: () async {
+        if (e.kolicina != null && e.kolicina! > 1) {
+          _updateQuantity(e, -1);
+          
+        //  _korpaProvider.updateKolicina(e.korpaId, e.proizvod?.proizvodId, int.parse(e.kolicina.toString()));
+
+          setState(() {}); // Osvežavanje UI-ja
+        }
+      },
+    ),
+    Text(
+      e.kolicina?.toString() ?? "0", // Prikaz količine, sigurnost od null-a
+      style: const TextStyle(fontSize: 14),
+    ),
+    IconButton(
+      icon: const Icon(Icons.add),
+      onPressed: () async {
+        _updateQuantity(e, 1);
+     ///   _korpaProvider.updateKolicina(e.korpaId, e.proizvod?.proizvodId, int.parse(e.kolicina.toString()));
+
+        setState(() {}); // Osvežavanje UI-ja
+      },
+    ),
+  ],
+)
+,
+                             const SizedBox(height: 8.0),
+Text(
+  'Cijena: ${e.kolicina! * (e.proizvod?.popust != null && e.proizvod!.popust! > 0 
+    ? (e.proizvod?.cijenaSaPopustom ?? 0.0) 
+    : (e.proizvod?.cijena ?? 0.0))} KM',
+  style: const TextStyle(fontSize: 14),
+),
+
                             ],
                           ),
                         ),
-                        // Trashcan Icon on the right
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          iconSize: 40,
-                          onPressed: () {
-                            // Do nothing on press
-                          },
-                        ),
+                     IconButton(
+  icon: const Icon(Icons.delete_outline),
+  iconSize: 40,
+  onPressed: () async {
+    try {
+      await _korpaProvider.deleteProizvodIzKorpe(e.korpaId, e.proizvod?.proizvodId); // Poziv API-ja za brisanje
+      setState(() {
+        // Ažuriraj UI nakon brisanja (ako koristiš StatefulWidget)
+        korpaList.removeWhere((item) => item.proizvodId == e.proizvod?.proizvodId && item.korpaId==e.korpaId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Proizvod uspešno obrisan")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Greška prilikom brisanja: $e")),
+      );
+    }
+  },
+),
+
                       ],
                     ),
                   ),
@@ -243,7 +293,9 @@ Widget _buildDataListView() {
           padding: const EdgeInsets.only(left: 140.0, right: 140.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            
             children: [
+                
               const Text(
                 'Ukupna cijena',
                 style: TextStyle(
@@ -251,8 +303,11 @@ Widget _buildDataListView() {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            
               Text(
+               
                 '${ukupnaCijena.toStringAsFixed(2)} KM',
+                
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -265,27 +320,43 @@ Widget _buildDataListView() {
     ),
   );
 }
+void _updateQuantity(Korpa e, int change) async {
+  int novaKolicina = (e.kolicina! ) + change;
 
-void _updateQuantity(Korpa e, int change) {
-  setState(() {
-    // Ensure kolicina is not null and doesn't go below 1
-    if (e.kolicina != null && e.kolicina! + change >= 1) {
-      e.kolicina = e.kolicina! + change; // Add change to kolicina
+  if (novaKolicina < 1) {
+    print('Količina ne može biti manja od 1.');
+    return;
+  }
 
-      // Check if discount is valid and apply accordingly
-      if (e.proizvod?.popust != null && e.proizvod!.popust! > 0) {
-        // Use price with discount if available
-        e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijenaSaPopustom ?? 0.0);
-      } else {
-        // Use regular price if no discount or popust is 0
-        e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijena ?? 0.0);
-      }
+  try {
+    bool uspesno = await _korpaProvider.updateKolicina(
+      e.korpaId,
+      e.proizvod?.proizvodId,
+      novaKolicina,
+    );
 
-      // Recalculate total price for the entire cart
-      ukupnaCijena = korpaList.fold(0.0, (sum, item) => sum + (item.ukupnaCijenaProizvoda ?? 0.0));
+    if (uspesno) {
+      setState(() {
+        e.kolicina = novaKolicina;
+
+        if (e.proizvod?.popust != null && e.proizvod!.popust! > 0) {
+          e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijenaSaPopustom ?? 0.0);
+        } else {
+          e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijena ?? 0.0);
+        }
+
+        ukupnaCijena = korpaList.fold(0.0, (sum, item) => sum + (item.ukupnaCijenaProizvoda ?? 0.0));
+
+        print("Nova količina: $novaKolicina"); // Ispis u terminal
+      });
+    } else {
+      print('Greška pri ažuriranju količine');
     }
-  });
+  } catch (e) {
+    print("Greška prilikom ažuriranja količine: $e");
+  }
 }
+
 
 
  Widget _buildKupacRow(Korpa e) {
@@ -316,18 +387,34 @@ void _updateQuantity(Korpa e, int change) {
     );
   }
 
-
-  Widget _buildFinishOrderButton() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+Widget _buildFinishOrderButton() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Visibility(
+      visible: korpaList.isNotEmpty, // Prikazuje dugme samo ako korpa nije prazna
       child: ElevatedButton(
-        onPressed: _finishOrder,
+        onPressed: () async {
+          await _finishOrder();
+          await _korpaProvider.ocistiKorpu(
+            klijentId: _userProvider.role == 'Klijent' ? _userProvider.userId : null,
+            zaposlenikId: _userProvider.role == 'Zaposlenik' ? _userProvider.userId : null,
+            autoservisId: _userProvider.role == 'Autoservis' ? _userProvider.userId : null,
+          );
+
+          // Osveži UI nakon čišćenja korpe
+          setState(() {
+            korpaList.clear();
+            ukupnaCijena = 0.0;
+          });
+        },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
           textStyle: const TextStyle(fontSize: 18),
         ),
         child: const Text('Završi narudžbu'),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

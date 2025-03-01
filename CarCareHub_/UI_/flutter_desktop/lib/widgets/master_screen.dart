@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
+import 'package:flutter_mobile/models/korpa.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentScreen.dart';
 import 'package:flutter_mobile/screens/chatKlijentZaposlenikScreen.dart';
@@ -23,7 +25,6 @@ import 'package:flutter_mobile/screens/usluge_screen.dart';
 import 'package:flutter_mobile/screens/vozilo_screen.dart';
 import 'package:flutter_mobile/screens/zaposlenik_screen.dart';
 import 'package:provider/provider.dart';
-
 class MasterScreenWidget extends StatefulWidget {
   final Widget? child;
   final String? title;
@@ -34,7 +35,6 @@ class MasterScreenWidget extends StatefulWidget {
     this.title,
     this.titleWidget,
     super.key,
-    
   });
 
   @override
@@ -43,64 +43,94 @@ class MasterScreenWidget extends StatefulWidget {
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   late UserProvider _userProvider;
+  late KorpaProvider _korpaProvider;
   late int userId;
   late String _role;
-
+  int brojProizvodaUKorpi = 0;
 
   @override
-
   void didChangeDependencies() {
     super.didChangeDependencies();
-   
+    
     _userProvider = context.read<UserProvider>();
+    _korpaProvider = context.read<KorpaProvider>();
+
     userId = _userProvider.userId;
-    _role=_userProvider.role;
-  
-  build(context);
+    _role = _userProvider.role;
+
+    _ucitajBrojProizvoda();
   }
+
+  Future<void> _ucitajBrojProizvoda() async {
+    if (userId != null) {
+      List<Korpa> korpaLista = await _korpaProvider.getById(userId);
+      setState(() {
+        brojProizvodaUKorpi = korpaLista.length;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 134, 134, 134), // Siva pozadina za AppBar
-        toolbarHeight: 80.0, // Povećana visina AppBar-a
+        backgroundColor: const Color.fromARGB(255, 134, 134, 134),
+        toolbarHeight: 80.0,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Back dugme
             IconButton(
               icon: const Icon(Icons.arrow_back, size: 30),
               onPressed: () {
-                Navigator.pop(context); // Vraća na prethodnu stranicu
+                Navigator.pop(context);
               },
             ),
-            // Naslov
             Expanded(
               child: Center(
                 child: Text(
                   widget.title ?? "",
                   style: const TextStyle(
-                    fontSize: 20, // Veličina fonta
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
-            // Shopping cart ikona
-            IconButton(
-              icon: const Icon(Icons.shopping_cart, size: 30), // Ikona korpe
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-              builder: (context) => const KorpaScreen(),
+            Stack(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart, size: 30),
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const KorpaScreen()),
+                    );
+                    _ucitajBrojProizvoda();
+                  },
+                ),
+                if (brojProizvodaUKorpi > 0)
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: Text(
+                        brojProizvodaUKorpi.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              },
+              ],
             ),
-            // Wallet ikona
             IconButton(
-              icon: const Icon(Icons.account_balance_wallet_outlined, size: 30), // Ikona novčanika
+              icon: const Icon(Icons.account_balance_wallet_outlined, size: 30),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -112,6 +142,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
           ],
         ),
       ),
+   
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

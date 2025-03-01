@@ -10,6 +10,9 @@ namespace CarCareHub.Services
 {
     public interface IKorpaService : ICRUDService<Korpa, KorpaSearchObject, KorpaInsert, KorpaUpdate>
     {
+        public Task<bool> DeleteProizvodIzKorpe(int? korpaId, int? proizvodId);
+        public Task<bool> UpdateKolicina(int? korpaId, int? proizvodId, int novaKolicina);
+        public Task<bool> OčistiKorpu(int? klijentId, int? zaposlenikId, int? autoservisId);
 
     }
 }
