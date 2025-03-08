@@ -270,7 +270,7 @@ Text(
         korpaList.removeWhere((item) => item.proizvodId == e.proizvod?.proizvodId && item.korpaId==e.korpaId);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Proizvod uspešno obrisan")),
+        const SnackBar(content: Text("Proizvod uspešno obrisan")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -394,27 +394,96 @@ Widget _buildFinishOrderButton() {
       visible: korpaList.isNotEmpty, // Prikazuje dugme samo ako korpa nije prazna
       child: ElevatedButton(
         onPressed: () async {
-          await _finishOrder();
-          await _korpaProvider.ocistiKorpu(
-            klijentId: _userProvider.role == 'Klijent' ? _userProvider.userId : null,
-            zaposlenikId: _userProvider.role == 'Zaposlenik' ? _userProvider.userId : null,
-            autoservisId: _userProvider.role == 'Autoservis' ? _userProvider.userId : null,
-          );
+          // Show custom confirmation form
+          bool confirmed = await _showCustomConfirmationForm(context);
+          if (confirmed) {
+            await _finishOrder();
+            await _korpaProvider.ocistiKorpu(
+              klijentId: _userProvider.role == 'Klijent' ? _userProvider.userId : null,
+              zaposlenikId: _userProvider.role == 'Zaposlenik' ? _userProvider.userId : null,
+              autoservisId: _userProvider.role == 'Autoservis' ? _userProvider.userId : null,
+            );
 
-          // Osveži UI nakon čišćenja korpe
-          setState(() {
-            korpaList.clear();
-            ukupnaCijena = 0.0;
-          });
+            // Osveži UI nakon čišćenja korpe
+            setState(() {
+              korpaList.clear();
+              ukupnaCijena = 0.0;
+            });
+          }
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
           textStyle: const TextStyle(fontSize: 18),
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white
         ),
         child: const Text('Završi narudžbu'),
       ),
     ),
   );
+}
+
+// Function to show custom confirmation form
+Future<bool> _showCustomConfirmationForm(BuildContext context) async {
+  bool confirmed = false;
+
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Potvrda narudžbe'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Detalji plaćanja i dostave:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Plaćanje:',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const Text(
+              'Plaćanje će biti izvršeno gotovinom prilikom preuzimanja.',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Dostava:',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const Text(
+              'Narudžba će biti poslana brzom poštom.',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('Otkaži'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    confirmed = true;
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('Potvrdi'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+
+  return confirmed;
 }
 
 }

@@ -43,24 +43,27 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Narudžbe",
-      child: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildDataListView(),
-                ],
-              ),
+      title: "Narudzbe",
+        child: Container(
+          color: const Color.fromARGB(255, 204, 204, 204),
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                _buildDataListView(),
+              ],
             ),
+          ),
+        ),
     );
   }
 
   Widget _buildDataListView() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return Card(
+      margin: const EdgeInsets.all(16.0), // Add margin around the card
+      elevation: 4.0, // Add shadow to the card
       child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+        scrollDirection: Axis.horizontal, // Allow horizontal scrolling
         child: DataTable(
           columnSpacing: 20,
           columns: const [
