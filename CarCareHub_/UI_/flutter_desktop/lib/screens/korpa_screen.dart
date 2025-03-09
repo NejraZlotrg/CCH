@@ -160,8 +160,8 @@ if(_userProvider.role =='Zaposlenik')
 Widget _buildDataListView() {
   // Calculate total price based on updated quantity
   ukupnaCijena = korpaList.fold(0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
-
-  return SingleChildScrollView(
+return Expanded( // Omogućava scroll
+  child: SingleChildScrollView(
     child: Column(
       mainAxisSize: MainAxisSize.min, // Let the Column shrink to fit its children
       children: [
@@ -318,8 +318,8 @@ Text(
         ),
       ],
     ),
-  );
-}
+  )
+);}
 void _updateQuantity(Korpa e, int change) async {
   int novaKolicina = (e.kolicina! ) + change;
 

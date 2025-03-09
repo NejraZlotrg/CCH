@@ -59,67 +59,101 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
   }
 
   Widget _buildDataListView() {
-    return Card(
-      margin: const EdgeInsets.all(16.0), // Add margin around the card
-      elevation: 4.0, // Add shadow to the card
+  return Card(
+    margin: const EdgeInsets.all(16.0), // Margin oko kartice
+    elevation: 4.0, // Senka za karticu
+    child: SizedBox(
+      height: 400, // Ograničenje visine za omogućavanje vertikalnog skrola
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal, // Allow horizontal scrolling
-        child: DataTable(
-          columnSpacing: 20,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Datum narudžbe',
-                style: TextStyle(fontStyle: FontStyle.italic),
+        scrollDirection: Axis.vertical, // Omogućava vertikalni skrol
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal, // Omogućava horizontalni skrol
+          child: DataTable(
+            columnSpacing: 20,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Datum narudžbe',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Datum isporuke',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Datum isporuke',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Ukupna cijena narudžbe',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Ukupna cijena narudžbe',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Završena',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Završena',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Narudzba e) => DataRow(
-                      cells: [
-                        DataCell(Text(e.datumNarudzbe != null
-                            ? formatDate(e.datumNarudzbe!)
-                            : 'N/A')),
-                        DataCell(Text(e.datumIsporuke != null
-                            ? formatDate(e.datumIsporuke!)
-                            : 'N/A')),
-                        DataCell(Text(e.ukupnaCijenaNarudzbe != null
-                            ? '${e.ukupnaCijenaNarudzbe!.toStringAsFixed(2)} KM'
-                            : 'N/A')),
-                        DataCell(
-                          Icon(
-                            e.zavrsenaNarudzba ? Icons.check_circle : Icons.cancel,
-                            color: e.zavrsenaNarudzba ? Colors.green : Colors.red,
+              DataColumn(
+                label: Text(
+                  'Akcija', // Nova kolona za dugme
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
+            rows: result?.result
+                    .map(
+                      (Narudzba e) => DataRow(
+                        cells: [
+                          DataCell(Text(e.datumNarudzbe != null
+                              ? formatDate(e.datumNarudzbe!)
+                              : 'N/A')),
+                          DataCell(Text(e.datumIsporuke != null
+                              ? formatDate(e.datumIsporuke!)
+                              : 'N/A')),
+                          DataCell(Text(e.ukupnaCijenaNarudzbe != null
+                              ? '${e.ukupnaCijenaNarudzbe!.toStringAsFixed(2)} KM'
+                              : 'N/A')),
+                          DataCell(
+                            Icon(
+                              e.zavrsenaNarudzba ? Icons.check_circle : Icons.cancel,
+                              color: e.zavrsenaNarudzba ? Colors.green : Colors.red,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
+DataCell(
+  ElevatedButton(
+    onPressed: e.zavrsenaNarudzba
+        ? null // Onemogući dugme ako je narudžba već završena
+        : () async {
+            try {
+              // Pozovi funkciju potvrdiNarudzbu
+              await _narudzbaProvider.potvrdiNarudzbu(e.narudzbaId);
+              _loadData();              // Ako je uspješno završeno, možeš ažurirati status narudžbe ili UI
+            } catch (error) {
+              // Obradi grešku (prikazivanje obavještenja korisniku)
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Greška pri završavanju narudžbe: $error')),
+              );
+            }
+          },
+    child: const Text('Označi kao završeno'),
+  ),
+)
+
+
+                        ],
+                      ),
+                    )
+                    .toList() ?? [],
+          ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
   String formatDate(DateTime date) {
     return "${date.day}.${date.month}.${date.year}";

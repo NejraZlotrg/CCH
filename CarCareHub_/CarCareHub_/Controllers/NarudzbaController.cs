@@ -20,7 +20,7 @@ namespace CarCareHub_.Controllers
             _narudzbaService = narudzbaService;
         }
 
-        [HttpPost("{narudzbaId}/potvrdi")]
+        [HttpPut("{narudzbaId}/potvrdi")]
         public async Task<IActionResult> PotvrdiNarudzbu(int narudzbaId)
         {
             try
