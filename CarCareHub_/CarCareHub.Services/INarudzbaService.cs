@@ -7,8 +7,9 @@ namespace CarCareHub.Services
     {
         public Task<Model.Narudzba> PotvrdiNarudzbu(int narudzbaId);
 
-       // public  Task<Model.Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina);
+        // public  Task<Model.Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina);
 
+        public Task<List<Model.Narudzba>> GetByLogeedUser_(int id);
 
 
     }

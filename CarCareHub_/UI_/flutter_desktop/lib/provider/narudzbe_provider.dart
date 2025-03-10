@@ -44,5 +44,35 @@ Future<Narudzba> potvrdiNarudzbu(int narudzbaId) async {
   }
 }
 
+Future<List<Narudzba>> getNarudzbePoUseru(int id) async {
+    String url = buildUrl("/$id/GetPoUseru"); // API endpoint za pretragu narudžbi korisnika
+    Uri uri = Uri.parse(url);
 
+    // Ispisivanje URL-a i status koda
+    print("Request URL: $url");
+
+    Map<String, String> headers = createHeaders();
+
+    try {
+      // Send a GET request to the API
+      http.Response response = await http.get(uri, headers: headers);
+
+      // Ispisivanje status koda i tijela odgovora
+      print("Response status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      // Check if the response is successful (status code 200 OK)
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        List<Narudzba> narudzbe = (data as List).map((e) => Narudzba.fromJson(e)).toList();
+        return narudzbe; // Return the list of Narudzba objects
+      } else {
+        throw Exception('Greška: ${response.statusCode} - ${response.body}');
+      }
+    } catch (error) {
+      // Ako dođe do greške u slanju zahtjeva
+      print("Greška pri slanju zahtjeva: $error");
+      throw Exception('Greška pri slanju zahtjeva: $error');
+    }
+  }
 }

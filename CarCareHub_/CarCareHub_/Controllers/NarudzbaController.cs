@@ -34,6 +34,31 @@ namespace CarCareHub_.Controllers
             }
         }
 
+        [HttpGet("{id}/GetPoUseru")]
+        public async Task<IActionResult> GetByLoggedUser(int id)
+        {
+            try
+            {
+                // Poziv servisa da dobije narudžbe na osnovu korisničke uloge i id-a
+                var narudzbe = await _narudzbaService.GetByLogeedUser_(id);
+
+                // Ako nije pronađeno ništa, vraćamo status 404 (Not Found)
+                if (narudzbe == null || !narudzbe.Any())
+                {
+                    return NotFound(new { message = "Nema narudžbi za ovog korisnika." });
+                }
+
+                // Vraćamo status 200 (OK) sa listom narudžbi
+                return Ok(narudzbe);
+            }
+            catch (Exception ex)
+            {
+                // Ako je došlo do greške, vraćamo status 400 (Bad Request) sa porukom greške
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
         //[HttpPost("DodajStavkuUKosaricu")]
 
         //public async Task<Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina)

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace CarCareHub.Services
 {
@@ -19,11 +20,14 @@ namespace CarCareHub.Services
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
 
         public NarudzbaService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public override async Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
@@ -32,11 +36,33 @@ namespace CarCareHub.Services
                                                             (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
                                                             (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId)) .ToListAsync();
 
+            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+
             var narudzba = new CarCareHub.Services.Database.Narudzba();
             narudzba.DatumNarudzbe = DateTime.Now;
             narudzba.DatumIsporuke = DateTime.Now.AddDays(2);
             narudzba.Vidljivo = true;
             narudzba.UkupnaCijenaNarudzbe = 0;
+            if (insert.KlijentId.HasValue && userRole=="Klijent")
+            {
+                narudzba.KlijentId = insert.KlijentId.Value;
+                narudzba.ZaposlenikId = null;
+                narudzba.AutoservisId = null;
+            }
+            else if (insert.ZaposlenikId.HasValue && userRole == "Zaposlenik")
+            {
+                narudzba.ZaposlenikId = insert.ZaposlenikId.Value;
+                narudzba.KlijentId = null;
+                narudzba.AutoservisId = null;
+            }
+            else if (insert.AutoservisId.HasValue && userRole == "Autoservis")
+            {
+                narudzba.AutoservisId = insert.AutoservisId.Value;
+                narudzba.KlijentId = null;
+                narudzba.ZaposlenikId = null;
+            }
+
+
             await _dbContext.AddAsync(narudzba);
 
 
@@ -188,6 +214,54 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
+        public  async Task<List<Model.Narudzba>> GetByLogeedUser_(int id)
+        {
+            // Početni upit
+            var query = _dbContext.Narudzbas.AsQueryable();
+
+            // Dohvati trenutnu prijavljenu ulogu korisnika
+            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+            query = query.Include(x => x.Klijent) // Uključivanje Klijenta
+                         .Include(x => x.Zaposlenik) // Uključivanje Zaposlenika
+                         .Include(x => x.Autoservis); // Uključivanje Autoservisa (ako je potrebno)
+
+            // Filtriranje na temelju korisničke uloge
+            if (userRole != null)
+            {
+                switch (userRole)
+                {
+                    case "Klijent":
+                        // Ako je korisnik Klijent, filtriraj samo po KlijentId
+                        query = query.Where(x => x.KlijentId == id);
+                        break;
+
+                    case "Zaposlenik":
+                        // Ako je korisnik Zaposlenik, filtriraj samo po ZaposlenikId
+                        query = query.Where(x => x.ZaposlenikId == id);
+                        break;
+
+                    case "Autoservis":
+                        // Ako je korisnik Autoservis, filtriraj samo po AutoservisId
+                        query = query.Where(x => x.AutoservisId == id);
+                        break;
+
+                    default:
+                        throw new Exception("Nepoznata uloga korisnika.");
+                }
+            }
+            else
+            {
+                throw new Exception("Korisnička uloga nije dostupna.");
+            }
+
+            // Dohvatanje podataka iz baze
+            var result = await query.ToListAsync();
+
+            // Mapiranje rezultata na Model.Narudzba
+            return _mapper.Map<List<Model.Narudzba>>(result);
+        }
+
+
 
         //public static string GenerateSalt()
         //{
@@ -214,6 +288,8 @@ namespace CarCareHub.Services
 
 
     }
+
+
 }
 
 

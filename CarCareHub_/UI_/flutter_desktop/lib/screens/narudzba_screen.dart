@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/narudzba.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
@@ -27,7 +28,13 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
 
   Future<void> _loadData() async {
     try {
-      var data = await _narudzbaProvider.get();
+     var korisnik=context.read<UserProvider>().userId;
+         SearchResult<Narudzba> data;
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _narudzbaProvider.getAdmin(filter: {'IsDrzavaIncluded': 'true'});
+    } else {
+      data = await _narudzbaProvider.getNarudzbePoUseru(korisnik); ERROR MOra ovjde biti drugi tip search result a ne list anrudzba
+    }
       setState(() {
         result = data;
         isLoading = false;
