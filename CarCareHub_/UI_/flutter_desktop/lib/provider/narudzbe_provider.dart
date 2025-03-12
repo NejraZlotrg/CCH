@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_mobile/models/narudzba.dart';
+import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -44,7 +45,7 @@ Future<Narudzba> potvrdiNarudzbu(int narudzbaId) async {
   }
 }
 
-Future<List<Narudzba>> getNarudzbePoUseru(int id) async {
+Future<SearchResult<Narudzba>> getNarudzbePoUseru(int id) async {
     String url = buildUrl("/$id/GetPoUseru"); // API endpoint za pretragu narudžbi korisnika
     Uri uri = Uri.parse(url);
 
@@ -64,7 +65,10 @@ Future<List<Narudzba>> getNarudzbePoUseru(int id) async {
       // Check if the response is successful (status code 200 OK)
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        List<Narudzba> narudzbe = (data as List).map((e) => Narudzba.fromJson(e)).toList();
+        SearchResult<Narudzba> narudzbe = SearchResult<Narudzba>();
+              for (var item in data) {
+        narudzbe.result.add(fromJson(item));
+      }
         return narudzbe; // Return the list of Narudzba objects
       } else {
         throw Exception('Greška: ${response.statusCode} - ${response.body}');

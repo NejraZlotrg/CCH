@@ -33,7 +33,7 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
     if (context.read<UserProvider>().role == "Admin") {
       data = await _narudzbaProvider.getAdmin(filter: {'IsDrzavaIncluded': 'true'});
     } else {
-      data = await _narudzbaProvider.getNarudzbePoUseru(korisnik); ERROR MOra ovjde biti drugi tip search result a ne list anrudzba
+      data = await _narudzbaProvider.getNarudzbePoUseru(korisnik); //ERROR MOra ovjde biti drugi tip search result a ne list anrudzba
     }
       setState(() {
         result = data;

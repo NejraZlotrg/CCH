@@ -1,4 +1,7 @@
+import 'package:flutter_mobile/models/autoservis.dart';
+import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/narudzba_stavke.dart';
+import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'narudzba.g.dart';
@@ -11,6 +14,12 @@ class Narudzba {
   final bool zavrsenaNarudzba;  // Ne nullable, default false
   final double? ukupnaCijenaNarudzbe;  // Nullable decimal type
 bool? vidljivo;
+  int? klijentId;
+  Klijent? klijent;
+  int? autoservisId;
+  Autoservis? autoservis;
+  int? zaposlenikId;
+  Zaposlenik? zaposlenik;
 
   Narudzba({
     required this.narudzbaId,

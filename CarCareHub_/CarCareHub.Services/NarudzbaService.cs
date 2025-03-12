@@ -214,7 +214,9 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
-        public  async Task<List<Model.Narudzba>> GetByLogeedUser_(int id)
+
+
+        public async Task<List<Model.Narudzba>> GetByLogeedUser_(int id)
         {
             // Početni upit
             var query = _dbContext.Narudzbas.AsQueryable();
@@ -257,39 +259,21 @@ namespace CarCareHub.Services
             // Dohvatanje podataka iz baze
             var result = await query.ToListAsync();
 
+            // Provjera da li je rezultat null
+            if (result == null || !result.Any())
+            {
+                // Vrati praznu listu ako nema podataka
+                return new List<Model.Narudzba>();
+            }
+
             // Mapiranje rezultata na Model.Narudzba
-            return _mapper.Map<List<Model.Narudzba>>(result);
+            var mappedResult = _mapper.Map<List<Model.Narudzba>>(result);
+
+            // Vrati mapiranu listu
+            return mappedResult;
         }
 
-
-
-        //public static string GenerateSalt()
-        //{
-        //    RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-        //    var byteArray = new byte[16];
-        //   provider.GetBytes(byteArray);
-
-
-        //    return Convert.ToBase64String(byteArray);
-        //}
-        //public static string GenerateHash(string salt, string password)
-        //{
-        //    byte[] src = Convert.FromBase64String(salt);
-        //    byte[] bytes = Encoding.Unicode.GetBytes(password);
-        //    byte[] dst = new byte[src.Length + bytes.Length];
-
-        //    System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
-        //    System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
-
-        //    HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
-        //    byte[] inArray = algorithm.ComputeHash(dst);
-        //    return Convert.ToBase64String(inArray);
-        //}
-
-
     }
-
-
 }
 
 
