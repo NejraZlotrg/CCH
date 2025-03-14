@@ -73,7 +73,6 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
       // Prvo pokušaj dobiti ID klijenta
      if(_userProvider.role =='Klijent')
-    
 {
       // Kreiraj objekat za unos narudžbe
       final narudzbaObjekat = {
@@ -88,8 +87,8 @@ class _KorpaScreenState extends State<KorpaScreen> {
       // Poziv metode za unos narudžbe
       await _narudzbaProvider.insert(narudzbaObjekat);
 }
-if(_userProvider.role =='Autoservis')
-    
+
+if(_userProvider.role =='Autoservis')   
 {
       // Kreiraj objekat za unos narudžbe
       final narudzbaObjekat = {
@@ -105,8 +104,8 @@ if(_userProvider.role =='Autoservis')
       // Poziv metode za unos narudžbe
       await _narudzbaProvider.insert(narudzbaObjekat);
 }
+
 if(_userProvider.role =='Zaposlenik')
-    
 {
       // Kreiraj objekat za unos narudžbe
       final narudzbaObjekat = {

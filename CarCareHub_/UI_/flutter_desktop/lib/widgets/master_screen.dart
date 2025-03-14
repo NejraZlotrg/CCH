@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/main.dart';
+import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
+import 'package:flutter_mobile/models/firmaautodijelova.dart';
+import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/korpa.dart';
+import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/autoservis_provider.dart';
+import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
+import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/korpa_provider.dart';
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
+import 'package:flutter_mobile/screens/autoservis_details_screen.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentScreen.dart';
 import 'package:flutter_mobile/screens/chatKlijentZaposlenikScreen.dart';
-
 import 'package:flutter_mobile/screens/drzave_screen.dart';
+import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
 import 'package:flutter_mobile/screens/godiste_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
 import 'package:flutter_mobile/screens/kategorije_screen.dart';
+import 'package:flutter_mobile/screens/klijent_details_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/korpa_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
@@ -23,7 +33,9 @@ import 'package:flutter_mobile/screens/proizvodjac_screen.dart';
 import 'package:flutter_mobile/screens/uloge_screen.dart';
 import 'package:flutter_mobile/screens/usluge_screen.dart';
 import 'package:flutter_mobile/screens/vozilo_screen.dart';
+import 'package:flutter_mobile/screens/zaposlenik_details_screen.dart';
 import 'package:flutter_mobile/screens/zaposlenik_screen.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 class MasterScreenWidget extends StatefulWidget {
   final Widget? child;
@@ -44,6 +56,10 @@ class MasterScreenWidget extends StatefulWidget {
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   late UserProvider _userProvider;
   late KorpaProvider _korpaProvider;
+  late KlijentProvider _klijentProvider;
+  late AutoservisProvider _autoservisProvider;
+  late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
+  late ZaposlenikProvider _zaposlenikProvider;
   late int userId;
   late String _role;
   int brojProizvodaUKorpi = 0;
@@ -54,6 +70,11 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     
     _userProvider = context.read<UserProvider>();
     _korpaProvider = context.read<KorpaProvider>();
+    _klijentProvider = context.read<KlijentProvider>();
+    _autoservisProvider = context.read<AutoservisProvider>();
+    _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
+    _zaposlenikProvider = context.read<ZaposlenikProvider>();
+
 
     userId = _userProvider.userId;
     _role = _userProvider.role;
@@ -62,13 +83,11 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   }
 
   Future<void> _ucitajBrojProizvoda() async {
-    if (userId != null) {
-      List<Korpa> korpaLista = await _korpaProvider.getById(userId);
-      setState(() {
-        brojProizvodaUKorpi = korpaLista.length;
-      });
+    List<Korpa> korpaLista = await _korpaProvider.getById(userId);
+    setState(() {
+      brojProizvodaUKorpi = korpaLista.length;
+    });
     }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +157,86 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   ),
                 );
               },
+            ),
+            IconButton(
+              icon: const Icon( Icons.person , size: 30),
+              onPressed: () async {
+    if (_role == "Klijent") {
+      try {
+        List<Klijent> klijenti = await _klijentProvider.getById(userId);
+        if (klijenti.isNotEmpty) {
+          Klijent k = klijenti.first;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => KlijentDetailsScreen(klijent: k),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Klijent nije pronadjen!')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+        if (_role == "Zaposlenik") {
+        Zaposlenik zaposlenici = await _zaposlenikProvider.getByID(userId);
+          Zaposlenik z = zaposlenici;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ZaposlenikDetailsScreen(zaposlenik: z),
+            ),
+          );
+            
+      }
+                  
+            if (_role == "Autoservis") {
+      try {
+        List<Autoservis> autoservis = await _autoservisProvider.getById(userId);
+        if (autoservis.isNotEmpty) {
+          Autoservis a = autoservis.first;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => AutoservisDetailsScreen(autoservis: a),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Autoservis nije pronadjen!')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+                if (_role == "Firma autodijelova") {
+      try {
+        List<FirmaAutodijelova> firmaautodijelova= await _firmaAutodijelovaProvider.getById(userId);
+        if (firmaautodijelova.isNotEmpty) {
+          FirmaAutodijelova a = firmaautodijelova.first;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => FirmaAutodijelovaDetailScreen(firmaAutodijelova: a),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Firma autodijelova nije pronadjena!')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  },
+  
             ),
           ],
         ),

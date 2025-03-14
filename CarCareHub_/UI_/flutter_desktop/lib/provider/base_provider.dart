@@ -56,8 +56,8 @@ abstract class BaseProvider<T> with ChangeNotifier {
       url = "$url?$queryString";
     }
 
-    Uri uri = Uri.parse(url);
-    Map<String, String> headers = createHeaders();
+      Uri uri = Uri.parse(url);
+      Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
 
     if (isValidResponse(response)) {
@@ -67,7 +67,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
       for (var item in data['result']) {
         result.result.add(fromJson(item));
-      }
+      }                         
 
       return result;
     } else {
@@ -206,4 +206,29 @@ abstract class BaseProvider<T> with ChangeNotifier {
   T fromJson(data) {
     throw Exception("Method not implemented");
   }
+  Future<T> getByID(int id) async {
+  // Construct the URL
+  String url = "$baseURL$endpoint/ZaposleniciGetByID/$id";
+
+  // Parse the URL into a Uri object
+  Uri uri = Uri.parse(url);
+
+  // Create headers for the request
+  Map<String, String> headers = createHeaders();
+
+  // Make the HTTP GET request
+  http.Response response = await http.get(uri, headers: headers);
+
+  // Validate the response
+  if (isValidResponse(response)) {
+    // Decode the response body
+    var data = jsonDecode(response.body);
+
+    // Convert the JSON data into an object of type T
+    return fromJson(data);
+  } else {
+    // Throw an exception if the response is not valid
+    throw Exception("Failed to fetch data for ID: $id");
+  }
+}
 }
