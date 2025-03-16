@@ -26,6 +26,7 @@ import 'package:flutter_mobile/screens/klijent_details_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
 import 'package:flutter_mobile/screens/korpa_screen.dart';
 import 'package:flutter_mobile/screens/model_screen.dart';
+import 'package:flutter_mobile/screens/mojproizvod_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_screen.dart';
 import 'package:flutter_mobile/screens/narudzba_stavka_screen.dart';
 import 'package:flutter_mobile/screens/product_screen.dart';
@@ -79,15 +80,19 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     userId = _userProvider.userId;
     _role = _userProvider.role;
 
-    _ucitajBrojProizvoda();
+
+      _ucitajBrojProizvoda();
+    
   }
 
   Future<void> _ucitajBrojProizvoda() async {
+    if(_role == "Klijent" || _role == "Zaposlenik" || _role == "Autoservis") {
     List<Korpa> korpaLista = await _korpaProvider.getById(userId);
     setState(() {
       brojProizvodaUKorpi = korpaLista.length;
     });
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +120,12 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 ),
               ),
             ),
+    if(_role == "Klijent" || _role == "Zaposlenik" || _role == "Autoservis") ...[
            Stack(
   children: [
-    IconButton(
+   Tooltip(
+  message: "Korpa",
+  child:  IconButton(
       icon: const Icon(Icons.shopping_cart, size: 30),
       onPressed: () async {
         await Navigator.of(context)
@@ -129,6 +137,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         });
       },
     ),
+           ),
     if (brojProizvodaUKorpi > 0)
       Positioned(
         right: 4,
@@ -152,117 +161,148 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
       ),
   ],
 ),
+    ],
+  
+      if(_role == "Klijent" || _role == "Zaposlenik" || _role == "Autoservis") ...[
+  Stack(
+    children: [
+      Tooltip(
+    message: "Moje narudžbe",
+    child: IconButton(
+                icon: const Icon(Icons.account_balance_wallet_outlined, size: 30),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NarudzbaScreen(),
+                    ),
+                  );
+                },
+              ),
+          ),
+    ]
+  ),
+      ],
+    
+    
+          if(_role != "Admin") ...[
+            Stack(
+              children: [Tooltip(
+                message: "Moj profil",
+                child:  IconButton(
+              
+                icon: const Icon(Icons.person, size: 30),
+                onPressed: () async {
+                  if (_role == "Klijent") {
+                    try {
+                      Klijent? klijent = await _klijentProvider.getSingleById(userId);
+                      if (klijent != null) {
+                        Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => KlijentDetailsScreen(klijent: klijent),
+              ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Klijent nije pronađen!')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Greška: $e')),
+                      );
+                    }
+                  }
+              
+                  if (_role == "Zaposlenik") {
+                    try {
+                      Zaposlenik? zaposlenik = await _zaposlenikProvider.getSingleById(userId);
+                      if (zaposlenik != null) {
+                        Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
+              ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Zaposlenik nije pronađen!')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Greška: $e')),
+                      );
+                    }
+                  }
+              
+                  if (_role == "Autoservis") {
+                    try {
+                      Autoservis? autoservis = await _autoservisProvider.getSingleById(userId);
+                      if (autoservis != null) {
+                        Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AutoservisDetailsScreen(autoservis: autoservis),
+              ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Autoservis nije pronađen!')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Greška: $e')),
+                      );
+                    }
+                  }
+              
+                  if (_role == "Firma autodijelova") {
+                    try {
+                      FirmaAutodijelova? firmaAutodijelova = await _firmaAutodijelovaProvider.getSingleById(userId);
+                      if (firmaAutodijelova != null) {
+                        Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => FirmaAutodijelovaDetailScreen(firmaAutodijelova: firmaAutodijelova),
+              ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Firma autodijelova nije pronađena!')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Greška: $e')),
+                      );
+                    }
+                  }
+                },
+              ),
+              
+              ),
+              ]
+            ),
+          ],
 
-            IconButton(
-              icon: const Icon(Icons.account_balance_wallet_outlined, size: 30),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const NarudzbaScreen(),
-                  ),
-                );
-              },
-            ),
-           IconButton(
-  icon: const Icon(Icons.person, size: 30),
-  onPressed: () async {
-    if (_role == "Klijent") {
-      try {
-        Klijent? klijent = await _klijentProvider.getSingleById(userId);
-        if (klijent != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => KlijentDetailsScreen(klijent: klijent),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Klijent nije pronađen!')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Greška: $e')),
-        );
-      }
-    }
 
-    if (_role == "Zaposlenik") {
-      try {
-        Zaposlenik? zaposlenik = await _zaposlenikProvider.getSingleById(userId);
-        if (zaposlenik != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Zaposlenik nije pronađen!')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Greška: $e')),
-        );
-      }
-    }
 
-    if (_role == "Autoservis") {
-      try {
-        Autoservis? autoservis = await _autoservisProvider.getSingleById(userId);
-        if (autoservis != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AutoservisDetailsScreen(autoservis: autoservis),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Autoservis nije pronađen!')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Greška: $e')),
-        );
-      }
-    }
-
-    if (_role == "Firma autodijelova") {
-      try {
-        FirmaAutodijelova? firmaAutodijelova = await _firmaAutodijelovaProvider.getSingleById(userId);
-        if (firmaAutodijelova != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => FirmaAutodijelovaDetailScreen(firmaAutodijelova: firmaAutodijelova),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Firma autodijelova nije pronađena!')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Greška: $e')),
-        );
-      }
-    }
-  },
-),Tooltip(
+          if(_role == "Firma autodijelova") ...[
+            Stack(
+              children: [Tooltip(
   message: "MOJI ARTIKLI",
   child: IconButton(
-    icon: const Icon(Icons.list, size: 30), // Ikonica za listu
+    icon: const Icon(Icons.inventory, size: 30), // Ikonica za listu
     onPressed: () {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => const MojiArtikliScreen(), // Ovdje ide ekran sa artiklima
-      //   ),
-      // );
+       Navigator.of(context).push(
+         MaterialPageRoute(
+           builder: (context) => const MojProizvodScreen(), // Ovdje ide ekran sa artiklima
+        ),
+       );
     },
   ),
 ),
+              ]
+            )
+          ],
 
           ],
         ),

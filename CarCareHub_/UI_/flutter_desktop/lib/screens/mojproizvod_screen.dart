@@ -21,14 +21,14 @@ import 'package:flutter_mobile/utils/utils.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
-class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key});
+class MojProizvodScreen extends StatefulWidget {
+  const MojProizvodScreen({super.key});
 
   @override
-  State<ProductScreen> createState() => _ProductScreenState();
+  State<MojProizvodScreen> createState() => _MojProizvodScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _MojProizvodScreenState extends State<MojProizvodScreen> {
   late ProductProvider _productProvider;
 
   final _formKey = GlobalKey<FormBuilderState>();
@@ -67,11 +67,14 @@ class _ProductScreenState extends State<ProductScreen> {
 
    // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
- Future<void> _loadData() async {
+
+
+Future<void> _loadData() async {
   try {
     String? userRole = context.read<UserProvider>().role;
     int? userId = context.read<UserProvider>().userId;
-    print("Korisnička uloga: $userRole, $userId");
+    print("Korisnička uloga: $userRole");
+    print(", korisnicki id: $userId");
 
     SearchResult<Product> data;
 
@@ -79,8 +82,12 @@ class _ProductScreenState extends State<ProductScreen> {
       case "Admin":
         data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
         break;
-      case "Klijent":
-        data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
+      case "Firma autodijelova":
+        // Call getByFirmaAutodijelovaID and wrap the result in a SearchResult object
+        List<Product> products = await _productProvider.getByFirmaAutodijelovaID(userId!);
+        data = SearchResult<Product>()
+          ..result = products // Assign the list of products to the `result` field
+          ..count = products.length; // Set the count to the length of the list
         break;
       default:
         data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
@@ -88,14 +95,13 @@ class _ProductScreenState extends State<ProductScreen> {
 
     if (mounted) {
       setState(() {
-        result = data;
+        result = data; // Assign the fetched data to the `result` variable
       });
     }
   } catch (e) {
     print("Došlo je do greške prilikom učitavanja podataka: $e");
   }
 }
-
 
   Future<void> _loadInitialData() async {
 
