@@ -70,7 +70,7 @@ class _ProductScreenState extends State<ProductScreen> {
  Future<void> _loadData() async {
   try {
     String? userRole = context.read<UserProvider>().role;
-    print("Korisnička uloga: ${userRole}");
+    print("Korisnička uloga: $userRole");
 
     SearchResult<Product> data;
 

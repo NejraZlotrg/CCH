@@ -421,7 +421,7 @@ Consumer<UserProvider>(
                           widget.product?.model?.nazivModela ??
                               "Nema podataka"),
                       DataRow(cells: [
-                        DataCell(SizedBox()), // Empty space for alignment
+                        const DataCell(SizedBox()), // Empty space for alignment
                         DataCell(
                           Padding(
                             padding: const EdgeInsets.only(right: 75),

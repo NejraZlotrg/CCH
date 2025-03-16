@@ -43,4 +43,21 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
     return null;
   }
 }
+
+
+Future<Autoservis> getSingleById(int id) async {
+    String url = "http://localhost:7209/api/Autoservis/AutoservisGetByID/$id"; // Dodajemo ID u URL
+
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data); // Vraća jedan objekat tipa T
+    } else {
+      throw Exception("Unknown error");
+    }
+  }
+
 }

@@ -117,21 +117,7 @@ namespace CarCareHub.Services
             return await base.Delete(id);
         }
 
-        //public override async Task<Model.FirmaAutodijelova> GetByID(int id)
-        //{
-        //    var temp = await _dbContext.FirmaAutodijelovas
-        //        .Include(f => f.BPAutodijeloviAutoservis)
-        //            .ThenInclude(bp => bp.Autoservis.Naziv)
-        //        .FirstOrDefaultAsync(f => f.FirmaAutodijelovaID == id);
-
-        //    // Ovdje ograničavamo broj podataka u kolekciji na primjer 10
-        //    if (temp.BPAutodijeloviAutoservis != null)
-        //    {
-        //        temp.BPAutodijeloviAutoservis = temp.BPAutodijeloviAutoservis.Take(10).ToList();
-        //    }
-
-        //    return _mapper.Map<Model.FirmaAutodijelova>(temp);
-        //}
+    
 
 
 
@@ -313,7 +299,17 @@ namespace CarCareHub.Services
 
                 return filePath; // Putanja do spremljenog izvještaja
             }
+
+        public override async Task<List<Model.FirmaAutodijelova>> GetByID_(int id)
+        {
+            var temp = _dbContext.FirmaAutodijelovas.Where(x => x.FirmaAutodijelovaID == id).ToList().AsQueryable();
+
+           
+
+
+            return _mapper.Map<List<Model.FirmaAutodijelova>>(temp);
         }
+    }
 
     }
 

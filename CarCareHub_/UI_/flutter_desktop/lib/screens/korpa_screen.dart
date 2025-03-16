@@ -46,12 +46,10 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
       // Osiguraj da je ukupnaCijenaProizvoda postavljena
       for (var item in korpaList) {
-        if (item.ukupnaCijenaProizvoda == null) {
-          item.ukupnaCijenaProizvoda = item.kolicina! *
+        item.ukupnaCijenaProizvoda ??= item.kolicina! *
               (item.proizvod?.popust != null && item.proizvod!.popust! > 0
                   ? (item.proizvod?.cijenaSaPopustom ?? 0.0)
                   : (item.proizvod?.cijena ?? 0.0));
-        }
       }
 
       // Ponovno izračunavanje ukupne cijene
@@ -130,7 +128,7 @@ if(_userProvider.role =='Zaposlenik')
          // Navigacija na ekran narudžbi
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => NarudzbaScreen()),
+      MaterialPageRoute(builder: (context) => const NarudzbaScreen()),
     );
     } catch (e) {
       print('Greška prilikom kreiranja narudžbe: $e');

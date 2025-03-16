@@ -51,14 +51,20 @@ Future<bool> updateKolicina(int? korpaId, int? proizvodId, int novaKolicina) asy
 }
 
  Future<bool> ocistiKorpu({int? klijentId, int? zaposlenikId, int? autoservisId}) async {
-  var url;
-  if(zaposlenikId==null && autoservisId==null)
-     url = Uri.parse("http://localhost:7209/api/korpa/ocistiKorpu?klijentId=$klijentId");
- if(klijentId==null && autoservisId==null)
-     url = Uri.parse("http://localhost:7209/api/korpa/ocistiKorpu?zaposlenikId=$zaposlenikId");
-if(klijentId==null && zaposlenikId==null)
-     url = Uri.parse("http://localhost:7209/api/korpa/ocistiKorpu?autoservisId=$autoservisId");
-
+  Uri url;
+  if(zaposlenikId==null && autoservisId==null) {
+    url = Uri.parse("http://localhost:7209/api/korpa/ocistiKorpu?klijentId=$klijentId");
+  }
+ if(klijentId==null && autoservisId==null) {
+   url = Uri.parse("http://localhost:7209/api/korpa/ocistiKorpu?zaposlenikId=$zaposlenikId");
+ }
+if(klijentId==null && zaposlenikId==null) {
+  url = Uri.parse("http://localhost:7209/api/korpa/ocistiKorpu?autoservisId=$autoservisId");
+}
+else {
+    // Ako nijedan od uslova nije zadovoljen, postavi podrazumevani URL ili vrati grešku.
+    return false;
+  }
     try {
       final response = await http.delete(
         url,

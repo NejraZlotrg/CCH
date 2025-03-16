@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
@@ -105,7 +104,7 @@ List<BPAutodijeloviAutoservis>? temp;
 
 
   Future initForm() async {
-     if (context.read<UserProvider>().role == "Admin") {
+     if (context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Firma autodijelova" && context.read<UserProvider>().userId==widget.firmaAutodijelova?.firmaAutodijelovaID)) {
        gradResult = await _gradProvider.getAdmin();
      } else {
        gradResult = await _gradProvider.get();

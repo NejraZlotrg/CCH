@@ -47,11 +47,11 @@ class _ChatMessagesScreenState
     var zaposlenikId = widget.selectedChat.zaposlenikId;
 
     // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
-    connection.on('ReceiveMessageZaposlenikKlijent#${zaposlenikId}/${klijentId}', (arguments) {
+    connection.on('ReceiveMessageZaposlenikKlijent#$zaposlenikId/$klijentId', (arguments) {
       fetchMessages();
     });
 
-    connection.on('ReceiveMessageZaposlenikKlijent#${klijentId}/${zaposlenikId}', (arguments) {
+    connection.on('ReceiveMessageZaposlenikKlijent#$klijentId/$zaposlenikId', (arguments) {
       fetchMessages();
     });
 

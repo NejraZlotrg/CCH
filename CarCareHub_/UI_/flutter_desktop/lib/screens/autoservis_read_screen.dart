@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
@@ -238,7 +237,7 @@ Widget build(BuildContext context) {
               // Dugme "Uredi" na dnu
          Consumer<UserProvider>(
   builder: (context, userProvider, child) {
-    if (userProvider.role == "Admin") {
+    if (userProvider.role == "Admin" || (userProvider.role == "Autoservis" && userProvider.userId==widget.autoservis?.autoservisId)) {
       return Padding(
         padding: const EdgeInsets.all(15),
         child: SizedBox(

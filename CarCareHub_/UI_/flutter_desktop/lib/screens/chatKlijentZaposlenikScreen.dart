@@ -74,8 +74,8 @@ Widget build(BuildContext context) {
               final chat = chats[index];
               final isKlijent = userProvider.role == 'Klijent';
               final chatName = isKlijent
-                  ? '${chat.zaposlenikIme}'
-                  : '${chat.klijentIme}';
+                  ? chat.zaposlenikIme
+                  : chat.klijentIme;
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),

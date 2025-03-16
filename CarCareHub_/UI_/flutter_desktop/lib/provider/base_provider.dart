@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
    String buildUrl(String path) {
     return "$baseURL$endpoint$path";  // Spaja osnovni URL sa endpointom i dodatnim dijelom
   }
-
+//get klasicni 
   Future<SearchResult<T>> get({dynamic filter}) async {
     String url = "$baseURL$endpoint";
 
@@ -47,7 +48,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-
+//get za admina geta i true i false properti vidljivo 
   Future<SearchResult<T>> getAdmin({dynamic filter}) async {
     String url = "$baseURL$endpoint/Admin";
 
@@ -76,7 +77,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
 
-  // Implementacija getById
+  // Implementacija getById getata Listu po nekom idu nekog properija
   Future<List<T>> getById(int? id) async {
     String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
 
@@ -206,29 +207,20 @@ abstract class BaseProvider<T> with ChangeNotifier {
   T fromJson(data) {
     throw Exception("Method not implemented");
   }
-  Future<T> getByID(int id) async {
-  // Construct the URL
-  String url = "$baseURL$endpoint/ZaposleniciGetByID/$id";
 
-  // Parse the URL into a Uri object
-  Uri uri = Uri.parse(url);
+   // Metoda za dohvaćanje jednog objekta po ID-u
+  Future<T> getSingleById(int id) async {
+    String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
 
-  // Create headers for the request
-  Map<String, String> headers = createHeaders();
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
 
-  // Make the HTTP GET request
-  http.Response response = await http.get(uri, headers: headers);
-
-  // Validate the response
-  if (isValidResponse(response)) {
-    // Decode the response body
-    var data = jsonDecode(response.body);
-
-    // Convert the JSON data into an object of type T
-    return fromJson(data);
-  } else {
-    // Throw an exception if the response is not valid
-    throw Exception("Failed to fetch data for ID: $id");
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data); // Vraća jedan objekat tipa T
+    } else {
+      throw Exception("Unknown error");
+    }
   }
-}
 }
