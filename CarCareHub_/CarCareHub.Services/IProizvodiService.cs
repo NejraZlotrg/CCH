@@ -17,7 +17,9 @@ namespace CarCareHub.Services
         Task<Model.Proizvod> Hide(int id);
         Task<List<string>> AllowedActions(int id);
         Task<PagedResult<CarCareHub.Model.Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject search = null);
-        
+        Task<PagedResult<CarCareHub.Model.Proizvod>> GetByFirmaAutodijelovaID(int firmaautodijelovaid);
+
+
 
     }
 }

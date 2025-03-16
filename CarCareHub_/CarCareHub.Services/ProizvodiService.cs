@@ -181,6 +181,22 @@ namespace CarCareHub.Services
 
         }
 
+        public virtual async Task<PagedResult<CarCareHub.Model.Proizvod>> GetByFirmaAutodijelovaID(int firmaautodijelovaid)
+        {
+            var query = _dbContext.Proizvods
+                .Where(x => x.Vidljivo == true && x.FirmaAutodijelovaID == firmaautodijelovaid);
+
+            PagedResult<CarCareHub.Model.Proizvod> result = new PagedResult<CarCareHub.Model.Proizvod>
+            {
+                Count = await query.CountAsync() // Broj proizvoda
+            };
+
+            var list = await query.ToListAsync(); // Dohvati rezultate
+
+            result.Result = _mapper.Map<List<CarCareHub.Model.Proizvod>>(list); // Mapiranje
+            return result;
+        }
+
 
     }
 

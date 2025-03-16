@@ -97,6 +97,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         toolbarHeight: 80.0,
         title: Row(
           children: [
+            
             IconButton(
               icon: const Icon(Icons.arrow_back, size: 30),
               onPressed: () {
@@ -114,40 +115,44 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                 ),
               ),
             ),
-            Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart, size: 30),
-                  onPressed: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const KorpaScreen()),
-                    );
-                    _ucitajBrojProizvoda();
-                  },
-                ),
-                if (brojProizvodaUKorpi > 0)
-                  Positioned(
-                    right: 4,
-                    top: 4,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: Text(
-                        brojProizvodaUKorpi.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+           Stack(
+  children: [
+    IconButton(
+      icon: const Icon(Icons.shopping_cart, size: 30),
+      onPressed: () async {
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const KorpaScreen()))
+            .then((_) {
+          setState(() {
+            _ucitajBrojProizvoda(); // Ponovno učitavanje broja proizvoda nakon zatvaranja ekrana
+          });
+        });
+      },
+    ),
+    if (brojProizvodaUKorpi > 0)
+      Positioned(
+        right: 4,
+        top: 4,
+        child: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: Text(
+            brojProizvodaUKorpi.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
+          ),
+        ),
+      ),
+  ],
+),
+
             IconButton(
               icon: const Icon(Icons.account_balance_wallet_outlined, size: 30),
               onPressed: () {
@@ -245,6 +250,18 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
       }
     }
   },
+),Tooltip(
+  message: "MOJI ARTIKLI",
+  child: IconButton(
+    icon: const Icon(Icons.list, size: 30), // Ikonica za listu
+    onPressed: () {
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => const MojiArtikliScreen(), // Ovdje ide ekran sa artiklima
+      //   ),
+      // );
+    },
+  ),
 ),
 
           ],
@@ -341,7 +358,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                if (context.read<UserProvider>().role == "Admin")
 
 
-               
+
             ListTile(
               leading: const Icon(Icons.emoji_people),
               title: const Text('Zaposlenici'),

@@ -22,7 +22,21 @@ class ProductProvider extends BaseProvider<Product> {
       throw Exception("Greška pri sakrivanju proizvoda (status: ${response.statusCode})");
     }
   }
+ Future<List<Product>> getByFirmaAutodijelovaID(int firmaAutodijelovaID) async {
+    String url = "http://localhost:7209/api/proizvodi/GetByFirmaAutodijelovaID/$firmaAutodijelovaID";
 
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    
+    http.Response response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      List<dynamic> data = jsonDecode(response.body)['result']; // Uzima listu iz odgovora
+      return data.map((item) => fromJson(item)).toList(); // Mapira u listu objekata `Proizvod`
+    } else {
+      throw Exception("Greška pri dohvaćanju proizvoda!");
+    }
+  }
 
     // Dodajemo custom funkciju za sakrivanje proizvoda
   Future<Product> activateProduct(int id) async {

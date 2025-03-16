@@ -58,5 +58,18 @@ namespace CarCareHub_.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetByFirmaAutodijelovaID/{firmaautodijelovaid}")]
+        public async Task<ActionResult<PagedResult<CarCareHub.Model.Proizvod>>> GetByFirmaAutodijelovaID(int firmaautodijelovaid)
+        {
+            var result = await (_service as IProizvodiService)?.GetByFirmaAutodijelovaID(firmaautodijelovaid);
+
+            if (result == null || result.Result.Count == 0)
+                return NotFound("Nema proizvoda za ovu firmu autodijelova.");
+
+            return Ok(result);
+        }
+
+
     }
 }

@@ -39,6 +39,7 @@ Future<bool> updateKolicina(int? korpaId, int? proizvodId, int novaKolicina) asy
 
     if (response.statusCode == 200) {
       print("Količina uspešno ažurirana.");
+        notifyListeners();  
       return true;
     } else {
       print("Greška prilikom ažuriranja količine: ${response.body}");
