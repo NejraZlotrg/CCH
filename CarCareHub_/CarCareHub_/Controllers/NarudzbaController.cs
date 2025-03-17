@@ -78,6 +78,12 @@ namespace CarCareHub_.Controllers
         //        return null;
         //    }
         //}
+        [HttpGet("izvjestaj")]
+        public async Task<ActionResult<List<IzvjestajNarudzbi>>> GenerisiIzvjestaj([FromQuery] DateTime? odDatuma, [FromQuery] DateTime? doDatuma, [FromQuery] int? kupacId, [FromQuery] int? zaposlenikId, [FromQuery] int? autoservisId)
+        {
+            var izvjestaj = await _narudzbaService.GetIzvjestajNarudzbi(odDatuma, doDatuma, kupacId, zaposlenikId, autoservisId);
+            return Ok(izvjestaj);
+        }
 
     }
 }

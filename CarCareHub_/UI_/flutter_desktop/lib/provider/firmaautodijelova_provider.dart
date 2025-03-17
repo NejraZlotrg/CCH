@@ -44,6 +44,7 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
 
 
 
+  @override
   Future<FirmaAutodijelova> getSingleById(int id) async {
     String url = "http://localhost:7209/api/firmaAutodijelova/FirmaAutodijelovaGetByID/$id"; // Dodajemo ID u URL
 

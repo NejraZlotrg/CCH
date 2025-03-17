@@ -84,7 +84,7 @@ Future<void> _loadData() async {
         break;
       case "Firma autodijelova":
         // Call getByFirmaAutodijelovaID and wrap the result in a SearchResult object
-        List<Product> products = await _productProvider.getByFirmaAutodijelovaID(userId!);
+        List<Product> products = await _productProvider.getByFirmaAutodijelovaID(userId);
         data = SearchResult<Product>()
           ..result = products // Assign the list of products to the `result` field
           ..count = products.length; // Set the count to the length of the list

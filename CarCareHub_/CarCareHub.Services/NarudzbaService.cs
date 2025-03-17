@@ -272,6 +272,48 @@ namespace CarCareHub.Services
             // Vrati mapiranu listu
             return mappedResult;
         }
+        public async Task<List<IzvjestajNarudzbi>> GetIzvjestajNarudzbi(DateTime? odDatuma, DateTime? doDatuma, int? kupacId, int? zaposlenikId, int? autoservisId)
+        {
+            var query = _dbContext.Narudzbas
+                .Include(n => n.Klijent)
+                .Include(n => n.Zaposlenik)
+                .Include(n => n.Autoservis)
+                .AsQueryable();
+
+            // Filtriranje prema vremenskom periodu
+            if (odDatuma.HasValue)
+                query = query.Where(n => n.DatumNarudzbe >= odDatuma.Value);
+
+            if (doDatuma.HasValue)
+                query = query.Where(n => n.DatumNarudzbe <= doDatuma.Value);
+
+            // Filtriranje po kupcu, zaposleniku ili autoservisu
+            if (kupacId.HasValue)
+                query = query.Where(n => n.KlijentId == kupacId.Value);
+
+            if (zaposlenikId.HasValue)
+                query = query.Where(n => n.ZaposlenikId == zaposlenikId.Value);
+
+            if (autoservisId.HasValue)
+                query = query.Where(n => n.AutoservisId == autoservisId.Value);
+
+            var narudzbe = await query.ToListAsync();
+
+            // Mapiranje u listu izvještaja
+            var izvjestaj = narudzbe.Select(n => new IzvjestajNarudzbi
+            {
+                NarudzbaId = n.NarudzbaId,
+                DatumNarudzbe = n.DatumNarudzbe,
+                Klijent = n.Klijent != null ? $"{n.Klijent.Ime} {n.Klijent.Prezime}" : "N/A",
+                Autoservis = n.Autoservis?.Naziv ?? "N/A",
+                Zaposlenik = n.Zaposlenik != null ? $"{n.Zaposlenik.Ime} {n.Zaposlenik.Prezime}" : "N/A",
+                UkupnaCijena = n.UkupnaCijenaNarudzbe,
+                Status = (bool)n.ZavrsenaNarudzba ? true : false
+            }).ToList();
+
+            return izvjestaj;
+        }
+
 
     }
 }

@@ -44,6 +44,7 @@ class KlijentProvider extends BaseProvider<Klijent> {
     return null;
   }
 }
+  @override
   Future<Klijent> getSingleById(int id) async {
     String url = "http://localhost:7209/api/klijent/KlijentiGetByID/$id"; // Dodajemo ID u URL
 

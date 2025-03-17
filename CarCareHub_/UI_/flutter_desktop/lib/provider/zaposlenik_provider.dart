@@ -48,6 +48,7 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
 
 //   String url = "";
 
+  @override
   Future<Zaposlenik> getSingleById(int id) async {
     String url = "http://localhost:7209/api/zaposlenici/ZaposleniciGetByID/$id"; // Dodajemo ID u URL
 

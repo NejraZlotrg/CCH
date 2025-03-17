@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_mobile/models/IzvjestajNarudzbi.dart';
 import 'package:flutter_mobile/models/narudzba.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
@@ -79,4 +80,47 @@ Future<SearchResult<Narudzba>> getNarudzbePoUseru(int id) async {
       throw Exception('Greška pri slanju zahtjeva: $error');
     }
   }
+  Future<List<IzvjestajNarudzbi>> getIzvjestaj({
+  DateTime? odDatuma,
+  DateTime? doDatuma,
+  int? kupacId,
+  int? zaposlenikId,
+  int? autoservisId,
+}) async {
+  String url = buildUrl("/izvjestaj");
+
+  Map<String, String> queryParams = {};
+  if (odDatuma != null) queryParams["odDatuma"] = odDatuma.toUtc().toIso8601String();
+  if (doDatuma != null) queryParams["doDatuma"] = doDatuma.toUtc().toIso8601String();
+  if (kupacId != null) queryParams["kupacId"] = kupacId.toString();
+  if (zaposlenikId != null) queryParams["zaposlenikId"] = zaposlenikId.toString();
+  if (autoservisId != null) queryParams["autoservisId"] = autoservisId.toString();
+
+  if (queryParams.isNotEmpty) {
+    url += "?${Uri(queryParameters: queryParams).query}";
+  }
+
+  Uri uri = Uri.parse(url);
+  Map<String, String> headers = createHeaders();
+
+  print("Request URL: $url");
+
+  try {
+    http.Response response = await http.get(uri, headers: headers);
+
+    print("Response status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((item) => IzvjestajNarudzbi.fromJson(item)).toList();
+    } else {
+      throw Exception('Greška: ${response.statusCode} - ${response.body}');
+    }
+  } catch (error) {
+    print("Greška pri slanju zahtjeva: $error");
+    throw Exception('Greška pri slanju zahtjeva: $error');
+  }
+}
+
 }

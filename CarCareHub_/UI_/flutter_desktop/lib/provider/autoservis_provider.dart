@@ -45,7 +45,8 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
 }
 
 
-Future<Autoservis> getSingleById(int id) async {
+@override
+  Future<Autoservis> getSingleById(int id) async {
     String url = "http://localhost:7209/api/Autoservis/AutoservisGetByID/$id"; // Dodajemo ID u URL
 
     Uri uri = Uri.parse(url);

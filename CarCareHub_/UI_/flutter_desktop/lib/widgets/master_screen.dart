@@ -21,6 +21,7 @@ import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_screen.dart';
 import 'package:flutter_mobile/screens/godiste_screen.dart';
 import 'package:flutter_mobile/screens/grad_screen.dart';
+import 'package:flutter_mobile/screens/izvjestajnarudzbi_screen.dart';
 import 'package:flutter_mobile/screens/kategorije_screen.dart';
 import 'package:flutter_mobile/screens/klijent_details_screen.dart';
 import 'package:flutter_mobile/screens/klijent_screen.dart';
@@ -164,24 +165,41 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     ],
   
       if(_role == "Klijent" || _role == "Zaposlenik" || _role == "Autoservis") ...[
-  Stack(
-    children: [
-      Tooltip(
-    message: "Moje narudžbe",
-    child: IconButton(
-                icon: const Icon(Icons.account_balance_wallet_outlined, size: 30),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const NarudzbaScreen(),
-                    ),
-                  );
-                },
-              ),
-          ),
-    ]
-  ),
+ Stack(
+  children: [
+    Tooltip(
+      message: "Moje narudžbe",
+      child: IconButton(
+        icon: const Icon(Icons.account_balance_wallet_outlined, size: 30),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const NarudzbaScreen(),
+            ),
+          );
+        },
+      ),
+    ),
+   
+  ],
+),
+
       ],
+      if (_role == "Firma autodijelova") ...[
+  Tooltip(
+    message: "Moji izvještaji",
+    child: IconButton(
+      icon: const Icon(Icons.bar_chart, size: 30),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const IzvjestajNarudzbiScreen(),
+          ),
+        );
+      },
+    ),
+  ),
+],
     
     
           if(_role != "Admin") ...[
@@ -195,18 +213,12 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   if (_role == "Klijent") {
                     try {
                       Klijent? klijent = await _klijentProvider.getSingleById(userId);
-                      if (klijent != null) {
-                        Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => KlijentDetailsScreen(klijent: klijent),
-              ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Klijent nije pronađen!')),
-                        );
-                      }
-                    } catch (e) {
+                      Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => KlijentDetailsScreen(klijent: klijent),
+            ),
+                      );
+                                        } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Greška: $e')),
                       );
@@ -216,18 +228,12 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   if (_role == "Zaposlenik") {
                     try {
                       Zaposlenik? zaposlenik = await _zaposlenikProvider.getSingleById(userId);
-                      if (zaposlenik != null) {
-                        Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
-              ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Zaposlenik nije pronađen!')),
-                        );
-                      }
-                    } catch (e) {
+                      Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
+            ),
+                      );
+                                        } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Greška: $e')),
                       );
@@ -237,18 +243,12 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   if (_role == "Autoservis") {
                     try {
                       Autoservis? autoservis = await _autoservisProvider.getSingleById(userId);
-                      if (autoservis != null) {
-                        Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => AutoservisDetailsScreen(autoservis: autoservis),
-              ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Autoservis nije pronađen!')),
-                        );
-                      }
-                    } catch (e) {
+                      Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => AutoservisDetailsScreen(autoservis: autoservis),
+            ),
+                      );
+                                        } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Greška: $e')),
                       );
@@ -258,18 +258,12 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                   if (_role == "Firma autodijelova") {
                     try {
                       FirmaAutodijelova? firmaAutodijelova = await _firmaAutodijelovaProvider.getSingleById(userId);
-                      if (firmaAutodijelova != null) {
-                        Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => FirmaAutodijelovaDetailScreen(firmaAutodijelova: firmaAutodijelova),
-              ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Firma autodijelova nije pronađena!')),
-                        );
-                      }
-                    } catch (e) {
+                      Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => FirmaAutodijelovaDetailScreen(firmaAutodijelova: firmaAutodijelova),
+            ),
+                      );
+                                        } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Greška: $e')),
                       );
