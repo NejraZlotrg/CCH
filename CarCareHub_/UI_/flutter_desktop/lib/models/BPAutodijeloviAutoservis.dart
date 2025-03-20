@@ -11,7 +11,7 @@ class BPAutodijeloviAutoservis {
   FirmaAutodijelova? firmaAutodijelova; // Veza prema firmi autodijelova
   Autoservis? autoservis; // Veza prema autoservisu
   int? firmaAutodijelovaId; // ID firme autodijelova
-bool? vidljivo;
+  bool? vidljivo;
   int? autoservisId; // ID autoservisa
 
 

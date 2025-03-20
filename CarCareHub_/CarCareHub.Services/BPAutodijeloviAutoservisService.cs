@@ -38,19 +38,30 @@ namespace CarCareHub.Services
             {
                 query = query.Include(z => z.FirmaAutodijelova);
                 query = query.Include(z => z.Autoservis);
+            }
+            return base.AddInclude(query, search);
+        }
 
-
+        public IQueryable<Database.BPAutodijeloviAutoservis> AutoservisInclude(IQueryable<Database.BPAutodijeloviAutoservis> query, BPAutodijeloviAutoservisSearchObject? search = null)
+        {
+            // Uključujemo samo entitet Uloge
+            if (search?.IsAllIncluded == true)
+            {
+                query = query.Include(z => z.Autoservis);
             }
             return base.AddInclude(query, search);
         }
         public override async Task<List<Model.BPAutodijeloviAutoservis>> GetByID_(int id)
         {
-            var temp = _dbContext.BPAutodijeloviAutoservis.Where(x => x.FirmaAutodijelova.FirmaAutodijelovaID == id).ToList().AsQueryable();
+            // Start with the base query
+            var query = _dbContext.BPAutodijeloviAutoservis.AsQueryable();
 
-          
+            // Apply the AddInclude method to include related data
+            query = AutoservisInclude(query, new BPAutodijeloviAutoservisSearchObject { IsAllIncluded = true });
 
-
-            return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(temp);
+            // Execute the query and map the results
+            var result = await query.ToListAsync();
+            return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(result);
         }
     }
 }
