@@ -65,9 +65,6 @@ class _KorpaScreenState extends State<KorpaScreen> {
     
     try {
       // Dohvati ID korisnika na osnovu tipa korisnika
-      int? klijentId;
-      int? autoservisId;
-      int? zaposlenikId;
 
       // Prvo pokušaj dobiti ID klijenta
      if(_userProvider.role =='Klijent')
