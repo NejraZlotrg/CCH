@@ -1,4 +1,8 @@
+import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/drzave.dart';
+import 'package:flutter_mobile/models/klijent.dart';
+import 'package:flutter_mobile/models/zaposlenik.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'izvjestajnarudzbi.g.dart';
@@ -7,9 +11,9 @@ part 'izvjestajnarudzbi.g.dart';
 class IzvjestajNarudzbi {
   int? narudzbaId;
   DateTime? datumNarudzbe;
-  String? klijent;
-  String? autoservis;
-  String? zaposlenik;
+  Klijent? klijent;
+  Autoservis? autoservis;
+  Zaposlenik? zaposlenik;
   double? ukupnaCijena;
   bool? status;
 

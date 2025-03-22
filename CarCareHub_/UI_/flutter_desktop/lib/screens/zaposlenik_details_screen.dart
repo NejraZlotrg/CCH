@@ -92,17 +92,26 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
       ),
     );
   }
+
+  
 Widget _buildForm() {
   final isAdminOrOwnProfile = context.read<UserProvider>().role == "Admin" || 
       (context.read<UserProvider>().role == "Zaposlenik" && 
        context.read<UserProvider>().userId == widget.zaposlenik!.zaposlenikId);
+
+  String brojTelefona = widget.zaposlenik?.brojTelefona?.toString() ?? '';
+
+  // Check if it starts with '6' and add '0' if necessary
+  if (brojTelefona.startsWith('6')) {
+    brojTelefona = '0$brojTelefona';
+  }
 
   return FormBuilder(
     key: _formKey,
     initialValue: {
       'ime': widget.zaposlenik?.ime ?? '',
       'prezime': widget.zaposlenik?.prezime ?? '',
-      'brojTelefona': widget.zaposlenik?.brojTelefona?.toString() ?? '',
+      'brojTelefona': brojTelefona,
       'gradId': widget.zaposlenik?.gradId?.toString() ?? '',
       'email': widget.zaposlenik?.email ?? '',
       'username': widget.zaposlenik?.username ?? '',
@@ -162,6 +171,7 @@ Widget _buildForm() {
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),
+        
         FormBuilderTextField(
           name: 'brojTelefona',
           validator: validator.phoneNumber,
@@ -183,7 +193,7 @@ Widget _buildForm() {
           ),
           keyboardType: TextInputType.phone,
           style: const TextStyle(color: Colors.black),
-          initialValue: widget.zaposlenik?.brojTelefona?.toString(),
+          initialValue: brojTelefona,
           enabled: isAdminOrOwnProfile,
         ),
         const SizedBox(height: 15),

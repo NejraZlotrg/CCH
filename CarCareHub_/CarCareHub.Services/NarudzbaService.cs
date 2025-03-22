@@ -275,9 +275,9 @@ namespace CarCareHub.Services
         public async Task<List<IzvjestajNarudzbi>> GetIzvjestajNarudzbi(DateTime? odDatuma, DateTime? doDatuma, int? kupacId, int? zaposlenikId, int? autoservisId)
         {
             var query = _dbContext.Narudzbas
-                .Include(n => n.Klijent)
-                .Include(n => n.Zaposlenik)
-                .Include(n => n.Autoservis)
+                .Include(n => n.Klijent) // Include Klijent navigation property
+                .Include(n => n.Zaposlenik) // Include Zaposlenik navigation property
+                .Include(n => n.Autoservis) // Include Autoservis navigation property
                 .AsQueryable();
 
             // Filtriranje prema vremenskom periodu
@@ -304,11 +304,25 @@ namespace CarCareHub.Services
             {
                 NarudzbaId = n.NarudzbaId,
                 DatumNarudzbe = n.DatumNarudzbe,
-                Klijent = n.Klijent != null ? $"{n.Klijent.Ime} {n.Klijent.Prezime}" : "N/A",
-                Autoservis = n.Autoservis?.Naziv ?? "N/A",
-                Zaposlenik = n.Zaposlenik != null ? $"{n.Zaposlenik.Ime} {n.Zaposlenik.Prezime}" : "N/A",
+                Klijent = n.Klijent != null ? new Model.Klijent // Map Klijent navigation property
+                {
+                    KlijentId = n.Klijent.KlijentId,
+                    Ime = n.Klijent.Ime,
+                    Prezime = n.Klijent.Prezime
+                } : null,
+                Autoservis = n.Autoservis != null ? new Model.Autoservis // Map Autoservis navigation property
+                {
+                    AutoservisId = n.Autoservis.AutoservisId,
+                    Naziv = n.Autoservis.Naziv
+                } : null,
+                Zaposlenik = n.Zaposlenik != null ? new Model.Zaposlenik // Map Zaposlenik navigation property
+                {
+                    ZaposlenikId = n.Zaposlenik.ZaposlenikId,
+                    Ime = n.Zaposlenik.Ime,
+                    Prezime = n.Zaposlenik.Prezime
+                } : null,
                 UkupnaCijena = n.UkupnaCijenaNarudzbe,
-                Status = (bool)n.ZavrsenaNarudzba ? true : false
+                Status = n.ZavrsenaNarudzba
             }).ToList();
 
             return izvjestaj;

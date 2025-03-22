@@ -12,9 +12,15 @@ IzvjestajNarudzbi _$IzvjestajNarudzbiFromJson(Map<String, dynamic> json) =>
       json['datumNarudzbe'] == null
           ? null
           : DateTime.parse(json['datumNarudzbe'] as String),
-      json['klijent'] as String?,
-      json['autoservis'] as String?,
-      json['zaposlenik'] as String?,
+      json['klijent']  == null
+          ? null
+          : Klijent.fromJson(json['klijent'] as Map<String, dynamic>),
+      json['autoservis'] == null
+          ? null
+          : Autoservis.fromJson(json['autoservis'] as Map<String, dynamic>),
+      json['zaposlenik']== null
+          ? null
+          : Zaposlenik.fromJson(json['zaposlenik'] as Map<String, dynamic>),
       (json['ukupnaCijena'] as num?)?.toDouble(),
       json['status'] as bool?,
     );

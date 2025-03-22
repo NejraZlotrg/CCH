@@ -172,9 +172,9 @@ class _IzvjestajNarudzbiScreenState extends State<IzvjestajNarudzbiScreen> {
                   (e) => DataRow(cells: [
                     DataCell(Text(e.narudzbaId.toString())),
                     DataCell(Text(e.datumNarudzbe != null ? _formatDate(e.datumNarudzbe!) : 'N/A')),
-                    DataCell(Text(e.klijent ?? 'N/A')),
-                    DataCell(Text(e.autoservis ?? 'N/A')),
-                    DataCell(Text(e.zaposlenik ?? 'N/A')),
+                    DataCell(Text(e.klijent?.ime ?? 'N/A')),
+                    DataCell(Text(e.autoservis?.naziv ?? 'N/A')),
+                    DataCell(Text(e.zaposlenik?.ime ?? 'N/A')),
                     DataCell(Text(e.ukupnaCijena != null ? '${e.ukupnaCijena!.toStringAsFixed(2)} KM' : 'N/A')),
                     DataCell(Icon(
                       e.status == true ? Icons.check_circle : Icons.cancel,
