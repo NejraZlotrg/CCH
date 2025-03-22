@@ -291,7 +291,6 @@ List<Widget> _buildFormFields() {
                 "Naziv autoservisa",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -316,7 +315,6 @@ List<Widget> _buildFormFields() {
                 "Vlasnik firme",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -334,7 +332,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 2: Korisničko ime
     Column(
@@ -344,7 +342,6 @@ List<Widget> _buildFormFields() {
           "Korisničko ime",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -359,7 +356,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 3: Lozinka
     Column(
@@ -369,7 +366,6 @@ List<Widget> _buildFormFields() {
           "Lozinka",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -385,7 +381,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 4: Ponovljena Lozinka
     Column(
@@ -395,7 +391,6 @@ List<Widget> _buildFormFields() {
           "Ponovite lozinku",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -410,7 +405,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 5: Adresa i Grad
     Row(
@@ -423,7 +418,6 @@ List<Widget> _buildFormFields() {
                 "Adresa autoservisa",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -447,7 +441,6 @@ List<Widget> _buildFormFields() {
       "Grad",
       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
-    const SizedBox(height: 5),
     FormBuilderDropdown(
       name: 'gradId',
       validator: validator.required,
@@ -480,7 +473,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 6: Email i Broj telefona
     Row(
@@ -493,7 +486,6 @@ List<Widget> _buildFormFields() {
                 "Email",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -517,7 +509,6 @@ List<Widget> _buildFormFields() {
                 "Broj telefona",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -534,7 +525,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 7: JIB i MBS
     Row(
@@ -547,7 +538,6 @@ List<Widget> _buildFormFields() {
                 "JIB",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -571,7 +561,6 @@ List<Widget> _buildFormFields() {
                 "MBS",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -588,7 +577,7 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
   ];
 }
 

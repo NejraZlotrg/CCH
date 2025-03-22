@@ -68,85 +68,162 @@ class _IzvjestajNarudzbiScreenState extends State<IzvjestajNarudzbiScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Izvještaj narudžbi",
-      child: Column(
-        children: [
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        child: Column(
+          children: [
           _buildFilterForm(),
           Expanded(child: _buildDataListView()),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFilterForm() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: FormBuilder(
-        key: _formKey,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: FormBuilderDateTimePicker(
-                    name: 'odDatuma',
-                    inputType: InputType.date,
-                    decoration: const InputDecoration(labelText: 'Od datuma'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FormBuilderDateTimePicker(
-                    name: 'doDatuma',
-                    inputType: InputType.date,
-                    decoration: const InputDecoration(labelText: 'Do datuma'),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: FormBuilderTextField(
-                    name: 'kupacId',
-                    decoration: const InputDecoration(labelText: 'Kupac ID'),
-                    keyboardType: TextInputType.number,
-                    enabled: !kupacDisabled,
-                    onChanged: (value) => _onFieldChanged('kupacId', value),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FormBuilderTextField(
-                    name: 'zaposlenikId',
-                    decoration: const InputDecoration(labelText: 'Zaposlenik ID'),
-                    keyboardType: TextInputType.number,
-                    enabled: !zaposlenikDisabled,
-                    onChanged: (value) => _onFieldChanged('zaposlenikId', value),
-                  ),
-                ),
-              ],
-            ),
-            FormBuilderTextField(
-              name: 'autoservisId',
-              decoration: const InputDecoration(labelText: 'Autoservis ID'),
-              keyboardType: TextInputType.number,
-              enabled: !autoservisDisabled,
-              onChanged: (value) => _onFieldChanged('autoservisId', value),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState?.saveAndValidate() ?? false) {
-                  _loadData(_formKey.currentState!.value);
-                }
-              },
-              child: const Text("Prikaži izvještaj"),
-            ),
-          ],
         ),
       ),
     );
   }
+
+ Widget _buildFilterForm() {
+  return Padding(
+    padding: const EdgeInsets.all(10.0),
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 3,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+       
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Datumski odabir
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderDateTimePicker(
+                      name: 'odDatuma',
+                      inputType: InputType.date,
+                      decoration: InputDecoration(
+                        labelText: 'Od datuma',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FormBuilderDateTimePicker(
+                      name: 'doDatuma',
+                      inputType: InputType.date,
+                      decoration: InputDecoration(
+                        labelText: 'Do datuma',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              // Kupac ID i Zaposlenik ID
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderTextField(
+                      name: 'kupacId',
+                      decoration: InputDecoration(
+                        labelText: 'Kupac ID',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      keyboardType: TextInputType.number,
+                      enabled: !kupacDisabled,
+                      onChanged: (value) => _onFieldChanged('kupacId', value),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FormBuilderTextField(
+                      name: 'zaposlenikId',
+                      decoration: InputDecoration(
+                        labelText: 'Zaposlenik ID',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      keyboardType: TextInputType.number,
+                      enabled: !zaposlenikDisabled,
+                      onChanged: (value) => _onFieldChanged('zaposlenikId', value),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Autoservis ID
+              FormBuilderTextField(
+                name: 'autoservisId',
+                decoration: InputDecoration(
+                  labelText: 'Autoservis ID',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                keyboardType: TextInputType.number,
+                enabled: !autoservisDisabled,
+                onChanged: (value) => _onFieldChanged('autoservisId', value),
+              ),
+              const SizedBox(height: 20),
+
+              // Gumb za prikaz izvještaja
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState?.saveAndValidate() ?? false) {
+                    _loadData(_formKey.currentState!.value);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade800, // Tamnocrvena boja
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  elevation: 5,
+                ),
+                child: const Text(
+                  "Prikaži izvještaj",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
   Widget _buildDataListView() {
     return Card(

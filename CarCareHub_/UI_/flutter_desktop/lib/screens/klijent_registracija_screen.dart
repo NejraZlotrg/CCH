@@ -196,7 +196,6 @@ class _KlijentRegistracijaScreenState
                 "Ime:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -220,7 +219,6 @@ class _KlijentRegistracijaScreenState
                 "Prezime:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -237,7 +235,7 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 2: grad
     Column(
@@ -247,7 +245,6 @@ class _KlijentRegistracijaScreenState
           "Korisničko ime",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -261,7 +258,7 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 3: Lozinka
     Column(
@@ -271,7 +268,6 @@ class _KlijentRegistracijaScreenState
           "Lozinka",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -286,7 +282,7 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 4: Ponovljena Lozinka
     Column(
@@ -296,7 +292,6 @@ class _KlijentRegistracijaScreenState
           "Ponovite lozinku",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -311,7 +306,7 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 5: Adresa i Grad
     Row(
@@ -324,7 +319,6 @@ class _KlijentRegistracijaScreenState
         "Grad",
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
-      const SizedBox(height: 5),
       FormBuilderDropdown(
         name: 'gradId',
         validator: validator.required,
@@ -353,15 +347,9 @@ class _KlijentRegistracijaScreenState
   ),
 )
 ,
-        const SizedBox(width: 20),
-
-
-        
-          
       ],
     ),
-    const SizedBox(height: 20),
-
+    const SizedBox(height: 10),
     // Red 6: Email i Broj telefona
     Row(
       children: [
@@ -373,7 +361,6 @@ class _KlijentRegistracijaScreenState
                 "Email",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -397,7 +384,6 @@ class _KlijentRegistracijaScreenState
                 "Broj telefona",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -414,7 +400,7 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 7: JIB i MBS
     Row(
@@ -427,7 +413,6 @@ class _KlijentRegistracijaScreenState
                 "Spol:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -444,7 +429,7 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
   ];
 }
 

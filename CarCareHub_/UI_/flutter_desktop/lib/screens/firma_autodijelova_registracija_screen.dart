@@ -282,7 +282,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 "Naziv firme autodijelova:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -307,7 +306,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 "Adresa:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -324,7 +322,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 2: grad
     Column(
@@ -334,7 +332,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
           "Korisničko ime",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -348,7 +345,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 3: Lozinka
     Column(
@@ -358,7 +355,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
           "Lozinka",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -373,7 +369,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 4: Ponovljena Lozinka
     Column(
@@ -383,7 +379,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
           "Ponovite lozinku",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
@@ -398,12 +393,11 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 5: Adresa i Grad
     Row(
       children: [
-        const SizedBox(width: 20),
         Expanded(
           child: Column(
   crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,7 +406,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
       "Grad",
       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
-    const SizedBox(height: 5),
     FormBuilderDropdown(
       name: 'gradId',
       validator: validator.required,
@@ -443,7 +436,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 6: Email i Broj telefona
     Row(
@@ -456,7 +449,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 "Email",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -480,7 +472,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 "Broj telefona",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -497,7 +488,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
     // Red 7: JIB i MBS
     Row(
@@ -510,7 +501,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 "JIB",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -534,7 +524,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                 "MBS",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -551,7 +540,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
   ];
 }
 

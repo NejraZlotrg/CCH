@@ -598,10 +598,8 @@ List<Widget> _buildFormFields() {
             "Korisničko ime",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          const SizedBox(height: 5),
           FormBuilderTextField(
             decoration: const InputDecoration(
-              labelText: "Korisničko ime",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite korisničko ime',
               hintStyle: TextStyle(color: Colors.black),
@@ -622,7 +620,6 @@ List<Widget> _buildFormFields() {
           ),
         ],
       ),
-      const SizedBox(height: 20),
 
       // Red 3: Lozinka
       Column(
@@ -632,10 +629,8 @@ List<Widget> _buildFormFields() {
             "Lozinka",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          const SizedBox(height: 5),
           FormBuilderTextField(
             decoration: const InputDecoration(
-              labelText: "Lozinka",
               labelStyle: TextStyle(color: Colors.black),
               hintText: 'Unesite lozinku',
               hintStyle: TextStyle(color: Colors.black),
@@ -657,7 +652,6 @@ List<Widget> _buildFormFields() {
           ),
         ],
       ),
-      const SizedBox(height: 20),
 
       // Red 4: Ponovljena Lozinka
       Column(
@@ -667,7 +661,6 @@ List<Widget> _buildFormFields() {
             "Ponovite lozinku",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          const SizedBox(height: 5),
           FormBuilderTextField(
             decoration: const InputDecoration(
               labelText: "Ponovite lozinku",

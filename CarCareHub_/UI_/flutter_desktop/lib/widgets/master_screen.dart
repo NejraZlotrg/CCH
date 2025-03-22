@@ -331,7 +331,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             ),
            if (context.read<UserProvider>().role == "Admin")
             ListTile(
-              leading: const Icon(Icons.build),
+              leading: const Icon(Icons.person_3_sharp),
               title: const Text('Korisnici'),
               onTap: () {
                 Navigator.of(context).push(
@@ -478,7 +478,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             ),
                if (context.read<UserProvider>().role == "Admin")
                         ListTile(
-              leading: const Icon(Icons.factory),
+              leading: const Icon(Icons.category_rounded),
               title: const Text('Kategorija'),
               onTap: () {
                 Navigator.of(context).push(

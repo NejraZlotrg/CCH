@@ -234,10 +234,8 @@ List<Widget> _buildFormFields() {
                 "Ime:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
-                  labelText: "Ime",
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: 'Unesite ime',
                   hintStyle: TextStyle(color: Colors.black),
@@ -268,10 +266,8 @@ List<Widget> _buildFormFields() {
                 "Prezime:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
-                  labelText: "Prezime",
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: 'Unesite prezime',
                   hintStyle: TextStyle(color: Colors.black),
@@ -295,7 +291,6 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
 
     // Red 2: Korisničko ime
     Column(
@@ -305,10 +300,8 @@ List<Widget> _buildFormFields() {
           "Korisničko ime",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
-            labelText: "Korisničko ime",
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Unesite korisničko ime',
             hintStyle: TextStyle(color: Colors.black),
@@ -329,7 +322,6 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
 
     // Red 3: Lozinka
     Column(
@@ -339,10 +331,8 @@ List<Widget> _buildFormFields() {
           "Lozinka",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
-            labelText: "Lozinka",
             labelStyle: TextStyle(color: Colors.black),
             hintText: 'Unesite lozinku',
             hintStyle: TextStyle(color: Colors.black),
@@ -364,7 +354,6 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
 
     // Red 4: Ponovljena Lozinka
     Column(
@@ -374,7 +363,6 @@ List<Widget> _buildFormFields() {
           "Ponovite lozinku",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             labelText: "Ponovite lozinku",
@@ -399,7 +387,6 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
 
     // Red 5: Grad
     Column(
@@ -409,7 +396,6 @@ List<Widget> _buildFormFields() {
           "Grad",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
        FormBuilderDropdown(
   name: 'gradId',
   validator: validator.required,
@@ -437,7 +423,6 @@ List<Widget> _buildFormFields() {
 
       ],
     ),
-    const SizedBox(height: 20),
 
     // Red 6: Email i Broj telefona
     Row(
@@ -450,10 +435,8 @@ List<Widget> _buildFormFields() {
                 "Email",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
-                  labelText: "Email",
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: 'Unesite email',
                   hintStyle: TextStyle(color: Colors.black),
@@ -484,10 +467,8 @@ List<Widget> _buildFormFields() {
                 "Broj telefona",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
-                  labelText: "Broj telefona",
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: 'Unesite broj telefona',
                   hintStyle: TextStyle(color: Colors.black),
@@ -511,7 +492,6 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
 
     // Red 7: Spol
     Row(
@@ -524,10 +504,8 @@ List<Widget> _buildFormFields() {
                 "Spol:",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 5),
               FormBuilderTextField(
                 decoration: const InputDecoration(
-                  labelText: "Spol",
                   labelStyle: TextStyle(color: Colors.black),
                   hintText: 'Unesite spol',
                   hintStyle: TextStyle(color: Colors.black),
@@ -551,7 +529,6 @@ List<Widget> _buildFormFields() {
         ),
       ],
     ),
-    const SizedBox(height: 20),
   ];
 }
 

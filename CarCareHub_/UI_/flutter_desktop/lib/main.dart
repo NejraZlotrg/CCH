@@ -39,6 +39,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  
 
   Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY',
       defaultValue:
