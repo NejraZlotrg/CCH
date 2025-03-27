@@ -12,9 +12,13 @@ namespace CarCareHub_.Controllers
     [Route("api/proizvodi")]
     public class ProizvodiController : BaseCRUDController<CarCareHub.Model.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject, CarCareHub.Model.ProizvodiInsert, CarCareHub.Model.ProizvodiUpdate>
     {
+        private readonly IRecommenderService _recommenderService;
         public ProizvodiController(ILogger<BaseController<CarCareHub.Model.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject>> logger, 
-            IProizvodiService service) : base(logger, service)
-        { }
+            IProizvodiService service,
+            IRecommenderService recommenderService) : base(logger, service)
+        {
+            _recommenderService = recommenderService;
+        }
 
         [AllowAnonymous]
         [HttpGet("[controller]GetAllAnonymous")]
@@ -70,6 +74,13 @@ namespace CarCareHub_.Controllers
             return Ok(result);
         }
 
+        [HttpGet("recommend/{proizvodId}")]
+        public async Task<IActionResult> Recommend(long proizvodId, CancellationToken cancellationToken)
+        {
+            var result = await _recommenderService.GetRecommendationsByArticleId(proizvodId, cancellationToken);
+
+            return Ok(result);
+        }
 
     }
 }

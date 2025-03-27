@@ -34,13 +34,9 @@ Future<void> fetchChats() async {
     var response = await chatKlijentZaposlenikProvider.getById__(userId);
 
     if (response.isNotEmpty) {
-      // Iterate over the response to check for nulls and handle them
       for (var chat in response) {
-        // Check for null values in the response before accessing them
         int? klijentId = chat.klijentId;
         int? zaposlenikId = chat.zaposlenikId;
-
-        // Make sure you handle nulls properly
         print('Chat with Klijent ID: $klijentId and Zaposlenik ID: $zaposlenikId');
             }
 
@@ -58,6 +54,7 @@ Future<void> fetchChats() async {
 
 
  @override
+@override
 Widget build(BuildContext context) {
   final userProvider = context.read<UserProvider>();
   final username = userProvider.username;
@@ -67,7 +64,12 @@ Widget build(BuildContext context) {
       title: Text('Chats of $username'),
     ),
     body: chats.isEmpty
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: Text(
+              'Nemate nijedan razgovor', // Poruka kada nema chatova
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          )
         : ListView.builder(
             itemCount: chats.length,
             itemBuilder: (context, index) {

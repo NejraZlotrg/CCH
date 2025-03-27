@@ -200,7 +200,36 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     ),
   ),
 ],
-    
+          if (_role == "Firma autodijelova") ...[
+  Tooltip(
+    message: "Moje narudžbe",
+    child: IconButton(
+      icon: const Icon(Icons.assignment, size: 30),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const NarudzbaScreen(),
+          ),
+        );
+      },
+    ),
+  ),
+],
+          if (_role == "Admin") ...[
+  Tooltip(
+    message: "Narudžbe",
+    child: IconButton(
+      icon: const Icon(Icons.assignment, size: 30),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const NarudzbaScreen(),
+          ),
+        );
+      },
+    ),
+  ),
+],
     
           if(_role != "Admin") ...[
             Stack(

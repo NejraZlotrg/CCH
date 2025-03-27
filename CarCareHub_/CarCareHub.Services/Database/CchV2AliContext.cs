@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using CarCareHub.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarCareHub.Services.Database;
@@ -56,14 +57,9 @@ public partial class CchV2AliContext : DbContext
 
     public virtual DbSet<Zaposlenik> Zaposleniks { get; set; }
 
-
-
-
-
-
-
-
     public DbSet<ChatAutoservisKlijent> ChatAutoservisKlijents { get; set; }
+
+    public virtual DbSet<Recommender> Recommenders { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -463,6 +459,16 @@ public partial class CchV2AliContext : DbContext
                         j.IndexerProperty<int>("ZaposlenikId").HasColumnName("zaposlenikID");
                         j.IndexerProperty<int>("ProizvodId").HasColumnName("proizvodID");
                     });
+        });
+
+        modelBuilder.Entity<Recommender>(entity =>
+        {
+            entity.HasKey(e => e.RecommenderId);
+
+            entity.Property(x => x.ProizvodId).HasColumnName("proizvodId");
+            entity.Property(x => x.PrvaPreporukaId).HasColumnName("prvaPreporukaId");
+            entity.Property(x => x.DrugaPreporukaId).HasColumnName("drugaPreporukaId");
+            entity.Property(x => x.TrecaPreporukaId).HasColumnName("trecaPreporukaId");
         });
 
         OnModelCreatingPartial(modelBuilder);

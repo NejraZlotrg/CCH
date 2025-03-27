@@ -51,7 +51,12 @@ Widget build(BuildContext context) {
       title: Text('Chats of $username'),
     ),
     body: chats.isEmpty
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: Text(
+              'Nemate nijedan razgovor', // Poruka kada nema chatova
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          )
         : ListView.builder(
             itemCount: chats.length,
             itemBuilder: (context, index) {

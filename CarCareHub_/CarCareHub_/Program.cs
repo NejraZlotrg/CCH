@@ -118,6 +118,7 @@ builder.Services.AddTransient<IKorpaService, KorpaService>();
 
 
 builder.Services.AddScoped<IChatAutoservisKlijentService, CarCareHub.Services.ChatAutoservisKlijentService>();
+builder.Services.AddScoped<IRecommenderService, RecommenderService>();
 
 
 
@@ -255,7 +256,7 @@ static async Task SeedUloge(WebApplication app)
         await SeedFirmaAsync(firmaService);
         await SeedKlijentAsync(klijentService);
         await SeedZaposlenikAsync(zaposlenikService);
-     
+
     }
 }
 
@@ -308,18 +309,35 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger"; // Postavite rutu za Swagger UI
     });
 
-app.UseAuthentication();
+    app.UseAuthentication();
 
-app.UseAuthorization();
+    app.UseAuthorization();
 
 
 
-app.MapControllers();
+    app.MapControllers();
 
 
 
     // Mapiraj SignalR rute
     app.MapHub<ChatHub>("/chatHub");
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var dataContext = scope.ServiceProvider.GetRequiredService<CchV2AliContext>();
+
+        var accommodationUnitService = scope.ServiceProvider.GetRequiredService<IRecommenderService>();
+
+        try
+        {
+            await accommodationUnitService.TrainModelAsync();
+        }
+        catch (Exception)
+        {
+
+        }
+
+    }
 
 
     app.Run();
