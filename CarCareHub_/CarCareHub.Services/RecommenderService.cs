@@ -1,5 +1,7 @@
 ﻿
+using AutoMapper;
 using CarCareHub.Model;
+using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
@@ -12,11 +14,14 @@ namespace CarCareHub.Services
         private readonly CchV2AliContext _dbContext;
         private static MLContext? _mlContext;
         private static object isLocked = new();
-        private static ITransformer? _model;
+        private static ITransformer? _model; 
+        private readonly IMapper _mapper;
 
-        public RecommenderService(CchV2AliContext dbContext)
+
+        public RecommenderService(CchV2AliContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
 
@@ -58,7 +63,7 @@ namespace CarCareHub.Services
                     {
                         var distinctItemId = tmpData.Select(y => y.ProizvodId).ToList();
 
-                        distinctItemId.ForEach(y =>
+                        distinctItemId?.ForEach(y =>
                         {
                             var relatedItems = tmpData.Select(z => z.ProizvodId).Where(z => z != y);
 
@@ -112,10 +117,10 @@ namespace CarCareHub.Services
 
             var finalResult = predictionResult.OrderByDescending(x => x.Item2).Select(x => x.Item1).Take(3).ToList();
 
-            return finalResult;
+            return _mapper.Map<List<Database.Proizvod>>(finalResult); 
         }
 
-        public async Task<List<Database.Recommender>> TrainModelAsync(CancellationToken cancellationToken)
+        public async Task<PagedResult<Database.Recommender>> TrainModelAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -136,7 +141,7 @@ namespace CarCareHub.Services
                             ProizvodId = article.ProizvodId,
                             PrvaPreporukaId = recommendedArticles[0].ProizvodId,
                             DrugaPreporukaId = recommendedArticles[1].ProizvodId,
-                            TrecaPreporukaId = recommendedArticles[1].ProizvodId,
+                            TrecaPreporukaId = recommendedArticles[2].ProizvodId,
                         };
 
                         recommendList.Add(result);
@@ -145,7 +150,8 @@ namespace CarCareHub.Services
                     await CreateNewRecommendation(recommendList, cancellationToken);
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
-                    return recommendList;
+                    return _mapper.Map<PagedResult<Database.Recommender>>(recommendList);
+
                 }
                 else
                 {
@@ -178,7 +184,13 @@ namespace CarCareHub.Services
                         existingRecommendations[i].DrugaPreporukaId = results[i].DrugaPreporukaId;
                         existingRecommendations[i].TrecaPreporukaId = results[i].TrecaPreporukaId;
                     }
-
+                    for (int i = 0; i < recommendationCount; i++)
+                    {
+                        _dbContext.Recommenders.Remove(existingRecommendations[i]);
+                    }
+                }
+                else
+                {
                     for (int i = 0; i < recommendationCount; i++)
                     {
                         existingRecommendations[i].ProizvodId = results[i].ProizvodId;
@@ -202,8 +214,7 @@ namespace CarCareHub.Services
             {
                 await _dbContext.Recommenders.AddRangeAsync(results, cancellationToken);
             }
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
         }
+
     }
 }

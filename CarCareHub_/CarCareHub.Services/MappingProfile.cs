@@ -118,6 +118,7 @@ namespace CarCareHub.Services
             .ForMember(dest => dest.Klijent, opt => opt.MapFrom(src => src.Klijent))
             .ForMember(dest => dest.Autoservis, opt => opt.MapFrom(src => src.Autoservis));
 
+            CreateMap<CarCareHub.Services.Database.Recommender, Model.Recommender>();
 
             //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
 

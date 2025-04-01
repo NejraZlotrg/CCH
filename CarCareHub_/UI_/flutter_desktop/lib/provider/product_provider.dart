@@ -98,6 +98,22 @@ class ProductProvider extends BaseProvider<Product> {
   }
 
 
+  Future<List<Product>> getRecommendations(int proizvodId) async {
+  String url = "${BaseProvider.baseURL}$endpoint/recommend/$proizvodId";
+  Uri uri = Uri.parse(url);
+  Map<String, String> headers = createHeaders();
+  
+  http.Response response = await http.get(uri, headers: headers);
+
+  if (isValidResponse(response)) {
+    List<dynamic> data = jsonDecode(response.body);
+    return data.map((item) => fromJson(item)).toList();
+  } else {
+    throw Exception("Greška pri dohvaćanju preporuka (status: ${response.statusCode})");
+  }
+}
+
+
   @override
   Product fromJson(data) {
     return Product.fromJson(data);
