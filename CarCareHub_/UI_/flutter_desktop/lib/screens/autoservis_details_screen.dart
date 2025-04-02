@@ -1159,8 +1159,7 @@ Expanded(
       },
     );
   }
-
-  void _showAddZaposlenikDialog() {
+void _showAddZaposlenikDialog() {
   final zaposlenikFormKey = GlobalKey<FormBuilderState>();
 
   showDialog(
@@ -1184,23 +1183,12 @@ Expanded(
                   decoration: const InputDecoration(labelText: "Prezime"),
                   validator: validator.required,
                 ),            
-                    FormBuilderTextField(
-  name: "maticniBroj",
-  decoration: const InputDecoration(labelText: "Matični broj"),
-  keyboardType: TextInputType.number,  // Ako je broj, možeš postaviti odgovarajući tip tastature
-  validator: validator.numberWith12DigitsOnly,  // Ovde pozivaš validator
-),
-
-// FormBuilderTextField(
-//                   name: "maticniBroj",
-//                   validator: validator.mb,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Matični broj',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   keyboardType: TextInputType.number,
-//                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-//                 ),
+                FormBuilderTextField(
+                  name: "mb",
+                  decoration: const InputDecoration(labelText: "Matični broj"),
+                  keyboardType: TextInputType.number,
+                  validator: validator.numberWith12DigitsOnly
+                ),
                 FormBuilderTextField(
                   name: "brojTelefona",
                   decoration: const InputDecoration(labelText: "Broj telefona"),
@@ -1210,11 +1198,8 @@ Expanded(
                 FormBuilderDateTimePicker(
                   name: "datumRodjenja",
                   inputType: InputType.date,
-                  decoration: const InputDecoration(
-                    labelText: "Datum Rođenja",
-                  ),
+                  decoration: const InputDecoration(labelText: "Datum Rođenja"),
                   format: DateFormat("dd.MM.yyyy"),
-                  initialValue: _initialValues['datumRodjenja'],
                 ),
                 FormBuilderTextField(
                   name: "email",
@@ -1252,7 +1237,6 @@ Expanded(
           ),
           TextButton(
             onPressed: () async {
-              // Provjera validacije forme
               if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -1260,35 +1244,35 @@ Expanded(
                     duration: Duration(seconds: 2),
                   ),
                 );
-                return; // Zaustavi obradu ako validacija nije prošla
+                return;
               }
               
               zaposlenikFormKey.currentState?.saveAndValidate();
               var zaposlenikRequest = Map<String, dynamic>.from(
                   zaposlenikFormKey.currentState!.value);
 
-              // // Convert maticniBroj to int
-              // if (zaposlenikRequest['maticniBroj'] != null) {
-              //   zaposlenikRequest['maticniBroj'] = 
-              //       int.tryParse(zaposlenikRequest['maticniBroj']) ?? 0;
-              // }
+              // Provjeri da li `mb` postoji i nije null
+              if (zaposlenikRequest['mb'] == null || zaposlenikRequest['mb'].toString().trim().isEmpty) {
+                zaposlenikRequest['mb'] = "";  // Postavi praznu vrijednost ako je null
+              }
 
-              // Convert date to ISO 8601 format
+              // Konverzija datuma u ISO format
               if (zaposlenikRequest['datumRodjenja'] != null) {
                 zaposlenikRequest['datumRodjenja'] =
                     (zaposlenikRequest['datumRodjenja'] as DateTime)
                         .toIso8601String();
               }
 
-              // Add required fields
               zaposlenikRequest['ulogaId'] = 1;
               zaposlenikRequest['autoservisId'] = widget.autoservis?.autoservisId;
-             // zaposlenikRequest['insert'] = true; // Add if backend requires this field
+zaposlenikRequest['mb'] = zaposlenikFormKey.currentState!.value['mb'] ?? "384748494949";
+
+              print("Zaposlenik request: $zaposlenikRequest"); // Debug ispis
 
               try {
                 await _zaposlenikProvider.insert(zaposlenikRequest);
                 Navigator.pop(context);
-                fetchZaposlenik(); // Osvježi listu zaposlenika nakon dodavanja
+                fetchZaposlenik(); 
               } catch (e) {
                 showDialog(
                   context: context,
@@ -1313,65 +1297,64 @@ Expanded(
   );
 }
 
-  void _showSendMessageDialog(
-      BuildContext context, int klijentId, int autoservisId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String message = "";
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text("Pošalji poruku"),
-              content: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    message = value;
-                  });
+void _showSendMessageDialog(
+    BuildContext context, int klijentId, int autoservisId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String message = "";
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: const Text("Pošalji poruku"),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  message = value;
+                });
+              },
+              decoration: const InputDecoration(hintText: "Unesite poruku"),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
                 },
-                decoration: const InputDecoration(hintText: "Unesite poruku"),
+                child: const Text("Otkaži"),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context); // Zatvori dialog
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await Provider.of<ChatAutoservisKlijentProvider>(
+                      context,
+                      listen: false,
+                    ).sendMessage(klijentId, autoservisId, message);
+
+                    if (mounted && Navigator.canPop(context)) {
+                      Navigator.pop(context);
                     }
-                  },
-                  child: const Text("Otkaži"),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      // Poziv za slanje poruke
-                      await Provider.of<ChatAutoservisKlijentProvider>(
-                        context,
-                        listen: false,
-                      ).sendMessage(klijentId, autoservisId, message);
 
-                      if (mounted && Navigator.canPop(context)) {
-                        Navigator.pop(context); // Zatvori dialog nakon slanja
-                      }
-
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text("Poruka poslana uspješno")),
+                    );
+                  } catch (e) {
+                    if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Poruka poslana uspješno")),
+                        SnackBar(content: Text("Greška: ${e.toString()}")),
                       );
-                    } catch (e) {
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Greška: ${e.toString()}")),
-                        );
-                      }
                     }
-                  },
-                  child: const Text("Pošalji"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+                  }
+                },
+                child: const Text("Pošalji"),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 }

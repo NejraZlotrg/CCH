@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CarCareHub.Services.Database; public partial class Zaposlenik
+namespace CarCareHub.Services.Database; 
+public partial class Zaposlenik
 {
     public int ZaposlenikId { get; set; }
     public string? Ime { get; set; }
     public string? Prezime { get; set; }
-    public int? MaticniBroj { get; set; } //dodala
+    public string? mb { get; set; } // Matični broj kao string
+
     public int? BrojTelefona { get; set; } //dodala
     public Grad? Grad { get; set; }
     public int? GradId { get; set; }

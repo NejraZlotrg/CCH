@@ -73,7 +73,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
       final narudzbaObjekat = {
         "klijentId": _userProvider.userId,
         "autoservisId": null,
-        "firmaAutodijelovaId": null,
+        "ZaposlenikId": null,
         "zavrsenaNarudzba": true,
         "popustId": null,
        "ukupnaCijenaNarudzbe":ukupnaCijena

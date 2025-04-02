@@ -27,32 +27,17 @@ namespace CarCareHub.Services
 
         }
 
-        public override Task<Model.Zaposlenik> Insert(Model.ZaposlenikInsert insert)
+        //public override Task<Model.Zaposlenik> Insert(Model.ZaposlenikInsert insert)
+        //{
+        //    // Ispis cijelog objekta u JSON formatu radi provjere
+        //    Console.WriteLine("========= PRIMLJENI PODACI =========");
+        //    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(insert));
 
-        {
-            //var existingUsername = _dbContext.Zaposleniks
-            //        .FirstOrDefaultAsync(a => a.Username == insert.Username);
+        //    // Ispis samo matičnog broja
+        //    Console.WriteLine($"Matični broj: {insert.mb}");
 
-            //if (existingUsername != null)
-            //{
-            //    throw new Exception("Username already exists.");
-            //}
-
-            //// Check if a record with the same email already exists
-            //var existingEmail = _dbContext.Zaposleniks
-            //    .FirstOrDefaultAsync(a => a.Email == insert.Email);
-
-            //if (existingEmail != null)
-            //{
-            //    throw new Exception("Email already exists.");
-            //}
-
-            //// If no duplicates found, proceed to insert the new record
-
-
-            return base.Insert(insert);
-
-        }
+        //    return base.Insert(insert);
+        //}
 
 
         public static string GenerateSalt()
@@ -192,7 +177,7 @@ namespace CarCareHub.Services
                     Ime = "Zaposlenik", // Ime zaposlenika
                     Prezime = "Test", // Prezime zaposlenika
                     DatumRodjenja = new DateTime(1990, 5, 15), // Datum rođenja
-                    MaticniBroj = 56789, // Matični broj zaposlenika
+                    mb = "637454647484", // Matični broj zaposlenika
                     BrojTelefona = 000000000, // Broj telefona
                     GradId = 1, // ID grada, pretpostavlja se da grad sa ID 1 postoji
                     Email = "zaposlenik@test.com", // Email adresa zaposlenika

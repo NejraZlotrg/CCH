@@ -926,8 +926,8 @@ namespace CarCareHub.Services.Migrations
                     b.Property<string>("LozinkaSalt")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MaticniBroj")
-                        .HasColumnType("int");
+                    b.Property<int?>("mb")
+                        .HasColumnType("string");
 
                     b.Property<string>("Password")
                         .HasMaxLength(20)

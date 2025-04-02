@@ -13,7 +13,7 @@ class Zaposlenik {
   int? zaposlenikId;
   String? ime;
   String? prezime;
-  int? maticniBroj;
+  String? mb;
   int? brojTelefona;
   Grad? grad;
   int? gradId;
@@ -23,8 +23,6 @@ class Zaposlenik {
   String? password;
   String? PasswordAgain;
 bool? vidljivo;
-
-  
   String? lozinkaSalt;
   String? lozinkaHash;
   int? autoservisId;
@@ -33,16 +31,16 @@ bool? vidljivo;
   FirmaAutodijelova? firmaAutodijelova;
   int? ulogaId;
   Uloge? uloga;
-
-
   String? passwordAgain;
 
+
+ 
   Zaposlenik({
     this.zaposlenikId,
     this.vidljivo,
     this.ime,
     this.prezime,
-    this.maticniBroj,
+   this.mb, 
     this.brojTelefona,
     this.gradId,
     this.datumRodjenja,

@@ -148,18 +148,15 @@ Widget _buildForm() {
           enabled: isAdminOrOwnProfile,
         ),
 
-
-
         const SizedBox(height: 15),
 
-
-        FormBuilderTextField(
-          name: 'prezime',
+   FormBuilderTextField(
+          name: 'mb',
           validator: validator.required,
           decoration: const InputDecoration(
-            labelText: 'Prezime',
+            labelText: 'mb',
             labelStyle: TextStyle(color: Colors.black),
-            hintText: 'Unesite prezime',
+            hintText: 'Unesite mb',
             hintStyle: TextStyle(color: Colors.black),
             border: OutlineInputBorder(),
             fillColor: Colors.white,
@@ -175,32 +172,11 @@ Widget _buildForm() {
           style: const TextStyle(color: Colors.black),
           enabled: isAdminOrOwnProfile,
         ),
+
+    
         const SizedBox(height: 15),
 
-
-        FormBuilderTextField(
-  name: 'maticniBroj',
-          validator: validator.required,
-  decoration: const InputDecoration(
-    labelText: 'Matični broj',
-    labelStyle: TextStyle(color: Colors.black),
-    hintText: 'Unesite matični broj',
-    hintStyle: TextStyle(color: Colors.black),
-    border: OutlineInputBorder(),
-    fillColor: Colors.white,
-    filled: true,
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black),
-    ),
-    disabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black),
-    ),
-  ),
-  keyboardType: TextInputType.number,
-  style: const TextStyle(color: Colors.black),
-  enabled: isAdminOrOwnProfile,
-),
+     
 const SizedBox(height: 15),
         
         FormBuilderTextField(
@@ -441,11 +417,14 @@ const SizedBox(height: 15),
 
                       try {
                         if (widget.zaposlenik == null) {
+                           print(widget.zaposlenik?.mb);
                           await _zaposlenikProvider.insert(request);
                         } else {
                           await _zaposlenikProvider.update(
                               widget.zaposlenik!.zaposlenikId!,
                               request);
+                           
+
                         }
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context);

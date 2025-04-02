@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20250402185447_gdhd")]
+    partial class gdhd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -980,9 +983,8 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnType("int")
                         .HasColumnName("autoservisID");
 
-                    b.Property<string>("mb")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("mb")
+                        .HasColumnType("int");
 
                     b.HasKey("ZaposlenikId")
                         .HasName("PK_zaposlenik");
