@@ -507,81 +507,93 @@ Widget _buildAutoservisDetails() {
     ],
   );
 }
-
-  void _showSendMessageDialog2(
-      BuildContext context, int klijentId, int zaposleniId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String message = "";
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text("Pošaljite poruku"),
-              content: TextField(
+void _showSendMessageDialog2(
+    BuildContext context, int klijentId, int zaposleniId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String message = "";
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: const Text(
+              "Pošaljite poruku",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            contentPadding: const EdgeInsets.all(20),  // Add padding around content
+            content: SizedBox(
+              width: 400,  // Set a custom width for the dialog
+              child: TextField(
+                maxLines: 5,  // Allow for multiple lines of text
+                minLines: 3,  // Set a minimum height for the text field
                 onChanged: (value) {
                   setState(() {
                     message = value; // Ažuriraj poruku kad se unese tekst
                   });
                 },
-                decoration: const InputDecoration(hintText: "Unesite poruku"),
+                decoration: const InputDecoration(
+                  hintText: "Unesite poruku",
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                ),
               ),
-              actions: [
-                // Otkaži dugme
-                TextButton(
-                  onPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context); // Zatvori dijalog
-                    }
-                  },
-                  child: const Text("Otkaži"),
-                ),
-                // Pošaljite dugme
-                ElevatedButton(
-                  onPressed: () async {
-                    if (message.isNotEmpty) {
-                      try {
-                        // Poziv za slanje poruke
-                        await Provider.of<ChatKlijentZaposlenikProvider>(
-                          context,
-                          listen: false,
-                        ).sendMessage(klijentId, zaposleniId, message);
+            ),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),  // Add padding around action buttons
+            actions: [
+              // Otkaži dugme
+              TextButton(
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context); // Zatvori dijalog
+                  }
+                },
+                child: const Text("Otkaži", style: TextStyle(fontSize: 16)),
+              ),
+              // Pošaljite dugme
+              ElevatedButton(
+                onPressed: () async {
+                  if (message.isNotEmpty) {
+                    try {
+                      // Poziv za slanje poruke
+                      await Provider.of<ChatKlijentZaposlenikProvider>(
+                        context,
+                        listen: false,
+                      ).sendMessage(klijentId, zaposleniId, message);
 
-                        // Zatvori dijalog nakon slanja poruke
-                        if (mounted && Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        }
-
-                        // Obavijesti korisnika o uspjehu
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Poruka poslana uspješno")),
-                        );
-                      } catch (e) {
-                        // Obavijesti korisnika o grešci
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Greška: ${e.toString()}")),
-                          );
-                        }
+                      // Zatvori dijalog nakon slanja poruke
+                      if (mounted && Navigator.canPop(context)) {
+                        Navigator.pop(context);
                       }
-                    } else {
-                      // Ako poruka nije uneta, obavesti korisnika
+
+                      // Obavijesti korisnika o uspjehu
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Poruka ne može biti prazna")),
+                        const SnackBar(content: Text("Poruka poslana uspješno")),
                       );
+                    } catch (e) {
+                      // Obavijesti korisnika o grešci
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Greška: ${e.toString()}")),
+                        );
+                      }
                     }
-                  },
-                  child: const Text("Pošaljite"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+                  } else {
+                    // Ako poruka nije uneta, obavesti korisnika
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Poruka ne može biti prazna")),
+                    );
+                  }
+                },
+                child: const Text("Pošaljite", style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 // Funkcija za kreiranje jednog reda u tabeli s dodatnim razmakom
 DataRow _buildDataRow(String label, String? value) {
   return DataRow(
@@ -601,66 +613,90 @@ DataRow _buildDataRow(String label, String? value) {
     ],
   );
 }
-
-  void _showSendMessageDialog(
-      BuildContext context, int klijentId, int autoservisId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String message = "";
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text("Pošalji poruku"),
-              content: TextField(
+void _showSendMessageDialog(
+    BuildContext context, int klijentId, int autoservisId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String message = "";
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: const Text(
+              "Pošaljite poruku",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            contentPadding: const EdgeInsets.all(20),  // Add padding around content
+            content: SizedBox(
+              width: 400,  // Set a custom width for the dialog
+              child: TextField(
+                maxLines: 5,  // Allow for multiple lines of text
+                minLines: 3,  // Set a minimum height for the text field
                 onChanged: (value) {
                   setState(() {
                     message = value;
                   });
                 },
-                decoration: const InputDecoration(hintText: "Unesite poruku"),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context); // Zatvori dialog
-                    }
-                  },
-                  child: const Text("Otkaži"),
+                decoration: const InputDecoration(
+                  hintText: "Unesite poruku",
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 ),
-                ElevatedButton(
-                  onPressed: () async {
+              ),
+            ),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),  // Add padding around action buttons
+            actions: [
+              // Cancel button
+              TextButton(
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);  // Close the dialog
+                  }
+                },
+                child: const Text("Otkaži", style: TextStyle(fontSize: 16)),
+              ),
+              // Send button
+              ElevatedButton(
+                onPressed: () async {
+                  if (message.isNotEmpty) {
                     try {
-                      // Poziv za slanje poruke
+                      // Call to send the message
                       await Provider.of<ChatAutoservisKlijentProvider>(
                         context,
                         listen: false,
                       ).sendMessage(klijentId, autoservisId, message);
 
                       if (mounted && Navigator.canPop(context)) {
-                        Navigator.pop(context); // Zatvori dialog nakon slanja
+                        Navigator.pop(context);  // Close the dialog after sending
                       }
 
+                      // Show success snackbar
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Poruka poslana uspješno")),
+                        const SnackBar(content: Text("Poruka poslana uspješno")),
                       );
                     } catch (e) {
                       if (mounted) {
+                        // Show error snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Greška: ${e.toString()}")),
                         );
                       }
                     }
-                  },
-                  child: const Text("Pošalji"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+                  } else {
+                    // Inform the user if the message is empty
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Poruka ne može biti prazna")),
+                    );
+                  }
+                },
+                child: const Text("Pošaljite", style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 }

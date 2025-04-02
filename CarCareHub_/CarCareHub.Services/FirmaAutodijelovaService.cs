@@ -141,7 +141,9 @@ namespace CarCareHub.Services
 
         public async Task<Model.FirmaAutodijelova> Login(string username, string password)
         {
-            var entity = await _dbContext.FirmaAutodijelovas.Include(x => x.Uloga).FirstOrDefaultAsync(x => x.Username == username);
+            var entity = await _dbContext.FirmaAutodijelovas
+                .Include(x => x.Uloga)
+                .FirstOrDefaultAsync(x => x.Username.ToLower() == username.ToLower());
 
             if (entity == null)
             {
@@ -157,6 +159,7 @@ namespace CarCareHub.Services
 
             return _mapper.Map<Model.FirmaAutodijelova>(entity);
         }
+
 
         //protected override IQueryable<Database.FirmaAutodijelova> GetCollection(IQueryable<Database.FirmaAutodijelova> query, FirmaAutodijelovaSearchObject? search)
         //{

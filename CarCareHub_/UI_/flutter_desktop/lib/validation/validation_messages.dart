@@ -9,5 +9,6 @@ class ValidationMessages {
   static String mbs = "Neispravan format,(8 cifara)";
   static String godiste = "Neispravan format,(4 cifare)";
   static String lozinkaPonovo = "lozinke se ne podudaraju";
+  static String required12Digits= "Matični broj mora sadržavati 12 cifri";
 
 }

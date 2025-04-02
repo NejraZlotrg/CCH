@@ -32,15 +32,14 @@ namespace CarCareHub_
             _klijentService = klijentService;
         }
 
-        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
-        {
+     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+{
             if (!Request.Headers.ContainsKey("Authorization"))
             {
                 return AuthenticateResult.Fail("Missing Authorization Header");
             }
-
             try
-            {
+    {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
                 var credentialsBytes = Convert.FromBase64String(authHeader.Parameter);
                 var credentials = Encoding.UTF8.GetString(credentialsBytes).Split(':');
@@ -53,32 +52,31 @@ namespace CarCareHub_
                 var username = credentials[0];
                 var password = credentials[1];
 
-                // Provjera za svakog korisnika (firma, zaposleni, autoservis, klijent)
-                var userFirma = await _firmaService.Login(username, password);
-                var userKorisnik = await _korisniciService.Login(username, password);
-                var userAutoservis = await _autoservisService.Login(username, password);
-                var userKlijent = await _klijentService.Login(username, password);
+        // Pozivanje metoda koje provjeravaju username/password direktno u bazi
+        var userFirma = await _firmaService.Login(username, password);
+        var userKorisnik = await _korisniciService.Login(username, password);
+        var userAutoservis = await _autoservisService.Login(username, password);
+        var userKlijent = await _klijentService.Login(username, password);
 
-                object user = null;
-                string userId = null;
+        object user = null;
+        string userId = null;
 
-                // Dodavanje korisničkog ID-a temeljem vrste korisnika
-                if (userFirma != null)
+                if (userFirma != null && userFirma.Username.Equals(username, StringComparison.Ordinal))
                 {
                     user = userFirma;
                     userId = userFirma.FirmaAutodijelovaID.ToString();
                 }
-                else if (userKorisnik != null)
+                else if (userKorisnik != null && userKorisnik.Username.Equals(username, StringComparison.Ordinal))
                 {
                     user = userKorisnik;
                     userId = userKorisnik.ZaposlenikId.ToString();
                 }
-                else if (userAutoservis != null)
+                else if (userAutoservis != null && userAutoservis.Username.Equals(username, StringComparison.Ordinal))
                 {
                     user = userAutoservis;
                     userId = userAutoservis.AutoservisId.ToString();
                 }
-                else if (userKlijent != null)
+                else if (userKlijent != null && userKlijent.Username.Equals(username, StringComparison.Ordinal))
                 {
                     user = userKlijent;
                     userId = userKlijent.KlijentId.ToString();
@@ -89,48 +87,42 @@ namespace CarCareHub_
                     return AuthenticateResult.Fail("Invalid Username or Password");
                 }
 
-                // Kreiranje claimova
                 var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.NameIdentifier, userId), // Ovo dodajete ID kao Claim
+            new Claim(ClaimTypes.NameIdentifier, userId),
         };
 
-                // Dodavanje uloge korisniku
+                // Postavljanje role
                 if (user is FirmaAutodijelova)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, "FirmaAutodijelova"));
-                }
-                else if (user is Zaposlenik)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, "Zaposlenik"));
-                }
-                else if (user is Autoservis)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, "Autoservis"));
-                }
-                else if (user is Klijent)
-                {
-                    if(userId=="2")
-                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                    else
-                        claims.Add(new Claim(ClaimTypes.Role, "Klijent"));
-                    
-                }
+        {
+            claims.Add(new Claim(ClaimTypes.Role, "FirmaAutodijelova"));
+        }
+        else if (user is Zaposlenik)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, "Zaposlenik"));
+        }
+        else if (user is Autoservis)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, "Autoservis"));
+        }
+        else if (user is Klijent)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, userId == "2" ? "Admin" : "Klijent"));
+        }
 
-                // Kreiranje identiteta i autentifikacijskog ticketa
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
                 var principal = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
                 return AuthenticateResult.Success(ticket);
             }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error in Basic Authentication");
-                return AuthenticateResult.Fail("Invalid Authorization Header");
-            }
-        }
+    catch (Exception ex)
+    {
+        Logger.LogError(ex, "Error in Basic Authentication");
+        return AuthenticateResult.Fail("Invalid Authorization Header");
+    }
+}
 
     }
 }

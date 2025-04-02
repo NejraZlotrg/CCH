@@ -475,6 +475,7 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
                           ]),
                         ],
                       ),
+                      const SizedBox(height: 20,),
                       Padding(
                         padding: const EdgeInsets.only(right: 150),
                         child: Row(
@@ -555,148 +556,158 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
         
         // Preporučeni proizvodi sekcija
      const SizedBox(height: 40),
-const Center(  // Centering the title
-  child: Text(
-    "Preporučeni proizvodi",
-    style: TextStyle(
-      fontSize: 22,
-      fontWeight: FontWeight.bold,
-      color: Colors.black,
-    ),
-  ),
-),
-const SizedBox(height: 10),
-
-if (isRecommendationsLoading)
-  const Center(child: CircularProgressIndicator())
-else if (recommendedProducts.isEmpty)
-  const Center(  // Centering the empty message
-    child: Padding(
-      padding: EdgeInsets.all(20),
-      child: Text("Nema preporučenih proizvoda"),
-    ),
-  )
-else
-  SizedBox(
-    height: 250,
-    child: Center(  // Centering the ListView
-      child: ListView.separated(  // Using ListView.separated for spacing
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: recommendedProducts.length,
-        itemBuilder: (context, index) {
-          return _buildProductCard(recommendedProducts[index]);
-        },
-        separatorBuilder: (context, index) => const SizedBox(width: 50),  // Space between cards
-        padding: const EdgeInsets.only(bottom: 16),  // Padding on sides
+Container(
+  color: const Color.fromARGB(41, 143, 143, 143),  // Red background for the whole section
+  padding: const EdgeInsets.all(12),  // Optional padding
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Center(  // Centering the title
+        child: Text(
+          "Preporučeni proizvodi",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
-    ),
+      const SizedBox(height: 10),
+      
+      if (isRecommendationsLoading)
+        const Center(child: CircularProgressIndicator())
+      else if (recommendedProducts.isEmpty)
+        const Center(  // Centering the empty message
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("Nema preporučenih proizvoda"),
+          ),
+        )
+      else
+        SizedBox(
+          height: 250,
+          child: Center(  // Centering the ListView
+            child: ListView.separated(  // Using ListView.separated for spacing
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: recommendedProducts.length,
+              itemBuilder: (context, index) {
+                return _buildProductCard(recommendedProducts[index]);
+              },
+              separatorBuilder: (context, index) => const SizedBox(width: 50),  // Space between cards
+              padding: const EdgeInsets.only(bottom: 16),  // Padding on sides
+            ),
+          ),
+        ),
+    ],
   ),
+)
+
       ],
     );
   }
 
-  Widget _buildProductCard(Product product) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductReadScreen(product: product),
-          ),
-        );
-      },
-      child: Container(
-        width: 180,
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
+Widget _buildProductCard(Product product) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductReadScreen(product: product),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Slika proizvoda
-            Container(
-              height: 120,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                image: product.slika != null
-                    ? DecorationImage(
-                        image: MemoryImage(base64Decode(product.slika!)),
-                        fit: BoxFit.contain,
-                      )
-                    : null,
-              ),
-              child: product.slika == null
-                  ? const Center(child: Icon(Icons.image, size: 50))
+      );
+    },
+    child: Container(
+      width: 200, // Povećana širina
+      margin: const EdgeInsets.all(12), // Veći razmak između kartica
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12), // Veći zaobljeni uglovi
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.9),
+            spreadRadius: 3,
+            blurRadius: 6,
+            offset: const Offset(0, 4), // Povećana sjena
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Slika proizvoda
+          Container(
+            height: 120, // Povećana visina slike
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              image: product.slika != null
+                  ? DecorationImage(
+                      image: MemoryImage(base64Decode(product.slika!)),
+                      fit: BoxFit.cover, // Bolje pokrivanje
+                    )
                   : null,
             ),
-            
-            // Informacije o proizvodu
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            child: product.slika == null
+                ? const Center(child: Icon(Icons.image, size: 60)) // Veća ikona
+                : null,
+          ),
+          
+          // Informacije o proizvodu
+          Padding(
+            padding: const EdgeInsets.all(12), // Veći padding
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.naziv ?? 'Nema naziva',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15, // Veći font
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                
+                if (product.popust != null && product.popust! > 0)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${product.cijena} KM",
+                        style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          color: Colors.grey,
+                          fontSize: 15, // Veći font
+                        ),
+                      ),
+                      Text(
+                        "${product.cijena! * (1 - product.popust! / 100)} KM",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 15, // Veći font
+                        ),
+                      ),
+                    ],
+                  )
+                else
                   Text(
-                    product.naziv ?? 'Nema naziva',
+                    "${product.cijena} KM",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 15, // Veći font
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 5),
-                  
-                  if (product.popust != null && product.popust! > 0)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${product.cijena} KM",
-                          style: const TextStyle(
-                            decoration: TextDecoration.lineThrough,
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          "${product.cijena! * (1 - product.popust! / 100)} KM",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    )
-                  else
-                    Text(
-                      "${product.cijena} KM",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   DataRow _buildDataRow(String label, String? value) {
     return DataRow(

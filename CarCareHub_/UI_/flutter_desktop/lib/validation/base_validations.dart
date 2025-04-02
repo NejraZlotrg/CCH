@@ -31,9 +31,8 @@ class BaseValidator {
       return ValidationMessages.required;
     }
 
-    var parsedValue = num.tryParse(value as String);
 
-    if (parsedValue == null) {
+    if (value == null) {
       return ValidationMessages.invalidFormat;
     }
 
@@ -41,6 +40,29 @@ class BaseValidator {
   }
 
   
+String? numberWith12DigitsOnly(dynamic value) {
+  if (value == null || value == 0) {
+    return ValidationMessages.required;
+  }
+
+  // Pretvaramo broj u string i proveravamo dužinu
+  String valueStr = value.toString();
+  
+  // Proveravamo da li broj ima tačno 12 cifara
+  if (valueStr.length != 12) {
+    return 'Broj mora imati tačno 12 cifara.';
+  }
+
+  // Proveravamo da li je broj validan (samo brojevi)
+  if (!RegExp(r'^[0-9]+$').hasMatch(valueStr)) {
+    return 'Broj mora sadržavati samo cifre.';
+  }
+
+  return null; // Ako su svi uslovi ispunjeni, nema greške
+}
+
+
+
   String? jib(dynamic value) {
     if (value == null || value == 0 || value == '') {
       return ValidationMessages.required;
@@ -55,6 +77,8 @@ var jibRegex = RegExp(r"^\d{13}$");
 
   return null; // Sve je validno
   }  
+
+
 
   String? mbs(dynamic value) {
     if (value == null || value == 0 || value == '') {

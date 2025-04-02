@@ -503,6 +503,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   }
 
   FormBuilder _buildForm() {
+
+    
     return FormBuilder(
       key: _formKey,
       initialValue: _initialValues,
@@ -1159,150 +1161,157 @@ Expanded(
   }
 
   void _showAddZaposlenikDialog() {
-    final zaposlenikFormKey = GlobalKey<FormBuilderState>();
+  final zaposlenikFormKey = GlobalKey<FormBuilderState>();
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Dodaj novog zaposlenika"),
-          content: SingleChildScrollView(
-            child: FormBuilder(
-              key: zaposlenikFormKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FormBuilderTextField(
-                    name: "ime",
-                    decoration: const InputDecoration(labelText: "Ime"),
-                    validator: validator.required,
-                  ),
-                  FormBuilderTextField(
-                    name: "prezime",
-                    decoration: const InputDecoration(labelText: "Prezime"),
-                    validator: validator.required,
-                  ),
-                  FormBuilderTextField(
-                    name: "maticniBroj",
-                    decoration:
-                        const InputDecoration(labelText: "Matični broj"),
-                    keyboardType: TextInputType.number,
-                    validator: validator.numberOnly,
-                  ),
-                  FormBuilderTextField(
-                    name: "brojTelefona",
-                    decoration:
-                        const InputDecoration(labelText: "Broj telefona"),
-                    keyboardType: TextInputType.phone,
-                    validator: validator.phoneNumber,
-                  ),
-                  FormBuilderDateTimePicker(
-                    name: "datumRodjenja",
-                    inputType: InputType.date,
-                    decoration: const InputDecoration(
-                      labelText: "Datum Rođenja",
-                    ),
-                    format: DateFormat("dd.MM.yyyy"),
-                    initialValue: _initialValues[
-                        'datumRodjenja'], // Povezuje inicijalnu vrednost
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Dodaj novog zaposlenika"),
+        content: SingleChildScrollView(
+          child: FormBuilder(
+            key: zaposlenikFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FormBuilderTextField(
+                  name: "ime",
+                  decoration: const InputDecoration(labelText: "Ime"),
+                  validator: validator.required,
+                ),
+                FormBuilderTextField(
+                  name: "prezime",
+                  decoration: const InputDecoration(labelText: "Prezime"),
+                  validator: validator.required,
+                ),            
+                    FormBuilderTextField(
+  name: "maticniBroj",
+  decoration: const InputDecoration(labelText: "Matični broj"),
+  keyboardType: TextInputType.number,  // Ako je broj, možeš postaviti odgovarajući tip tastature
+  validator: validator.numberWith12DigitsOnly,  // Ovde pozivaš validator
+),
 
-                        
+// FormBuilderTextField(
+//                   name: "maticniBroj",
+//                   validator: validator.mb,
+//                   decoration: const InputDecoration(
+//                     labelText: 'Matični broj',
+//                     border: OutlineInputBorder(),
+//                   ),
+//                   keyboardType: TextInputType.number,
+//                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+//                 ),
+                FormBuilderTextField(
+                  name: "brojTelefona",
+                  decoration: const InputDecoration(labelText: "Broj telefona"),
+                  keyboardType: TextInputType.phone,
+                  validator: validator.phoneNumber,
+                ),
+                FormBuilderDateTimePicker(
+                  name: "datumRodjenja",
+                  inputType: InputType.date,
+                  decoration: const InputDecoration(
+                    labelText: "Datum Rođenja",
                   ),
-                  FormBuilderTextField(
-                    name: "email",
-                    decoration: const InputDecoration(labelText: "Email"),
-                    keyboardType: TextInputType.emailAddress,
-                    validator:validator.email,
-                  ),
-                  FormBuilderTextField(
-                    name: "username",
-                    decoration:
-                        const InputDecoration(labelText: "Korisničko ime"),
-                        validator: validator.required,
-                  ),
-                  FormBuilderTextField(
-                    name: "password",
-                    decoration: const InputDecoration(labelText: "Lozinka"),
-                    obscureText: true,
-                    validator: validator.required,
-                  ),
-                  FormBuilderTextField(
-                    name: "passwordAgain",
-                    decoration:
-                        const InputDecoration(labelText: "Ponovi lozinku"),
-                    obscureText: true,
-                    validator: validator.required,
-                  ),
-                
-                ],
-              ),
+                  format: DateFormat("dd.MM.yyyy"),
+                  initialValue: _initialValues['datumRodjenja'],
+                ),
+                FormBuilderTextField(
+                  name: "email",
+                  decoration: const InputDecoration(labelText: "Email"),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: validator.email,
+                ),
+                FormBuilderTextField(
+                  name: "username",
+                  decoration: const InputDecoration(labelText: "Korisničko ime"),
+                  validator: validator.required,
+                ),
+                FormBuilderTextField(
+                  name: "password",
+                  decoration: const InputDecoration(labelText: "Lozinka"),
+                  obscureText: true,
+                  validator: validator.required,
+                ),
+                FormBuilderTextField(
+                  name: "passwordAgain",
+                  decoration: const InputDecoration(labelText: "Ponovi lozinku"),
+                  obscureText: true,
+                  validator: validator.required,
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Odustani"),
-            ),
-            TextButton(
-              onPressed: () async {
-                                                                  // Provjera validacije forme
-    if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Molimo popunite obavezna polja."),
-          duration: Duration(seconds: 2),
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Odustani"),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Provjera validacije forme
+              if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Molimo popunite obavezna polja."),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                return; // Zaustavi obradu ako validacija nije prošla
+              }
+              
+              zaposlenikFormKey.currentState?.saveAndValidate();
+              var zaposlenikRequest = Map<String, dynamic>.from(
+                  zaposlenikFormKey.currentState!.value);
+
+              // // Convert maticniBroj to int
+              // if (zaposlenikRequest['maticniBroj'] != null) {
+              //   zaposlenikRequest['maticniBroj'] = 
+              //       int.tryParse(zaposlenikRequest['maticniBroj']) ?? 0;
+              // }
+
+              // Convert date to ISO 8601 format
+              if (zaposlenikRequest['datumRodjenja'] != null) {
+                zaposlenikRequest['datumRodjenja'] =
+                    (zaposlenikRequest['datumRodjenja'] as DateTime)
+                        .toIso8601String();
+              }
+
+              // Add required fields
+              zaposlenikRequest['ulogaId'] = 1;
+              zaposlenikRequest['autoservisId'] = widget.autoservis?.autoservisId;
+             // zaposlenikRequest['insert'] = true; // Add if backend requires this field
+
+              try {
+                await _zaposlenikProvider.insert(zaposlenikRequest);
+                Navigator.pop(context);
+                fetchZaposlenik(); // Osvježi listu zaposlenika nakon dodavanja
+              } catch (e) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text("Greška"),
+                    content: Text(e.toString()),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+            child: const Text("Dodaj"),
+          ),
+        ],
       );
-      return; // Zaustavi obradu ako validacija nije prošla
-    }
-    
-                zaposlenikFormKey.currentState?.saveAndValidate();
-                var zaposlenikRequest = Map<String, dynamic>.from(
-                    zaposlenikFormKey.currentState!.value);
-
-// Pretvorite datum u odgovarajući format (npr. ISO 8601)
-                if (zaposlenikRequest['datumRodjenja'] != null) {
-                  zaposlenikRequest['datumRodjenja'] =
-                      (zaposlenikRequest['datumRodjenja'] as DateTime)
-                          .toIso8601String();
-                }
-
-                zaposlenikRequest['ulogaId'] = 1;
-
-                // Dodaj autoservisId prije slanja na server
-                zaposlenikRequest['autoservisId'] =
-                    widget.autoservis?.autoservisId;
-
-                try {
-                  await _zaposlenikProvider.insert(zaposlenikRequest);
-                  Navigator.pop(context);
-                  fetchZaposlenik(); // Osvježi listu zaposlenika nakon dodavanja
-                } catch (e) {
-                  showDialog(
-                    // ignore: use_build_context_synchronously
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text("Greška"),
-                      content: Text(e.toString()),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("OK"),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-              child: const Text("Dodaj"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+    },
+  );
+}
 
   void _showSendMessageDialog(
       BuildContext context, int klijentId, int autoservisId) {
