@@ -36,7 +36,7 @@ class _ChatMessagesScreenState
   Future<void> runSignalR() async {
     connection = HubConnectionBuilder()
         .withUrl('http://localhost:7209/chat-hub')
-        .build();
+        .build();       
 
     connection.onclose(({Exception? error}) {
       print('Connection closed: $error');

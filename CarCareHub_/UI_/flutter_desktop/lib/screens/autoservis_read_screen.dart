@@ -41,7 +41,6 @@ class AutoservisReadScreen extends StatefulWidget {
 }
 
 class _AutoservisDetailsScreenState extends State<AutoservisReadScreen> {
-  final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late AutoservisProvider _autoservisProvider;
   late UslugeProvider _uslugaProvider;
@@ -50,7 +49,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisReadScreen> {
   late GradProvider _gradProvider;
 
   File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
   SearchResult<Grad>? gradResult;
   List<Usluge> usluge = [];
   List<Zaposlenik> zaposlenik = [];
@@ -152,14 +150,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisReadScreen> {
     return file;
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
 
   Future<void> fetchUsluge() async {
     try {
@@ -298,50 +288,51 @@ Widget _buildZaposlenikSection() {
             child: Consumer<UserProvider>(
               builder: (context, userProvider, child) {
                 return DataTable(
-                  columns: const [
-                    DataColumn(label: Text("Ime")),
-                    DataColumn(label: Text("Prezime")),
-                    DataColumn(label: Text("Email")),
-                    DataColumn(label: Text("Broj telefona")),
-                    DataColumn(label: Text("")), // Kolona za dugme
-                  ],
-                  rows: zaposlenik.map((zap) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(zap.ime ?? "")),
-                        DataCell(Text(zap.prezime ?? "")),
-                        DataCell(Text(zap.email ?? "")),
-                        DataCell(Text(zap.brojTelefona?.toString() ?? "")),
-                        DataCell(
-                          (userProvider.role == "Klijent" || userProvider.role == "Zaposlenik")
-                              ? ElevatedButton(
-                                  onPressed: () {
-                                    final klijentId = context.read<UserProvider>().userId;
-                                    final zaposleniId = zap.zaposlenikId!;
-                                    _showSendMessageDialog2(context, klijentId, zaposleniId);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(255, 248, 18, 2),
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.chat, size: 20),
-                                      SizedBox(width: 5),
-                                      Text("Pošaljite poruku"),
-                                    ],
-                                  ),
-                                )
-                              : const SizedBox(), // Ako korisnik nije Klijent ili Autoservis, ne prikazuje dugme
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                );
+  columns: [
+    const DataColumn(label: Text("Ime")),
+    const DataColumn(label: Text("Prezime")),
+    const DataColumn(label: Text("Email")),
+    const DataColumn(label: Text("Broj telefona")),
+    if (context.read<UserProvider>().role == "Klijent")
+      const DataColumn(label: Text("")), // Empty header for message button
+  ],
+  rows: zaposlenik.map((zap) {
+    return DataRow(
+      cells: [
+        DataCell(Text(zap.ime ?? "")),
+        DataCell(Text(zap.prezime ?? "")),
+        DataCell(Text(zap.email ?? "")),
+        DataCell(Text(zap.brojTelefona?.toString() ?? "")),
+       
+        if (context.read<UserProvider>().role == "Klijent")
+          DataCell(
+            ElevatedButton(
+              onPressed: () {
+                final klijentId = context.read<UserProvider>().userId;
+                final zaposleniId = zap.zaposlenikId!;
+                _showSendMessageDialog2(context, klijentId, zaposleniId);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 247, 28, 13),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.chat, size: 20),
+                  SizedBox(width: 5),
+                  Text("Pošaljite poruku"),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }).toList(),
+);
               },
             ),
           )
