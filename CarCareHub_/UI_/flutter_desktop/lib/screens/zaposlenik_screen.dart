@@ -166,7 +166,7 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.search),
+                Icon(Icons.add),
                 SizedBox(width: 8.0),
                 Text('Dodaj'),
               ],

@@ -18,6 +18,8 @@ namespace CarCareHub.Model
         public DateTime? DatumIsporuke { get; set; }
 
         public bool? ZavrsenaNarudzba { get; set; }
+        public string? Adresa { get; set; }
+
         public int? KlijentId { get; set; }
       //  public virtual Klijent? Klijent { get; set; }
 

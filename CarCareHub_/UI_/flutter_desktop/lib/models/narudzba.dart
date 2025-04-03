@@ -20,6 +20,7 @@ bool? vidljivo;
   Autoservis? autoservis;
   int? zaposlenikId;
   Zaposlenik? zaposlenik;
+  String? adresa;
 
   Narudzba({
     required this.narudzbaId,
@@ -28,6 +29,7 @@ bool? vidljivo;
     this.datumIsporuke,  // Može biti null
     this.zavrsenaNarudzba = false,  // Default value
     this.ukupnaCijenaNarudzbe,  // Može biti null
+    this.adresa
   });
 
   factory Narudzba.fromJson(Map<String, dynamic> json) => _$NarudzbaFromJson(json);

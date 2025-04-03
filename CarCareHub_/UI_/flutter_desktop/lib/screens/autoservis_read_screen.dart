@@ -295,53 +295,60 @@ Widget _buildZaposlenikSection() {
               border: Border.all(color: Colors.grey, width: 1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: DataTable(
-              columns: const [
-                DataColumn(label: Text("Ime")),
-                DataColumn(label: Text("Prezime")),
-                DataColumn(label: Text("Email")),
-                DataColumn(label: Text("Broj telefona")),
-                DataColumn(label: Text("")),
-              ],
-              rows: zaposlenik.map((zap) {
-                return DataRow(
-                  cells: [
-                    DataCell(Text(zap.ime ?? "")),
-                    DataCell(Text(zap.prezime ?? "")),
-                    DataCell(Text(zap.email ?? "")),
-                    DataCell(Text(zap.brojTelefona?.toString() ?? "")),
-                    DataCell(
-                      ElevatedButton(
-                        onPressed: () {
-                          final klijentId = context.read<UserProvider>().userId;
-                          final zaposleniId = zap.zaposlenikId!;
-                          _showSendMessageDialog2(context, klijentId, zaposleniId);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 248, 18, 2),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.chat, size: 20),
-                            SizedBox(width: 5),
-                            Text("Pošaljite poruku"),
-                          ],
-                        ),
-                      ),
-                    ),
+            child: Consumer<UserProvider>(
+              builder: (context, userProvider, child) {
+                return DataTable(
+                  columns: const [
+                    DataColumn(label: Text("Ime")),
+                    DataColumn(label: Text("Prezime")),
+                    DataColumn(label: Text("Email")),
+                    DataColumn(label: Text("Broj telefona")),
+                    DataColumn(label: Text("")), // Kolona za dugme
                   ],
+                  rows: zaposlenik.map((zap) {
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(zap.ime ?? "")),
+                        DataCell(Text(zap.prezime ?? "")),
+                        DataCell(Text(zap.email ?? "")),
+                        DataCell(Text(zap.brojTelefona?.toString() ?? "")),
+                        DataCell(
+                          (userProvider.role == "Klijent" || userProvider.role == "Zaposlenik")
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    final klijentId = context.read<UserProvider>().userId;
+                                    final zaposleniId = zap.zaposlenikId!;
+                                    _showSendMessageDialog2(context, klijentId, zaposleniId);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(255, 248, 18, 2),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.chat, size: 20),
+                                      SizedBox(width: 5),
+                                      Text("Pošaljite poruku"),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox(), // Ako korisnik nije Klijent ili Autoservis, ne prikazuje dugme
+                        ),
+                      ],
+                    );
+                  }).toList(),
                 );
-              }).toList(),
+              },
             ),
           )
-        : const Text("Nema dostupnih zaposlenika za ovaj autoservis."),
+        : const Center(child: Text("Nema dostupnih zaposlenika.")),
   );
 }
+
 
  Widget _buildUslugeList() {
     return Padding(

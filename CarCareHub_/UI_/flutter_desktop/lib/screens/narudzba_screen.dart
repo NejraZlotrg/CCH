@@ -96,12 +96,19 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               ),
+                            DataColumn(
+                label: Text(
+                  'Adresa', // Nova kolona za dugme
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
               DataColumn(
                 label: Text(
                   'Završena',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               ),
+
               DataColumn(
                 label: Text(
                   'Akcija', // Nova kolona za dugme
@@ -122,6 +129,9 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
                           DataCell(Text(e.ukupnaCijenaNarudzbe != null
                               ? '${e.ukupnaCijenaNarudzbe!.toStringAsFixed(2)} KM'
                               : 'N/A')),
+                           DataCell(
+  Text(e.adresa ?? 'Nema adrese'),  // Ako je adresa null, prikazuje se 'Nema adrese'
+),
                           DataCell(
                             Icon(
                               e.zavrsenaNarudzba ? Icons.check_circle : Icons.cancel,

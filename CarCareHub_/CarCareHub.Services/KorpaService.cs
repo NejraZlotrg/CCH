@@ -59,9 +59,10 @@ namespace CarCareHub.Services
             // Provjera da li je pronađen proizvod
             if (proizvod != null)
             {
-                // Izračunavanje UkupneCijene
-                korpa.UkupnaCijenaProizvoda = proizvod.CijenaSaPopustom != null ? proizvod.CijenaSaPopustom * insert.Kolicina : proizvod.Cijena * insert.Kolicina;
 
+                // Izračunavanje UkupneCijene
+                 korpa.UkupnaCijenaProizvoda = proizvod.CijenaSaPopustom != null ? proizvod.CijenaSaPopustom * insert.Kolicina : proizvod.Cijena * insert.Kolicina;
+           
                 // Postavljanje navigacionog property-ja Proizvod
                 korpa.Proizvod = proizvod;
             }

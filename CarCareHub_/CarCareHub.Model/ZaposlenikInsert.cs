@@ -14,13 +14,19 @@ namespace CarCareHub.Model
         public string? Prezime { get; set; }
 
         public DateTime? DatumRodjenja { get; set; }
-        public int? MaticniBroj { get; set; } //dodala
-        public int? BrojTelefona { get; set; } //dodala
+
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Matični broj mora imati tačno 12 cifara.")]
+        public string? mb { get; set; } // Matični broj kao string
+
+
+        public string? BrojTelefona { get; set; } //dodala
+
         public int? GradId { get; set; }
-        public bool? Vidljivo { get; set; }
+        public bool Vidljivo { get; set; }
 
 
         public string? Email { get; set; }
+        public string? Adresa { get; set; }
 
         public string? Username { get; set; }
 

@@ -7,6 +7,7 @@ public partial class Narudzba
 {
     public int NarudzbaId { get; set; }
 
+    public string? Adresa { get; set; }
 
     public DateTime? DatumNarudzbe { get; set; }
     public bool Vidljivo { get; set; }

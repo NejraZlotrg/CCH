@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/kategorija.dart';
+import 'package:flutter_mobile/models/korpa.dart';
 import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/search_result.dart';
@@ -47,7 +48,10 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
   late ProizvodjacProvider _proizvodjacProvider;
   SearchResult<Proizvodjac>? proizvodjacResult;
   SearchResult<Product>? result;
+SearchResult<Product>? dataWithDiscount;
+  SearchResult<Product>? result2;
 
+  
   List<Product> recommendedProducts = [];
   bool isRecommendationsLoading = false;
 
@@ -63,6 +67,7 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
     _kategorijaProvider = context.read<KategorijaProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
+   
 
     initForm();
     _loadRecommendations();
@@ -79,6 +84,7 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
       var products = await _productProvider.getRecommendations(widget.product!.proizvodId!);
       setState(() {
         recommendedProducts = products;
+        
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -97,7 +103,11 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
       kategorijaResult = await _kategorijaProvider.getAdmin();
       firmaAutodijelovaResult = await _firmaAutodijelovaProvider.getAdmin();
       proizvodjacResult = await _proizvodjacProvider.getAdmin();
-    } else {
+    } 
+    if(context.read<UserProvider>().role == "Autoservis")
+    dataWithDiscount = await _productProvider.getForAutoservis( context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+    
+    else {
       modelResult = await _modelProvider.get();
       kategorijaResult = await _kategorijaProvider.get();
       firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
@@ -192,6 +202,7 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
                                     ),
                                   ).then((_) async {
                                     await _fetchInitialData();
+                                  
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -292,6 +303,8 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
     );
   }
 
+ 
+  
   Widget _buildFirmaDetails() {
     return Column(
       children: [
@@ -429,37 +442,58 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
                                           color: Colors.black,
                                         ),
                                         const SizedBox(height: 3),
-                                        if (widget.product?.popust != null &&
-                                            widget.product!.popust! > 0)
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "${widget.product!.cijena!} KM",
-                                                style: const TextStyle(
-                                                  decoration: TextDecoration.lineThrough,
-                                                  color: Colors.grey,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${widget.product!.cijena! * (1 - widget.product!.popust! / 100)} KM",
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.red,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        if (widget.product?.popust == null ||
-                                            widget.product!.popust! <= 0)
-                                          Text(
-                                            "${widget.product!.cijena!} KM",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
+                                   
+   Column(
+  children: [
+    // 1. Prikaz regularne cijene
+    Text(
+      "${widget.product!.cijena!} KM",
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        decoration: (widget.product?.popust != null && widget.product!.popust! > 0) || 
+                   (widget.product?.cijenaSaPopustomZaAutoservis != null &&
+                    (context.read<UserProvider>().role == "Admin" || 
+                     (context.read<UserProvider>().role == "Autoservis" && 
+                      (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
+            ? TextDecoration.lineThrough 
+            : TextDecoration.none,
+        color: (widget.product?.popust != null && widget.product!.popust! > 0) || 
+               (widget.product?.cijenaSaPopustomZaAutoservis != null &&
+                (context.read<UserProvider>().role == "Admin" || 
+                 (context.read<UserProvider>().role == "Autoservis" && 
+                  (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
+            ? Colors.grey 
+            : Colors.black,
+      ),
+    ),
+
+    // 2. Prikaz cijene sa popustom (crvena) ako postoji
+    if (widget.product?.popust != null && widget.product!.popust! > 0)
+      Text(
+        "${widget.product!.cijena! * (1 - widget.product!.popust! / 100)} KM",
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+          fontSize: 16,
+        ),
+      ),
+
+    // 3. Prikaz cijene za autoservise (narandžasta)
+    if (widget.product?.cijenaSaPopustomZaAutoservis != null &&
+        (context.read<UserProvider>().role == "Admin" || 
+         (context.read<UserProvider>().role == "Autoservis" && 
+          (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
+      Text(
+        "${widget.product!.cijenaSaPopustomZaAutoservis!} KM",
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.orange,
+          fontSize: 16,
+        ),
+      ),
+  ],
+),
                                         const SizedBox(height: 3),
                                         Container(
                                           width: 220,

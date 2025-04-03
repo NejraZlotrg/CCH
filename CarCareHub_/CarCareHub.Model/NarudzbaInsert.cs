@@ -15,6 +15,10 @@ namespace CarCareHub.Model
         public int? AutoservisId { get; set; }
         public int? ZaposlenikId { get; set; }
 
+        [JsonIgnore] // Sakriva svojstvo prilikom serijalizacije u JSON
+        public string? Adresa { get; set; }
+        
+
         public DateTime? DatumNarudzbe { get; set; }
 
         public DateTime? DatumIsporuke { get; set; }

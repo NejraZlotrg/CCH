@@ -55,7 +55,7 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
-
+ print("API odgovor: ${response.body}");
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
       return fromJson(data); // Vraća jedan objekat tipa T

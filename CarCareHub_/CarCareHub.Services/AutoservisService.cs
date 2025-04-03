@@ -189,7 +189,8 @@ namespace CarCareHub.Services
                 SlikaProfila = null, // Add profile image byte array if necessary
                 SlikaThumb = null, // Add thumbnail image byte array if necessary
                 UlogaId = 2, // Assuming UlogaId corresponds to a specific role in the database
-                VoziloId = 1 // Assuming VoziloId corresponds to a specific vehicle
+                VoziloId = 1, // Assuming VoziloId corresponds to a specific vehicle
+                 Vidljivo=true,
             };
 
                 // Mapirajte svaki Insert model u Database.Autoservis entitet

@@ -113,6 +113,42 @@ class ProductProvider extends BaseProvider<Product> {
   }
 }
 
+Future<SearchResult<Product>> getForAutoservis(int autoservisID, {dynamic filter}) async {
+  // Sastavljanje URL-a za dohvat proizvoda za određeni autoservis
+  String url = "${BaseProvider.baseURL}$endpoint/GetForAutoservisSapoputomArtikli/$autoservisID";
+
+print(url);
+  // Ako postoji filter, dodaj ga kao query parametre
+  if (filter != null) {
+    String queryString = getQueryString(filter);
+    url = "$url?$queryString";
+  }
+
+  Uri uri = Uri.parse(url);
+  Map<String, String> headers = createHeaders();
+
+  // Slanje GET zahtjeva prema serveru
+  http.Response response = await http.get(uri, headers: headers);
+
+  // Provjera je li odgovor valjan
+  if (isValidResponse(response)) {
+    var data = jsonDecode(response.body);
+
+    // Kreiranje rezultata za SearchResult
+    SearchResult<Product> result = SearchResult<Product>();
+    result.count = data['count']; // Broj ukupnih stavki
+
+    // Mapiranje rezultata u listu objekata Product
+    for (var item in data['result']) {
+      result.result.add(fromJson(item));
+    }
+
+    return result;
+  } else {
+    throw Exception("Greška pri dohvaćanju proizvoda za autoservis (status: ${response.statusCode})");
+  }
+}
+
 
   @override
   Product fromJson(data) {

@@ -299,9 +299,9 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                       cells: [
                         DataCell(
                           Text(
-                            e.autoservis?.naziv ?? "",
+                            e.firmaAutodijelova?.nazivFirme ?? "",
                             style: TextStyle(
-                              color: (e.autoservis?.vidljivo == null || e.vidljivo == false)
+                              color: (e.firmaAutodijelova?.vidljivo == null || e.vidljivo == false)
                                   ? Colors.red 
                                   : Colors.black,
                             ),
@@ -309,9 +309,9 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                         ),
                         DataCell(
                           Text(
-                            e.firmaAutodijelova?.nazivFirme ?? "",
+                            e.autoservis?.naziv ?? "",
                             style: TextStyle(
-                              color: (e.firmaAutodijelova?.vidljivo == null || e.vidljivo == false)
+                              color: (e.autoservis?.vidljivo == null || e.vidljivo == false)
                                   ? Colors.red 
                                   : Colors.black,
                             ),

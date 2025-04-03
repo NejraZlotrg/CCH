@@ -19,6 +19,7 @@ namespace CarCareHub.Services
         Task<PagedResult<CarCareHub.Model.Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject search = null);
         Task<PagedResult<CarCareHub.Model.Proizvod>> GetByFirmaAutodijelovaID(int firmaautodijelovaid);
 
+        Task<PagedResult<CarCareHub.Model.Proizvod>> GetForAutoservisSapoputomArtikli(int autoservisID, [FromQuery] ProizvodiSearchObject search = null);
 
 
     }

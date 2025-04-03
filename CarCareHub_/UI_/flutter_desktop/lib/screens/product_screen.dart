@@ -43,6 +43,8 @@ class _ProductScreenState extends State<ProductScreen> {
   List<Grad>? grad;
 
   SearchResult<Product>? result;
+  SearchResult<Product>? result2;
+
 
   final TextEditingController _nazivController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
@@ -74,6 +76,8 @@ class _ProductScreenState extends State<ProductScreen> {
     print("Korisnička uloga: $userRole, $userId");
 
     SearchResult<Product> data;
+    SearchResult<Product>? dataWithDiscount;
+
 
     switch (userRole) {
       case "Admin":
@@ -82,6 +86,10 @@ class _ProductScreenState extends State<ProductScreen> {
       case "Klijent":
         data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
         break;
+        case "Autoservis":
+        dataWithDiscount = await _productProvider.getForAutoservis( userId, filter: {'IsAllIncluded': 'true'});
+        data = await _productProvider.getForUsers(filter: {'IsAllIncluded': 'true'});
+
       default:
         data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
     }
@@ -89,6 +97,7 @@ class _ProductScreenState extends State<ProductScreen> {
     if (mounted) {
       setState(() {
         result = data;
+        result2=dataWithDiscount;
       });
     }
   } catch (e) {
@@ -265,7 +274,6 @@ else {
           child: FormBuilderDropdown<Grad>(
   name: 'gradId',
   decoration: InputDecoration(
-    labelText: 'Lokacija',
     suffixIcon: const Icon(Icons.directions_car),
     hintText: 'Odaberite grad',
     hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
@@ -318,7 +326,6 @@ else {
           child: FormBuilderDropdown<Vozilo>(
   name: 'voziloId',
   decoration: InputDecoration(
-    labelText: 'Marka vozila',
     suffixIcon: const Icon(Icons.directions_car),
     hintText: 'Odaberite marku vozila',
     hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
@@ -352,7 +359,6 @@ else {
           child: FormBuilderDropdown<Godiste>(
   name: 'godisteId',
   decoration: InputDecoration(
-    labelText: 'Godiste',
     suffixIcon: const Icon(Icons.date_range),
     hintText: 'Odaberite godiste',
     hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
@@ -390,7 +396,6 @@ else {
   child: FormBuilderDropdown<Model>(
   name: 'modelId',
   decoration: InputDecoration(
-    labelText: 'Model',
     suffixIcon: const Icon(Icons.dashboard_customize),
     hintText: 'Odaberite model',
     hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
@@ -436,6 +441,7 @@ else {
           await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const ProductDetailScreen(product: null),
+              
             ),
           );
           await _loadData();
@@ -545,10 +551,19 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
 
   // Pozivanje API-ja sa filterima
   try {
+
     SearchResult<Product> data;
+    SearchResult<Product>? data2;
+
     if (context.read<UserProvider>().role == "Admin") {
       data = await _productProvider.getAdmin(filter: filterParams);
-    } else {
+    } 
+    else if (context.read<UserProvider>().role == "Autoservis"){
+      var idAutos= context.read<UserProvider>().userId;
+      data2 = await _productProvider.getForAutoservis(idAutos, filter: filterParams);
+      data = await _productProvider.getForAutoservis(idAutos, filter: filterParams);
+
+      }else {
       data = await _productProvider.get(filter: filterParams);
     }
 
@@ -556,6 +571,7 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
     if (mounted) {
       setState(() {
         result = data;  // Ažuriraj rezultate sa podacima dobijenim iz backend-a
+        result2=data2;
       });
     }
   } catch (e) {
@@ -564,23 +580,46 @@ if (selectedGodiste != null && selectedGodiste is Godiste) {
   }
 }
 
+
 Widget _buildDataListView() {
+  // Kreiraj kopiju liste proizvoda
+  List<Product>? products = result?.result.toList();
+  
+  // Ako postoje proizvodi i result2 lista, sortiraj ih tako da oni u obje liste budu prvi
+  if (products != null && result2 != null && result2!.result.isNotEmpty) {
+    products.sort((a, b) {
+      bool aInBoth = result2!.result.any((prod) => prod.proizvodId == a.proizvodId);
+      bool bInBoth = result2!.result.any((prod) => prod.proizvodId == b.proizvodId);
+      
+      if (aInBoth && !bInBoth) {
+        return -1; // a ide prije b
+      } else if (!aInBoth && bInBoth) {
+        return 1; // b ide prije a
+      }
+      return 0; // zadrži originalni redoslijed
+    });
+  }
+
   return Expanded(
     child: SingleChildScrollView(
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, // Tri kolone
-          childAspectRatio: 0.75, // Omjer za kartice da se ne preklapaju
+          crossAxisCount: 3,
+          childAspectRatio: 0.75,
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
         ),
-        itemCount: result?.result.length ?? 0,
+        itemCount: products?.length ?? 0,
         itemBuilder: (context, index) {
-          Product e = result!.result[index];
+          Product e = products![index];
           bool hasDiscount = e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
+          bool hasServiceDiscount = e.cijenaSaPopustomZaAutoservis != null && e.cijenaSaPopustomZaAutoservis! > 0;
           double originalPrice = e.cijena ?? 0.0;
           double discountPrice = hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
           bool isHidden = e.vidljivo == false;
+          bool isInDiscountList = result2?.result.any((prod) => prod.proizvodId == e.proizvodId) ?? false;
+          bool isService = context.read<UserProvider>().role == "Autoservis";
+          bool isAdmin = context.read<UserProvider>().role == "Admin";
 
           return GestureDetector(
             onTap: () async {
@@ -589,13 +628,17 @@ Widget _buildDataListView() {
                   builder: (context) => ProductReadScreen(product: e),
                 ),
               );
-              await _loadData(); // Osvježi podatke nakon povratka
+              await _loadData();
             },
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
-                  color: isHidden ? Colors.red : Colors.transparent,
+                  color: isHidden
+                      ? Colors.red
+                      : isInDiscountList
+                          ? Colors.orange
+                          : Colors.transparent,
                   width: 2.0,
                 ),
               ),
@@ -605,7 +648,6 @@ Widget _buildDataListView() {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Slika proizvoda
                     Expanded(
                       flex: 5,
                       child: ClipRRect(
@@ -620,7 +662,6 @@ Widget _buildDataListView() {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Naziv proizvoda
                     Text(
                       e.naziv ?? "",
                       style: TextStyle(
@@ -632,7 +673,6 @@ Widget _buildDataListView() {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    // Kratak opis proizvoda
                     Text(
                       e.opis != null && e.opis!.length > 30
                           ? "${e.opis!.substring(0, 30)}..."
@@ -645,106 +685,124 @@ Widget _buildDataListView() {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const Spacer(),
-                    // Cena i dugmad za admina ili firmu
-             Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    // Admin ili firma može videti dugmad, samo ako je proizvod vidljiv
-    if ((context.read<UserProvider>().role == "Admin" ||
-        (context.read<UserProvider>().role == "Firma autodijelova" &&
-            context.read<UserProvider>().userId == e.firmaAutodijelovaID)) &&
-        e.vidljivo == true)
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (e.stateMachine == "draft")
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _productProvider.activateProduct(e.proizvodId!);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Proizvod uspješno prikazan na profilu")),
-                  );
-                  await _loadData(); // Osvježavanje podataka nakon aktivacije
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Greška prilikom aktivacije: $e")),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              ),
-              child: const Text(
-                "Prikazi na profilu",
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-          if (e.stateMachine == "active")
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _productProvider.hideProduct(e.proizvodId!);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Proizvod uspješno sakriven sa profila")),
-                  );
-                  await _loadData(); // Osvježavanje podataka nakon aktivacije
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Greška prilikom aktivacije: $e")),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              ),
-              child: const Text(
-                "Sakrij proizvod",
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-        ],
-      ),
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (hasDiscount)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.redAccent.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text(
-              "${formatNumber(discountPrice)} KM",
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.withOpacity(0.7),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Text(
-            "${formatNumber(originalPrice)} KM",
-            style: TextStyle(
-              color: hasDiscount ? Colors.white70 : Colors.white,
-              fontWeight: FontWeight.bold,
-              decoration: hasDiscount ? TextDecoration.lineThrough : null,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ],
-),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if ((isAdmin || 
+                             (context.read<UserProvider>().role == "Firma autodijelova" &&
+                              context.read<UserProvider>().userId == e.firmaAutodijelovaID)) &&
+                            e.vidljivo == true)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (e.stateMachine == "draft")
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      await _productProvider.activateProduct(e.proizvodId!);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text("Proizvod uspješno prikazan na profilu")),
+                                      );
+                                      await _loadData();
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text("Greška prilikom aktivacije: $e")),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  ),
+                                  child: const Text(
+                                    "Prikazi na profilu",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                              if (e.stateMachine == "active")
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      await _productProvider.hideProduct(e.proizvodId!);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text("Proizvod uspješno sakriven sa profila")),
+                                      );
+                                      await _loadData();
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text("Greška prilikom aktivacije: $e")),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  ),
+                                  child: const Text(
+                                    "Sakrij proizvod",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Prikaz posebnog popusta za autoservise:
+                            // - Ako postoji popust za autoservise
+                            // - I (korisnik je admin) ILI (korisnik je autoservis I artikal je u popust listi)
+                            if (hasServiceDiscount && (isAdmin || (isService && isInDiscountList)))
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  "${formatNumber(e.cijenaSaPopustomZaAutoservis!)} KM",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            if (hasDiscount)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.redAccent.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  "${formatNumber(discountPrice)} KM",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                "${formatNumber(originalPrice)} KM",
+                                style: TextStyle(
+                                  color: (hasDiscount || (hasServiceDiscount && (isAdmin || (isService && isInDiscountList)))) 
+                                      ? Colors.white70 
+                                      : Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: hasDiscount ? TextDecoration.lineThrough : null,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -758,5 +816,4 @@ Widget _buildDataListView() {
     ),
   );
 }
-
 }

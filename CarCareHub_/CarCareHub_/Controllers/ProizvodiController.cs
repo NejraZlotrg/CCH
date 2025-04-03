@@ -82,5 +82,18 @@ namespace CarCareHub_.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetForAutoservisSapoputomArtikli/{autoservisID}")]
+        public async Task<ActionResult<PagedResult<CarCareHub.Model.Proizvod>>> GetForAutoservisSapoputomArtikli(int autoservisID, [FromQuery] ProizvodiSearchObject search = null)
+        {
+            var result = await (_service as IProizvodiService)?.GetForAutoservisSapoputomArtikli(autoservisID, search);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+
     }
 }

@@ -13,13 +13,16 @@ namespace CarCareHub.Model
             public string? Ime { get; set; }
 
             public string? Prezime { get; set; }
-        public int? MaticniBroj { get; set; } //dodala
-        public int? BrojTelefona { get; set; } //dodala
+        public string? mb { get; set; } //dodala
+        public string? BrojTelefona { get; set; } //dodala
+
         public Grad? Grad { get; set; }
         public int? GradId { get; set; }
         public bool Vidljivo { get; set; }
         public DateTime? DatumRodjenja { get; set; }
-       
+        public string? Adresa { get; set; }
+        
+
 
         public string? Email { get; set; }
 

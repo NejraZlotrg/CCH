@@ -19,7 +19,7 @@ class Korpa {
   Zaposlenik? zaposlenik;
   int? kolicina;
   double? ukupnaCijenaProizvoda;
-bool? vidljivo;
+  bool? vidljivo;
 
 
   // Konstruktor

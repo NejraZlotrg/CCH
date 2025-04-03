@@ -25,6 +25,8 @@ namespace CarCareHub.Model
         public string? Spol { get; set; }
 
         public string? BrojTelefona { get; set; }
+        public string? Adresa { get; set; }
+
 
         public int? GradId { get; set; }
 

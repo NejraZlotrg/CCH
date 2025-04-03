@@ -42,55 +42,98 @@ namespace CarCareHub.Services
             narudzba.DatumNarudzbe = DateTime.Now;
             narudzba.DatumIsporuke = DateTime.Now.AddDays(2);
             narudzba.Vidljivo = true;
+            narudzba.Adresa = insert.Adresa;
+
             narudzba.UkupnaCijenaNarudzbe = 0;
             if (insert.KlijentId.HasValue && userRole=="Klijent")
             {
+                var k = _dbContext.Klijents.FirstOrDefault(x => x.KlijentId == insert.KlijentId);
                 narudzba.KlijentId = insert.KlijentId.Value;
                 narudzba.ZaposlenikId = null;
                 narudzba.AutoservisId = null;
+                narudzba.Adresa = k.Adresa;
             }
             else if (insert.ZaposlenikId.HasValue && userRole == "Zaposlenik")
             {
+                var Z = _dbContext.Zaposleniks.FirstOrDefault(x => x.ZaposlenikId == insert.ZaposlenikId);
+
                 narudzba.ZaposlenikId = insert.ZaposlenikId.Value;
                 narudzba.KlijentId = null;
                 narudzba.AutoservisId = null;
+                narudzba.Adresa = Z.Adresa;
+
             }
             else if (insert.AutoservisId.HasValue && userRole == "Autoservis")
             {
+                var A = _dbContext.Autoservis.FirstOrDefault(x => x.AutoservisId == insert.AutoservisId);
+
                 narudzba.AutoservisId = insert.AutoservisId.Value;
                 narudzba.KlijentId = null;
                 narudzba.ZaposlenikId = null;
+                narudzba.Adresa = A?.Adresa ?? insert.Adresa;
+
+                // Dobavi ID-e firmi autodijelova povezanih sa ovim autoservisom
+                var firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
+                    .Where(f => f.BPAutodijeloviAutoservis.Any(a => a.AutoservisId == insert.AutoservisId))
+                    .Select(f => f.FirmaAutodijelovaID)
+                    .ToListAsync();
             }
 
-
             await _dbContext.AddAsync(narudzba);
-
-
             await _dbContext.SaveChangesAsync();
             decimal ukupnaCijena = 0;
 
             foreach (var item in korpe)
             {
-                var proizvod = await _dbContext.Proizvods.FindAsync(item.ProizvodId);
-                if (proizvod != null)
-                {
-                    decimal cijenaProizvoda = proizvod.Cijena ?? 0;  // Ako je null, postavi na 0
-                    int kolicina = item.Kolicina ?? 1;  // Ako je null, podrazumijevana količina je 1
-                    decimal ukupnaStavka = cijenaProizvoda * kolicina;
+                var proizvod = await _dbContext.Proizvods
+                    .Include(p => p.FirmaAutodijelova) // Uključite FirmaAutodijelova ako je potrebno
+                    .FirstOrDefaultAsync(p => p.ProizvodId == item.ProizvodId);
 
-                    ukupnaCijena += ukupnaStavka; // Dodaj u ukupnu cijenu
+                if (proizvod != null && insert.AutoservisId!=null)
+                {
+                    decimal cijenaProizvoda;
+                    int kolicina = item.Kolicina ?? 1;
+                    var firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
+                   .Where(f => f.BPAutodijeloviAutoservis.Any(a => a.AutoservisId == insert.AutoservisId))
+                   .Select(f => f.FirmaAutodijelovaID)
+                   .ToListAsync();
+                    // Provjeri da li je proizvod u listi firmi autodijelova povezanih sa autoservisom
+                    bool isInFirmaAutodijelovaList = firmaAutodijelovaIds.Contains((int)proizvod.FirmaAutodijelovaID);
+
+                    // Logika odabira cijene
+                    if (userRole == "Autoservis" &&
+                        proizvod.CijenaSaPopustomZaAutoservis.HasValue &&
+                        isInFirmaAutodijelovaList)
+                    {
+                        cijenaProizvoda = proizvod.CijenaSaPopustomZaAutoservis.Value;
+                    }
+                    else if (proizvod.CijenaSaPopustom.HasValue)
+                    {
+                        cijenaProizvoda = proizvod.CijenaSaPopustom.Value;
+                    }
+                    else
+                    {
+                        cijenaProizvoda = proizvod.Cijena ?? 0;
+                    }
+
+                    decimal ukupnaStavka = cijenaProizvoda * kolicina;
+                    ukupnaCijena += ukupnaStavka;
 
                     var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
                     {
                         ProizvodId = item.ProizvodId,
                         NarudzbaId = narudzba.NarudzbaId,
                         Kolicina = kolicina,
-                      
+                       
                     };
 
                     narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
                 }
             }
+
+
+
+            narudzba.UkupnaCijenaNarudzbe = ukupnaCijena;
             // Datum kada je narudžba kreirana (univerzalno vreme)
             // Datum kada je narudžba kreirana (univerzalno vreme)
             insert.DatumNarudzbe = DateTime.UtcNow;  // Čuva se kao DateTime, UTC vremenska zona

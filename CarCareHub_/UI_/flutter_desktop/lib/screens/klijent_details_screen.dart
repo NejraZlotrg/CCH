@@ -46,6 +46,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
       'brojTelefona': widget.klijent?.brojTelefona ?? '',
       'gradId': widget.klijent?.gradId?.toString() ?? '',
       'ulogaId': widget.klijent?.ulogaId ?? '',
+      'adresa' : widget.klijent?.adresa ?? '',
     };
 
     _klijentProvider = context.read<KlijentProvider>();
@@ -388,6 +389,36 @@ List<Widget> _buildFormFields() {
       ],
     ),
 
+    
+ Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Adresa",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite adresu',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          name: "adresa",
+          validator: validator.required,
+        ),
+      ],
+    ),
     // Red 5: Grad
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,

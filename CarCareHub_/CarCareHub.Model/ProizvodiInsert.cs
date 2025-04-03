@@ -23,6 +23,10 @@ namespace CarCareHub.Model
         [JsonIgnore]
         public decimal? CijenaSaPopustom { get; set; }
 
+        [NotMapped]
+        [JsonIgnore]
+        public decimal? CijenaSaPopustomZaAutoservis { get; set; }
+
         [MinLength(0)]
         [MaxLength(5)]
         public string? Sifra { get; set; }

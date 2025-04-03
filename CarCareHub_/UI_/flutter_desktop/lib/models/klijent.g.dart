@@ -9,6 +9,7 @@ part of 'klijent.dart';
 Klijent _$KlijentFromJson(Map<String, dynamic> json) => Klijent(
       (json['klijentId'] as num).toInt(),
       json['vidljivo'] as bool?,
+      json['adresa'] as String?,
       json['ime'] as String?,
       json['prezime'] as String?,
       json['username'] as String?,
@@ -37,4 +38,5 @@ Map<String, dynamic> _$KlijentToJson(Klijent instance) => <String, dynamic>{
       'gradId': instance.gradId,
       'ulogaId': instance.ulogaId,
       'vidljivo': instance.vidljivo,
+      'adresa': instance.adresa,
     };

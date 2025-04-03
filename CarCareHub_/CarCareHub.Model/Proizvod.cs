@@ -19,6 +19,7 @@ namespace CarCareHub.Model
         public string? Sifra { get; set; }
         public bool Vidljivo { get; set; }
         public string? OriginalniBroj { get; set; }
+        public decimal? CijenaSaPopustomZaAutoservis { get; set; }
 
         public string? ModelProizvoda { get; set; }
 

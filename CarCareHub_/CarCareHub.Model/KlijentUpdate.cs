@@ -25,6 +25,7 @@ namespace CarCareHub.Model
 
         [Compare("Password", ErrorMessage = "Pass don't match")]
         public string? PasswordAgain { get; set; }
+        public string? Adresa { get; set; }
 
 
         public string? Spol { get; set; }

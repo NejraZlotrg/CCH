@@ -39,7 +39,9 @@ namespace CarCareHub.Model
         public int? ProizvodjacId { get; set; }
         public int? firmaAutodijelovaID { get; set; }
         public int? ModelId { get; set; } // Foreign key
-
+        [NotMapped]
+        [JsonIgnore]
+        public decimal? CijenaSaPopustomZaAutoservis { get; set; }
 
         public byte[]? Slika { get; set; }
         public byte[]? SlikaThumb { get; set; }

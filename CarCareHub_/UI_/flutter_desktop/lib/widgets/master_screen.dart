@@ -64,7 +64,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   late ZaposlenikProvider _zaposlenikProvider;
   late int userId;
   late String _role;
-  int brojProizvodaUKorpi = 0;
+
 
   @override
   void didChangeDependencies() {
@@ -82,18 +82,11 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     _role = _userProvider.role;
 
 
-      _ucitajBrojProizvoda();
+      
     
   }
 
-  Future<void> _ucitajBrojProizvoda() async {
-    if(_role == "Klijent" || _role == "Zaposlenik" || _role == "Autoservis") {
-    List<Korpa> korpaLista = await _korpaProvider.getById(userId);
-    setState(() {
-      brojProizvodaUKorpi = korpaLista.length;
-    });
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +101,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               icon: const Icon(Icons.arrow_back, size: 30),
               onPressed: () {
                 Navigator.pop(context);
+               
               },
             ),
             Expanded(
@@ -133,33 +127,13 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             .push(MaterialPageRoute(builder: (context) => const KorpaScreen()))
             .then((_) {
           setState(() {
-            _ucitajBrojProizvoda(); // Ponovno učitavanje broja proizvoda nakon zatvaranja ekrana
+        
           });
         });
       },
     ),
            ),
-    if (brojProizvodaUKorpi > 0)
-      Positioned(
-        right: 4,
-        top: 4,
-        child: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: Colors.red,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-          ),
-          child: Text(
-            brojProizvodaUKorpi.toString(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
+    
   ],
 ),
     ],

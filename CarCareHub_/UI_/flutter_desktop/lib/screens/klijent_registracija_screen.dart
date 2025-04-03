@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/klijent.dart';
@@ -59,6 +60,7 @@ class _KlijentRegistracijaScreenState
       'brojTelefona': widget.klijent?.brojTelefona ?? '',
       'gradId': widget.klijent?.gradId ?? '',
       'ulogaId': widget.klijent?.ulogaId ?? '',
+      'adresa' : widget.klijent?.adresa ?? '',
 
     };
 
@@ -97,6 +99,13 @@ class _KlijentRegistracijaScreenState
           request,
         );
       }
+
+       Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LogInPage()),
+      (Route<dynamic> route) => false,  // This will pop all the previous routes from the stack
+    );
+    
     } on Exception catch (e) {
       showDialog(
         context: context,
@@ -303,6 +312,28 @@ class _KlijentRegistracijaScreenState
           name: "passwordAgain",
           validator: validator.required,
           obscureText: true,
+        ),
+      ],
+    ),
+    const SizedBox(height: 10),
+
+        Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Adresa",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "adresa",
+          validator: validator.required,
         ),
       ],
     ),

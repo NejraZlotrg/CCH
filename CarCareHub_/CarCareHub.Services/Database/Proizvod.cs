@@ -8,6 +8,8 @@ public partial class Proizvod
     public string? Naziv { get; set; }
     public decimal? Cijena { get; set; }
     public decimal? CijenaSaPopustom { get; set; }
+    public decimal? CijenaSaPopustomZaAutoservis { get; set; }
+
     public int? Popust { get; set; }
 
     public string? Sifra { get; set; }

@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20250402191919_ooo")]
+    partial class ooo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,9 +438,6 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KlijentId"));
 
-                    b.Property<string>("Adresa")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("BrojTelefona")
                         .HasMaxLength(20)
                         .IsUnicode(false)
@@ -585,9 +585,6 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NarudzbaId"));
 
-                    b.Property<string>("Adresa")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("AutoservisId")
                         .HasColumnType("int");
 
@@ -707,9 +704,6 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnName("cijena");
 
                     b.Property<decimal?>("CijenaSaPopustom")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("CijenaSaPopustomZaAutoservis")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("FirmaAutodijelovaID")
@@ -929,11 +923,8 @@ namespace CarCareHub.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZaposlenikId"));
 
-                    b.Property<string>("Adresa")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BrojTelefona")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("BrojTelefona")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DatumRodjenja")
                         .HasColumnType("date")
@@ -993,6 +984,7 @@ namespace CarCareHub.Services.Migrations
                         .HasColumnName("autoservisID");
 
                     b.Property<string>("mb")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ZaposlenikId")
