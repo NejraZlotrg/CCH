@@ -78,7 +78,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
 
   // Implementacija getById getata Listu po nekom idu nekog properija
-  Future<List<T>> getById(int? id) async {
+  Future<List<T>>  getById(int? id) async {
     String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
 
     Uri uri = Uri.parse(url);

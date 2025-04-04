@@ -99,37 +99,26 @@ namespace CarCareHub.Services
         //}
 
 
-        public async Task<SearchResult<Model.NarudzbaStavka>> GetByFirma(int id)
+        public async Task<SearchResult<Model.NarudzbaStavka>> GetByNarudzbaID(int id)
         {
             var query = _dbContext.NarudzbaStavkas
-                .Include(s => s.Proizvod)
-                .Where(s => s.Proizvod.FirmaAutodijelovaID == id && s.Vidljivo == true)
+                .Include(s => s.Narudzba).Include(b=>b.Proizvod)
+                .Where(s => s.NarudzbaId == id)
                 .AsQueryable();
-
 
             var count = await query.CountAsync();
 
-            var result = await query
-                .Select(s => new Model.NarudzbaStavka
-                {
-                    ProizvodId = s.ProizvodId,
-                    Kolicina = s.Kolicina,
-                    NarudzbaId = s.NarudzbaId,
-                    Vidljivo = s.Vidljivo,
-                    Proizvod = new Model.Proizvod
-                    {
-                        ProizvodId = s.Proizvod.ProizvodId,
-                        FirmaAutodijelovaID = s.Proizvod.FirmaAutodijelova.FirmaAutodijelovaID
-                    }
-                })
-                .ToListAsync();
+            var entities = await query.ToListAsync();
+
+            var mapped = _mapper.Map<List<Model.NarudzbaStavka>>(entities);
 
             return new SearchResult<Model.NarudzbaStavka>
             {
-                Result = result,
+                Result = mapped,
                 Count = count
             };
         }
+
 
 
     }

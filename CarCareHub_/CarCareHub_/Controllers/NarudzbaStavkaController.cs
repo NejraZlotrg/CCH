@@ -16,5 +16,20 @@ namespace CarCareHub_.Controllers
         {
         }
 
+        [HttpGet("{narudzbaId}/ByNarudzbaId")]
+        public async Task<ActionResult<SearchResult<CarCareHub.Model.NarudzbaStavka>>> GetByNarudzbaId(int narudzbaId)
+        {
+            try
+            {
+                var service = (INarudzbaStavkaService)_service;
+                var stavke = await service.GetByNarudzbaID(narudzbaId);
+                return Ok(stavke);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Greška pri dohvatu stavki narudžbe: {ex.Message}" });
+            }
+        }
+
     }
 }

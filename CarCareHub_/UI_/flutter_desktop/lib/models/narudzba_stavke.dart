@@ -8,14 +8,14 @@ part 'narudzba_stavke.g.dart';
 class NarudzbaStavke {
   final int? proizvodId;
   final int? kolicina;
-  final double? ukupnaCijenaProizvoda;
+  final double? ukupnaCijenaNarudzbe;
   final Product? proizvod;
   final Narudzba? narudzba;
   final int? narudzbaId;
 bool? vidljivo;
 
 
-  NarudzbaStavke(this.proizvodId, this.vidljivo, this.kolicina, this.ukupnaCijenaProizvoda,this.proizvod,this.narudzba,this.narudzbaId);
+  NarudzbaStavke(this.proizvodId, this.vidljivo, this.kolicina, this.ukupnaCijenaNarudzbe,this.proizvod,this.narudzba,this.narudzbaId);
 
   
   factory NarudzbaStavke.fromJson(Map<String,dynamic> json) => _$NarudzbaStavkeFromJson(json);
