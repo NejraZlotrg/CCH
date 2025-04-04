@@ -29,132 +29,123 @@ namespace CarCareHub.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
-
         public override async Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
         {
-            var korpe = await _dbContext.Korpas.Where(x => (!insert.KlijentId.HasValue || x.KlijentId == insert.KlijentId) &&
-                                                            (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
-                                                            (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId)) .ToListAsync();
+            // Get items from cart
+            var korpe = await _dbContext.Korpas
+                .Where(x => (!insert.KlijentId.HasValue || x.KlijentId == insert.KlijentId) &&
+                            (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
+                            (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId))
+                .ToListAsync();
 
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
 
-            var narudzba = new CarCareHub.Services.Database.Narudzba();
-            narudzba.DatumNarudzbe = DateTime.Now;
-            narudzba.DatumIsporuke = DateTime.Now.AddDays(2);
-            narudzba.Vidljivo = true;
-            narudzba.Adresa = insert.Adresa;
-
-            narudzba.UkupnaCijenaNarudzbe = 0;
-            if (insert.KlijentId.HasValue && userRole=="Klijent")
+            // Create new order
+            var narudzba = new CarCareHub.Services.Database.Narudzba
             {
-                var k = _dbContext.Klijents.FirstOrDefault(x => x.KlijentId == insert.KlijentId);
+                DatumNarudzbe = DateTime.Now,
+                DatumIsporuke = DateTime.Now.AddDays(2),
+                Vidljivo = true,
+                Adresa = insert.Adresa,
+                UkupnaCijenaNarudzbe = 0
+            };
+
+            // Set order owner based on role
+            if (insert.KlijentId.HasValue && userRole == "Klijent")
+            {
+                var k = await _dbContext.Klijents.FirstOrDefaultAsync(x => x.KlijentId == insert.KlijentId);
                 narudzba.KlijentId = insert.KlijentId.Value;
-                narudzba.ZaposlenikId = null;
-                narudzba.AutoservisId = null;
-                narudzba.Adresa = k.Adresa;
+                narudzba.Adresa = k?.Adresa ?? insert.Adresa;
             }
             else if (insert.ZaposlenikId.HasValue && userRole == "Zaposlenik")
             {
-                var Z = _dbContext.Zaposleniks.FirstOrDefault(x => x.ZaposlenikId == insert.ZaposlenikId);
-
+                var z = await _dbContext.Zaposleniks.FirstOrDefaultAsync(x => x.ZaposlenikId == insert.ZaposlenikId);
                 narudzba.ZaposlenikId = insert.ZaposlenikId.Value;
-                narudzba.KlijentId = null;
-                narudzba.AutoservisId = null;
-                narudzba.Adresa = Z.Adresa;
-
+                narudzba.Adresa = z?.Adresa ?? insert.Adresa;
             }
             else if (insert.AutoservisId.HasValue && userRole == "Autoservis")
             {
-                var A = _dbContext.Autoservis.FirstOrDefault(x => x.AutoservisId == insert.AutoservisId);
-
+                var a = await _dbContext.Autoservis.FirstOrDefaultAsync(x => x.AutoservisId == insert.AutoservisId);
                 narudzba.AutoservisId = insert.AutoservisId.Value;
-                narudzba.KlijentId = null;
-                narudzba.ZaposlenikId = null;
-                narudzba.Adresa = A?.Adresa ?? insert.Adresa;
+                narudzba.Adresa = a?.Adresa ?? insert.Adresa;
+            }
 
-                // Dobavi ID-e firmi autodijelova povezanih sa ovim autoservisom
-                var firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
+            await _dbContext.AddAsync(narudzba);
+            await _dbContext.SaveChangesAsync();
+
+            decimal ukupnaCijena = 0;
+            List<int> firmaAutodijelovaIds = null;
+
+            // Get autoparts companies for autoservice only once
+            if (userRole == "Autoservis" && insert.AutoservisId.HasValue)
+            {
+                firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
                     .Where(f => f.BPAutodijeloviAutoservis.Any(a => a.AutoservisId == insert.AutoservisId))
                     .Select(f => f.FirmaAutodijelovaID)
                     .ToListAsync();
             }
 
-            await _dbContext.AddAsync(narudzba);
-            await _dbContext.SaveChangesAsync();
-            decimal ukupnaCijena = 0;
-
+            // Process each cart item
             foreach (var item in korpe)
             {
                 var proizvod = await _dbContext.Proizvods
-                    .Include(p => p.FirmaAutodijelova) // Uključite FirmaAutodijelova ako je potrebno
+                    .Include(p => p.FirmaAutodijelova)
                     .FirstOrDefaultAsync(p => p.ProizvodId == item.ProizvodId);
 
-                if (proizvod != null && insert.AutoservisId!=null)
+                if (proizvod == null) continue;
+
+                decimal cijenaProizvoda;
+                int kolicina = item.Kolicina ?? 1;
+
+                // Pricing logic based on user role
+                switch (userRole)
                 {
-                    decimal cijenaProizvoda;
-                    int kolicina = item.Kolicina ?? 1;
-                    var firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
-                   .Where(f => f.BPAutodijeloviAutoservis.Any(a => a.AutoservisId == insert.AutoservisId))
-                   .Select(f => f.FirmaAutodijelovaID)
-                   .ToListAsync();
-                    // Provjeri da li je proizvod u listi firmi autodijelova povezanih sa autoservisom
-                    bool isInFirmaAutodijelovaList = firmaAutodijelovaIds.Contains((int)proizvod.FirmaAutodijelovaID);
+                    case "Autoservis":
+                        bool isInFirmaAutodijelovaList = firmaAutodijelovaIds?.Contains(proizvod.FirmaAutodijelovaID ?? 0) ?? false;
 
-                    // Logika odabira cijene
-                    if (userRole == "Autoservis" &&
-                        proizvod.CijenaSaPopustomZaAutoservis.HasValue &&
-                        isInFirmaAutodijelovaList)
-                    {
-                        cijenaProizvoda = proizvod.CijenaSaPopustomZaAutoservis.Value;
-                    }
-                    else if (proizvod.CijenaSaPopustom.HasValue)
-                    {
-                        cijenaProizvoda = proizvod.CijenaSaPopustom.Value;
-                    }
-                    else
-                    {
+                        if (isInFirmaAutodijelovaList && proizvod.CijenaSaPopustomZaAutoservis.HasValue)
+                            cijenaProizvoda = proizvod.CijenaSaPopustomZaAutoservis.Value;
+                        else if (proizvod.CijenaSaPopustom.HasValue)
+                            cijenaProizvoda = proizvod.CijenaSaPopustom.Value;
+                        else
+                            cijenaProizvoda = proizvod.Cijena ?? 0;
+                        break;
+
+                    case "Zaposlenik":
+                    case "Klijent":
+                        cijenaProizvoda = proizvod.CijenaSaPopustom.HasValue
+                            ? proizvod.CijenaSaPopustom.Value
+                            : proizvod.Cijena ?? 0;
+                        break;
+
+                    default:
                         cijenaProizvoda = proizvod.Cijena ?? 0;
-                    }
-
-                    decimal ukupnaStavka = cijenaProizvoda * kolicina;
-                    ukupnaCijena += ukupnaStavka;
-
-                    var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
-                    {
-                        ProizvodId = item.ProizvodId,
-                        NarudzbaId = narudzba.NarudzbaId,
-                        Kolicina = kolicina,
-                       
-                    };
-
-                    narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
+                        break;
                 }
+
+                decimal ukupnaStavka = cijenaProizvoda * kolicina;
+                ukupnaCijena += ukupnaStavka;
+
+                var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
+                {
+                    ProizvodId = item.ProizvodId,
+                    NarudzbaId = narudzba.NarudzbaId,
+                    Kolicina = kolicina,
+              
+                };
+
+                narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
             }
 
-
-
+            // Update order totals
             narudzba.UkupnaCijenaNarudzbe = ukupnaCijena;
-            // Datum kada je narudžba kreirana (univerzalno vreme)
-            // Datum kada je narudžba kreirana (univerzalno vreme)
-            insert.DatumNarudzbe = DateTime.UtcNow;  // Čuva se kao DateTime, UTC vremenska zona
-
-            // Datum kada je predviđena isporuka (lokalno vreme sa predviđenim rokom isporuke za 7 dana)
-            insert.DatumIsporuke = DateTime.Now.AddDays(7);  // Čuva se kao DateTime, lokalno vreme
-
-                // Ako treba da pošaljete ili prikažete podatke u specifičnom formatu, koristite:
-                //string? datumNarudzbeStr = insert.DatumNarudzbe.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                //string datumIsporukeStr = insert.DatumIsporuke.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-
-
-                narudzba.UkupnaCijenaNarudzbe = ukupnaCijena;
-
-                _mapper.Map<Database.Narudzba>(insert);
+            narudzba.DatumNarudzbe = DateTime.UtcNow;
+            narudzba.DatumIsporuke = DateTime.Now.AddDays(7);
 
             await _dbContext.SaveChangesAsync();
 
             return _mapper.Map<Model.Narudzba>(narudzba);
-            }
-        
+        }
 
         public override async Task<Model.Narudzba> Update(int id, Model.NarudzbaUpdate update)
         {

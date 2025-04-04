@@ -171,7 +171,9 @@ class _ChatListScreen2State extends State<ChatListScreen2> {
           ],
         ),
       ),
-      body: RefreshIndicator(
+      body: chats.isEmpty
+          ? const Center(child: Text('No conversations yet'))
+          : RefreshIndicator(
         onRefresh: fetchChats,
         child: ListView.builder(
           itemCount: chats.length,

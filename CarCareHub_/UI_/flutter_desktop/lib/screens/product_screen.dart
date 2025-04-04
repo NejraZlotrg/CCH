@@ -615,6 +615,7 @@ Widget _buildDataListView() {
           bool hasDiscount = e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
           bool hasServiceDiscount = e.cijenaSaPopustomZaAutoservis != null && e.cijenaSaPopustomZaAutoservis! > 0;
           double originalPrice = e.cijena ?? 0.0;
+          
           double discountPrice = hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
           bool isHidden = e.vidljivo == false;
           bool isInDiscountList = result2?.result.any((prod) => prod.proizvodId == e.proizvodId) ?? false;

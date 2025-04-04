@@ -31,8 +31,11 @@ namespace CarCareHub.Services
 
             if (entity is null)
             {
+                Console.WriteLine($"Nema preporuka za proizvod ID: {articleId}");
                 return new();
             }
+
+         
 
             var recommendedArticleIds = new List<long>();
 

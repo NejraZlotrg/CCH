@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CarCareHub.Services
 {
@@ -25,7 +26,7 @@ namespace CarCareHub.Services
         public override Task<Model.Proizvod> Insert(Model.ProizvodiInsert insert)
         {
             var state = _baseState.CreateState("initial");
-
+            insert.Cijena = Math.Round((decimal)(insert.Cijena), 2);
             // Standardni popust ako je postavljen
             if (insert.Popust.HasValue && insert.Popust > 0)
             {
@@ -46,18 +47,36 @@ namespace CarCareHub.Services
             var entity = await _dbContext.Proizvods.FindAsync(id);
             var state = _baseState.CreateState(entity.StateMachine);
 
-            // Standardni popust ako je postavljen
-            if (update.Popust.HasValue && update.Popust > 0)
+            // Ako je popust eksplicitno postavljen
+            if (update.Popust.HasValue)
             {
-                var pom = update.Cijena * update.Popust.Value / 100;
-                update.CijenaSaPopustom = update.Cijena - pom;
-                // Resetiraj autoservis popust ako postoji eksplicitni popust
-                update.CijenaSaPopustomZaAutoservis = null;
+                if (update.Popust > 0)
+                {
+                    // Izračunaj standardni popust i zaokruži na 2 decimale
+                    var pom = update.Cijena * update.Popust.Value / 100;
+                    update.CijenaSaPopustom = Math.Round((decimal)(update.Cijena - pom), 2);
+                    // Resetiraj autoservis popust
+                    update.CijenaSaPopustomZaAutoservis = null;
+                }
+                else
+                {
+                    // Ako je popust 0, obriši standardni popust
+                    update.CijenaSaPopustom = null;
+                    // Postavi autoservis popust (5%) i zaokruži na 2 decimale
+                    update.CijenaSaPopustomZaAutoservis = Math.Round((decimal)(update.Cijena * 0.95m), 2);
+                }
             }
-            // Dodaj automatski 5% popusta za autoservise ako nema drugog popusta
-            else if (update.CijenaSaPopustom == null && entity.CijenaSaPopustom == null)
+            // Ako je popust null (nije postavljen)
+            else
             {
-                update.CijenaSaPopustomZaAutoservis = update.Cijena * 0.95m; // 5% popusta
+                // Obriši standardni popust
+                update.CijenaSaPopustom = null;
+
+                // Dodaj automatski 5% popusta za autoservise samo ako nije bilo prijašnjeg popusta i zaokruži
+                if (entity.CijenaSaPopustom == null)
+                {
+                    update.CijenaSaPopustomZaAutoservis = Math.Round((decimal)(update.Cijena * 0.95m), 2);
+                }
             }
 
             return await state.Update(id, update);

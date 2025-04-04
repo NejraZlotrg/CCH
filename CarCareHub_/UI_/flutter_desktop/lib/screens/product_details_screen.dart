@@ -386,70 +386,71 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
           ),
         ],
       ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          Expanded(child:
-         FormBuilderDropdown(
-  name: 'firmaAutodijelovaID',
-  validator: validator.required,
-  decoration: const InputDecoration(
-    labelText: 'Firma Auto Dijelova',
-    border: OutlineInputBorder(),
-    fillColor: Colors.white, // Bela pozadina
-    filled: true, // Da pozadina bude ispunjenae
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    hintText: 'Firma Auto Dijelova',
-  ),
-  initialValue: widget.product?.firmaAutodijelovaID?.toString(),
-  items: firmaAutodijelovaResult?.result.map((item) {
-        return DropdownMenuItem(
-          value: item.firmaAutodijelovaID.toString(),
-          child: Text(
-            item.nazivFirme ?? "",
-            style: TextStyle(
-              color: item.vidljivo == false ? Colors.red : Colors.black,
+    const SizedBox(height: 10),
+Row(
+  children: [
+    Expanded(child:
+      FormBuilderDropdown(
+        name: 'firmaAutodijelovaID',
+        validator: validator.required,
+        decoration: const InputDecoration(
+          labelText: 'Firma Auto Dijelova',
+          border: OutlineInputBorder(),
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          hintText: 'Firma Auto Dijelova',
+        ),
+        initialValue: widget.product?.firmaAutodijelovaID?.toString(),
+        items: firmaAutodijelovaResult?.result.map((item) {
+          return DropdownMenuItem(
+            value: item.firmaAutodijelovaID.toString(),
+            child: Text(
+              item.nazivFirme ?? "",
+              style: TextStyle(
+                color: item.vidljivo == false ? Colors.red : Colors.black,
+              ),
             ),
-          ),
-        );
-      }).toList() ?? [],
-)
-
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          Expanded(
-            child: FormBuilderDropdown(
-  name: 'modelId',
-  validator: validator.required,
-  decoration: const InputDecoration(
-    labelText: 'Model',
-    border: OutlineInputBorder(),
-    fillColor: Colors.white, // Bela pozadina
-    filled: true, // Da pozadina bude ispunjena
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    hintText: 'Odaberite Model',
-  ),
-  initialValue: widget.product?.model?.modelId.toString(),
-  items: modelResult?.result.map((item) {
-        return DropdownMenuItem(
-          value: item.modelId.toString(),
-          child: Text(
-            item.nazivModela ?? "",
-            style: TextStyle(
-              color: item.vidljivo == false ? Colors.red : Colors.black,
+          );
+        }).toList() ?? [],
+      )
+    ),
+  ],
+),
+const SizedBox(height: 10),
+Row(
+  children: [
+    Expanded(
+      child: FormBuilderDropdown(
+        name: 'modelId',
+        validator: validator.required,
+        decoration: const InputDecoration(
+          labelText: 'Model',
+          border: OutlineInputBorder(),
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          hintText: 'Odaberite Model',
+        ),
+        initialValue: widget.product?.modelId?.toString(),
+        items: modelResult?.result.map((item) {
+          return DropdownMenuItem(
+            value: item.modelId.toString(),
+            child: Text(
+              item.nazivModela ?? "",
+              style: TextStyle(
+                color: item.vidljivo == false ? Colors.red : Colors.black,
+              ),
             ),
-          ),
-        );
-      }).toList() ?? [],
-)
-
-          ),
-        ],
+          );
+        }).toList() ?? [],
+        onChanged: (value) {
+          // Ovdje možete dodati dodatnu logiku ako je potrebno
+        },
       ),
+    ),
+  ],
+),
       const SizedBox(height: 10),
       FormBuilderTextField(
         decoration: const InputDecoration(

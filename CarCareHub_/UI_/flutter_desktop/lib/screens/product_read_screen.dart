@@ -21,6 +21,7 @@ import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 
@@ -443,11 +444,11 @@ SearchResult<Product>? dataWithDiscount;
                                         ),
                                         const SizedBox(height: 3),
                                    
-   Column(
+  Column(
   children: [
     // 1. Prikaz regularne cijene
     Text(
-      "${widget.product!.cijena!} KM",
+      "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijena!)} KM",
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
@@ -471,7 +472,7 @@ SearchResult<Product>? dataWithDiscount;
     // 2. Prikaz cijene sa popustom (crvena) ako postoji
     if (widget.product?.popust != null && widget.product!.popust! > 0)
       Text(
-        "${widget.product!.cijena! * (1 - widget.product!.popust! / 100)} KM",
+        "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijena! * (1 - widget.product!.popust! / 100))} KM",
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.red,
@@ -485,7 +486,7 @@ SearchResult<Product>? dataWithDiscount;
          (context.read<UserProvider>().role == "Autoservis" && 
           (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
       Text(
-        "${widget.product!.cijenaSaPopustomZaAutoservis!} KM",
+        "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijenaSaPopustomZaAutoservis!)} KM",
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.orange,
