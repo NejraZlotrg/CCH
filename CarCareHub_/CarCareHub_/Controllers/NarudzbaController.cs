@@ -93,5 +93,13 @@ namespace CarCareHub_.Controllers
             return nar; // Directly return the list
         }
 
+        [HttpGet("IzvjestajzaAutoservis")]
+
+        public async Task<List<AutoservisIzvjestaj>> GetAutoservisIzvjestaj()
+        {
+            var nar = await _narudzbaService.GetAutoservisIzvjestaj();
+            return nar; // Directly return the list
+        }
+
     }
 }

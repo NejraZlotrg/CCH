@@ -315,7 +315,8 @@ namespace CarCareHub.Services
             var query = _dbContext.Narudzbas
                 .Include(n => n.Klijent) // Include Klijent navigation property
                 .Include(n => n.Zaposlenik) // Include Zaposlenik navigation property
-                .Include(n => n.Autoservis) // Include Autoservis navigation property
+                .Include(n => n.Autoservis)
+                .Where(x=> x.ZavrsenaNarudzba == true)// Include Autoservis navigation property
                 .AsQueryable();
 
             // Filtriranje prema vremenskom periodu
@@ -366,6 +367,62 @@ namespace CarCareHub.Services
             return izvjestaj;
         }
 
+        public async Task<List<AutoservisIzvjestaj>> GetAutoservisIzvjestaj()
+        {
+            try
+            {
+                // Calculate date range (last 30 days)
+                var startDate = DateTime.Now.AddDays(-30);
+                var endDate = DateTime.Now;
+
+                // Get all completed orders for autoservices in the last 30 days
+                var orders = await _dbContext.Narudzbas
+                    .Include(n => n.Autoservis)
+                    .Include(n => n.NarudzbaStavkas)
+                        .ThenInclude(ns => ns.Proizvod)
+                    .Where(n => n.AutoservisId != null
+                              && n.ZavrsenaNarudzba == true
+                              && n.DatumNarudzbe >= startDate
+                              && n.DatumNarudzbe <= endDate)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                // Group by autoservice and calculate statistics
+                var report = orders
+                    .GroupBy(n => n.AutoservisId)
+                    .Select(g => {
+                        var firstOrder = g.First();
+                        return new AutoservisIzvjestaj
+                        {
+                            AutoservisId = g.Key.Value,
+                            NazivAutoservisa = firstOrder.Autoservis?.Naziv ?? "Nepoznato",
+                            UkupanIznos = (decimal)g.Sum(n => n.UkupnaCijenaNarudzbe),
+                            BrojNarudzbi = g.Count(),
+                            ProsjecnaCijena = (decimal)g.Average(n => n.UkupnaCijenaNarudzbe),
+                            NajpopularnijiProizvodi = g.SelectMany(n => n.NarudzbaStavkas)
+                                .GroupBy(ns => ns.Proizvod)
+                                .OrderByDescending(pg => pg.Sum(ns => ns.Kolicina))
+                                .Take(3)
+                                .Select(pg => new ProizvodStatistika
+                                {
+                                    ProizvodId = pg.Key.ProizvodId,
+                                    Naziv = pg.Key.Naziv,
+                                    UkupnaKolicina = (int)pg.Sum(ns => ns.Kolicina),
+                                    UkupnaVrijednost = (decimal)pg.Sum(ns => ns.Kolicina * (ns.Proizvod.Cijena ?? 0))
+                                }).ToList()
+                        };
+                    })
+                    .OrderByDescending(x => x.UkupanIznos)
+                    .ToList();
+
+                return report;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating autoservice report: {ex.Message}");
+                throw;
+            }
+        }
 
         public async Task<List<Model.Narudzba>> GetNarudzbeZaFirmu(int id)
         {

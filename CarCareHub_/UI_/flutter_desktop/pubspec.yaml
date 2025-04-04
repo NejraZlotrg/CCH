@@ -33,6 +33,9 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.0.15 # Provjeri najnoviju verziju
   form_validation: ^3.2.0
+  path_provider: ^2.1.1
+  share_plus: ^10.1.4
+  open_file: ^3.3.1  # For opening files
 
 
 
@@ -77,17 +80,15 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+  
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
 
-  # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/images/
-  #   - images/a_dot_ham.jpeg
-
+    - assets/images/cch_logo.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

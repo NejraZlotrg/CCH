@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_mobile/models/IzvjestajNarudzbi.dart';
+import 'package:flutter_mobile/models/autoservisIzvjestaj.dart';
 import 'package:flutter_mobile/models/narudzba.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
@@ -169,5 +170,25 @@ Future<SearchResult<Narudzba>> getNarudzbeZaFirmu(int id) async {
     throw Exception('Greška pri slanju zahtjeva: $error');
   }
 }
+
+Future<List<AutoservisIzvjestaj>> getAutoservisIzvjestaj() async {
+    String url = buildUrl("/IzvjestajzaAutoservis");
+    Uri uri = Uri.parse(url);
+
+    Map<String, String> headers = createHeaders();
+
+    try {
+      http.Response response = await http.get(uri, headers: headers);
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((item) => AutoservisIzvjestaj.fromJson(item)).toList(); 
+      } else {
+        throw Exception('Greška: ${response.statusCode} - ${response.body}');
+      }
+    } catch (error) {
+      throw Exception('Greška pri slanju zahtjeva: $error');
+    }
+  }
 
 }
