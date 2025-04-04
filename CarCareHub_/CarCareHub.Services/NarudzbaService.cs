@@ -316,7 +316,7 @@ namespace CarCareHub.Services
                 .Include(n => n.Klijent) // Include Klijent navigation property
                 .Include(n => n.Zaposlenik) // Include Zaposlenik navigation property
                 .Include(n => n.Autoservis)
-                .Where(x=> x.ZavrsenaNarudzba == true)// Include Autoservis navigation property
+                .Where(x => x.ZavrsenaNarudzba == true)// Include Autoservis navigation property
                 .AsQueryable();
 
             // Filtriranje prema vremenskom periodu
@@ -424,6 +424,7 @@ namespace CarCareHub.Services
             }
         }
 
+
         public async Task<List<Model.Narudzba>> GetNarudzbeZaFirmu(int id)
         {
             // Početni upit za Narudžbe
@@ -435,7 +436,7 @@ namespace CarCareHub.Services
             // Uključivanje potrebnih entiteta
             query = query.Include(x => x.Proizvod)
                          .ThenInclude(ns => ns.FirmaAutodijelova).Where(f => f.Proizvod.FirmaAutodijelova.FirmaAutodijelovaID == id);
-                      
+
 
             var query2 = _dbContext.Narudzbas.AsQueryable();
 
@@ -462,9 +463,165 @@ namespace CarCareHub.Services
 
             return mappedResult;
         }
+        public async Task<List<KlijentIzvjestaj>> GetNarudzbeZaSveKlijente()
+        {
+            try
+            {
+                // Calculate date range (last 30 days)
+                var startDate = DateTime.Now.AddDays(-30);
+                var endDate = DateTime.Now;
+
+                // Get all completed orders for clients in the last 30 days
+                var orders = await _dbContext.Narudzbas
+                    .Include(n => n.Klijent)
+                    .Include(n => n.NarudzbaStavkas)
+                        .ThenInclude(ns => ns.Proizvod)
+                    .Where(n => n.KlijentId != null
+                              && n.ZavrsenaNarudzba == true
+                              && n.DatumNarudzbe >= startDate
+                              && n.DatumNarudzbe <= endDate)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                // Check if orders exist
+                if (orders == null || !orders.Any())
+                {
+                    return new List<KlijentIzvjestaj>();
+                }
+
+                // Group by client and calculate statistics
+                var report = orders
+                    .GroupBy(n => n.KlijentId)
+                    .Where(g => g.Key.HasValue) // Additional check for null KlijentId
+                    .Select(g => {
+                        var firstOrder = g.FirstOrDefault();
+                        if (firstOrder == null || firstOrder.Klijent == null)
+                        {
+                            return null;
+                        }
+
+                        var narudzbaStavke = g.SelectMany(n => n.NarudzbaStavkas ?? Enumerable.Empty<Database.NarudzbaStavka>());
+                        var proizvodiGroups = narudzbaStavke
+                            .Where(ns => ns.Proizvod != null)
+                            .GroupBy(ns => ns.Proizvod);
+
+                        var popularniProizvodi = proizvodiGroups
+                            .OrderByDescending(pg => pg.Sum(ns => ns.Kolicina))
+                            .Take(3)
+                            .Select(pg => new ProizvodStatistika
+                            {
+                                ProizvodId = pg.Key?.ProizvodId ?? 0,
+                                Naziv = pg.Key?.Naziv ?? "Nepoznato",
+                                UkupnaKolicina = (int)pg.Sum(ns => ns.Kolicina),
+                                UkupnaVrijednost = (decimal)pg.Sum(ns => ns.Kolicina * (pg.Key?.Cijena ?? 0))
+                            })
+                            .ToList();
+
+                        return new KlijentIzvjestaj
+                        {
+                            KlijentId = g.Key.Value,
+                            ImePrezime = $"{firstOrder.Klijent.Ime} {firstOrder.Klijent.Prezime}".Trim(),
+                            UkupanIznos = (decimal)g.Sum(n => n.UkupnaCijenaNarudzbe),
+                            BrojNarudzbi = g.Count(),
+                            ProsjecnaVrijednost = g.Any() ? (decimal)g.Average(n => n.UkupnaCijenaNarudzbe) : 0,
+                            NajpopularnijiProizvodi = popularniProizvodi
+                        };
+                    })
+                    .Where(x => x != null) // Filter out null results
+                    .OrderByDescending(x => x.UkupanIznos)
+                    .ToList();
+
+                return report ?? new List<KlijentIzvjestaj>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška pri generisanju izvještaja za klijente: {ex.Message}");
+                throw;
+            }
+        }
+   
+
+    public async Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike()
+        {
+            try
+            {
+                // Calculate date range (last 30 days)
+                var startDate = DateTime.Now.AddDays(-30);
+                var endDate = DateTime.Now;
+
+                // Get all completed orders handled by employees in the last 30 days
+                var orders = await _dbContext.Narudzbas
+                    .Include(n => n.Zaposlenik)
+                    .Include(n => n.NarudzbaStavkas)
+                        .ThenInclude(ns => ns.Proizvod)
+                    .Where(n => n.ZaposlenikId != null
+                              && n.ZavrsenaNarudzba == true
+                              && n.DatumNarudzbe >= startDate
+                              && n.DatumNarudzbe <= endDate)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                // Check if any orders exist
+                if (orders == null || !orders.Any())
+                {
+                    return new List<ZaposlenikIzvjestaj>();
+                }
+
+                // Group by employee and calculate statistics
+                var report = orders
+                    .GroupBy(n => n.ZaposlenikId)
+                    .Where(g => g.Key.HasValue) // Filter out null ZaposlenikId
+                    .Select(g => {
+                        var firstOrder = g.FirstOrDefault();
+                        if (firstOrder == null || firstOrder.Zaposlenik == null)
+                        {
+                            return null;
+                        }
+
+                        var narudzbaStavke = g.SelectMany(n => n.NarudzbaStavkas ?? Enumerable.Empty<Database.NarudzbaStavka>());
+                        var proizvodiGroups = narudzbaStavke
+                            .Where(ns => ns.Proizvod != null)
+                            .GroupBy(ns => ns.Proizvod);
+
+                        var popularniProizvodi = proizvodiGroups
+                            .OrderByDescending(pg => pg.Sum(ns => ns.Kolicina))
+                            .Take(3)
+                            .Select(pg => new ProizvodStatistika
+                            {
+                                ProizvodId = pg.Key?.ProizvodId ?? 0,
+                                Naziv = pg.Key?.Naziv ?? "Nepoznato",
+                                UkupnaKolicina = (int)pg.Sum(ns => ns.Kolicina),
+                                UkupnaVrijednost = (decimal)pg.Sum(ns => ns.Kolicina * (pg.Key?.Cijena ?? 0))
+                            })
+                            .ToList();
+
+                        return new ZaposlenikIzvjestaj
+                        {
+                            ZaposlenikId = g.Key.Value,
+                            ImePrezime = $"{firstOrder.Zaposlenik.Ime} {firstOrder.Zaposlenik.Prezime}".Trim(),
+                            UkupanIznos = (decimal)g.Sum(n => n.UkupnaCijenaNarudzbe),
+                            BrojNarudzbi = g.Count(),
+                            ProsjecnaVrijednost = g.Any() ? (decimal)g.Average(n => n.UkupnaCijenaNarudzbe) : 0,
+                            NajpopularnijiProizvodi = popularniProizvodi,
+                            Autoservis = firstOrder.Autoservis?.Naziv ?? "Nepoznato"
+                        };
+                    })
+                    .Where(x => x != null) // Filter out null results
+                    .OrderByDescending(x => x.UkupanIznos)
+                    .ToList();
+
+                return report ?? new List<ZaposlenikIzvjestaj>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Greška pri generisanju izvještaja za zaposlenike: {ex.Message}");
+                throw;
+            }
+        }
+
+
     }
 }
-
 
 
 

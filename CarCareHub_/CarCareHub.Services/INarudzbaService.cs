@@ -14,6 +14,10 @@ namespace CarCareHub.Services
         public Task<List<IzvjestajNarudzbi>> GetIzvjestajNarudzbi(DateTime? datumOd, DateTime? datumDo, int? klijentId, int? zaposlenikId, int? autoservisId);
         public Task<List<Model.Narudzba>> GetNarudzbeZaFirmu(int id);
         public Task<List<AutoservisIzvjestaj>> GetAutoservisIzvjestaj();
+        public Task<List<KlijentIzvjestaj>> GetNarudzbeZaSveKlijente();
+        public  Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike();
+        
+
 
     }
 }

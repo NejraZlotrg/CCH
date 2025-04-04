@@ -101,5 +101,21 @@ namespace CarCareHub_.Controllers
             return nar; // Directly return the list
         }
 
+
+        [HttpGet("IzvjestajzaKlijenta")]
+
+        public async Task<List<KlijentIzvjestaj>> GetNarudzbeZaSveKlijente()
+        {
+            var nar = await _narudzbaService.GetNarudzbeZaSveKlijente();
+            return nar; // Directly return the list
+        }
+        [HttpGet("IzvjestajzaZaposlenike")]
+
+        public async Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike()
+
+        {
+            var nar = await _narudzbaService.GetNarudzbeZaSveZaposlenike();
+            return nar; // Directly return the list
+        }
     }
 }
