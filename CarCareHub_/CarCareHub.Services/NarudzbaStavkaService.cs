@@ -25,16 +25,18 @@ namespace CarCareHub.Services
         }
         public override async Task<Model.NarudzbaStavka> Insert(Model.NarudzbaStavkaInsert insert)
         {
+            // Osiguravamo da je Vidljivo uvijek true
+            insert.Vidljivo = true;
+
             var narudzbaStavka = _mapper.Map<Database.NarudzbaStavka>(insert);
 
             // Dobavljanje cijene proizvoda iz baze podataka DODATI U KORPU
-           
+
             // Spremanje u bazu podataka
             await _dbContext.NarudzbaStavkas.AddAsync(narudzbaStavka);
             await _dbContext.SaveChangesAsync();
 
             return _mapper.Map<Model.NarudzbaStavka>(narudzbaStavka);
-
         }
 
 
@@ -49,10 +51,16 @@ namespace CarCareHub.Services
         public override async Task<Model.NarudzbaStavka> Delete(int id)
         {
             return await base.Delete(id);
-        } 
-        
-        
-      
+        }
+
+
+        public class SearchResult<T>
+        {
+            public List<T> Result { get; set; }
+            public int Count { get; set; }
+        }
+
+
 
         public override IQueryable<Database.NarudzbaStavka> AddInclude(IQueryable<Database.NarudzbaStavka> query, NarudzbaStavkaSearchObject? search = null)
         {
@@ -89,6 +97,39 @@ namespace CarCareHub.Services
         //    byte[] inArray = algorithm.ComputeHash(dst);
         //    return Convert.ToBase64String(inArray);
         //}
+
+
+        public async Task<SearchResult<Model.NarudzbaStavka>> GetByFirma(int id)
+        {
+            var query = _dbContext.NarudzbaStavkas
+                .Include(s => s.Proizvod)
+                .Where(s => s.Proizvod.FirmaAutodijelovaID == id && s.Vidljivo == true)
+                .AsQueryable();
+
+
+            var count = await query.CountAsync();
+
+            var result = await query
+                .Select(s => new Model.NarudzbaStavka
+                {
+                    ProizvodId = s.ProizvodId,
+                    Kolicina = s.Kolicina,
+                    NarudzbaId = s.NarudzbaId,
+                    Vidljivo = s.Vidljivo,
+                    Proizvod = new Model.Proizvod
+                    {
+                        ProizvodId = s.Proizvod.ProizvodId,
+                        FirmaAutodijelovaID = s.Proizvod.FirmaAutodijelova.FirmaAutodijelovaID
+                    }
+                })
+                .ToListAsync();
+
+            return new SearchResult<Model.NarudzbaStavka>
+            {
+                Result = result,
+                Count = count
+            };
+        }
 
 
     }

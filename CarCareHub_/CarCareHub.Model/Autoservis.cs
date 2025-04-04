@@ -37,7 +37,6 @@ namespace CarCareHub.Model
         public string? Mbs { get; set; }
         [Column(TypeName = "VARBINARY(MAX)")]
         public byte[]? SlikaProfila { get; set; }
-        public byte[]? SlikaThumb { get; set; }
 
 
         public int? UlogaId { get; set; }

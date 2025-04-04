@@ -30,7 +30,6 @@ namespace CarCareHub.Model
 
         public string? OriginalniBroj { get; set; }
 
-        public string? ModelProizvoda { get; set; }
 
         public string? Opis { get; set; }
 
@@ -44,7 +43,6 @@ namespace CarCareHub.Model
         public decimal? CijenaSaPopustomZaAutoservis { get; set; }
 
         public byte[]? Slika { get; set; }
-        public byte[]? SlikaThumb { get; set; }
       
     }
 }

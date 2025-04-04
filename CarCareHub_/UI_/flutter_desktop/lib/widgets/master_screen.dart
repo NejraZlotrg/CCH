@@ -498,7 +498,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               leading: const Icon(Icons.mail),
              title: Text(
   _role == 'Klijent' ? 'Inbox Autoservisi' : 'Inbox',
-),  
+),
               onTap: () {
                    if(_role=='Autoservis'){
 

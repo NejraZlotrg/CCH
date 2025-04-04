@@ -40,7 +40,6 @@ namespace CarCareHub.Model
         public virtual Proizvodjac Proizvodjac { get; set; }
 
         public byte[]? Slika { get; set; }
-        public byte[]? SlikaThumb { get; set; }
         public string StateMachine { get; set; }
 
     }

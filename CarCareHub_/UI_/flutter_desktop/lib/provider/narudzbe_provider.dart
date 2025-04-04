@@ -123,4 +123,51 @@ Future<SearchResult<Narudzba>> getNarudzbePoUseru(int id) async {
   }
 }
 
+Future<SearchResult<Narudzba>> getNarudzbeZaFirmu(int id) async {
+ String url = buildUrl("/fm?id=$id");
+
+  Uri uri = Uri.parse(url);
+
+  print("Request URL: $url");
+
+  Map<String, String> headers = createHeaders();
+
+  try {
+    http.Response response = await http.get(uri, headers: headers);
+
+    print("Response status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      
+      // Create a new SearchResult object
+      SearchResult<Narudzba> result = SearchResult<Narudzba>();
+      
+      // Check if the response is a list or an object
+      if (data is List) {
+        // If it's a list, add all items to the result
+        for (var item in data) {
+          result.result.add(fromJson(item));
+        }
+      } else if (data is Map<String, dynamic>) {
+        // If it's a map (SearchResult-like structure)
+        result.count = data['count'] ?? 0;
+        if (data['result'] is List) {
+          for (var item in data['result']) {
+            result.result.add(fromJson(item));
+          }
+        }
+      }
+      
+      return result;
+    } else {
+      throw Exception('Greška: ${response.statusCode} - ${response.body}');
+    }
+  } catch (error) {
+    print("Greška pri slanju zahtjeva: $error");
+    throw Exception('Greška pri slanju zahtjeva: $error');
+  }
+}
+
 }

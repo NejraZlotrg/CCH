@@ -35,7 +35,6 @@ namespace CarCareHub.Model
         public bool? Vidljivo { get; set; }
 
 
-        public string? ModelProizvoda { get; set; }
 
         public string? Opis { get; set; }
 
@@ -47,7 +46,6 @@ namespace CarCareHub.Model
 
         public int? ProizvodjacId { get; set; }
         public byte[]? Slika { get; set; }
-        public byte[]? SlikaThumb { get; set; }
      
     }
 }

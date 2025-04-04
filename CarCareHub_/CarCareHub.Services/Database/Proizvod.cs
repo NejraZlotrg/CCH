@@ -23,7 +23,6 @@ public partial class Proizvod
     public virtual Model? Model { get; set; }
     public int? ProizvodjacId { get; set; }
     public byte[]? Slika { get; set; }
-    public byte[]? SlikaThumb { get; set; }
     public string? StateMachine { get; set; }
     public int? FirmaAutodijelovaID { get; set; }
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }

@@ -34,7 +34,6 @@ public partial class Autoservis
 
     [Column(TypeName = "VARBINARY(MAX)")]
     public byte[]? SlikaProfila { get; set; }
-    public byte[]? SlikaThumb { get; set; }
 
 
     public int? UlogaId { get; set; }

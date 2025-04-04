@@ -35,7 +35,6 @@ namespace CarCareHub.Model
 
 
         public byte[]? SlikaProfila { get; set; }
-        public byte[]? SlikaThumb { get; set; }
 
 
         public int? UlogaId { get; set; }

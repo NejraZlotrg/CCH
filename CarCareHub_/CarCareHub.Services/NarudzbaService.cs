@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CarCareHub.Services
 {
@@ -131,7 +132,8 @@ namespace CarCareHub.Services
                     ProizvodId = item.ProizvodId,
                     NarudzbaId = narudzba.NarudzbaId,
                     Kolicina = kolicina,
-              
+                    Vidljivo = true
+
                 };
 
                 narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
@@ -306,6 +308,8 @@ namespace CarCareHub.Services
             // Vrati mapiranu listu
             return mappedResult;
         }
+
+
         public async Task<List<IzvjestajNarudzbi>> GetIzvjestajNarudzbi(DateTime? odDatuma, DateTime? doDatuma, int? kupacId, int? zaposlenikId, int? autoservisId)
         {
             var query = _dbContext.Narudzbas
@@ -363,6 +367,44 @@ namespace CarCareHub.Services
         }
 
 
+        public async Task<List<Model.Narudzba>> GetNarudzbeZaFirmu(int id)
+        {
+            // Početni upit za Narudžbe
+            var query = _dbContext.NarudzbaStavkas.AsQueryable();
+
+            // Dohvati trenutnu prijavljenu ulogu korisnika
+            var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+
+            // Uključivanje potrebnih entiteta
+            query = query.Include(x => x.Proizvod)
+                         .ThenInclude(ns => ns.FirmaAutodijelova).Where(f => f.Proizvod.FirmaAutodijelova.FirmaAutodijelovaID == id);
+                      
+
+            var query2 = _dbContext.Narudzbas.AsQueryable();
+
+            // Filtriranje na temelju korisničke uloge
+            // Prvo dobijte distinct NarudzbaID iz query1
+            var narudzbaIdsIzQuery1 = await query.Select(x => x.NarudzbaId).Distinct().ToListAsync();
+
+            // Zatim filtrirajte query2
+            query2 = query2.Where(n => narudzbaIdsIzQuery1.Contains(n.NarudzbaId))
+                           .Include(x => x.NarudzbaStavkas)
+                           .ThenInclude(ns => ns.Proizvod);
+
+            // Dohvatanje podataka iz baze
+            var result = await query2.ToListAsync();
+
+            // Provjera da li je rezultat null
+            if (result == null || !result.Any())
+            {
+                return new List<Model.Narudzba>();
+            }
+
+            // Mapiranje rezultata na Model.Narudzba
+            var mappedResult = _mapper.Map<List<Model.Narudzba>>(result);
+
+            return mappedResult;
+        }
     }
 }
 

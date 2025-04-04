@@ -14,9 +14,9 @@ class FirmaAutodijelovaScreen extends StatefulWidget {
   const FirmaAutodijelovaScreen({super.key});
 
   @override
-  State<FirmaAutodijelovaScreen> createState() =>
-      _FirmaAutodijelovaScreenState();
+  State<FirmaAutodijelovaScreen> createState() => _FirmaAutodijelovaScreenState();
 }
+
 class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
   SearchResult<FirmaAutodijelova>? result;
@@ -31,62 +31,54 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
 
   Future<void> _loadData() async {
     SearchResult<FirmaAutodijelova> data;
-     if (context.read<UserProvider>().role == "Admin") {
-       data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
-     } else {
-       data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
-     }
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+    } else {
+      data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
+    }
     if (mounted) {
       setState(() {
         result = data;
-        
- 
       });
     }
   }
 
-  
-void _onSearchPressed() async {
-  var filterParams = {
-    'IsAllIncluded': 'true', // Ovaj parametar ostaje
-  };
+  void _onSearchPressed() async {
+    var filterParams = {
+      'IsAllIncluded': 'true',
+    };
 
-  // Dodavanje filtera samo ako je naziv unesen
-  if (_nazivFirmeController.text.isNotEmpty) {
-    filterParams['NazivFirme'] = _nazivFirmeController.text;
+    if (_nazivFirmeController.text.isNotEmpty) {
+      filterParams['NazivFirme'] = _nazivFirmeController.text;
+    }
+
+    try {
+      SearchResult<FirmaAutodijelova> data;
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _firmaAutodijelovaProvider.getAdmin(filter: filterParams);
+      } else {
+        data = await _firmaAutodijelovaProvider.get(filter: filterParams);
+      }
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error fetching filtered data: $e");
+    }
   }
-
-  print("Filter Params: $filterParams"); // Debugging log
-
- try {
-                    SearchResult<FirmaAutodijelova> data;
-                      if (context.read<UserProvider>().role == "Admin") {
-                        data = await _firmaAutodijelovaProvider.getAdmin(filter: filterParams);
-                      } else {
-                        data = await _firmaAutodijelovaProvider.get(filter: filterParams);
-                      }
-                    if (mounted) {
-                      setState(() {
-                        result = data;
-                      });
-                    }
-                  } catch (e) {
-                    print("Error fetching filtered data: $e");
-                  }
-
-}
-
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "FirmaAutodijelova",
+      title: "Firme autodijelova",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
-            _buildDataListView(),
+            _buildCompanyCards(),
           ],
         ),
       ),
@@ -95,7 +87,7 @@ void _onSearchPressed() async {
 
   Widget _buildSearch() {
     return Container(
-      width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(top: 20.0),
       child: Card(
         elevation: 4.0,
@@ -120,7 +112,7 @@ void _onSearchPressed() async {
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: _onSearchPressed, // Koristi novu funkciju
+                onPressed: _onSearchPressed,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 245, 32, 17),
                   foregroundColor: Colors.white,
@@ -139,14 +131,14 @@ void _onSearchPressed() async {
               ),
               const SizedBox(width: 10),
               if (context.read<UserProvider>().role == "Admin")
-               ElevatedButton(
+                ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
-                              ),
-                            );
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
+                      ),
+                    );
                     await _loadData();
                   },
                   style: ElevatedButton.styleFrom(
@@ -173,79 +165,122 @@ void _onSearchPressed() async {
     );
   }
 
-
-
-
- Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(color: Colors.black, width: 1.0),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(label: Text('nazivFirme', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('adresa', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('grad', style: TextStyle(fontStyle: FontStyle.italic))),
-            DataColumn(label: Text('SlikaProfila', style: TextStyle(fontStyle: FontStyle.italic))),
-          ],
-          rows: result?.result
-                  .map(
-                    (FirmaAutodijelova e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => FirmaAutodijelovaReadScreen(
-                                firmaAutodijelova: e,
-                              ),
-                            ),
-                          );
-                          await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(Text(
-                          e.nazivFirme ?? "",
-                          style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
-                        )),
-                        DataCell(Text(
-                          e.adresa ?? "",
-                          style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
-                        )),
-                        DataCell(Text(
-                          e.grad?.nazivGrada ?? "",
-                          style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
-                        )),
-                        DataCell(
-                          e.slikaProfila != null
-                              ? SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: imageFromBase64String(e.slikaProfila!),
-                                )
-                              : Text(
-                                  "",
-                                  style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black),
-                                ),
-                        ),
-                      ],
+Widget _buildCompanyCards() {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(10.0),
+        child: result?.result.isEmpty ?? true
+            ? const Center(child: Text("Nema rezultata"))
+            : ListView.builder(
+                itemCount: result?.result.length ?? 0,
+                itemBuilder: (context, index) {
+                  final company = result!.result[index];
+                  return Card(
+                    elevation: 4.0,
+                    margin: const EdgeInsets.only(bottom: 10.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: BorderSide(
+                        color: company.vidljivo == false ? Colors.red : Colors.grey,
+                        width: 1.0,
+                      ),
                     ),
-                  )
-                  .toList() ?? [],
-        ),
+                    child: InkWell(
+                      onTap: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => FirmaAutodijelovaReadScreen(
+                              firmaAutodijelova: company,
+                            ),
+                          ),
+                        );
+                        await _loadData();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          height: 90, // Shorter card height
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Profile picture
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: Colors.grey[200],
+                                ),
+                                child: company.slikaProfila != null
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: imageFromBase64String(company.slikaProfila!),
+                                      )
+                                    : const Icon(Icons.business, size: 30, color: Colors.grey),
+                              ),
+                              const SizedBox(width: 50),
+                              // Company name and phone
+                              Expanded(
+                                flex: 3, // Wider column
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      company.nazivFirme ?? "Nepoznata firma",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: company.vidljivo == false ? Colors.red : Colors.black,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (company.telefon != null && company.telefon!.isNotEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 4.0),
+                                        child: Text(
+                                          "Tel: ${company.telefon}",
+                                          style: TextStyle(
+                                            color: company.vidljivo == false ? Colors.red : Colors.grey[700],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              // City and address combined
+                              Expanded(
+                                flex: 3, // Wider column
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${company.grad?.nazivGrada ?? "Nepoznat grad"}${company.adresa != null && company.adresa!.isNotEmpty ? ", ${company.adresa!}" : ""}',
+                                      style: TextStyle(
+                                        color: company.vidljivo == false ? Colors.red : Colors.grey[700],
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Hidden indicator for admin
+                              if (company.vidljivo == false && context.read<UserProvider>().role == "Admin")
+                                const Icon(Icons.visibility_off, size: 20, color: Colors.red),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
       ),
-    ),))
-  );
-}
-
+    );
+  }
 }

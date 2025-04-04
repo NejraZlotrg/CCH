@@ -17,7 +17,8 @@ namespace CarCareHub.Model
 
         [JsonIgnore] // Sakriva svojstvo prilikom serijalizacije u JSON
         public string? Adresa { get; set; }
-        
+
+        public bool Vidljivo { get; set; }
 
         public DateTime? DatumNarudzbe { get; set; }
 

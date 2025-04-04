@@ -21,8 +21,9 @@ namespace CarCareHub.Model
         public string? Adresa { get; set; }
 
         public int? KlijentId { get; set; }
-      //  public virtual Klijent? Klijent { get; set; }
+        //  public virtual Klijent? Klijent { get; set; }
 
+     
 
         public int? AutoservisId { get; set; }
       //  public virtual Autoservis? Autoservis { get; set; }

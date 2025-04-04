@@ -36,7 +36,8 @@ namespace CarCareHub.Services
                 var stavkaNarudzbe = new NarudzbaStavka
                 {
                     NarudzbaId = narudzba.NarudzbaId,
-                    ProizvodId = stavka.ProizvodId
+                    ProizvodId = stavka.ProizvodId,
+                    Vidljivo=true,
                 };
 
                 await _dbContext.AddAsync(stavkaNarudzbe);

@@ -78,7 +78,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'password': widget.autoservis?.password ?? '',
       'passwordAgain': widget.autoservis?.passwordAgain ?? '',
       "slikaProfila": widget.autoservis?.slikaProfila ?? '',
-      "slikaThumb": widget.autoservis?.slikaThumb ?? '',
       "vidljivo": widget.autoservis?.vidljivo
     };
 

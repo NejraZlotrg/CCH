@@ -12,7 +12,7 @@ public partial class Narudzba
     public DateTime? DatumNarudzbe { get; set; }
     public bool Vidljivo { get; set; }
     public DateTime? DatumIsporuke { get; set; }
-    public bool? ZavrsenaNarudzba { get; set; } = false; 
+    public bool? ZavrsenaNarudzba { get; set; } = false;
     public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
     public int? KlijentId { get; set; }
     public virtual Klijent? Klijent { get; set; }

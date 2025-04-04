@@ -85,5 +85,13 @@ namespace CarCareHub_.Controllers
             return Ok(izvjestaj);
         }
 
+
+        [HttpGet("fm")]
+        public async Task<List<CarCareHub.Model.Narudzba>> GetNarudzbeZaFirmu(int id)
+        {
+            var nar = await _narudzbaService.GetNarudzbeZaFirmu(id);
+            return nar; // Directly return the list
+        }
+
     }
 }
