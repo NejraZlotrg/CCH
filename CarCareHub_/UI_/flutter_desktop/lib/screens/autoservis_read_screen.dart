@@ -370,6 +370,7 @@ Widget _buildZaposlenikSection() {
           : const Text("Nema dostupnih usluga za ovaj autoservis."),
     );
   }
+
 Widget _buildAutoservisDetails() {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.center, // Centriranje slike i podataka

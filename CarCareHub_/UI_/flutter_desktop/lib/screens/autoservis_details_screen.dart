@@ -510,6 +510,7 @@ Padding(
             ),
     );
   }
+
 Future<void> _editUsluga(Usluge usluga) async {
   // Example implementation - you might want to navigate to an edit screen
   final editedUsluga = await showDialog<Usluge>(

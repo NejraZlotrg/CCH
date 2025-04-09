@@ -47,4 +47,24 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
     return null;
   }
 }
+
+
+//   String url = "";
+
+  @override
+  Future<Zaposlenik> getSingleById(int id) async {
+    String url = "http://10.0.2.2:7209/api/zaposlenici/ZaposleniciGetByID/$id"; // Dodajemo ID u URL
+
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
+ print("API odgovor: ${response.body}");
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data); // Vraća jedan objekat tipa T
+    } else {
+      throw Exception("Unknown error");
+    }
+  }
+
 }

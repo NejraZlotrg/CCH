@@ -78,7 +78,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       'password': widget.autoservis?.password ?? '',
       'passwordAgain': widget.autoservis?.passwordAgain ?? '',
       "slikaProfila": widget.autoservis?.slikaProfila ?? '',
-      "slikaThumb": widget.autoservis?.slikaThumb ?? '',
       "vidljivo": widget.autoservis?.vidljivo
     };
 
@@ -212,6 +211,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 DataColumn(label: Text("Naziv usluge")),
                 DataColumn(label: Text("Cijena")),
                 DataColumn(label: Text("Opis")),
+              DataColumn(label: Text("Uredi")),
+              DataColumn(label: Text("Obriši")),
               ],
               rows: usluge.map((usluga) {
                 return DataRow(
@@ -220,6 +221,18 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     DataCell(Text(
                         usluga.cijena?.toString() ?? "")),
                     DataCell(Text(usluga.opis ?? "")),
+                    DataCell(
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () => _editUsluga(usluga),
+                    ),
+                  ),
+                  DataCell(
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteUsluga(usluga),
+                    ),
+                  ),
                   ],
                 );
               }).toList(),
@@ -267,19 +280,60 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal, // Enable horizontal scrolling
             child: DataTable(
-              columns: const [
-                DataColumn(label: Text("Ime")),
-                DataColumn(label: Text("Prezime")),
-                DataColumn(label: Text("Email")),
-                DataColumn(label: Text("Broj telefona")),
-              ],
+              columns: [
+                const DataColumn(label: Text("Ime")),
+                const DataColumn(label: Text("Prezime")),
+                const DataColumn(label: Text("Email")),
+                const DataColumn(label: Text("Broj telefona")),
+                const DataColumn(label: Text("Uredi")),
+                const DataColumn(label: Text("Obriši")),
+                if (context.read<UserProvider>().role == "Klijent")
+                  const DataColumn(label: Text("")), // Empty header for message button
+  ],
               rows: zaposlenik.map((zap) {
                 return DataRow(
                   cells: [
                     DataCell(Text(zap.ime ?? "")),
                     DataCell(Text(zap.prezime ?? "")),
                     DataCell(Text(zap.email ?? "")),
-                    DataCell(Text("0${zap.brojTelefona?.toString() ?? ""}")),                  ],
+                    DataCell(Text("0${zap.brojTelefona?.toString() ?? ""}")), 
+                    DataCell(
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blue),
+            onPressed: () => _editZaposlenik(zap),
+          ),
+        ),
+        DataCell(
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () => _deleteZaposlenik(zap),
+          ),
+        ),
+        if (context.read<UserProvider>().role == "Klijent")
+          DataCell(
+            ElevatedButton(
+              onPressed: () {
+                final klijentId = context.read<UserProvider>().userId;
+                final zaposleniId = zap.zaposlenikId!;
+                _showSendMessageDialog2(context, klijentId, zaposleniId);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 247, 28, 13),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.chat, size: 20),
+                  SizedBox(width: 5),
+                  Text("Pošaljite poruku"),
+                ],
+              ),
+            ),
+          ),                 ],
                 );
               }).toList(),
             ),
@@ -398,6 +452,112 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
             ),
     );
   }
+
+
+
+Future<void> _editUsluga(Usluge usluga) async {
+  // Example implementation - you might want to navigate to an edit screen
+  final editedUsluga = await showDialog<Usluge>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Uredi uslugu'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: TextEditingController(text: usluga.nazivUsluge),
+            decoration: const InputDecoration(labelText: 'Naziv usluge'),
+            onChanged: (value) => usluga.nazivUsluge = value,
+          ),
+          TextField(
+            controller: TextEditingController(text: usluga.cijena?.toString()),
+            decoration: const InputDecoration(labelText: 'Cijena'),
+            keyboardType: TextInputType.number,
+            onChanged: (value) => usluga.cijena = double.tryParse(value),
+          ),
+          TextField(
+            controller: TextEditingController(text: usluga.opis),
+            decoration: const InputDecoration(labelText: 'Opis'),
+            onChanged: (value) => usluga.opis = value,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Otkaži'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context, usluga);
+          },
+          child: const Text('Spremi'),
+        ),
+      ],
+    ),
+  );
+
+  if (editedUsluga != null) {
+    try {
+      // ignore: use_build_context_synchronously
+      final provider = Provider.of<UslugeProvider>(context, listen: false);
+      await provider.update(editedUsluga.uslugeId, editedUsluga);
+      setState(() {
+        // Update the local list
+        final index = usluge.indexWhere((u) => u.uslugeId == editedUsluga.uslugeId);
+        if (index != -1) {
+          usluge[index] = editedUsluga;
+        }
+      });
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usluga uspješno ažurirana')),
+      );
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri ažuriranju: $e')),
+      );
+    }
+  }
+}
+
+Future<void> _deleteUsluga(Usluge usluga) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Potvrda brisanja'),
+      content: Text('Da li ste sigurni da želite obrisati uslugu ${usluga.nazivUsluge}?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Otkaži'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Obriši', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmed == true) {
+    try {
+      final provider = Provider.of<UslugeProvider>(context, listen: false);
+      await provider.delete(usluga.uslugeId);
+      setState(() {
+        usluge.removeWhere((u) => u.uslugeId == usluga.uslugeId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Usluga ${usluga.nazivUsluge} obrisana')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri brisanju: $e')),
+      );
+    }
+  }
+}
 
   FormBuilder _buildForm() {
     return FormBuilder(
@@ -1189,4 +1349,132 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       },
     );
   }
+
+
+  Future<void> _editZaposlenik(Zaposlenik zap) async {
+  // Example implementation - you might want to navigate to an edit screen
+  final editedZap = await showDialog<Zaposlenik>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Uredi zaposlenika'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: TextEditingController(text: zap.ime),
+            decoration: const InputDecoration(labelText: 'Ime'),
+            onChanged: (value) => zap.ime = value,
+          ),
+                    TextField(
+            controller: TextEditingController(text: zap.prezime),
+            decoration: const InputDecoration(labelText: 'Prezime'),
+            onChanged: (value) => zap.prezime = value,
+          ),
+                    TextField(
+            controller: TextEditingController(text: zap.mb),
+            decoration: const InputDecoration(labelText: 'Matični broj'),
+            onChanged: (value) => zap.mb = value,
+          ),
+                    TextField(
+            controller: TextEditingController(text: zap.brojTelefona),
+            decoration: const InputDecoration(labelText: 'Broj telefona'),
+            onChanged: (value) => zap.brojTelefona = value,
+          ),
+                    TextField(
+            controller: TextEditingController(text: zap.email),
+            decoration: const InputDecoration(labelText: 'Email'),
+            onChanged: (value) => zap.email = value,
+          ),
+                      TextField(
+            controller: TextEditingController(text: zap.username),
+            decoration: const InputDecoration(labelText: 'Korisničko ime'),
+            onChanged: (value) => zap.username = value,
+          ),
+                       TextField(
+            controller: TextEditingController(text: zap.password),
+            decoration: const InputDecoration(labelText: 'Lozinka'),
+            onChanged: (value) => zap.password = value,
+            obscureText: true,
+          ),
+                       TextField(
+            controller: TextEditingController(text: zap.passwordAgain),
+            decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
+            onChanged: (value) => zap.passwordAgain = value,
+            obscureText: true,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Otkaži'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context, zap);
+          },
+          child: const Text('Spremi'),
+        ),
+      ],
+    ),
+  );
+
+  if (editedZap != null) {
+    try {
+      final provider = Provider.of<ZaposlenikProvider>(context, listen: false);
+      await provider.update(editedZap.zaposlenikId!, editedZap);
+      setState(() {
+        // Update the local list
+        final index = zaposlenik.indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
+        if (index != -1) {
+          zaposlenik[index] = editedZap;
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri ažuriranju: $e')),
+      );
+    }
+  }
+}
+
+Future<void> _deleteZaposlenik(Zaposlenik zap) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Potvrda brisanja'),
+      content: Text('Da li ste sigurni da želite obrisati zaposlenika ${zap.ime}?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Otkaži'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Obriši', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmed == true) {
+    try {
+      final provider = Provider.of<ZaposlenikProvider>(context, listen: false);
+      await provider.delete(zap.zaposlenikId!);
+      setState(() {
+        zaposlenik.removeWhere((u) => u.zaposlenikId == zap.zaposlenikId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Zaposlenik ${zap.ime} obrisan')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri brisanju: $e')),
+      );
+    }
+  }
+}
 }

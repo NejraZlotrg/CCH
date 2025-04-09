@@ -45,4 +45,20 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
   }
 }
 
+  @override
+  Future<FirmaAutodijelova> getSingleById(int id) async {
+    String url = "http://10.0.2.2:7209/api/firmaAutodijelova/FirmaAutodijelovaGetByID/$id"; // Dodajemo ID u URL
+
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data); // Vraća jedan objekat tipa T
+    } else {
+      throw Exception("Unknown error");
+    }
+  }
+
 }

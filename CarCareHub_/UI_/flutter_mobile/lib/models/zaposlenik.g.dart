@@ -11,8 +11,8 @@ Zaposlenik _$ZaposlenikFromJson(Map<String, dynamic> json) => Zaposlenik(
       vidljivo: json['vidljivo'] as bool?,
       ime: json['ime'] as String?,
       prezime: json['prezime'] as String?,
-      maticniBroj: (json['maticniBroj'] as num?)?.toInt(),
-      brojTelefona: (json['brojTelefona'] as num?)?.toInt(),
+      mb: json['mb'] as String?,
+      brojTelefona: json['brojTelefona'] as String?,
       gradId: (json['gradId'] as num?)?.toInt(),
       datumRodjenja: json['datumRodjenja'] == null
           ? null
@@ -39,6 +39,7 @@ Zaposlenik _$ZaposlenikFromJson(Map<String, dynamic> json) => Zaposlenik(
           ? null
           : Uloge.fromJson(json['uloga'] as Map<String, dynamic>),
       passwordAgain: json['passwordAgain'] as String?,
+      adresa: json['adresa'] as String?,
     )..PasswordAgain = json['PasswordAgain'] as String?;
 
 Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
@@ -46,7 +47,7 @@ Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
       'zaposlenikId': instance.zaposlenikId,
       'ime': instance.ime,
       'prezime': instance.prezime,
-      'maticniBroj': instance.maticniBroj,
+      'mb': instance.mb,
       'brojTelefona': instance.brojTelefona,
       'grad': instance.grad,
       'gradId': instance.gradId,
@@ -65,4 +66,5 @@ Map<String, dynamic> _$ZaposlenikToJson(Zaposlenik instance) =>
       'ulogaId': instance.ulogaId,
       'uloga': instance.uloga,
       'passwordAgain': instance.passwordAgain,
+      'adresa': instance.adresa,
     };

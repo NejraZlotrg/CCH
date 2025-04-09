@@ -420,18 +420,7 @@ ElevatedButton(
         validator: validator.required,
         initialValue: widget.product?.originalniBroj ?? '',
       ),
-      const SizedBox(height: 10),
-      FormBuilderTextField(
-        decoration: const InputDecoration(
-            labelText: "ModelProizvoda",
-            border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
-            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
-        name: "modelProizvoda",
-        validator: validator.required,
-        initialValue: widget.product?.modelProizvoda ?? '',
-      ),
+   
       const SizedBox(height: 10),
       Row(
         children: [
