@@ -201,7 +201,56 @@ namespace CarCareHub.Services
             }
         }
 
+        public override async Task<Model.Zaposlenik> Update(int id, Model.ZaposlenikUpdate update)
+        {
+            // Pronađi postojeći entitet u bazi na temelju ID-a
+            var entity = await _dbContext.Zaposleniks.FindAsync(id);
 
+            // Provjeri da li entitet postoji
+            if (entity == null)
+            {
+                throw new ArgumentException("Zaposlenik nije pronađen.");
+            }
+
+            // Ažuriraj polja entiteta
+            if (update.Ime != null)
+                entity.Ime = update.Ime;
+
+            if (update.Prezime != null)
+                entity.Prezime = update.Prezime;
+
+            if (update.DatumRodjenja.HasValue)
+                entity.DatumRodjenja = update.DatumRodjenja.Value;
+
+            if (update.BrojTelefona != null)
+                entity.BrojTelefona = update.BrojTelefona;
+
+            if (update.Email != null)
+                entity.Email = update.Email;
+
+            if (update.Adresa != null)
+                entity.Adresa = update.Adresa;
+
+            if (update.Username != null)
+                entity.Username = update.Username;
+
+            if (update.Password != null)
+                entity.Password = update.Password; // Consider password hashing here
+
+            if (update.UlogaId.HasValue)
+                entity.UlogaId = update.UlogaId.Value;
+
+            if (update.AutoservisId.HasValue)
+                entity.autoservisId = update.AutoservisId.Value;
+
+            if (update.FirmaAutodijelovaId.HasValue)
+                entity.FirmaAutodijelovaId = update.FirmaAutodijelovaId.Value;
+
+            // Spremi promjene u bazu
+            await _dbContext.SaveChangesAsync();
+
+            return entity;
+        }
 
     }
 

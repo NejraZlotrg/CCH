@@ -14,6 +14,7 @@ import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ZaposlenikDetailsScreen extends StatefulWidget {
@@ -108,6 +109,7 @@ Widget _buildForm() {
       'ime': widget.zaposlenik?.ime ?? '',
       'prezime': widget.zaposlenik?.prezime ?? '',
       'brojTelefona': widget.zaposlenik?.brojTelefona ?? '',
+      'datumRodjenja': widget.zaposlenik?.datumRodjenja,
       'gradId': widget.zaposlenik?.gradId?.toString() ?? '',
       'email': widget.zaposlenik?.email ?? '',
       'username': widget.zaposlenik?.username ?? '',
@@ -148,14 +150,36 @@ Widget _buildForm() {
         ),
 
         const SizedBox(height: 15),
-
+ FormBuilderTextField(
+          name: 'prezime',
+          validator: validator.required,
+          decoration: const InputDecoration(
+            labelText: 'Prezime',
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite prezime',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+          enabled: isAdminOrOwnProfile,
+        ),
+        const SizedBox(height: 15),
    FormBuilderTextField(
           name: 'mb',
           validator: validator.required,
           decoration: const InputDecoration(
-            labelText: 'mb',
+            labelText: 'JMBG',
             labelStyle: TextStyle(color: Colors.black),
-            hintText: 'Unesite mb',
+            hintText: 'Unesite JMBG',
             hintStyle: TextStyle(color: Colors.black),
             border: OutlineInputBorder(),
             fillColor: Colors.white,
@@ -199,9 +223,32 @@ const SizedBox(height: 15),
           enabled: isAdminOrOwnProfile,
         ),
         
+const SizedBox(height: 15),
 
-
-
+FormBuilderDateTimePicker(
+  name: 'datumRodjenja',
+  inputType: InputType.date,
+  format: DateFormat("dd.MM.yyyy"),
+  decoration: const InputDecoration(
+    labelText: 'Datum rođenja',
+    labelStyle: TextStyle(color: Colors.black),
+    hintText: 'Odaberite datum rođenja',
+    hintStyle: TextStyle(color: Colors.black),
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+  ),
+  style: const TextStyle(color: Colors.black),
+  
+  validator: validator.required, // dodaj ako je obavezno polje
+),
  
 const SizedBox(height: 15),
         
@@ -383,7 +430,7 @@ const SizedBox(height: 15),
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovog zaposlenika?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -407,7 +454,7 @@ const SizedBox(height: 15),
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Zaposlenik uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {
@@ -434,38 +481,43 @@ const SizedBox(height: 15),
                           ),
               if (isAdminOrOwnProfile) 
                 ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState?.saveAndValidate() ?? false) {
-                      var request = Map.from(_formKey.currentState!.value);
-                      request['ulogaId'] = 1; // Set the default role if necessary
+               onPressed: () async {
+  if (_formKey.currentState?.saveAndValidate() ?? false) {
+    var request = Map.from(_formKey.currentState!.value);
 
-                      try {
-                        if (widget.zaposlenik == null) {
-                       
-                          await _zaposlenikProvider.insert(request);
-                        } else {
-                          await _zaposlenikProvider.update(
-                              widget.zaposlenik!.zaposlenikId!,
-                              request);
-                           
+                // Konverzija datuma u ISO format
+          
 
-                        }
-                        // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
-                      } on Exception {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => const AlertDialog(
-                            title: Text("Greška"),
-                                        content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
-                            actions: [
-                              
-                            ],
-                          ),
-                        );
-                      }
-                    }
-                  },
+          if (request['datumRodjenja'] != null) {
+  // Konverzija u ISO 8601 format sa vremenskom zonom
+  request['datumRodjenja'] = (request['datumRodjenja'] as DateTime).toUtc().toIso8601String();
+  print("Datum rođenja nakon konverzije: ${request['datumRodjenja']}");
+}
+
+    request['ulogaId'] = 1; // ili koristi iz dropdown-a ako je dinamički
+
+    try {
+      if (widget.zaposlenik == null) {
+        await _zaposlenikProvider.insert(request);
+      } else {
+        await _zaposlenikProvider.update(widget.zaposlenik!.zaposlenikId!, request);
+      }
+
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => const AlertDialog(
+          title: Text("Greška"),
+          content: Text("Došlo je do greške prilikom spremanja."),
+          actions: [],
+        ),
+      );
+    }
+  }
+},
+
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.red,

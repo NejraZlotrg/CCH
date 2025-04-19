@@ -423,7 +423,7 @@ class _KlijentRegistracijaScreenState
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
-                name: "telefon",
+                name: "brojTelefona",
                 validator: validator.phoneNumber,
               ),
             ],
