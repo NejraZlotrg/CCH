@@ -23,6 +23,7 @@ import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:form_validation/form_validation.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1471,71 +1472,92 @@ void _showSendMessageDialog(
 }
 
 Future<void> _editZaposlenik(Zaposlenik zap) async {
-  // Example implementation - you might want to navigate to an edit screen
+  // Future<void> _editZaposlenik(Zaposlenik zap) async {
   final editedZap = await showDialog<Zaposlenik>(
     context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Uredi zaposlenika'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: TextEditingController(text: zap.ime),
-            decoration: const InputDecoration(labelText: 'Ime'),
-            onChanged: (value) => zap.ime = value,
-          ),
-                    TextField(
-            controller: TextEditingController(text: zap.prezime),
-            decoration: const InputDecoration(labelText: 'Prezime'),
-            onChanged: (value) => zap.prezime = value,
-          ),
-                    TextField(
-            controller: TextEditingController(text: zap.mb),
-            decoration: const InputDecoration(labelText: 'Matični broj'),
-            onChanged: (value) => zap.mb = value,
-          ),
-                    TextField(
-            controller: TextEditingController(text: zap.brojTelefona),
-            decoration: const InputDecoration(labelText: 'Broj telefona'),
-            onChanged: (value) => zap.brojTelefona = value,
-          ),
-                    TextField(
-            controller: TextEditingController(text: zap.email),
-            decoration: const InputDecoration(labelText: 'Email'),
-            onChanged: (value) => zap.email = value,
-          ),
-                      TextField(
-            controller: TextEditingController(text: zap.username),
-            decoration: const InputDecoration(labelText: 'Korisničko ime'),
-            onChanged: (value) => zap.username = value,
-          ),
-                       TextField(
-            controller: TextEditingController(text: zap.password),
-            decoration: const InputDecoration(labelText: 'Lozinka'),
-            onChanged: (value) => zap.password = value,
-            obscureText: true,
-          ),
-                       TextField(
-            controller: TextEditingController(text: zap.passwordAgain),
-            decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
-            onChanged: (value) => zap.passwordAgain = value,
-            obscureText: true,
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Otkaži'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context, zap);
-          },
-          child: const Text('Spremi'),
-        ),
-      ],
-    ),
+    builder: (context) {
+      // Use StatefulBuilder to manage state within the dialog
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Uredi zaposlenika'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: TextEditingController(text: zap.ime),
+                    decoration: const InputDecoration(labelText: 'Ime'),
+                    onChanged: (value) => zap.ime = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.prezime),
+                    decoration: const InputDecoration(labelText: 'Prezime'),
+                    onChanged: (value) => zap.prezime = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.mb),
+                    decoration: const InputDecoration(labelText: 'Matični broj'),
+                    onChanged: (value) => zap.mb = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.brojTelefona),
+                    decoration: const InputDecoration(labelText: 'Broj telefona'),
+                    onChanged: (value) => zap.brojTelefona = value,
+                  ),
+                  FormBuilderDateTimePicker(
+                    name: "datumRodjenja",
+                    inputType: InputType.date,
+                    decoration: const InputDecoration(labelText: "Datum Rođenja"),
+                    format: DateFormat("dd.MM.yyyy"),
+                    initialValue: zap.datumRodjenja, // Use DateTime directly
+                    onChanged: (DateTime? value) {
+                      if (value != null) {
+                        zap.datumRodjenja = value; // Store DateTime directly
+                      }
+                    },
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.email),
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    onChanged: (value) => zap.email = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.username),
+                    decoration: const InputDecoration(labelText: 'Korisničko ime'),
+                    onChanged: (value) => zap.username = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.password),
+                    decoration: const InputDecoration(labelText: 'Lozinka'),
+                    onChanged: (value) => zap.password = value,
+                    obscureText: true,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.passwordAgain),
+                    decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
+                    onChanged: (value) => zap.passwordAgain = value,
+                    obscureText: true,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Otkaži'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, zap);
+                },
+                child: const Text('Spremi'),
+              ),
+            ],
+          );
+        },
+      );
+    },
   );
 
   if (editedZap != null) {
@@ -1543,7 +1565,6 @@ Future<void> _editZaposlenik(Zaposlenik zap) async {
       final provider = Provider.of<ZaposlenikProvider>(context, listen: false);
       await provider.update(editedZap.zaposlenikId!, editedZap);
       setState(() {
-        // Update the local list
         final index = zaposlenik.indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
         if (index != -1) {
           zaposlenik[index] = editedZap;

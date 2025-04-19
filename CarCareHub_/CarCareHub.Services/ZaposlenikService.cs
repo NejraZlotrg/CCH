@@ -16,13 +16,13 @@ namespace CarCareHub.Services
         public ZaposlenikService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-     
+
 
 
         public override async Task BeforeInsert(CarCareHub.Services.Database.Zaposlenik entity, ZaposlenikInsert insert)
         {
 
-        entity.LozinkaSalt = GenerateSalt();
+            entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
 
         }
@@ -90,13 +90,13 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.FirmaAutodijelova);
                 query = query.Include(z => z.Autoservis);
                 query = query.Include(z => z.Grad);
-            
+
 
             }
             return base.AddInclude(query, search);
         }
 
-       
+
 
         public async Task<CarCareHub.Model.Zaposlenik> GetByGrad(int id)
         {
@@ -187,12 +187,12 @@ namespace CarCareHub.Services
                     UlogaId = 1, // Pretpostavlja se da je ID za "Zaposlenik" 1
                     AutoservisId = 1, // Nijedna veza s autoservisom
                     FirmaAutodijelovaId = 1, // Nijedna veza s firmom autodijelova
-                    Vidljivo= true, 
-                    Adresa= "Donje Putićevo bb"
+                    Vidljivo = true,
+                    Adresa = "Donje Putićevo bb"
                 };
 
                 // Mapiraj noviZaposlenik u entitet Zaposlenik za bazu podataka
-         
+
                 var zapEntity = _mapper.Map<Database.Zaposlenik>(noviZaposlenik);
                 BeforeInsert(zapEntity, noviZaposlenik);
                 // Dodajte zaposlenika u bazu podataka
@@ -246,13 +246,13 @@ namespace CarCareHub.Services
             if (update.FirmaAutodijelovaId.HasValue)
                 entity.FirmaAutodijelovaId = update.FirmaAutodijelovaId.Value;
 
-            // Spremi promjene u bazu
+
             await _dbContext.SaveChangesAsync();
 
-            return entity;
+            // Mapiraj entitet baze podataka na model prije vraćanja
+            return _mapper.Map<Model.Zaposlenik>(entity);
+
         }
 
     }
-
-
 }

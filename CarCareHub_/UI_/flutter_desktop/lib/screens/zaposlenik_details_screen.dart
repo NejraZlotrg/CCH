@@ -490,7 +490,7 @@ const SizedBox(height: 15),
 
           if (request['datumRodjenja'] != null) {
   // Konverzija u ISO 8601 format sa vremenskom zonom
-  request['datumRodjenja'] = (request['datumRodjenja'] as DateTime).toUtc().toIso8601String();
+  request['datumRodjenja'] = (request['datumRodjenja'] as DateTime).toIso8601String();
   print("Datum rođenja nakon konverzije: ${request['datumRodjenja']}");
 }
 
