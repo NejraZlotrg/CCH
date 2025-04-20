@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
 using CarCareHub.Services.Database;
 using CarCareHub.Services.ProizvodiStateMachine;
@@ -14,7 +15,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CarCareHub.Services
 {
-    public class ProizvodiService : BaseCRUDService<Model.Proizvod, Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject, Model.ProizvodiInsert, Model.ProizvodiUpdate>
+    public class ProizvodiService : BaseCRUDService<Model.Proizvod, CarCareHub.Services.Database.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject, Model.ProizvodiInsert, Model.ProizvodiUpdate>
         , IProizvodiService
     {
         public BaseState _baseState { get; set; }
@@ -300,6 +301,69 @@ namespace CarCareHub.Services
             result.Result = _mapper.Map<List<CarCareHub.Model.Proizvod>>(list); // Mapiranje
             return result;
         }
+        public async Task AddInitialProizvodiAsync()
+{
+    // Provjera koliko proizvoda već postoji u bazi
+    var initialCount = await _dbContext.Proizvods.CountAsync();
+    Console.WriteLine($"Broj proizvoda prije dodavanja: {initialCount}");
+
+    // Ako nema proizvoda u bazi, dodaj tri početna proizvoda
+    if (initialCount == 0)
+    {
+        var proizvodiInsert = new List<ProizvodiInsert>
+        {
+            new ProizvodiInsert
+            {
+                Naziv = "Motorna ulja",
+                Cijena = 150m,
+                Popust = 10,
+                Vidljivo = true,
+                Opis = "Visokokvalitetna motorna ulja za automobile.",
+                KategorijaId = 1, // Pretpostavljamo da KategorijaId 1 odgovara 'Automobilima'
+                FirmaAutoDijelovaID = 1, // Pretpostavljamo da FirmaAutodijelovaID 1 postoji
+                ModelId = 1, // Model automobila
+                ProizvodjacId = 1, // Proizvođač proizvoda
+                Slika = null // Ako imate sliku, dodajte byte array ovde
+            },
+            new ProizvodiInsert
+            {
+                Naziv = "Kočione pločice",
+                Cijena = 120m,
+                Popust = 5,
+                Vidljivo = true,
+                Opis = "Kočione pločice za kamione.",
+                KategorijaId = 2, // Pretpostavljamo da KategorijaId 2 odgovara 'Kamionima'
+                FirmaAutoDijelovaID = 2, // Pretpostavljamo da FirmaAutodijelovaID 2 postoji
+                ModelId = 2, // Model kamiona
+                ProizvodjacId = 2, // Proizvođač proizvoda
+                Slika = null // Ako imate sliku, dodajte byte array ovde
+            },
+            new ProizvodiInsert
+            {
+                Naziv = "Filteri za zrak",
+                Cijena = 80m,
+                Popust = 15,
+                Vidljivo = true,
+                Opis = "Filteri za zrak za motocikle.",
+                KategorijaId = 3, // Pretpostavljamo da KategorijaId 3 odgovara 'Motociklima'
+                FirmaAutoDijelovaID = 3, // Pretpostavljamo da FirmaAutodijelovaID 3 postoji
+                ModelId = 3, // Model motocikla
+                ProizvodjacId = 3, // Proizvođač proizvoda
+                Slika = null // Ako imate sliku, dodajte byte array ovde
+            }
+        };
+
+        // Mapiranje i dodavanje proizvoda u bazu
+        var proizvodiEntities = proizvodiInsert.Select(p => _mapper.Map<CarCareHub.Services.Database.Proizvod>(p)).ToList();
+        await _dbContext.Proizvods.AddRangeAsync(proizvodiEntities);
+        await _dbContext.SaveChangesAsync();
+        Console.WriteLine("Proizvodi su dodani.");
+    }
+
+    // Provjera broja proizvoda nakon dodavanja
+    var finalCount = await _dbContext.Proizvods.CountAsync();
+    Console.WriteLine($"Broj proizvoda nakon dodavanja: {finalCount}");
+}
 
 
     }

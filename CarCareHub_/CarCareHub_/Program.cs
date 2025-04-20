@@ -245,17 +245,32 @@ static async Task SeedUloge(WebApplication app)
         var firmaService = scope.ServiceProvider.GetRequiredService<IFirmaAutodijelovaService>();
         var autoservisService = scope.ServiceProvider.GetRequiredService<IAutoservisService>();
         var zaposlenikService = scope.ServiceProvider.GetRequiredService<IZaposlenikService>();
+        var godisteService = scope.ServiceProvider.GetRequiredService<IGodisteService>();
+        var kategorijaService = scope.ServiceProvider.GetRequiredService<IKategorijaService>();
+        var modelService = scope.ServiceProvider.GetRequiredService<IModelService>();
+        var proizvodiService = scope.ServiceProvider.GetRequiredService<IProizvodiService>();
+
+
+
+
+
 
 
         await SeedUlogeAsync(ulogeService);
         await SeedDrzavaAsync(drzavaService);
         await SeedGradAsync(gradService);
         await SeedVoziloAsync(voziloService);
-
         await SeedAutoservisAsync(autoservisService);
         await SeedFirmaAsync(firmaService);
         await SeedKlijentAsync(klijentService);
         await SeedZaposlenikAsync(zaposlenikService);
+        await SeedGodisteAsync(godisteService);
+        await SeedKategorijaAsync(kategorijaService);
+        await SeedModelAsync(modelService);
+        await SeedProizvodiAsync(proizvodiService);
+
+
+
 
     }
 }
@@ -299,6 +314,23 @@ static async Task SeedKlijentAsync(IKlijentService klijentService)
 {
     await klijentService.AddKlijentAsync();
 }
+static async Task SeedGodisteAsync(IGodisteService godisteService)
+{
+    await godisteService.AddGodisteAsync();
+}
+static async Task SeedKategorijaAsync(IKategorijaService kategorijaService)
+{
+    await kategorijaService.AddKategorijaAsync();
+}
+static async Task SeedModelAsync(IModelService modelService)
+{
+    await modelService.AddModelAsync();
+}
+static async Task SeedProizvodiAsync(IProizvodiService proizvodiService)
+{
+    await proizvodiService.AddInitialProizvodiAsync();
+}
+
 
 if (app.Environment.IsDevelopment())
 {

@@ -211,6 +211,7 @@ namespace CarCareHub.Services
                 Username = "firma",
                 Password = "firma",
                 PasswordAgain = "firma",
+                Vidljivo=true,
                 SlikaProfila = null // Add profile image byte array if necessary
             };
 

@@ -50,6 +50,29 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
     }
-}
+        public async Task AddModelAsync()
+        {
+            // Provjerite da li modeli već postoje u bazi
+            if (!_dbContext.Models.Any())
+            {
+                // Kreirajte listu modela za unos
+                var modeliInsert = new List<ModelInsert>
+        {
+            new ModelInsert { NazivModela = "Audi A4", VoziloId = 1, GodisteId = 1, Vidljivo = true },
+            new ModelInsert { NazivModela = "BMW X5", VoziloId = 2, GodisteId = 2, Vidljivo = true },
+            new ModelInsert { NazivModela = "Mercedes-Benz E-Class", VoziloId = 3, GodisteId = 3, Vidljivo = true },
+            new ModelInsert { NazivModela = "Tesla Model 3", VoziloId = 4, GodisteId = 4, Vidljivo = true }
+        };
+
+                // Mapirajte svaki Insert model u Database.Model entitet
+                var modelEntities = modeliInsert.Select(m => _mapper.Map<Database.Model>(m)).ToList();
+
+                // Dodajte modele u bazu podataka
+                await _dbContext.Models.AddRangeAsync(modelEntities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+    }
 
 }

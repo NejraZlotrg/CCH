@@ -38,20 +38,26 @@ namespace CarCareHub.Services
                 // Kreirajte listu vozila za unos
                 var vozilaInsert = new List<VoziloInsert>
         {
-            new VoziloInsert { MarkaVozila = "Volkswagen" },
+            new VoziloInsert { MarkaVozila = "Volkswagen"},
             new VoziloInsert { MarkaVozila = "BMW" },
             new VoziloInsert { MarkaVozila = "Audi" },
             new VoziloInsert { MarkaVozila = "Mercedes" }
         };
 
-                // Mapirajte svaki Insert model u Database.Vozilo entitet
-                var voziloEntities = vozilaInsert.Select(v => _mapper.Map<Database.Vozilo>(v)).ToList();
+                // Mapirajte svaki Insert model u Database.Vozilo entitet i postavite Vidljivo na true
+                var voziloEntities = vozilaInsert.Select(v =>
+                {
+                    var vozilo = _mapper.Map<Database.Vozilo>(v);
+                    vozilo.Vidljivo = true;  // Postavite Vidljivo na true
+                    return vozilo;
+                }).ToList();
 
                 // Dodajte vozila u bazu podataka
                 await _dbContext.Vozilos.AddRangeAsync(voziloEntities);
                 await _dbContext.SaveChangesAsync();
             }
         }
+
 
 
     }

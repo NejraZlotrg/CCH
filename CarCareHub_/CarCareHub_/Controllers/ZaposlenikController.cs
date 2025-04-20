@@ -36,7 +36,7 @@ namespace CarCareHub_.Controllers
 
         }
 
-        [HttpGet("get-id")]
+        [HttpPost("get-id")]
         [AllowAnonymous]
         public IActionResult GetIdByUsernameAndPassword(string username, string password)
         {

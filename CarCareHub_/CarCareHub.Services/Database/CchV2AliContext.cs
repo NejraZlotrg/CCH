@@ -19,6 +19,8 @@ public partial class CchV2AliContext : DbContext
 
     public virtual DbSet<Autoservis> Autoservis { get; set; }
     public virtual DbSet<Korpa> Korpas { get; set; }
+    public virtual DbSet<Model> Models { get; set; }
+
 
 
     public virtual DbSet<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; }
@@ -35,6 +37,8 @@ public partial class CchV2AliContext : DbContext
     public virtual DbSet<Izvjestaj> Izvjestajs { get; set; }
 
     public virtual DbSet<Kategorija> Kategorijas { get; set; }
+    public virtual DbSet<Godiste> Godistes { get; set; }
+
 
     public virtual DbSet<Klijent> Klijents { get; set; }
 
