@@ -200,19 +200,15 @@ namespace CarCareHub.Services
                 await _dbContext.SaveChangesAsync();
             }
         }
-
         public override async Task<Model.Zaposlenik> Update(int id, Model.ZaposlenikUpdate update)
         {
-            // Pronađi postojeći entitet u bazi na temelju ID-a
             var entity = await _dbContext.Zaposleniks.FindAsync(id);
 
-            // Provjeri da li entitet postoji
             if (entity == null)
             {
                 throw new ArgumentException("Zaposlenik nije pronađen.");
             }
 
-            // Ažuriraj polja entiteta
             if (update.Ime != null)
                 entity.Ime = update.Ime;
 
@@ -235,24 +231,22 @@ namespace CarCareHub.Services
                 entity.Username = update.Username;
 
             if (update.Password != null)
-                entity.Password = update.Password; // Consider password hashing here
+                entity.Password = update.Password; // razmisli o hashiranju
 
             if (update.UlogaId.HasValue)
                 entity.UlogaId = update.UlogaId.Value;
 
-            if (update.AutoservisId.HasValue)
-                entity.autoservisId = update.AutoservisId.Value;
+            // Ako je poslan autoservis, postavi vrijednost, inače null
+            entity.autoservisId = update.AutoservisId.HasValue ? update.AutoservisId.Value : null;
 
-            if (update.FirmaAutodijelovaId.HasValue)
-                entity.FirmaAutodijelovaId = update.FirmaAutodijelovaId.Value;
-
+            // Ako je poslana firma autodijelova, postavi vrijednost, inače null
+            entity.FirmaAutodijelovaId = update.FirmaAutodijelovaId.HasValue ? update.FirmaAutodijelovaId.Value : null;
 
             await _dbContext.SaveChangesAsync();
 
-            // Mapiraj entitet baze podataka na model prije vraćanja
             return _mapper.Map<Model.Zaposlenik>(entity);
-
         }
+
 
     }
 }

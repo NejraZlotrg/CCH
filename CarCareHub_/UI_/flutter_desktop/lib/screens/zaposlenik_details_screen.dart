@@ -37,7 +37,8 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
   SearchResult<Uloge>? ulogaResult;
   SearchResult<Autoservis>? autoservisResult;
   SearchResult<FirmaAutodijelova>? firmaResult;
-
+String? selectedAutoservisId;
+String? selectedFirmaId;
   bool isLoading = true;
   final validator = CreateValidator();
 
@@ -49,6 +50,8 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
     _ulogeProvider = context.read<UlogeProvider>();
     _autoservisProvider = context.read<AutoservisProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
+      selectedAutoservisId = widget.zaposlenik?.autoservisId?.toString();
+  selectedFirmaId = widget.zaposlenik?.firmaAutodijelovaId?.toString();
     initForm();
   }
 
@@ -105,23 +108,22 @@ Widget _buildForm() {
 
   return FormBuilder(
     key: _formKey,
-    initialValue: {
-      'ime': widget.zaposlenik?.ime ?? '',
-      'prezime': widget.zaposlenik?.prezime ?? '',
-      'brojTelefona': widget.zaposlenik?.brojTelefona ?? '',
-      'datumRodjenja': widget.zaposlenik?.datumRodjenja,
-      'gradId': widget.zaposlenik?.gradId?.toString() ?? '',
-      'email': widget.zaposlenik?.email ?? '',
-      'username': widget.zaposlenik?.username ?? '',
-      'password': widget.zaposlenik?.password ?? '',
-      'passwordAgain': widget.zaposlenik?.passwordAgain ?? '',
-      'ulogaId': widget.zaposlenik?.ulogaId?.toString() ?? '',
-      'autoservisId': widget.zaposlenik?.autoservisId?.toString() ?? '',
-      'firmaAutodijelovaId': widget.zaposlenik?.firmaAutodijelovaId?.toString() ?? '',
-      'adresa': widget.zaposlenik?.adresa ?? '',
-      'mb' : widget.zaposlenik?.mb ?? ''
-
-    },
+   initialValue: {
+  'ime': widget.zaposlenik?.ime ?? '',
+  'prezime': widget.zaposlenik?.prezime ?? '',
+  'brojTelefona': widget.zaposlenik?.brojTelefona ?? '',
+  'datumRodjenja': widget.zaposlenik?.datumRodjenja,
+  'gradId': widget.zaposlenik?.gradId?.toString() ?? '',
+  'email': widget.zaposlenik?.email ?? '',
+  'username': widget.zaposlenik?.username ?? '',
+  'password': widget.zaposlenik?.password ?? '',
+  'passwordAgain': widget.zaposlenik?.passwordAgain ?? '',
+  'ulogaId': widget.zaposlenik?.ulogaId?.toString() ?? '',
+  'autoservisId': widget.zaposlenik?.autoservisId?.toString() ?? '',
+  'firmaAutodijelovaId': widget.zaposlenik?.firmaAutodijelovaId?.toString() ?? '',
+  'adresa': widget.zaposlenik?.adresa ?? '',
+  'mb': widget.zaposlenik?.mb ?? ''
+},
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -413,6 +415,99 @@ const SizedBox(height: 15),
           ),
         ],
         const SizedBox(height: 15),
+   
+FormBuilderDropdown<String>(
+  name: 'autoservisId',
+  decoration: const InputDecoration(
+    labelText: 'Izaberite autoservis',
+    labelStyle: TextStyle(color: Colors.black),
+    hintText: 'Izaberite autoservis',
+    hintStyle: TextStyle(color: Colors.black),
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+  ),
+  style: const TextStyle(color: Colors.black),
+  items: [
+    const DropdownMenuItem(
+      value: '',
+      child: Text('Izaberi autoservis', style: TextStyle(color: Colors.grey)),
+    ),
+    ...?autoservisResult?.result.map((item) {
+      return DropdownMenuItem(
+        value: item.autoservisId.toString(),
+        child: Text(
+          item.naziv ?? "",
+          style: TextStyle(
+            color: item.vidljivo == false ? Colors.red : Colors.black,
+          ),
+        ),
+      );
+    }).toList(),
+  ],
+  enabled: isAdminOrOwnProfile && (selectedFirmaId == '' || selectedFirmaId==null), // Omogući ako firma nije odabrana
+  onChanged: (value) {
+    setState(() {
+      selectedAutoservisId = value ?? ''; // Ako nije odabrano, setuj na prazno
+      if (value != '') selectedFirmaId = ''; // Resetuj firmu ako je odabran autoservis
+    });
+  },
+),
+
+const SizedBox(height: 15),
+
+FormBuilderDropdown<String>(
+  name: 'firmaAutodijelovaId',
+  decoration: const InputDecoration(
+    labelText: 'Izaberite firmu autodijelova',
+    labelStyle: TextStyle(color: Colors.black),
+    hintText: 'Izaberite firmu autodijelova',
+    hintStyle: TextStyle(color: Colors.black),
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+  ),
+  style: const TextStyle(color: Colors.black),
+  items: [
+    const DropdownMenuItem(
+      value: '',
+      child: Text('Izaberi firmu autodijelova', style: TextStyle(color: Colors.grey)),
+    ),
+    ...?firmaResult?.result.map((item) {
+      return DropdownMenuItem(
+        value: item.firmaAutodijelovaID.toString(),
+        child: Text(
+          item.nazivFirme ?? "",
+          style: TextStyle(
+            color: item.vidljivo == false ? Colors.red : Colors.black,
+          ),
+        ),
+      );
+    }).toList(),
+  ],
+  enabled: isAdminOrOwnProfile && (selectedAutoservisId == '' || selectedAutoservisId==null), // Omogući ako autoservis nije odabrana
+  onChanged: (value) {
+    setState(() {
+      selectedFirmaId = value ?? ''; // Ako nije odabrano, setuj na prazno
+      if (value != '') selectedAutoservisId = ''; // Resetuj autoservis ako je odabrana firma
+    });
+  },
+),
+
 
         // Save button
         Padding(
@@ -481,20 +576,34 @@ const SizedBox(height: 15),
                           ),
               if (isAdminOrOwnProfile) 
                 ElevatedButton(
-               onPressed: () async {
+              onPressed: () async {
   if (_formKey.currentState?.saveAndValidate() ?? false) {
     var request = Map.from(_formKey.currentState!.value);
 
-                // Konverzija datuma u ISO format
-          
+    // Convert date to ISO format
+    if (request['datumRodjenja'] != null) {
+      request['datumRodjenja'] = (request['datumRodjenja'] as DateTime).toIso8601String();
+    }
 
-          if (request['datumRodjenja'] != null) {
-  // Konverzija u ISO 8601 format sa vremenskom zonom
-  request['datumRodjenja'] = (request['datumRodjenja'] as DateTime).toIso8601String();
-  print("Datum rođenja nakon konverzije: ${request['datumRodjenja']}");
-}
+    // Convert dropdown string values to integers
+    if (request['gradId'] != null) {
+      request['gradId'] = int.tryParse(request['gradId']);
+    }
 
-    request['ulogaId'] = 1; // ili koristi iz dropdown-a ako je dinamički
+   request['ulogaId'] =1;
+
+    // Handle autoservisId and firmaAutodijelovaId - only send one of them
+    if (selectedAutoservisId != null && selectedAutoservisId!.isNotEmpty) {
+      request['autoservisId'] = int.tryParse(selectedAutoservisId!);
+      request['firmaAutodijelovaId'] = null; // Explicitly set to null
+    } else if (selectedFirmaId != null && selectedFirmaId!.isNotEmpty) {
+      request['firmaAutodijelovaId'] = int.tryParse(selectedFirmaId!);
+      request['autoservisId'] = null; // Explicitly set to null
+    } else {
+      // If neither is selected, set both to null
+      request['autoservisId'] = null;
+      request['firmaAutodijelovaId'] = null;
+    }
 
     try {
       if (widget.zaposlenik == null) {
@@ -508,9 +617,9 @@ const SizedBox(height: 15),
     } catch (e) {
       showDialog(
         context: context,
-        builder: (BuildContext context) => const AlertDialog(
-          title: Text("Greška"),
-          content: Text("Došlo je do greške prilikom spremanja."),
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: Text("Došlo je do greške prilikom spremanja: ${e.toString()}"),
           actions: [],
         ),
       );

@@ -1295,7 +1295,33 @@ void _showAddZaposlenikDialog() {
                   name: "prezime",
                   decoration: const InputDecoration(labelText: "Prezime"),
                   validator: validator.required,
-                ),            
+                ),      
+                FormBuilderTextField(
+  name: 'adresa',
+  decoration: const InputDecoration(
+    labelText: 'Adresa',
+  ),
+  validator: validator.required,
+),
+FormBuilderDropdown<String>(
+  name: 'gradId',
+  decoration: const InputDecoration(
+    labelText: 'Izaberite grad',
+  ),
+  validator: validator.required,
+  items: gradResult?.result.map((item) {
+    return DropdownMenuItem(
+      value: item.gradId.toString(),
+      child: Text(
+        item.nazivGrada ?? "",
+        style: TextStyle(
+          color: item.vidljivo == false ? Colors.red : Colors.black,
+        ),
+      ),
+    );
+  }).toList() ?? [],
+),
+
                 FormBuilderTextField(
                   name: "mb",
                   decoration: const InputDecoration(labelText: "Matični broj"),
