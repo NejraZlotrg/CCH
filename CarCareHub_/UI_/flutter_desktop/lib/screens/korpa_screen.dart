@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -59,8 +61,9 @@ SearchResult<Product>? dataWithDiscount;
   Future<void> _loadData() async {
   try {
     List<Korpa> data = await _korpaProvider.getById(userId);
- if(context.read<UserProvider>().role == "Autoservis")
-    dataWithDiscount = await _productProvider.getForAutoservis( context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+ if(context.read<UserProvider>().role == "Autoservis") {
+   dataWithDiscount = await _productProvider.getForAutoservis( context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+ }
     
     setState(() {
       korpaList = data;
@@ -338,7 +341,7 @@ double _calculateItemPrice(Korpa item) {
   // 1. Check if user is Autoservis, product has special price AND is in discount list
   if (_userProvider.role == "Autoservis" && 
       product.cijenaSaPopustomZaAutoservis != null &&
-      (dataWithDiscount?.result?.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
+      (dataWithDiscount?.result.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
     return product.cijenaSaPopustomZaAutoservis!;
   }
   
@@ -358,7 +361,7 @@ Widget _buildPriceDisplay(Korpa e, double currentPrice) {
   // Case 1: Autoservis with special price (only if product is in discount list)
   if (_userProvider.role == "Autoservis" && 
       product.cijenaSaPopustomZaAutoservis != null &&
-      (dataWithDiscount?.result?.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
+      (dataWithDiscount?.result.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

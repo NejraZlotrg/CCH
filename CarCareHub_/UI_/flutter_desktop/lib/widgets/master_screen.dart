@@ -57,7 +57,6 @@ class MasterScreenWidget extends StatefulWidget {
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   late UserProvider _userProvider;
-  late KorpaProvider _korpaProvider;
   late KlijentProvider _klijentProvider;
   late AutoservisProvider _autoservisProvider;
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
@@ -71,7 +70,6 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     super.didChangeDependencies();
     
     _userProvider = context.read<UserProvider>();
-    _korpaProvider = context.read<KorpaProvider>();
     _klijentProvider = context.read<KlijentProvider>();
     _autoservisProvider = context.read<AutoservisProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
@@ -410,7 +408,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
                if (context.read<UserProvider>().role == "Admin")
             ListTile(
               leading: const Icon(Icons.speed),
-              title: const Text('Model'),
+              title: const Text('Model vozila'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(

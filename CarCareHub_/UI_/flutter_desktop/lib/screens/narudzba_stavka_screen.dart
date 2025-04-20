@@ -29,8 +29,6 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
 late AutoservisProvider _autoservisProvider;
 late KlijentProvider _klijentProvider;
 late ZaposlenikProvider _zaposlenikProvider;
-late UserProvider _userProvider;
-late BPAutodijeloviAutoservisProvider _bpProvider;
 
 
   @override
@@ -39,8 +37,6 @@ late BPAutodijeloviAutoservisProvider _bpProvider;
     _autoservisProvider = context.read<AutoservisProvider>();
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
     _klijentProvider = context.read<KlijentProvider>();
-    _userProvider = context.read<UserProvider>();
-    _bpProvider = context.read<BPAutodijeloviAutoservisProvider>();
 
 
 
@@ -308,7 +304,7 @@ Widget _buildProductsTable() {
                   padding: const EdgeInsets.all(8),
                   child: Text(
                     hasRegularDiscount 
-                      ? _formatCurrency(discountPrice! * kolicina)
+                      ? _formatCurrency(discountPrice * kolicina)
                       : "Nema",
                     style: TextStyle(
                       color: hasRegularDiscount ? Colors.green : Colors.grey,
@@ -319,7 +315,7 @@ Widget _buildProductsTable() {
                   padding: const EdgeInsets.all(8),
                   child: Text(
                     hasAutoserviceDiscount
-                      ? _formatCurrency(autoservicePrice! * kolicina)
+                      ? _formatCurrency(autoservicePrice * kolicina)
                       : "Nema",
                     style: TextStyle(
                       color: hasAutoserviceDiscount ? Colors.blue : Colors.grey,

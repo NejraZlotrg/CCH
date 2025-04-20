@@ -10,5 +10,6 @@ namespace CarCareHub.Services
 {
     public interface IProizvodjacService : ICRUDService<Model.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>
     {
+        Task AddInitialProizvodjacAsync();
     }
 }

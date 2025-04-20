@@ -36,6 +36,60 @@ namespace CarCareHub.Services
 
             return _mapper.Map<List<Usluge>>(temp);
         }
-  
+
+
+
+        public async Task AddInitialUslugeAsync()
+        {
+            // Provjera koliko proizvoda već postoji u bazi
+            var initialCount = await _dbContext.Usluges.CountAsync();
+            Console.WriteLine($"Broj usluga prije dodavanja: {initialCount}");
+
+            // Ako nema proizvoda u bazi, dodaj tri početna proizvoda
+            if (initialCount == 0)
+            {
+                var usluge = new List<UslugeInsert>
+        {
+            new UslugeInsert
+            {
+               Vidljivo = true,
+               NazivUsluge = "Mali servis",
+               AutoservisId = 1,
+               Cijena = 100,
+               Opis = "Osnovni servis."
+            },
+            new UslugeInsert
+            {
+               Vidljivo = true,
+               NazivUsluge = "Zamjena guma",
+               AutoservisId = 1,
+               Cijena = 150,
+               Opis = "Promjena sezonskih guma."
+            },
+            new UslugeInsert
+            {
+               Vidljivo = true,
+               NazivUsluge = "Čišćenje DPF",
+               AutoservisId = 1,
+               Cijena = 200,
+               Opis = "Čišćenje dpf filtera."
+            },
+
+        };
+
+                // Mapiranje i dodavanje proizvoda u bazu
+                var uslugeEntities = usluge.Select(p => _mapper.Map<CarCareHub.Services.Database.Usluge>(p)).ToList();
+                await _dbContext.Usluges.AddRangeAsync(uslugeEntities);
+                await _dbContext.SaveChangesAsync();
+                Console.WriteLine("Usluge su dodane.");
+            }
+
+            // Provjera broja proizvoda nakon dodavanja
+            var finalCount = await _dbContext.Usluges.CountAsync();
+            Console.WriteLine($"Broj usuga nakon dodavanja: {finalCount}");
+        }
+
+
     }
 }
+

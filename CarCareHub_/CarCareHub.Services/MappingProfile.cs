@@ -34,10 +34,6 @@ namespace CarCareHub.Services
             CreateMap<Model.KategorijaInsert, CarCareHub.Services.Database.Kategorija>();
             CreateMap<Model.KategorijaUpdate, CarCareHub.Services.Database.Kategorija>();
 
-            CreateMap<Database.Proizvod, Model.Proizvod>();
-            CreateMap<Model.ProizvodiInsert, CarCareHub.Services.Database.Proizvod>();
-            CreateMap<Model.ProizvodiUpdate, CarCareHub.Services.Database.Proizvod>();
-
             CreateMap<Database.Uloge, Model.Uloge>();
             CreateMap<Model.UlogeInsert, CarCareHub.Services.Database.Uloge>();
             CreateMap<Model.UlogeUpdate, CarCareHub.Services.Database.Uloge>();
@@ -55,9 +51,13 @@ namespace CarCareHub.Services
             CreateMap<CarCareHub.Services.Database.Proizvodjac, Model.Proizvodjac>();
             CreateMap<Model.ProizvodjacUpdate, CarCareHub.Services.Database.Proizvodjac>();
             CreateMap<Model.ProizvodjacInsert, CarCareHub.Services.Database.Proizvodjac>();
-            
-            
-            
+
+
+
+            CreateMap<Database.Proizvod, Model.Proizvod>();
+            CreateMap<Model.ProizvodiInsert, CarCareHub.Services.Database.Proizvod>();
+            CreateMap<Model.ProizvodiUpdate, CarCareHub.Services.Database.Proizvod>();
+
             CreateMap<CarCareHub.Services.Database.Vozilo, Model.Vozilo>();
             CreateMap<Model.VoziloUpdate, CarCareHub.Services.Database.Vozilo>();
             CreateMap<Model.VoziloInsert, CarCareHub.Services.Database.Vozilo>();

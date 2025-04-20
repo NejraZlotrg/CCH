@@ -5,5 +5,6 @@ namespace CarCareHub.Services
 {
     public interface IUslugeService : ICRUDService<Model.Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>
     {
+        Task AddInitialUslugeAsync();
     }
 }

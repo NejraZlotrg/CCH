@@ -460,7 +460,7 @@ Row(
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "popust",
-        initialValue: widget.product?.popust.toString(),
+        initialValue: widget.product?.popust.toString() ?? "",
       ),
       const SizedBox(height: 10),
       FormBuilderTextField(

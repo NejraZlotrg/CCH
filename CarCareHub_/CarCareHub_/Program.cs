@@ -73,7 +73,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 
 //builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
 //builder.Services.AddTransient<IGradService, GradService>();
@@ -119,6 +118,7 @@ builder.Services.AddTransient<IKorpaService, KorpaService>();
 
 builder.Services.AddScoped<IChatAutoservisKlijentService, CarCareHub.Services.ChatAutoservisKlijentService>();
 builder.Services.AddScoped<IRecommenderService, RecommenderService>();
+builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 
 
 
@@ -247,8 +247,11 @@ static async Task SeedUloge(WebApplication app)
         var zaposlenikService = scope.ServiceProvider.GetRequiredService<IZaposlenikService>();
         var godisteService = scope.ServiceProvider.GetRequiredService<IGodisteService>();
         var kategorijaService = scope.ServiceProvider.GetRequiredService<IKategorijaService>();
+        var uslugeService = scope.ServiceProvider.GetRequiredService<IUslugeService>();
         var modelService = scope.ServiceProvider.GetRequiredService<IModelService>();
+        var proizvodjacService = scope.ServiceProvider.GetRequiredService<IProizvodjacService>();
         var proizvodiService = scope.ServiceProvider.GetRequiredService<IProizvodiService>();
+
 
 
 
@@ -267,7 +270,10 @@ static async Task SeedUloge(WebApplication app)
         await SeedGodisteAsync(godisteService);
         await SeedKategorijaAsync(kategorijaService);
         await SeedModelAsync(modelService);
+        await SeedUslugeAsync(uslugeService);
+        await SeedProizvodjacAsync(proizvodjacService);
         await SeedProizvodiAsync(proizvodiService);
+
 
 
 
@@ -325,6 +331,15 @@ static async Task SeedKategorijaAsync(IKategorijaService kategorijaService)
 static async Task SeedModelAsync(IModelService modelService)
 {
     await modelService.AddModelAsync();
+}
+
+static async Task SeedProizvodjacAsync(IProizvodjacService proizvodjacService)
+{
+    await proizvodjacService.AddInitialProizvodjacAsync();
+}
+static async Task SeedUslugeAsync(IUslugeService uslugeService)
+{
+    await uslugeService.AddInitialUslugeAsync();
 }
 static async Task SeedProizvodiAsync(IProizvodiService proizvodiService)
 {
