@@ -432,9 +432,6 @@ Row(
             ),
           );
         }).toList() ?? [],
-        onChanged: (value) {
-          // Ovdje možete dodati dodatnu logiku ako je potrebno
-        },
       ),
     ),
   ],
@@ -444,7 +441,7 @@ Row(
         decoration: const InputDecoration(
             labelText: "Cijena",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
+            fillColor: Colors.white, 
             filled: true, // Da pozadina bude ispunjena
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "cijena",

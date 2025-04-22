@@ -45,6 +45,9 @@ class _ProductScreenState extends State<ProductScreen> {
   SearchResult<Product>? result;
   SearchResult<Product>? result2;
 
+  Vozilo? selectedVozilo;
+  List<Model>? filtriraniModeli;
+
 
   final TextEditingController _nazivController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
@@ -69,6 +72,14 @@ class _ProductScreenState extends State<ProductScreen> {
 
    // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
   }
+
+  @override
+void initState() {
+  super.initState();
+  filtriraniModeli = model; // Na početku prikazujemo sve modele
+}
+
+
  Future<void> _loadData() async {
   try {
     String? userRole = context.read<UserProvider>().role;
@@ -338,20 +349,26 @@ else {
       value: null,
       child: Text('Odaberite marku vozila'),
     ),
-  ] +
-      (vozila
-              ?.map((vozilo) => DropdownMenuItem(
-                    value: vozilo,
-                    child: Text(
-                      vozilo.markaVozila ?? "",
-                      style: TextStyle(
-                        color: vozilo.vidljivo == false ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  ))
-              .toList() ??
-          []),
-)
+    ...?vozila?.map((vozilo) => DropdownMenuItem(
+          value: vozilo,
+          child: Text(
+            vozilo.markaVozila ?? "",
+            style: TextStyle(
+              color: vozilo.vidljivo == false ? Colors.red : Colors.black,
+            ),
+          ),
+        ))
+  ],
+  onChanged: (Vozilo? newValue) {
+    setState(() {
+      selectedVozilo = newValue;
+      filtriraniModeli = model
+          ?.where((m) => m.voziloId == selectedVozilo?.voziloId)
+          .toList();
+    });
+  },
+),
+
 
         ),
         const SizedBox(width: 16), // Razmak između dropdown-ova
@@ -408,20 +425,18 @@ else {
       value: null,
       child: Text('Odaberite model'),
     ),
-  ] +
-      (model
-              ?.map((model) => DropdownMenuItem(
-                    value: model,
-                    child: Text(
-                      model.nazivModela ?? "",
-                      style: TextStyle(
-                        color: model.vidljivo == false ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  ))
-              .toList() ??
-          []),
-)
+    ...?filtriraniModeli?.map((model) => DropdownMenuItem(
+          value: model,
+          child: Text(
+            model.nazivModela ?? "",
+            style: TextStyle(
+              color: model.vidljivo == false ? Colors.red : Colors.black,
+            ),
+          ),
+        ))
+  ],
+),
+
 
 ),
 

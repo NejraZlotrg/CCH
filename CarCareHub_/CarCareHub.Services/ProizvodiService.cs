@@ -312,9 +312,10 @@ namespace CarCareHub.Services
         {
             new ProizvodiInsert
             {
+                
                 Naziv = "Motorna ulja",
                 Cijena = 150m,
-                Popust = 10,
+                Popust = 0,
                 Vidljivo = true,
                 Opis = "Visokokvalitetna motorna ulja za automobile.",
                 KategorijaId = 1, // Pretpostavljamo da KategorijaId 1 odgovara 'Automobilima'
@@ -323,7 +324,8 @@ namespace CarCareHub.Services
                 ProizvodjacId = 1, // Proizvođač proizvoda
                 Slika = sampleImage, // Ako imate sliku, dodajte byte array ovde
                 OriginalniBroj = "23442",
-                 Sifra = "11111"
+                Sifra = "11111"
+                
             },
             new ProizvodiInsert
             {
@@ -331,7 +333,7 @@ namespace CarCareHub.Services
                  Sifra ="11111",
                  OriginalniBroj = "297346",
                 Cijena = 120m,
-                Popust = 5,
+                Popust = 0,
                 Vidljivo = true,
                 Opis = "Kočione pločice za kamione.",
                 KategorijaId = 2, // Pretpostavljamo da KategorijaId 2 odgovara 'Kamionima'
@@ -346,7 +348,7 @@ namespace CarCareHub.Services
                 Sifra = "33333",
                 OriginalniBroj = "097739439",
                 Cijena = 80m,
-                Popust = 15,
+                Popust = 0,
                 Vidljivo = true,
                 Opis = "Filteri za zrak za motocikle.",
                 KategorijaId = 3, // Pretpostavljamo da KategorijaId 3 odgovara 'Motociklima'
@@ -357,11 +359,18 @@ namespace CarCareHub.Services
             }
         };
 
-                // Mapiranje i dodavanje proizvoda u bazu
-                var proizvodiEntities = proizvodiInsert.Select(p => _mapper.Map<CarCareHub.Services.Database.Proizvod>(p)).ToList();
+                var proizvodiEntities = proizvodiInsert.Select(p =>
+                {
+                    var entity = _mapper.Map<CarCareHub.Services.Database.Proizvod>(p);
+                    entity.StateMachine = "active"; // Postavi početno stanje
+                    return entity;
+                }).ToList();
+
+                // Dodavanje u bazu
                 await _dbContext.Proizvods.AddRangeAsync(proizvodiEntities);
                 await _dbContext.SaveChangesAsync();
                 Console.WriteLine("Proizvodi su dodani.");
+
             }
 
             // Provjera broja proizvoda nakon dodavanja
