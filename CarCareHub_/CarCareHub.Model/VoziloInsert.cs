@@ -9,9 +9,6 @@ namespace CarCareHub.Model
     public class VoziloInsert
     {
         public string? MarkaVozila { get; set; }
-
         public bool? Vidljivo { get; set; }
-
-
     }
 }

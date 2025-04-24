@@ -16,25 +16,12 @@ using System.Text.Json.Serialization;
 using CarCareHub_.Hubs;
 using CarCareHub.Model.Configurations;
 
-
-
-
 //////////////////////////////////////////////////////// Facebook SDK
 //using Microsoft.AspNetCore.Authentication.Facebook;
 //using Microsoft.AspNetCore.Authentication.Cookies;
 
 //////////////////////////////////////////////////////// Facebook SDK
-
-
-
-
-
-
-
-
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 //////////////////////////////////////////////////////// Facebook SDK
 ///
@@ -67,33 +54,8 @@ var builder = WebApplication.CreateBuilder(args);
 //////////////////////////////////////////////////////// Facebook SDK
 
 
-
-
-
-
-
-// Add services to the container.
-
-//builder.Services.AddTransient<IFirmaAutodijelovaService, FirmaAutodijelovaService>();
-//builder.Services.AddTransient<IGradService, GradService>();
-//builder.Services.AddTransient<  IService<CarCareHub.Model.Grad>, GradService>();
-//builder.Services.AddTransient<IService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject>, BaseService<CarCareHub.Model.Zaposlenik,
-//    CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject>>();
-
-//RADIbuilder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, ZaposlenikService>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Grad, GradSearchObject, GradInsert, GradUpdate>, BaseCRUDService<CarCareHub.Model.Grad, CarCareHub.Services.Database.Grad, GradSearchObject, GradInsert, GradUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>, BaseCRUDService<CarCareHub.Model.FirmaAutodijelova, CarCareHub.Services.Database.FirmaAutodijelova, FirmaAutodijelovaSearchObject, FirmaAutodijelovaInsert, FirmaAutodijelovaUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>, BaseCRUDService<CarCareHub.Model.Drzava, CarCareHub.Services.Database.Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>, BaseCRUDService<CarCareHub.Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>, BaseCRUDService<CarCareHub.Model.Kategorija, CarCareHub.Services.Database.Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>, BaseCRUDService<CarCareHub.Model.Proizvodjac, CarCareHub.Services.Database.Proizvodjac, ProizvodjacSearchObject, ProizvodjacInsert, ProizvodjacUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>, BaseCRUDService<CarCareHub.Model.Uloge, CarCareHub.Services.Database.Uloge, UlogeSearchObject, UlogeInsert, UlogeUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>, BaseCRUDService<CarCareHub.Model.Usluge, CarCareHub.Services.Database.Usluge, UslugeSearchObject, UslugeInsert, UslugeUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>, BaseCRUDService<CarCareHub.Model.Vozilo, CarCareHub.Services.Database.Vozilo, VoziloSearchObject, VoziloInsert, VoziloUpdate>>();
-//builder.Services.AddTransient<ICRUDService<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>, BaseCRUDService<CarCareHub.Model.Autoservis, CarCareHub.Services.Database.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>>();
 builder.Services.AddTransient<IDrzavaService, DrzavaService>();
 builder.Services.AddTransient<IModelService, ModelService>();
-
 builder.Services.AddTransient<IKategorijaService, KategorijaService>();
 builder.Services.AddTransient<IUlogeService, UlogeService>();
 builder.Services.AddTransient<IUslugeService, UslugeService>();
@@ -113,24 +75,10 @@ builder.Services.AddTransient<IChatKlijentZaposlenikService, ChatKlijentZaposlen
 builder.Services.AddTransient<IBPAutodijeloviAutoservisService, BPAutodijeloviAutoservisService>();
 builder.Services.AddTransient<IProizvodjacService, ProizvodjacService>();
 builder.Services.AddTransient<IKorpaService, KorpaService>();
-
-
-
 builder.Services.AddScoped<IChatAutoservisKlijentService, CarCareHub.Services.ChatAutoservisKlijentService>();
 builder.Services.AddScoped<IRecommenderService, RecommenderService>();
 builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
 
-
-
-//-------------------------------------------------------------------
-
-// Serializacija objekta s postavljenim opcijama
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-
-
-// Ostali servisi
-//builder.Services.AddTransient<IZaposlenikService, ZaposlenikService>();
 
 builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<InitialProductState>();
@@ -165,10 +113,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-
-
-
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CchV2AliContext>(options =>
 options.UseSqlServer(connectionString));
@@ -186,7 +130,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSignalR(options =>
 {
-    options.ClientTimeoutInterval = TimeSpan.FromSeconds(10);  // Povećajte timeout
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(10); 
 });
 
 
@@ -217,19 +161,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Omogući CORS
 app.UseCors("AllowAll");
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chat-hub");
-//app.MapHub<ChatHub>("/chatKlijentZaposlenik");
 
 
 app.UseWebSockets();
 
 
-
-// Configure the HTTP request pipeline.
 await SeedUloge(app);
 
 static async Task SeedUloge(WebApplication app)
@@ -252,13 +192,6 @@ static async Task SeedUloge(WebApplication app)
         var proizvodjacService = scope.ServiceProvider.GetRequiredService<IProizvodjacService>();
         var proizvodiService = scope.ServiceProvider.GetRequiredService<IProizvodiService>();
 
-
-
-
-
-
-
-
         await SeedUlogeAsync(ulogeService);
         await SeedDrzavaAsync(drzavaService);
         await SeedGradAsync(gradService);
@@ -273,49 +206,36 @@ static async Task SeedUloge(WebApplication app)
         await SeedUslugeAsync(uslugeService);
         await SeedProizvodjacAsync(proizvodjacService);
         await SeedProizvodiAsync(proizvodiService);
-
-
-
-
-
     }
 }
-
 static async Task SeedUlogeAsync(IUlogeService ulogeService)
 {
     await ulogeService.AddUlogeAsync();
 }
-
 static async Task SeedDrzavaAsync(IDrzavaService drzavaService)
 {
     await drzavaService.AddDrzavaAsync();
 }
-
 static async Task SeedZaposlenikAsync(IZaposlenikService zaposlenikService)
 {
     await zaposlenikService.AddZaposlenikAsync();
 }
-
 static async Task SeedGradAsync(IGradService gradService)
 {
     await gradService.AddGradAsync();
 }
-
 static async Task SeedAutoservisAsync(IAutoservisService autoservisService)
 {
     await autoservisService.AddAutoserviceAsync();
 }
-
 static async Task SeedVoziloAsync(IVoziloService voziloService)
 {
     await voziloService.AddVoziloAsync();
 }
-
 static async Task SeedFirmaAsync(IFirmaAutodijelovaService firmaService)
 {
     await firmaService.AddFirmaAsync();
 }
-
 static async Task SeedKlijentAsync(IKlijentService klijentService)
 {
     await klijentService.AddKlijentAsync();
@@ -332,7 +252,6 @@ static async Task SeedModelAsync(IModelService modelService)
 {
     await modelService.AddModelAsync();
 }
-
 static async Task SeedProizvodjacAsync(IProizvodjacService proizvodjacService)
 {
     await proizvodjacService.AddInitialProizvodjacAsync();
@@ -345,47 +264,31 @@ static async Task SeedProizvodiAsync(IProizvodiService proizvodiService)
 {
     await proizvodiService.AddInitialProizvodiAsync();
 }
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = "swagger"; // Postavite rutu za Swagger UI
+        c.RoutePrefix = "swagger"; // Postavi rutu za Swagger UI
     });
-
     app.UseAuthentication();
-
     app.UseAuthorization();
-
-
-
     app.MapControllers();
-
-
-
-    // Mapiraj SignalR rute
+    
     app.MapHub<ChatHub>("/chatHub");
 
     using (var scope = app.Services.CreateScope())
     {
         var dataContext = scope.ServiceProvider.GetRequiredService<CchV2AliContext>();
-
         var accommodationUnitService = scope.ServiceProvider.GetRequiredService<IRecommenderService>();
-
         try
         {
             await accommodationUnitService.TrainModelAsync();
         }
         catch (Exception)
         {
-
         }
-
     }
-
-
     app.Run();
 }

@@ -21,20 +21,16 @@ namespace CarCareHub_.Controllers
             _stripeConfig = stripeConfig.Value;
             StripeConfiguration.ApiKey = _stripeConfig.SecretKey;
         }
-
         [HttpPost("plati")]
         public async Task<IActionResult> CreatePaymentIntent([FromBody] PlacanjeStripe request)
         {
             var service = new PaymentIntentService();
-
             var options = new PaymentIntentCreateOptions
             {
                 Amount = request.Ukupno,
                 Currency = "BAM",
             };
-
             var paymentIntent = await service.CreateAsync(options);
-
             return Ok(new
             {
                 Id = paymentIntent.Id,

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    //[AllowAnonymous]
     [Route("api/kategorija")]
     public class KategorijaController : BaseCRUDController<Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>
     {

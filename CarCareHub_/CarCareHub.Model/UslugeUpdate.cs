@@ -9,11 +9,8 @@ namespace CarCareHub.Model
     public class UslugeUpdate
     {
         public string? NazivUsluge { get; set; }
-
         public string? Opis { get; set; }
-
         public decimal? Cijena { get; set; }
-
         public int? AutoservisId { get; set; }
     }
 }

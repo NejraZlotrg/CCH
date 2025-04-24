@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
-
-    // Model za izvještaj
-
-public class KlijentIzvjestaj
+    public class KlijentIzvjestaj
     {
         public int KlijentId { get; set; }
         public string ImePrezime { get; set; }

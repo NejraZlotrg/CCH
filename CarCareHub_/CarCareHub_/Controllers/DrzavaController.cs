@@ -9,14 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    //[AllowAnonymous]
     [Route("api/drzava")]
     public class DrzavaController : BaseCRUDController<Drzava, DrzavaSearchObject, DrzavaInsert, DrzavaUpdate>
     {
         public DrzavaController(ILogger<BaseController<CarCareHub.Model.Drzava, DrzavaSearchObject>> logger,
              IDrzavaService drzavaService) : base(logger, drzavaService)
         {
-            
         }
     }
 }

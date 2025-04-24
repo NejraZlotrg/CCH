@@ -11,9 +11,6 @@ namespace CarCareHub.Model.SearchObjects
         public string? NazivModela { get; set; }
         public bool? IsAllIncluded { get; set; }
         public string? MarkaVozila { get; set; }
-        public int? Godiste_ { get; set; } //dodati implementaciju, obrisati ovaj komentar 
-
-
-
+        public int? Godiste_ { get; set; } 
     }
 }

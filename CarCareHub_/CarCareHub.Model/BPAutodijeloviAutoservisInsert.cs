@@ -8,7 +8,6 @@ namespace CarCareHub.Model
 {
     public class BPAutodijeloviAutoservisInsert
     {
-
         public int? FirmaAutodijelovaID { get; set; }
         public int? AutoservisId { get; set; }
     }

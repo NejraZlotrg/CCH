@@ -18,7 +18,6 @@ namespace CarCareHub.Services
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHubContext<ChatHub> _hubContext;
-
         public ChatAutoservisKlijentService(CchV2AliContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<ChatHub> hubContext)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -26,7 +25,6 @@ namespace CarCareHub.Services
             _httpContextAccessor = httpContextAccessor;
             _hubContext = hubContext;
         }
-
         // Snimanje poruke u bazu
         public async Task SendMessageAsync(ChatAutoservisKlijentInsert request)
         {
@@ -43,16 +41,10 @@ namespace CarCareHub.Services
             {
                 throw new Exception("Uloga korisnika nije dostupna.");
             }
-
             // Postavljanje trenutnog vremena slanja
             request.VrijemeSlanja = DateTime.UtcNow;
-
-
             // Postavljanje vrijednosti PoslanoOdKlijenta na osnovu korisničke uloge
-
             bool poslanoOdKlijenta = userRole == "Klijent";
-
-
             // Prilagođavanje ID-jeva prema ulozi korisnika
             var chatPoruka = new Database.ChatAutoservisKlijent
             {
@@ -62,14 +54,11 @@ namespace CarCareHub.Services
                 PoslanoOdKlijenta = poslanoOdKlijenta,
                 VrijemeSlanja = request.VrijemeSlanja
             };
-
             try
             {
                 await _context.ChatAutoservisKlijents.AddAsync(chatPoruka);
-
                 await _hubContext.Clients.All.SendAsync($"ReceiveMessageAutoservisKlijent#{chatPoruka.KlijentId}/{chatPoruka.AutoservisId}");
                 await _hubContext.Clients.All.SendAsync($"ReceiveMessageAutoservisKlijent#{chatPoruka.AutoservisId}/{chatPoruka.KlijentId}");
-
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -77,14 +66,13 @@ namespace CarCareHub.Services
                 throw new InvalidOperationException("Greška prilikom snimanja poruke u bazu.", ex);
             }
         }
-
         public async Task<IQueryable<PorukaDTO>> GetMessagesAsync(int klijentId, int autoservisId)
         {
             var poruke = _context.ChatAutoservisKlijents
-                .Include(p => p.Klijent)  // Učitaj povezani Klijent entitet
-                .Include(p => p.Autoservis)  // Učitaj povezani Autoservis entitet
+                .Include(p => p.Klijent)  
+                .Include(p => p.Autoservis) 
                 .Where(p => p.KlijentId == klijentId && p.AutoservisId == autoservisId);
-
+            
             // Mapiranje na model
             var result = poruke.Select(p => new PorukaDTO
             {
@@ -96,12 +84,10 @@ namespace CarCareHub.Services
                 Poruka=p.Poruka,
                 PoslanoOdKlijenta=p.PoslanoOdKlijenta,
                 VrijemeSlanja=p.VrijemeSlanja
-
             }
             ).ToList();
             return result.AsQueryable();
         }
-
         public class PorukaDTO
         {
             public int Id { get; set; }
@@ -113,17 +99,13 @@ namespace CarCareHub.Services
             public bool PoslanoOdKlijenta { get; set; }
             public DateTime VrijemeSlanja { get; set; }
         }
-
         public List<PorukaDTO> GetByID_(int targetId)
         {
             var user = _httpContextAccessor.HttpContext.User;
-
             var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
-
             if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int parsedUserId))
                 throw new Exception("Invalid or missing User ID.");
-
             if (userRole == "Klijent" && targetId == parsedUserId)
             {
                 var chatRecords = _context.ChatAutoservisKlijents.AsNoTracking()
@@ -133,16 +115,14 @@ namespace CarCareHub.Services
                     .GroupBy(x => x.AutoservisId)
                     .Select(g => g.First())
                     .ToList();
-
                 if (!chatRecords.Any())
                     throw new Exception("No data found.");
-
                 return chatRecords.Select(x => new PorukaDTO
                 {
                     KlijentId = x.Klijent.KlijentId,
-                    KlijentIme = x.Klijent.Ime,  // Samo ime umjesto cijelog objekta
+                    KlijentIme = x.Klijent.Ime,  
                     AutoservisId = x.Autoservis.AutoservisId,
-                    AutoservisNaziv = x.Autoservis.Naziv // Samo naziv umjesto cijelog objekta
+                    AutoservisNaziv = x.Autoservis.Naziv 
                 }).ToList();
             }
             else if (userRole == "Autoservis" && targetId == parsedUserId)
@@ -154,10 +134,8 @@ namespace CarCareHub.Services
                     .GroupBy(x => x.KlijentId)
                     .Select(g => g.First())
                     .ToList();
-
                 if (!chatRecords.Any())
                     throw new Exception("No data found.");
-
                 return chatRecords.Select(x => new PorukaDTO
                 {
                     KlijentId = x.Klijent.KlijentId,
@@ -166,13 +144,7 @@ namespace CarCareHub.Services
                     AutoservisNaziv = x.Autoservis.Naziv
                 }).ToList();
             }
-
             throw new Exception("Unauthorized access or unsupported role.");
         }
-
-
     }
 }
-
-
-

@@ -8,7 +8,6 @@ namespace CarCareHub.Model
 {
     public class GodisteUpdate
     {
-
         public int? Godiste_ { get; set; }
     }
 }

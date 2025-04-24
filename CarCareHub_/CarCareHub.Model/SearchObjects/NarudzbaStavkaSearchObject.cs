@@ -10,7 +10,6 @@ namespace CarCareHub.Model.SearchObjects
     {
 
         public bool IsAllncluded { get; set; }
-
         public int? NarudzbaId { get; set; }
 
     }

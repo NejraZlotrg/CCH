@@ -8,9 +8,7 @@ namespace CarCareHub.Model
 {
     public class PorukaUpdate
     {
-
         public string Sadrzaj { get; set; }
-        //istp update uraditi 
         public DateTime VrijemeSlanja { get; set; }
     }
 }

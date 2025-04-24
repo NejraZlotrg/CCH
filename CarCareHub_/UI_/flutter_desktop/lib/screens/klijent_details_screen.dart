@@ -127,7 +127,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovog klijenta?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -151,7 +151,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Klijent uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {

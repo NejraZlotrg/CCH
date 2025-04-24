@@ -20,7 +20,6 @@ namespace CarCareHub.Services.ProizvodiStateMachine
             set.StateMachine = "draft";
             await _dbContext.SaveChangesAsync();
 
-
             return _mapper.Map<Model.Proizvod>(set);
         }
         public override async Task<List<string>> AllowedActions(int id)

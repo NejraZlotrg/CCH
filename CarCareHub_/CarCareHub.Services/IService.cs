@@ -10,18 +10,10 @@ namespace CarCareHub.Services
     public interface IService<T, TSearch> where TSearch : class 
    
     {
-        //Task<List<T>> Get(TSearch search=null);
         Task<PagedResult<T>> Get(TSearch search = null);
         Task<PagedResult<T>> GetAdmin
             (TSearch search = null);
-
         Task<T> GetByID(int id);
         Task<List<T>> GetByID_(int id);
-
-
-
-
-
-
     }
 }

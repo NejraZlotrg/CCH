@@ -16,41 +16,34 @@ namespace CarCareHub.Services
         private static object isLocked = new();
         private static ITransformer? _model; 
         private readonly IMapper _mapper;
-
-
         public RecommenderService(CchV2AliContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
-
-
-        public async Task<List<Database.Proizvod>> GetRecommendationsByArticleId(long articleId, CancellationToken cancellationToken)
+        public async Task<List<Database.Proizvod>> GetRecommendationsByProizvodId(long proizvodId, CancellationToken cancellationToken)
         {
-            var entity = await _dbContext.Recommenders.FirstOrDefaultAsync(x => x.ProizvodId == articleId, cancellationToken);
+            var entity = await _dbContext.Recommenders.FirstOrDefaultAsync(x => x.ProizvodId == proizvodId, cancellationToken);
 
             if (entity is null)
             {
-                Console.WriteLine($"Nema preporuka za proizvod ID: {articleId}");
+                Console.WriteLine($"Nema preporuka za proizvod ID: {proizvodId}");
                 return new();
             }
+            var recommendedProizvodIds = new List<long>();
 
-         
+            recommendedProizvodIds.Add(entity.PrvaPreporukaId ?? 0);
+            recommendedProizvodIds.Add(entity.DrugaPreporukaId ?? 0);
+            recommendedProizvodIds.Add(entity.TrecaPreporukaId ?? 0);
 
-            var recommendedArticleIds = new List<long>();
-
-            recommendedArticleIds.Add(entity.PrvaPreporukaId ?? 0);
-            recommendedArticleIds.Add(entity.DrugaPreporukaId ?? 0);
-            recommendedArticleIds.Add(entity.TrecaPreporukaId ?? 0);
-
-            var articles = await _dbContext.Proizvods
-                .Where(x => recommendedArticleIds.Contains(x.ProizvodId))
+            var proizvodi = await _dbContext.Proizvods
+                .Where(x => recommendedProizvodIds.Contains(x.ProizvodId))
                 .ToListAsync(cancellationToken);
 
-            return articles;
+            return proizvodi;
         }
 
-        private List<Database.Proizvod> Recommend(long articleId)
+        private List<Database.Proizvod> Recommend(long proizvodId)
         {
             lock (isLocked)
             {
@@ -60,7 +53,7 @@ namespace CarCareHub.Services
 
                     var tmpData = _dbContext.NarudzbaStavkas.Include(x => x.Proizvod).ToList();
 
-                    var data = new List<ArticleRecommendation>();
+                    var data = new List<ProizvodRecommendation>();
 
                     foreach (var x in tmpData)
                     {
@@ -72,7 +65,7 @@ namespace CarCareHub.Services
 
                             foreach (var z in relatedItems)
                             {
-                                data.Add(new ArticleRecommendation
+                                data.Add(new ProizvodRecommendation
                                 {
                                     ProizvodId = (uint)y,
                                     CoProizvodId = (uint)z
@@ -84,8 +77,8 @@ namespace CarCareHub.Services
                     var trainData = _mlContext.Data.LoadFromEnumerable(data);
 
                     MatrixFactorizationTrainer.Options options = new MatrixFactorizationTrainer.Options();
-                    options.MatrixColumnIndexColumnName = nameof(ArticleRecommendation.ProizvodId);
-                    options.MatrixRowIndexColumnName = nameof(ArticleRecommendation.CoProizvodId);
+                    options.MatrixColumnIndexColumnName = nameof(ProizvodRecommendation.ProizvodId);
+                    options.MatrixRowIndexColumnName = nameof(ProizvodRecommendation.CoProizvodId);
                     options.LabelColumnName = "Label";
 
                     options.LossFunction = MatrixFactorizationTrainer.LossFunctionType.SquareLossOneClass;
@@ -101,17 +94,17 @@ namespace CarCareHub.Services
                 }
             }
 
-            var articles = _dbContext.Proizvods.Where(x => x.ProizvodId != articleId).ToList();
+            var proizvodi = _dbContext.Proizvods.Where(x => x.ProizvodId != proizvodId).ToList();
 
             var predictionResult = new List<Tuple<Database.Proizvod, float>>();
 
-            foreach (var proizvod in articles)
+            foreach (var proizvod in proizvodi)
             {
-                var predictionEngine = _mlContext.Model.CreatePredictionEngine<ArticleRecommendation, CoArticlePrediction>(_model);
+                var predictionEngine = _mlContext.Model.CreatePredictionEngine<ProizvodRecommendation, CoProizvodPrediction>(_model);
 
-                var prediction = predictionEngine.Predict(new ArticleRecommendation
+                var prediction = predictionEngine.Predict(new ProizvodRecommendation
                 {
-                    ProizvodId = (uint)articleId,
+                    ProizvodId = (uint)proizvodId,
                     CoProizvodId = (uint)proizvod.ProizvodId
                 });
 
@@ -127,24 +120,24 @@ namespace CarCareHub.Services
         {
             try
             {
-                var articles = await _dbContext.Proizvods.ToListAsync(cancellationToken);
+                var proizvodi = await _dbContext.Proizvods.ToListAsync(cancellationToken);
 
 
                 // Bilo > 1 pa radilo
-                if (articles.Count > 4)
+                if (proizvodi.Count > 4)
                 {
                     var recommendList = new List<Database.Recommender>();
 
-                    foreach (var article in articles)
+                    foreach (var proizvod in proizvodi)
                     {
-                        var recommendedArticles = Recommend(article.ProizvodId);
+                        var recommendedProizvodi = Recommend(proizvod.ProizvodId);
 
                         var result = new Database.Recommender
                         {
-                            ProizvodId = article.ProizvodId,
-                            PrvaPreporukaId = recommendedArticles[0].ProizvodId,
-                            DrugaPreporukaId = recommendedArticles[1].ProizvodId,
-                            TrecaPreporukaId = recommendedArticles[2].ProizvodId,
+                            ProizvodId = proizvod.ProizvodId,
+                            PrvaPreporukaId = recommendedProizvodi[0].ProizvodId,
+                            DrugaPreporukaId = recommendedProizvodi[1].ProizvodId,
+                            TrecaPreporukaId = recommendedProizvodi[2].ProizvodId,
                         };
 
                         recommendList.Add(result);
@@ -173,14 +166,14 @@ namespace CarCareHub.Services
         private async Task CreateNewRecommendation(List<Database.Recommender> results, CancellationToken cancellationToken)
         {
             var existingRecommendations = await _dbContext.Recommenders.ToListAsync(cancellationToken);
-            var articlesCount = await _dbContext.Proizvods.CountAsync(cancellationToken);
+            var proizvodiCount = await _dbContext.Proizvods.CountAsync(cancellationToken);
             var recommendationCount = await _dbContext.Recommenders.CountAsync(cancellationToken);
 
             if (recommendationCount != 0)
             {
-                if (recommendationCount > articlesCount)
+                if (recommendationCount > proizvodiCount)
                 {
-                    for (int i = 0; i < articlesCount; i++)
+                    for (int i = 0; i < proizvodiCount; i++)
                     {
                         existingRecommendations[i].ProizvodId = results[i].ProizvodId;
                         existingRecommendations[i].PrvaPreporukaId = results[i].PrvaPreporukaId;

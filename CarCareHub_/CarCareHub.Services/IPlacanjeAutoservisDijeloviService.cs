@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-
     public interface IPlacanjeAutoservisDijeloviService : ICRUDService<Model.PlacanjeAutoservisDijelovi, PlacanjeAutoservisDijeloviSearchObject, PlacanjeAutoservisDijeloviInsert, PlacanjeAutoservisDijeloviUpdate>
     {
     }

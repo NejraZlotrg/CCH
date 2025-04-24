@@ -9,7 +9,6 @@ namespace CarCareHub.Model
     public class DrzavaUpdate
     {
         public string? NazivDrzave { get; set; }
-        // Možete dodati druga svojstva koja se mogu ažurirati
     }
 }
 

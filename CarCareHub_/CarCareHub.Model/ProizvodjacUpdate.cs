@@ -9,6 +9,5 @@ namespace CarCareHub.Model
     public class ProizvodjacUpdate
     {
         public string? NazivProizvodjaca { get; set; }
-
     }
 }

@@ -10,13 +10,11 @@ using System.Collections.Generic;
 
 namespace CarCareHub.Services
 {
-
     public class KategorijaService : BaseCRUDService<Model.Kategorija, Database.Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>, IKategorijaService
     {
         public KategorijaService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-
         public override IQueryable<Database.Kategorija> AddFilter(IQueryable<Database.Kategorija> query, KategorijaSearchObject search = null)
         {
             if (!string.IsNullOrWhiteSpace(search?.NazivKategorije))
@@ -25,15 +23,10 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
-
-        // Metoda za dodavanje početnih kategorija
         public async Task AddKategorijaAsync()
         {
-            // Provjerite broj postojećih kategorija u bazi
             var initialCount = await _dbContext.Kategorijas.CountAsync();
             Console.WriteLine($"Broj kategorija prije dodavanja: {initialCount}");
-
-            // Ako ne postoji nijedna kategorija, dodajte 3 unaprijed definirane
             if (initialCount == 0)
             {
                 var kategorijaInsert = new List<KategorijaInsert>
@@ -42,16 +35,11 @@ namespace CarCareHub.Services
                     new KategorijaInsert { NazivKategorije = "Motocikli", Vidljivo = true },
                     new KategorijaInsert { NazivKategorije = "Kamioni", Vidljivo = true }
                 };
-
                 var kategorijaEntities = kategorijaInsert.Select(k => _mapper.Map<Database.Kategorija>(k)).ToList();
-
-                // Dodajte nove kategorije u bazu
                 await _dbContext.Kategorijas.AddRangeAsync(kategorijaEntities);
                 await _dbContext.SaveChangesAsync();
                 Console.WriteLine("Kategorije su dodane.");
             }
-
-            // Provjerite broj kategorija nakon dodavanja
             var finalCount = await _dbContext.Kategorijas.CountAsync();
             Console.WriteLine($"Broj kategorija nakon dodavanja: {finalCount}");
         }

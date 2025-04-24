@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarCareHub_
 {
-
-
     [ApiController]
     [AllowAnonymous]
     [Route("api/korpa")]
@@ -20,19 +18,16 @@ namespace CarCareHub_
         {
             _korpaService = korpaService;
         }
-
-
         [HttpDelete("deleteProizvodIzKorpe/{korpaId}/{proizvodId}")]
         public async Task<IActionResult> DeleteProizvodIzKorpe(int korpaId, int proizvodId)
         {
             var result = await _korpaService.DeleteProizvodIzKorpe(korpaId, proizvodId);
-            if (!result) // Ako metoda vraća false, proizvod nije pronađen ili je došlo do greške
+            if (!result)
             {
                 return NotFound(new { Message = "Proizvod nije pronađen u korpi." });
             }
             return Ok(new { Message = "Proizvod uspešno obrisan iz korpe." });
         }
-
         [HttpPut("{korpaId}/proizvod/{proizvodId}")]
         public async Task<IActionResult> UpdateKolicina(int? korpaId, int? proizvodId, int novaKolicina)
         {
@@ -46,18 +41,11 @@ namespace CarCareHub_
                 return BadRequest(new { Error = ex.Message });
             }
         }
-
-
         [HttpDelete("ocistiKorpu")]
         public async Task<IActionResult> OčistiKorpu(int? klijentId, int? zaposlenikId, int? autoservisId)
         {
-           
                 await _korpaService.OčistiKorpu(klijentId, zaposlenikId, autoservisId);
                 return Ok(new { Message = "Korpa očišćena!" });
-           
         }
     }
-
-
 }
-

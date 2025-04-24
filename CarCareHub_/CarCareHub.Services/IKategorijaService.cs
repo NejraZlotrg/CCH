@@ -6,6 +6,5 @@ namespace CarCareHub.Services
     public interface IKategorijaService : ICRUDService<Kategorija, KategorijaSearchObject, KategorijaInsert, KategorijaUpdate>
     {
         public Task AddKategorijaAsync();
-
     }
 }

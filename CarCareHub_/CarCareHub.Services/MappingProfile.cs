@@ -42,8 +42,6 @@ namespace CarCareHub.Services
             CreateMap<Model.UslugeInsert, CarCareHub.Services.Database.Usluge>();
             CreateMap<Model.UslugeUpdate, CarCareHub.Services.Database.Usluge>();
 
-           
-
             CreateMap<CarCareHub.Services.Database.Zaposlenik, Model.Zaposlenik>();
             CreateMap<Model.ZaposlenikUpdate, CarCareHub.Services.Database.Zaposlenik>();
             CreateMap<Model.ZaposlenikInsert, CarCareHub.Services.Database.Zaposlenik>();
@@ -51,8 +49,6 @@ namespace CarCareHub.Services
             CreateMap<CarCareHub.Services.Database.Proizvodjac, Model.Proizvodjac>();
             CreateMap<Model.ProizvodjacUpdate, CarCareHub.Services.Database.Proizvodjac>();
             CreateMap<Model.ProizvodjacInsert, CarCareHub.Services.Database.Proizvodjac>();
-
-
 
             CreateMap<Database.Proizvod, Model.Proizvod>();
             CreateMap<Model.ProizvodiInsert, CarCareHub.Services.Database.Proizvod>();
@@ -74,8 +70,6 @@ namespace CarCareHub.Services
             CreateMap<Model.NarudzbaStavkaUpdate, CarCareHub.Services.Database.NarudzbaStavka>();
             CreateMap<Model.NarudzbaStavkaInsert, CarCareHub.Services.Database.NarudzbaStavka>();
 
-
-
             CreateMap<CarCareHub.Services.Database.Poruka, Model.Poruka>();
             CreateMap<Model.PorukaUpdate, CarCareHub.Services.Database.Poruka>();
             CreateMap<Model.PorukaInsert, CarCareHub.Services.Database.Poruka>();
@@ -92,7 +86,6 @@ namespace CarCareHub.Services
             CreateMap<Model.ChatKlijentZaposlenikUpdate, CarCareHub.Services.Database.ChatKlijentZaposlenik>();
             CreateMap<Model.ChatKlijentZaposlenikInsert, CarCareHub.Services.Database.ChatKlijentZaposlenik>();
 
-
             CreateMap<CarCareHub.Services.Database.PlacanjeAutoservisDijelovi, Model.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviUpdate, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
             CreateMap<Model.PlacanjeAutoservisDijeloviInsert, CarCareHub.Services.Database.PlacanjeAutoservisDijelovi>();
@@ -101,11 +94,9 @@ namespace CarCareHub.Services
             CreateMap<Model.BPAutodijeloviAutoservisUpdate, CarCareHub.Services.Database.BPAutodijeloviAutoservis>();
             CreateMap<Model.BPAutodijeloviAutoservisInsert, CarCareHub.Services.Database.BPAutodijeloviAutoservis>();
 
-
             CreateMap<CarCareHub.Services.Database.Korpa, Model.Korpa>();
             CreateMap<Model.KorpaUpdate, CarCareHub.Services.Database.Korpa>();
             CreateMap<Model.KorpaInsert, CarCareHub.Services.Database.Korpa>();
-
 
             CreateMap<ChatAutoservisKlijentInsert, Model.ChatAutoservisKlijent>();
             CreateMap<Model.ChatAutoservisKlijent, ChatAutoservisKlijentInsert>();
@@ -119,12 +110,6 @@ namespace CarCareHub.Services
             .ForMember(dest => dest.Autoservis, opt => opt.MapFrom(src => src.Autoservis));
 
             CreateMap<CarCareHub.Services.Database.Recommender, Model.Recommender>();
-
-            //CreateMap< Model.Zaposlenik, CarCareHub.Services.Database.Zaposlenik>();
-
-            // CreateMap<CarCareHub.Services.Database.FirmaAutodijelova, Model.FirmaAutodijelova>();
-            // CreateMap<CarCareHub.Services.Database.FirmaAutodijelova, Model.FirmaAutodijelovaInsert>();
-
         }
     }
 }

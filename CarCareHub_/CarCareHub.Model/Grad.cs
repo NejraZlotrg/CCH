@@ -9,9 +9,7 @@ namespace CarCareHub.Model
     public class Grad
     {
         public int GradId { get; set; }
-
         public string? NazivGrada { get; set; }
-
         public int DrzavaId { get; set; }
         public virtual Drzava Drzava { get; set; }
         public bool Vidljivo { get; set; }

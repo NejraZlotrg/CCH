@@ -9,16 +9,14 @@ public partial class Proizvod
     public decimal? Cijena { get; set; }
     public decimal? CijenaSaPopustom { get; set; }
     public decimal? CijenaSaPopustomZaAutoservis { get; set; }
-
     public int? Popust { get; set; }
-
     public string? Sifra { get; set; }
     public string? OriginalniBroj { get; set; }
     public string? ModelProizvoda { get; set; }
     public string? Opis { get; set; }
     public int? KategorijaId { get; set; }
     public virtual Kategorija? Kategorija { get; set; }
-    public int? ModelId { get; set; } // Foreign key
+    public int? ModelId { get; set; } 
     public bool Vidljivo { get; set; }
     public virtual Model? Model { get; set; }
     public int? ProizvodjacId { get; set; }
@@ -26,11 +24,7 @@ public partial class Proizvod
     public string? StateMachine { get; set; }
     public int? FirmaAutodijelovaID { get; set; }
     public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
-
-    // Navigation properties
-   // public virtual ICollection<NarudzbaStavka> NarudzbaStavkas { get; set; } = new List<NarudzbaStavka>();
     public virtual ICollection<Korpa> Korpas { get; set; } = new List<Korpa>();
-
     public virtual Proizvodjac? Proizvodjac { get; set; }
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
 }

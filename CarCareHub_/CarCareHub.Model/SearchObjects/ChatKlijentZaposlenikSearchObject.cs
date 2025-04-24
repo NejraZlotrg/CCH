@@ -8,7 +8,6 @@ namespace CarCareHub.Model.SearchObjects
 {
     public class ChatKlijentZaposlenikSearchObject: BaseSearchObject
     {
-       // public string? Naziv { get; set; }
         public bool IsAllIncluded { get; set; }
 
     }

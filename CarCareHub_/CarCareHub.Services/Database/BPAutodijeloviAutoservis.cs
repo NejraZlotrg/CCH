@@ -12,9 +12,7 @@ namespace CarCareHub.Services.Database
         public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
         public virtual Autoservis? Autoservis { get; set; }
         public bool Vidljivo { get; set; }
-
         public int? FirmaAutodijelovaID { get; set; }
         public int? AutoservisId { get; set; }
-
     }
 }

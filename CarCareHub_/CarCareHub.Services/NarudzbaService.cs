@@ -15,15 +15,11 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CarCareHub.Services
 {
-
-
     public class NarudzbaService : BaseCRUDService<Model.Narudzba, Database.Narudzba, NarudzbaSearchObject, NarudzbaInsert, NarudzbaUpdate>, INarudzbaService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-
         public NarudzbaService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
@@ -32,16 +28,12 @@ namespace CarCareHub.Services
         }
         public override async Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
         {
-            // Get items from cart
             var korpe = await _dbContext.Korpas
                 .Where(x => (!insert.KlijentId.HasValue || x.KlijentId == insert.KlijentId) &&
                             (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
                             (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId))
                 .ToListAsync();
-
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
-
-            // Create new order
             var narudzba = new CarCareHub.Services.Database.Narudzba
             {
                 DatumNarudzbe = DateTime.Now,
@@ -50,8 +42,6 @@ namespace CarCareHub.Services
                 Adresa = insert.Adresa,
                 UkupnaCijenaNarudzbe = 0
             };
-
-            // Set order owner based on role
             if (insert.KlijentId.HasValue && userRole == "Klijent")
             {
                 var k = await _dbContext.Klijents.FirstOrDefaultAsync(x => x.KlijentId == insert.KlijentId);
@@ -70,14 +60,10 @@ namespace CarCareHub.Services
                 narudzba.AutoservisId = insert.AutoservisId.Value;
                 narudzba.Adresa = a?.Adresa ?? insert.Adresa;
             }
-
             await _dbContext.AddAsync(narudzba);
             await _dbContext.SaveChangesAsync();
-
             decimal ukupnaCijena = 0;
             List<int> firmaAutodijelovaIds = null;
-
-            // Get autoparts companies for autoservice only once
             if (userRole == "Autoservis" && insert.AutoservisId.HasValue)
             {
                 firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
@@ -85,25 +71,18 @@ namespace CarCareHub.Services
                     .Select(f => f.FirmaAutodijelovaID)
                     .ToListAsync();
             }
-
-            // Process each cart item
             foreach (var item in korpe)
             {
                 var proizvod = await _dbContext.Proizvods
                     .Include(p => p.FirmaAutodijelova)
                     .FirstOrDefaultAsync(p => p.ProizvodId == item.ProizvodId);
-
                 if (proizvod == null) continue;
-
                 decimal cijenaProizvoda;
                 int kolicina = item.Kolicina ?? 1;
-
-                // Pricing logic based on user role
                 switch (userRole)
                 {
                     case "Autoservis":
                         bool isInFirmaAutodijelovaList = firmaAutodijelovaIds?.Contains(proizvod.FirmaAutodijelovaID ?? 0) ?? false;
-
                         if (isInFirmaAutodijelovaList && proizvod.CijenaSaPopustomZaAutoservis.HasValue)
                             cijenaProizvoda = proizvod.CijenaSaPopustomZaAutoservis.Value;
                         else if (proizvod.CijenaSaPopustom.HasValue)
@@ -111,178 +90,77 @@ namespace CarCareHub.Services
                         else
                             cijenaProizvoda = proizvod.Cijena ?? 0;
                         break;
-
                     case "Zaposlenik":
                     case "Klijent":
                         cijenaProizvoda = proizvod.CijenaSaPopustom.HasValue
                             ? proizvod.CijenaSaPopustom.Value
                             : proizvod.Cijena ?? 0;
                         break;
-
                     default:
                         cijenaProizvoda = proizvod.Cijena ?? 0;
                         break;
                 }
-
                 decimal ukupnaStavka = cijenaProizvoda * kolicina;
                 ukupnaCijena += ukupnaStavka;
-
                 var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
                 {
                     ProizvodId = item.ProizvodId,
                     NarudzbaId = narudzba.NarudzbaId,
                     Kolicina = kolicina,
                     Vidljivo = true
-
                 };
-
                 narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
             }
-
-            // Update order totals
             narudzba.UkupnaCijenaNarudzbe = ukupnaCijena;
             narudzba.DatumNarudzbe = DateTime.UtcNow;
             narudzba.DatumIsporuke = DateTime.Now.AddDays(7);
-
             await _dbContext.SaveChangesAsync();
-
             return _mapper.Map<Model.Narudzba>(narudzba);
         }
-
         public override async Task<Model.Narudzba> Update(int id, Model.NarudzbaUpdate update)
         {
             return await base.Update(id, update);
         }
-
         public override async Task<Model.Narudzba> Delete(int id)
         {
             return await base.Delete(id);
         }
-
-
         public async Task<Model.Narudzba> PotvrdiNarudzbu(int narudzbaId)
         {
-            // Pronalaženje narudžbe u bazi
             var narudzba = await _dbContext.Narudzbas.FindAsync(narudzbaId);
             if (narudzba == null)
                 throw new Exception("Narudžba nije pronađena.");
-
-            // Postavljanje narudžbe kao završene
             narudzba.ZavrsenaNarudzba = true;
             narudzba.DatumIsporuke = DateTime.Now;
-
-            // Spremanje promjena u bazu
             _dbContext.Narudzbas.Update(narudzba);
             await _dbContext.SaveChangesAsync();
 
             return _mapper.Map<Model.Narudzba>(narudzba);
         }
-
-        //public async Task<Model.Narudzba> DodajStavkuUKosaricu(int proizvodId, int kolicina)
-        //{
-        //    Provjeriti postoji li aktivna narudžba
-        //   var aktivnaNarudzba = await _dbContext.Narudzbas
-        //       .Where(n => n.ZavrsenaNarudzba == false) // Provjera da li je narudžba aktivna
-        //       .FirstOrDefaultAsync();
-
-        //    if (aktivnaNarudzba != null)
-        //    {
-        //        var proizvod = await _dbContext.Proizvods.FindAsync(proizvodId);
-        //        if (proizvod == null)
-        //        {
-        //            throw new Exception("Proizvod nije pronađen.");
-        //        }
-
-        //        var novaStavka = new NarudzbaStavkaInsert
-        //        {
-        //            ProizvodId = proizvodId,
-        //            Kolicina = kolicina,
-        //            NarudzbaId = aktivnaNarudzba.NarudzbaId,
-        //            UkupnaCijenaProizvoda = proizvod.CijenaSaPopustom * kolicina
-        //        };
-
-        //        var stavkaService = new NarudzbaStavkaService(_dbContext, _mapper);
-        //        var stavka = await stavkaService.Insert(novaStavka);
-
-        //        _dbContext.Narudzbas.Update(aktivnaNarudzba);
-        //        await _dbContext.SaveChangesAsync();
-
-        //        Mapiranje entiteta na model prije vraćanja
-        //        var aktivnaNarudzbaModel = _mapper.Map<CarCareHub.Model.Narudzba>(aktivnaNarudzba);
-        //        return aktivnaNarudzbaModel;
-        //    }
-        //    else
-        //    {
-        //        var novaNarudzba = new NarudzbaInsert
-        //        {
-        //            UkupnaCijenaNarudzbe = 0,
-        //            ZavrsenaNarudzba = false,
-        //            NarudzbaStavkas = new List<Model.NarudzbaStavka>()
-        //        };
-
-        //        var narudzba = await base.Insert(novaNarudzba);
-        //        var narudzbaModel = _mapper.Map<CarCareHub.Model.Narudzba>(narudzba);
-
-        //        return narudzbaModel;
-        //    }
-        //}
-
-
         public override IQueryable<Database.Narudzba> AddInclude(IQueryable<Database.Narudzba> query, NarudzbaSearchObject? search = null)
         {
-            // Uključujemo samo entitet Uloge
-            if (search?.IsAllIncluded == true)
-            {
-                //query = query.Include(z => z.NarudzbaStavke);
-                //query = query.Include(z => z.NarudzbaStavke.Proizvod);
-                //query = query.Include(z => z.NarudzbaStavke.Proizvod.Proizvodjac);
-                //query = query.Include(z => z.NarudzbaStavke.Proizvod.Kategorija);
-                //query = query.Include(z => z.Popust.Autoservis);
-                //query = query.Include(z => z.Popust.Autoservis.Grad);
-                //query = query.Include(z => z.Popust.Autoservis.Grad.Drzava);
-                //query = query.Include(z => z.Popust.Autoservis.Uloga);
-                //query = query.Include(z => z.Popust.Autoservis.Usluge);
-                //query = query.Include(z => z.Popust.Autoservis.Vozilo);
-                //query = query.Include(z => z.Popust.FirmaAutodijelova);
-                //query = query.Include(z => z.Popust.FirmaAutodijelova.Grad);
-                //query = query.Include(z => z.Popust.FirmaAutodijelova.Izvjestaj);
-                //query = query.Include(z => z.Popust.FirmaAutodijelova.Uloga);
-            }
             return base.AddInclude(query, search);
         }
-
-
         public async Task<List<Model.Narudzba>> GetByLogeedUser_(int id)
         {
-            // Početni upit
             var query = _dbContext.Narudzbas.AsQueryable();
-
-            // Dohvati trenutnu prijavljenu ulogu korisnika
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
-            query = query.Include(x => x.Klijent) // Uključivanje Klijenta
-                         .Include(x => x.Zaposlenik) // Uključivanje Zaposlenika
-                         .Include(x => x.Autoservis); // Uključivanje Autoservisa (ako je potrebno)
-
-            // Filtriranje na temelju korisničke uloge
+            query = query.Include(x => x.Klijent)
+                         .Include(x => x.Zaposlenik) 
+                         .Include(x => x.Autoservis);
             if (userRole != null)
             {
                 switch (userRole)
                 {
                     case "Klijent":
-                        // Ako je korisnik Klijent, filtriraj samo po KlijentId
                         query = query.Where(x => x.KlijentId == id);
                         break;
-
                     case "Zaposlenik":
-                        // Ako je korisnik Zaposlenik, filtriraj samo po ZaposlenikId
                         query = query.Where(x => x.ZaposlenikId == id);
                         break;
-
                     case "Autoservis":
-                        // Ako je korisnik Autoservis, filtriraj samo po AutoservisId
                         query = query.Where(x => x.AutoservisId == id);
                         break;
-
                     default:
                         throw new Exception("Nepoznata uloga korisnika.");
                 }
@@ -291,70 +169,49 @@ namespace CarCareHub.Services
             {
                 throw new Exception("Korisnička uloga nije dostupna.");
             }
-
-            // Dohvatanje podataka iz baze
             var result = await query.ToListAsync();
-
-            // Provjera da li je rezultat null
             if (result == null || !result.Any())
             {
-                // Vrati praznu listu ako nema podataka
                 return new List<Model.Narudzba>();
             }
-
-            // Mapiranje rezultata na Model.Narudzba
             var mappedResult = _mapper.Map<List<Model.Narudzba>>(result);
-
-            // Vrati mapiranu listu
             return mappedResult;
         }
-
-
         public async Task<List<IzvjestajNarudzbi>> GetIzvjestajNarudzbi(DateTime? odDatuma, DateTime? doDatuma, int? kupacId, int? zaposlenikId, int? autoservisId)
         {
             var query = _dbContext.Narudzbas
-                .Include(n => n.Klijent) // Include Klijent navigation property
-                .Include(n => n.Zaposlenik) // Include Zaposlenik navigation property
+                .Include(n => n.Klijent) 
+                .Include(n => n.Zaposlenik) 
                 .Include(n => n.Autoservis)
-                .Where(x => x.ZavrsenaNarudzba == true)// Include Autoservis navigation property
+                .Where(x => x.ZavrsenaNarudzba == true)
                 .AsQueryable();
-
-            // Filtriranje prema vremenskom periodu
             if (odDatuma.HasValue)
                 query = query.Where(n => n.DatumNarudzbe >= odDatuma.Value);
-
             if (doDatuma.HasValue)
                 query = query.Where(n => n.DatumNarudzbe <= doDatuma.Value);
-
-            // Filtriranje po kupcu, zaposleniku ili autoservisu
             if (kupacId.HasValue)
                 query = query.Where(n => n.KlijentId == kupacId.Value);
-
             if (zaposlenikId.HasValue)
                 query = query.Where(n => n.ZaposlenikId == zaposlenikId.Value);
-
             if (autoservisId.HasValue)
                 query = query.Where(n => n.AutoservisId == autoservisId.Value);
-
             var narudzbe = await query.ToListAsync();
-
-            // Mapiranje u listu izvještaja
             var izvjestaj = narudzbe.Select(n => new IzvjestajNarudzbi
             {
                 NarudzbaId = n.NarudzbaId,
                 DatumNarudzbe = n.DatumNarudzbe,
-                Klijent = n.Klijent != null ? new Model.Klijent // Map Klijent navigation property
+                Klijent = n.Klijent != null ? new Model.Klijent 
                 {
                     KlijentId = n.Klijent.KlijentId,
                     Ime = n.Klijent.Ime,
                     Prezime = n.Klijent.Prezime
                 } : null,
-                Autoservis = n.Autoservis != null ? new Model.Autoservis // Map Autoservis navigation property
+                Autoservis = n.Autoservis != null ? new Model.Autoservis 
                 {
                     AutoservisId = n.Autoservis.AutoservisId,
                     Naziv = n.Autoservis.Naziv
                 } : null,
-                Zaposlenik = n.Zaposlenik != null ? new Model.Zaposlenik // Map Zaposlenik navigation property
+                Zaposlenik = n.Zaposlenik != null ? new Model.Zaposlenik 
                 {
                     ZaposlenikId = n.Zaposlenik.ZaposlenikId,
                     Ime = n.Zaposlenik.Ime,
@@ -363,19 +220,14 @@ namespace CarCareHub.Services
                 UkupnaCijena = n.UkupnaCijenaNarudzbe,
                 Status = n.ZavrsenaNarudzba
             }).ToList();
-
             return izvjestaj;
         }
-
         public async Task<List<AutoservisIzvjestaj>> GetAutoservisIzvjestaj()
         {
             try
             {
-                // Calculate date range (last 30 days)
                 var startDate = DateTime.Now.AddDays(-30);
                 var endDate = DateTime.Now;
-
-                // Get all completed orders for autoservices in the last 30 days
                 var orders = await _dbContext.Narudzbas
                     .Include(n => n.Autoservis)
                     .Include(n => n.NarudzbaStavkas)
@@ -386,8 +238,6 @@ namespace CarCareHub.Services
                               && n.DatumNarudzbe <= endDate)
                     .AsNoTracking()
                     .ToListAsync();
-
-                // Group by autoservice and calculate statistics
                 var report = orders
                     .GroupBy(n => n.AutoservisId)
                     .Select(g => {
@@ -423,55 +273,31 @@ namespace CarCareHub.Services
                 throw;
             }
         }
-
-
         public async Task<List<Model.Narudzba>> GetNarudzbeZaFirmu(int id)
         {
-            // Početni upit za Narudžbe
             var query = _dbContext.NarudzbaStavkas.AsQueryable();
-
-            // Dohvati trenutnu prijavljenu ulogu korisnika
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
-
-            // Uključivanje potrebnih entiteta
             query = query.Include(x => x.Proizvod)
                          .ThenInclude(ns => ns.FirmaAutodijelova).Where(f => f.Proizvod.FirmaAutodijelova.FirmaAutodijelovaID == id);
-
-
             var query2 = _dbContext.Narudzbas.AsQueryable();
-
-            // Filtriranje na temelju korisničke uloge
-            // Prvo dobijte distinct NarudzbaID iz query1
             var narudzbaIdsIzQuery1 = await query.Select(x => x.NarudzbaId).Distinct().ToListAsync();
-
-            // Zatim filtrirajte query2
             query2 = query2.Where(n => narudzbaIdsIzQuery1.Contains(n.NarudzbaId))
                            .Include(x => x.NarudzbaStavkas)
                            .ThenInclude(ns => ns.Proizvod);
-
-            // Dohvatanje podataka iz baze
             var result = await query2.ToListAsync();
-
-            // Provjera da li je rezultat null
             if (result == null || !result.Any())
             {
                 return new List<Model.Narudzba>();
             }
-
-            // Mapiranje rezultata na Model.Narudzba
             var mappedResult = _mapper.Map<List<Model.Narudzba>>(result);
-
             return mappedResult;
         }
         public async Task<List<KlijentIzvjestaj>> GetNarudzbeZaSveKlijente()
         {
             try
             {
-                // Calculate date range (last 30 days)
                 var startDate = DateTime.Now.AddDays(-30);
                 var endDate = DateTime.Now;
-
-                // Get all completed orders for clients in the last 30 days
                 var orders = await _dbContext.Narudzbas
                     .Include(n => n.Klijent)
                     .Include(n => n.NarudzbaStavkas)
@@ -482,29 +308,23 @@ namespace CarCareHub.Services
                               && n.DatumNarudzbe <= endDate)
                     .AsNoTracking()
                     .ToListAsync();
-
-                // Check if orders exist
                 if (orders == null || !orders.Any())
                 {
                     return new List<KlijentIzvjestaj>();
                 }
-
-                // Group by client and calculate statistics
                 var report = orders
                     .GroupBy(n => n.KlijentId)
-                    .Where(g => g.Key.HasValue) // Additional check for null KlijentId
+                    .Where(g => g.Key.HasValue) 
                     .Select(g => {
                         var firstOrder = g.FirstOrDefault();
                         if (firstOrder == null || firstOrder.Klijent == null)
                         {
                             return null;
                         }
-
                         var narudzbaStavke = g.SelectMany(n => n.NarudzbaStavkas ?? Enumerable.Empty<Database.NarudzbaStavka>());
                         var proizvodiGroups = narudzbaStavke
                             .Where(ns => ns.Proizvod != null)
                             .GroupBy(ns => ns.Proizvod);
-
                         var popularniProizvodi = proizvodiGroups
                             .OrderByDescending(pg => pg.Sum(ns => ns.Kolicina))
                             .Take(3)
@@ -516,7 +336,6 @@ namespace CarCareHub.Services
                                 UkupnaVrijednost = (decimal)pg.Sum(ns => ns.Kolicina * (pg.Key?.Cijena ?? 0))
                             })
                             .ToList();
-
                         return new KlijentIzvjestaj
                         {
                             KlijentId = g.Key.Value,
@@ -527,10 +346,9 @@ namespace CarCareHub.Services
                             NajpopularnijiProizvodi = popularniProizvodi
                         };
                     })
-                    .Where(x => x != null) // Filter out null results
+                    .Where(x => x != null)
                     .OrderByDescending(x => x.UkupanIznos)
                     .ToList();
-
                 return report ?? new List<KlijentIzvjestaj>();
             }
             catch (Exception ex)
@@ -539,17 +357,12 @@ namespace CarCareHub.Services
                 throw;
             }
         }
-   
-
     public async Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike()
         {
             try
             {
-                // Calculate date range (last 30 days)
                 var startDate = DateTime.Now.AddDays(-30);
                 var endDate = DateTime.Now;
-
-                // Get all completed orders handled by employees in the last 30 days
                 var orders = await _dbContext.Narudzbas
                     .Include(n => n.Zaposlenik)
                     .Include(n => n.NarudzbaStavkas)
@@ -560,29 +373,23 @@ namespace CarCareHub.Services
                               && n.DatumNarudzbe <= endDate)
                     .AsNoTracking()
                     .ToListAsync();
-
-                // Check if any orders exist
                 if (orders == null || !orders.Any())
                 {
                     return new List<ZaposlenikIzvjestaj>();
                 }
-
-                // Group by employee and calculate statistics
                 var report = orders
                     .GroupBy(n => n.ZaposlenikId)
-                    .Where(g => g.Key.HasValue) // Filter out null ZaposlenikId
+                    .Where(g => g.Key.HasValue)
                     .Select(g => {
                         var firstOrder = g.FirstOrDefault();
                         if (firstOrder == null || firstOrder.Zaposlenik == null)
                         {
                             return null;
                         }
-
                         var narudzbaStavke = g.SelectMany(n => n.NarudzbaStavkas ?? Enumerable.Empty<Database.NarudzbaStavka>());
                         var proizvodiGroups = narudzbaStavke
                             .Where(ns => ns.Proizvod != null)
                             .GroupBy(ns => ns.Proizvod);
-
                         var popularniProizvodi = proizvodiGroups
                             .OrderByDescending(pg => pg.Sum(ns => ns.Kolicina))
                             .Take(3)
@@ -594,7 +401,6 @@ namespace CarCareHub.Services
                                 UkupnaVrijednost = (decimal)pg.Sum(ns => ns.Kolicina * (pg.Key?.Cijena ?? 0))
                             })
                             .ToList();
-
                         return new ZaposlenikIzvjestaj
                         {
                             ZaposlenikId = g.Key.Value,
@@ -606,10 +412,9 @@ namespace CarCareHub.Services
                             Autoservis = firstOrder.Autoservis?.Naziv ?? "Nepoznato"
                         };
                     })
-                    .Where(x => x != null) // Filter out null results
+                    .Where(x => x != null)
                     .OrderByDescending(x => x.UkupanIznos)
                     .ToList();
-
                 return report ?? new List<ZaposlenikIzvjestaj>();
             }
             catch (Exception ex)
@@ -618,12 +423,5 @@ namespace CarCareHub.Services
                 throw;
             }
         }
-
-
     }
 }
-
-
-
-
-

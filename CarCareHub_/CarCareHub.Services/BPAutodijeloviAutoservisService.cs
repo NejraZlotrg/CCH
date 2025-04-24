@@ -16,11 +16,8 @@ namespace CarCareHub.Services
         public BPAutodijeloviAutoservisService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-
-
         public override IQueryable<Database.BPAutodijeloviAutoservis> AddFilter(IQueryable<Database.BPAutodijeloviAutoservis> query, BPAutodijeloviAutoservisSearchObject? search = null)
         {
-
             if (search?.AutoservisID!=null)
             {
                 query = query.Where(x => x.Autoservis.AutoservisId == search.AutoservisID);
@@ -33,7 +30,6 @@ namespace CarCareHub.Services
         }
         public override IQueryable<Database.BPAutodijeloviAutoservis> AddInclude(IQueryable<Database.BPAutodijeloviAutoservis> query, BPAutodijeloviAutoservisSearchObject? search = null)
         {
-            // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.FirmaAutodijelova);
@@ -41,10 +37,8 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
-
         public IQueryable<Database.BPAutodijeloviAutoservis> AutoservisInclude(IQueryable<Database.BPAutodijeloviAutoservis> query, BPAutodijeloviAutoservisSearchObject? search = null)
         {
-            // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.Autoservis);
@@ -53,14 +47,10 @@ namespace CarCareHub.Services
         }
         public override async Task<List<Model.BPAutodijeloviAutoservis>> GetByID_(int id)
         {
-            // Start with the base query
             var query = _dbContext.BPAutodijeloviAutoservis.AsQueryable();
-
-            // Apply the AddInclude method to include related data
             query = AutoservisInclude(query, new BPAutodijeloviAutoservisSearchObject { IsAllIncluded = true });
-
-            // Execute the query and map the results
             var result = await query.ToListAsync();
+            
             return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(result);
         }
     }

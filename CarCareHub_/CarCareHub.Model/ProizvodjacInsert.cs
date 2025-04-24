@@ -10,7 +10,5 @@ namespace CarCareHub.Model
     {
         public string? NazivProizvodjaca { get; set; }
         public bool? Vidljivo { get; set; }
-
-
     }
 }

@@ -10,6 +10,5 @@ namespace CarCareHub.Model.SearchObjects
     {
         public bool? IsAllIncluded { get; set; }
 
-      //  public string Poruka { get; set; }
     }
 }

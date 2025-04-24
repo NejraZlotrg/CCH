@@ -10,17 +10,8 @@ namespace CarCareHub.Model
     public class KorpaInsert
     {
         public int? ProizvodId { get; set; }
-
         public int? Kolicina { get; set; }
-
-
         [JsonIgnore]
         public decimal? UkupnaCijenaProizvoda { get; set; }
-       
-
-
-        //[JsonIgnore]
-
-        //public virtual Proizvod? Proizvod { get; set; }
     }
 }

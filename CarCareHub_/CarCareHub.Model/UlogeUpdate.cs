@@ -9,6 +9,5 @@ namespace CarCareHub.Model
     public class UlogeUpdate
     {
         public string? NazivUloge { get; set; }
-
     }
 }

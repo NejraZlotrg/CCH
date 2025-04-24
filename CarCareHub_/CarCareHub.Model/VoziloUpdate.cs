@@ -9,7 +9,5 @@ namespace CarCareHub.Model
     public class VoziloUpdate
     {
         public string? MarkaVozila { get; set; }
-
-
     }
 }

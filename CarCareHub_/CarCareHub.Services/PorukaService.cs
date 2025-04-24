@@ -17,11 +17,8 @@ namespace CarCareHub.Services
 
         {
         }
-
         public override IQueryable<Database.Poruka> AddFilter(IQueryable<Database.Poruka> query, PorukaSearchObject? search = null)
         {
-
-
             if (search?.Sadrzaj != null)
             {
                 query = query.Where(x => x.Sadrzaj.Contains(search.Sadrzaj));
@@ -34,14 +31,10 @@ namespace CarCareHub.Services
             {
                 query = query.Where(x => x.ChatKlijentAutoservisId ==search.ChatKlijentAutoservisId);
             }
-
-
             return base.AddFilter(query, search);
         }
-
         public override IQueryable<Database.Poruka> AddInclude(IQueryable<Database.Poruka> query, PorukaSearchObject? search = null)
         {
-            // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.ChatKlijentZaposlenik);
@@ -49,5 +42,4 @@ namespace CarCareHub.Services
             return base.AddInclude(query, search);
         }
     }
-
 }

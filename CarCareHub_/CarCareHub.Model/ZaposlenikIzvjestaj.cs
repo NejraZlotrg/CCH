@@ -15,6 +15,6 @@ public class ZaposlenikIzvjestaj
         public int BrojNarudzbi { get; set; }
         public decimal ProsjecnaVrijednost { get; set; }
         public List<ProizvodStatistika> NajpopularnijiProizvodi { get; set; }
-        public string Autoservis { get; set; } // Added autoservice info
+        public string Autoservis { get; set; } 
     }
 }

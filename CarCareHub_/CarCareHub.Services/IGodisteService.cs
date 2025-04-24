@@ -11,6 +11,5 @@ namespace CarCareHub.Services
     public interface IGodisteService : ICRUDService<Godiste, GodisteSearchObject, GodisteInsert, GodisteUpdate>
     {
         public Task AddGodisteAsync();
-
     }
 }

@@ -8,16 +8,9 @@ namespace CarCareHub.Model
 {
     public class PorukaInsert
     {
-
         public string Sadrzaj { get; set; }
-
-        //ovdje trenutno vrijeme postaviti 
         public DateTime VrijemeSlanja { get; set; }
-        public int? ChatKlijentAutoservisId { get; set; } // ID razgovora kojem poruka pripada
-
-
-        public int? ChatKlijentZaposlenikId { get; set; } // ID razgovora kojem poruka pripada
-
-
+        public int? ChatKlijentAutoservisId { get; set; }
+        public int? ChatKlijentZaposlenikId { get; set; } 
     }
 }

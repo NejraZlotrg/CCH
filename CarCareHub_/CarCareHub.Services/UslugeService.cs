@@ -16,11 +16,8 @@ namespace CarCareHub.Services
         public UslugeService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-
         public override IQueryable<Database.Usluge> AddFilter(IQueryable<Database.Usluge> query, UslugeSearchObject? search = null)
         {
-
-
             if (!string.IsNullOrWhiteSpace(search?.NazivUsluge))
             {
                 query = query.Where(x => x.NazivUsluge.StartsWith(search.NazivUsluge));
@@ -30,22 +27,13 @@ namespace CarCareHub.Services
         public override async Task<List<Usluge>> GetByID_(int id)
         {
             var temp = _dbContext.Usluges.Where(x => x.autoservisId == id).ToList().AsQueryable();
-
             temp = temp.Include(x => x.Autoservis);
-
-
             return _mapper.Map<List<Usluge>>(temp);
         }
-
-
-
         public async Task AddInitialUslugeAsync()
         {
-            // Provjera koliko proizvoda već postoji u bazi
             var initialCount = await _dbContext.Usluges.CountAsync();
             Console.WriteLine($"Broj usluga prije dodavanja: {initialCount}");
-
-            // Ako nema proizvoda u bazi, dodaj tri početna proizvoda
             if (initialCount == 0)
             {
                 var usluge = new List<UslugeInsert>
@@ -74,22 +62,14 @@ namespace CarCareHub.Services
                Cijena = 200,
                Opis = "Čišćenje dpf filtera."
             },
-
         };
-
-                // Mapiranje i dodavanje proizvoda u bazu
                 var uslugeEntities = usluge.Select(p => _mapper.Map<CarCareHub.Services.Database.Usluge>(p)).ToList();
                 await _dbContext.Usluges.AddRangeAsync(uslugeEntities);
                 await _dbContext.SaveChangesAsync();
                 Console.WriteLine("Usluge su dodane.");
             }
-
-            // Provjera broja proizvoda nakon dodavanja
             var finalCount = await _dbContext.Usluges.CountAsync();
             Console.WriteLine($"Broj usuga nakon dodavanja: {finalCount}");
         }
-
-
     }
 }
-

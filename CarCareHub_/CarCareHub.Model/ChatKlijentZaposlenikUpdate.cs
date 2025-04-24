@@ -9,6 +9,5 @@ namespace CarCareHub.Model
     public class ChatKlijentZaposlenikUpdate
     {
         public string Poruka { get; set; }
-
     }
 }

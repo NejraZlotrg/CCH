@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarCareHub_.Controllers
 {
     [ApiController]
-    //[AllowAnonymous]
     [Route("api/godiste")]
     public class GodisteController : BaseCRUDController<Godiste, GodisteSearchObject, GodisteInsert, GodisteUpdate>
     {

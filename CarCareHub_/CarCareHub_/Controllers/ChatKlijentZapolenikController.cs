@@ -10,12 +10,10 @@ namespace CarCareHub_.Controllers
     public class ChatKlijentZapolenikController : ControllerBase
     {
         private readonly IChatKlijentZaposlenikService _chatService;
-
         public ChatKlijentZapolenikController(IChatKlijentZaposlenikService chatService)
         {
             _chatService = chatService;
         }
-
         [HttpPost("posalji")]
         public async Task<IActionResult> SendMessageAsync([FromBody] ChatKlijentZaposlenikInsert request)
         {
@@ -23,7 +21,6 @@ namespace CarCareHub_.Controllers
             {
                 return BadRequest(new { Message = "Podaci nisu validni." });
             }
-
             try
             {
                 await _chatService.SendMessageAsync(request);
@@ -34,16 +31,12 @@ namespace CarCareHub_.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
-
         [HttpGet("{klijentId}/{zaposlenikId}")]
         public async Task<IActionResult> GetMessagesAsync(int klijentId, int zaposlenikId)
         {
             var poruke = await _chatService.GetMessagesAsync(klijentId, zaposlenikId);
             return Ok(poruke);
-
         }
-
         [HttpGet("byLoggedUser")]
         public IActionResult GetById_(int klijent_id)
         {
@@ -54,7 +47,6 @@ namespace CarCareHub_.Controllers
                 {
                     return NotFound("No chat records found for the logged-in user.");
                 }
-
                 return Ok(chatList);
             }
             catch (Exception ex)
@@ -62,9 +54,5 @@ namespace CarCareHub_.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
-
-
-
     }
 }

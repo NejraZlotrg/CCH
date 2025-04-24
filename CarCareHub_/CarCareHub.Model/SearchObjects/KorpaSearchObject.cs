@@ -8,9 +8,6 @@ namespace CarCareHub.Model.SearchObjects
 {
     public class KorpaSearchObject : BaseSearchObject
     {
-      
-
         public bool? IsAllIncluded { get; set; }
-
     }
 }

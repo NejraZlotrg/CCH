@@ -10,44 +10,19 @@ namespace CarCareHub.Model
     public class ZaposlenikUpdate
     {
         public string? Ime { get; set; }
-
         public string? Prezime { get; set; }
-
-        //public DateTime? DatumRodjenja { get; set; }
-        // public int? MaticniBroj { get; set; } //dodala
-        public string? BrojTelefona { get; set; } //dodala
+        public string? BrojTelefona { get; set; }
         public DateTime? DatumRodjenja { get; set; }
-
         public int? GradId { get; set; }
-
-
         public string? Email { get; set; }
         public string? Adresa { get; set; }
-
         public string? Username { get; set; }
-
         [Compare("PasswordAgain", ErrorMessage = "Pass don't match")]
-
         public string? Password { get; set; }
-
         [Compare("Password", ErrorMessage = "Pass don't match")]
         public string? PasswordAgain { get; set; }
-
-
         public int? UlogaId { get; set; }
-
         public int? AutoservisId { get; set; }
-
         public int? FirmaAutodijelovaId { get; set; }
-
-        //public virtual Autoservi? Autoservis { get; set; }
-
-        //public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentZaposleniks { get; set; } = new List<ChatKlijentZaposlenik>();
-
-        //public virtual FirmaAutodijelova? FirmaAutodijelova { get; set; }
-
-        //public virtual Uloge? Uloga { get; set; }
-
-        //public virtual ICollection<Proizvod> Proizvods { get; set; } = new List<Proizvod>();
     }
 }

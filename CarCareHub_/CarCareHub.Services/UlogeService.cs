@@ -15,24 +15,18 @@ namespace CarCareHub.Services
         public UlogeService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-
         public override IQueryable<Database.Uloge> AddFilter(IQueryable<Database.Uloge> query, UlogeSearchObject? search = null)
         {
-
-
             if (!string.IsNullOrWhiteSpace(search?.NazivUloge))
             {
                 query = query.Where(x => x.NazivUloge.StartsWith(search.NazivUloge));
             }
             return base.AddFilter(query, search);
         }
-
         public async Task AddUlogeAsync()
         {
-            // Provjerite da li uloge već postoje u bazi
             if (!_dbContext.Uloges.Any())
             {
-                // Kreirajte listu uloga za unos
                 var ulogeInsert = new List<UlogeInsert>
         {
             new UlogeInsert { NazivUloge = "Zaposlenik" , Vidljivo=true},
@@ -40,18 +34,11 @@ namespace CarCareHub.Services
             new UlogeInsert { NazivUloge = "Firma autodijelova" , Vidljivo=true},
             new UlogeInsert { NazivUloge = "Klijent", Vidljivo=true },
             new UlogeInsert { NazivUloge = "Admin", Vidljivo=true }
-
         };
-
-                // Mapirajte svaki Insert model u Database.Uloge entitet
                 var ulogeEntities = ulogeInsert.Select(u => _mapper.Map<Database.Uloge>(u)).ToList();
-
-                // Dodajte uloge u bazu podataka
                 await _dbContext.Uloges.AddRangeAsync(ulogeEntities);
                 await _dbContext.SaveChangesAsync();
             }
         }
-
-
     }
 }

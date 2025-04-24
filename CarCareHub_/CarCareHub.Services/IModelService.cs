@@ -11,6 +11,5 @@ namespace CarCareHub.Services
     public interface IModelService : ICRUDService<Model.Model, ModelSearchObject, ModelInsert, ModelUpdate>
     {
         Task AddModelAsync();
-
     }
 }

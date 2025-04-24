@@ -16,10 +16,5 @@ namespace CarCareHub_.Controllers
              IGradService gradService) : base(logger, gradService)
         {
         }
-
-
-      
-
-
     }
 }

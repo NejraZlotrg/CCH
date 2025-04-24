@@ -9,12 +9,7 @@ namespace CarCareHub.Model
 {
     public class NarudzbaStavkaUpdate
     {
-
-
-
-
         public int? KorpaId { get; set; }
         public int? NarudzbaId { get; set; }
-
     }
 }

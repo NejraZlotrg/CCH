@@ -11,15 +11,9 @@ namespace CarCareHub.Services.Database
         public int PorukaId { get; set; }
         public string Sadrzaj { get; set; }
         public DateTime VrijemeSlanja { get; set; }
-        public int? ChatKlijentAutoservisId { get; set; } // ID razgovora kojem poruka pripada
-
-//        public virtual ChatKlijentAutoservis? ChatKlijentAutoservis { get; set; }
-
-
-        public int? ChatKlijentZaposlenikId { get; set; } // ID razgovora kojem poruka pripada
-
+        public int? ChatKlijentAutoservisId { get; set; }
+        public int? ChatKlijentZaposlenikId { get; set; } 
         public virtual ChatKlijentZaposlenik? ChatKlijentZaposlenik { get; set; }
         public bool Vidljivo { get; set; }
     }
-
 }

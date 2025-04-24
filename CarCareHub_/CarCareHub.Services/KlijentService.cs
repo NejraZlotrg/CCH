@@ -16,31 +16,22 @@ namespace CarCareHub.Services
     public class KlijentService : BaseCRUDService<Model.Klijent, Database.Klijent, KlijentSearchObject, KlijentInsert, KlijentUpdate>, IKlijentService
     {
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
-
-
         IMapper _mapper { get; set; }
-
         public KlijentService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
-
         public override async Task BeforeInsert(CarCareHub.Services.Database.Klijent entity, KlijentInsert insert)
         {
-
-
-            entity.LozinkaSalt = GenerateSalt(); 
+            entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
         }
-
-
         public static string GenerateSalt()
         {
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
             var byteArray = new byte[16];
             provider.GetBytes(byteArray);
-
 
             return Convert.ToBase64String(byteArray);
         }
@@ -49,19 +40,15 @@ namespace CarCareHub.Services
             byte[] src = Convert.FromBase64String(salt);
             byte[] bytes = Encoding.Unicode.GetBytes(password);
             byte[] dst = new byte[src.Length + bytes.Length];
-
             System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
             System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
-
             HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
             byte[] inArray = algorithm.ComputeHash(dst);
+
             return Convert.ToBase64String(inArray);
         }
-
         public override IQueryable<Database.Klijent> AddFilter(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
         {
-
-
             if (!string.IsNullOrWhiteSpace(search?.Ime))
             {
                 query = query.Where(x => x.Ime.StartsWith(search.Ime));
@@ -72,53 +59,12 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
-
         public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
-
         {
-            //var existingUsername = _dbContext.Klijents
-            //        .FirstOrDefaultAsync(a => a.Username == insert.Username);
-
-            //if (existingUsername != null)
-            //{
-            //    throw new Exception("Username already exists.");
-            //}
-
-            //// Check if a record with the same email already exists
-            //var existingEmail = _dbContext.Klijents
-            //    .FirstOrDefaultAsync(a => a.Email == insert.Email);
-
-            //if (existingEmail != null)
-            //{
-            //    throw new Exception("Email already exists.");
-            //}
-
-            //// If no duplicates found, proceed to insert the new record
-
-
             return base.Insert(insert);
-
         }
-
-        //public override task<model.klijent> insert(model.klijentinsert insert)
-        //{
-        //    return base.insert(insert);
-        //}
-
-        //public override async task<model.klijent> update(int id, model.klijentupdate update)
-        //{
-        //    return await base.update(id, update);
-        //}
-
-        //public override async task<model.klijent> delete(int id)
-        //{
-        //    return await base.delete(id);
-        //}
-
-
         public override IQueryable<Database.Klijent> AddInclude(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
         {
-            // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.Grad);
@@ -129,59 +75,32 @@ namespace CarCareHub.Services
             }
             return base.AddInclude(query, search);
         }
-
-
-
-
-
-
         public async Task<Model.Klijent> Login(string username, string password)
-
         {
-
             var entity = await _dbContext.Klijents.FirstOrDefaultAsync(x => x.Username == username);
-
             if (entity == null)
-
             {
-
                 return null;
-
             }
-
             var hash = GenerateHash(entity.LozinkaSalt, password);
-
             if (hash != entity.LozinkaHash)
-
             {
-
                 return null;
-
             }
-
             return _mapper.Map<Model.Klijent>(entity);
-
         }
-
-
-
         public int? GetIdByUsernameAndPassword(string username, string password)
         {
-            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
             var user = _dbContext.Klijents
                 .SingleOrDefault(x => x.Password == password && x.Username == username);
 
-            // Ako korisnik nije pronađen, vraća null.
             return user?.KlijentId;
         }
-
         public async Task AddKlijentAsync()
         {
-            // Provjerite da li klijenti već postoje u bazi
             if (!_dbContext.Klijents.Any())
             {
-                // Kreirajte listu klijenata za unos
-                var klijentInsert1 = 
+                var klijentInsert1 =
             new KlijentInsert
             {
                 Ime = "Marko",
@@ -192,12 +111,10 @@ namespace CarCareHub.Services
                 PasswordAgain = "klijent",
                 Spol = "Muško",
                 BrojTelefona = "38761123456",
-                GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
-                UlogaId = 4 ,// Assuming UlogaId corresponds to a specific role in the database
+                GradId = 1,
+                UlogaId = 4,
                 Vidljivo = true
-
             };
-
                 var klijentInsert2 =
            new KlijentInsert
            {
@@ -209,28 +126,21 @@ namespace CarCareHub.Services
                PasswordAgain = "Admin",
                Spol = "Muško",
                BrojTelefona = "38761123456",
-               GradId = 1, // Assuming GradId = 1 corresponds to Sarajevo
-               UlogaId = 5, // Assuming UlogaId corresponds to a specific role in the database, 
-               Vidljivo =true
+               GradId = 1,
+               UlogaId = 5,
+               Vidljivo = true
            };
-                // You can add more records here
-
-
-                // Mapirajte svaki Insert model u Database.Klijent entitet
                 var klijentEntities = _mapper.Map<Database.Klijent>(klijentInsert1);
                 BeforeInsert(klijentEntities, klijentInsert1);
 
                 var klijentEntities2 = _mapper.Map<Database.Klijent>(klijentInsert2);
                 BeforeInsert(klijentEntities2, klijentInsert2);
-                // Dodajte klijente u bazu podataka
+
                 await _dbContext.Klijents.AddRangeAsync(klijentEntities);
                 await _dbContext.SaveChangesAsync();
-
                 await _dbContext.Klijents.AddRangeAsync(klijentEntities2);
                 await _dbContext.SaveChangesAsync();
-
             }
         }
-
     }
 }

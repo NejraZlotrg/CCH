@@ -2,7 +2,7 @@
 
 namespace CarCareHub.Model
 {
-    public class ArticleRecommendation
+    public class ProizvodRecommendation
     {
         [KeyType(count: 27)]
         public uint ProizvodId { get; set; }

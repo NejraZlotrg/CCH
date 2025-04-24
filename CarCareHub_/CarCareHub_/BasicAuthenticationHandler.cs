@@ -15,7 +15,6 @@ namespace CarCareHub_
         private readonly IAutoservisService _autoservisService;
         private readonly IZaposlenikService _korisniciService;
         private readonly IKlijentService _klijentService;
-
         public BasicAuthenticationHandler(
             IFirmaAutodijelovaService firmaService,
             IZaposlenikService korisniciService,
@@ -31,36 +30,29 @@ namespace CarCareHub_
             _autoservisService = autoservisService;
             _klijentService = klijentService;
         }
-
-     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
-{
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
             if (!Request.Headers.ContainsKey("Authorization"))
             {
                 return AuthenticateResult.Fail("Missing Authorization Header");
             }
             try
-    {
+            {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
                 var credentialsBytes = Convert.FromBase64String(authHeader.Parameter);
                 var credentials = Encoding.UTF8.GetString(credentialsBytes).Split(':');
-
                 if (credentials.Length != 2)
                 {
                     return AuthenticateResult.Fail("Invalid Authorization Header Format");
                 }
-
                 var username = credentials[0];
                 var password = credentials[1];
-
-        // Pozivanje metoda koje provjeravaju username/password direktno u bazi
-        var userFirma = await _firmaService.Login(username, password);
-        var userKorisnik = await _korisniciService.Login(username, password);
-        var userAutoservis = await _autoservisService.Login(username, password);
-        var userKlijent = await _klijentService.Login(username, password);
-
-        object user = null;
-        string userId = null;
-
+                var userFirma = await _firmaService.Login(username, password);
+                var userKorisnik = await _korisniciService.Login(username, password);
+                var userAutoservis = await _autoservisService.Login(username, password);
+                var userKlijent = await _klijentService.Login(username, password);
+                object user = null;
+                string userId = null;
                 if (userFirma != null && userFirma.Username.Equals(username, StringComparison.Ordinal))
                 {
                     user = userFirma;
@@ -81,48 +73,41 @@ namespace CarCareHub_
                     user = userKlijent;
                     userId = userKlijent.KlijentId.ToString();
                 }
-
                 if (user == null)
                 {
                     return AuthenticateResult.Fail("Invalid Username or Password");
                 }
-
                 var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, username),
             new Claim(ClaimTypes.NameIdentifier, userId),
         };
-
-                // Postavljanje role
                 if (user is FirmaAutodijelova)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, "FirmaAutodijelova"));
-        }
-        else if (user is Zaposlenik)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, "Zaposlenik"));
-        }
-        else if (user is Autoservis)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, "Autoservis"));
-        }
-        else if (user is Klijent)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, userId == "2" ? "Admin" : "Klijent"));
-        }
-
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "FirmaAutodijelova"));
+                }
+                else if (user is Zaposlenik)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Zaposlenik"));
+                }
+                else if (user is Autoservis)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "Autoservis"));
+                }
+                else if (user is Klijent)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, userId == "2" ? "Admin" : "Klijent"));
+                }
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
                 var principal = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
-
                 return AuthenticateResult.Success(ticket);
             }
-    catch (Exception ex)
-    {
-        Logger.LogError(ex, "Error in Basic Authentication");
-        return AuthenticateResult.Fail("Invalid Authorization Header");
-    }
-}
-
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error in Basic Authentication");
+                return AuthenticateResult.Fail("Invalid Authorization Header");
+            }
+        }
     }
 }

@@ -16,37 +16,16 @@ namespace CarCareHub.Services
         public ZaposlenikService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-
-
-
         public override async Task BeforeInsert(CarCareHub.Services.Database.Zaposlenik entity, ZaposlenikInsert insert)
         {
-
             entity.LozinkaSalt = GenerateSalt();
             entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
-
         }
-
-        //public override Task<Model.Zaposlenik> Insert(Model.ZaposlenikInsert insert)
-        //{
-        //    // Ispis cijelog objekta u JSON formatu radi provjere
-        //    Console.WriteLine("========= PRIMLJENI PODACI =========");
-        //    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(insert));
-
-        //    // Ispis samo matičnog broja
-        //    Console.WriteLine($"Matični broj: {insert.mb}");
-
-        //    return base.Insert(insert);
-        //}
-
-
         public static string GenerateSalt()
         {
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
             var byteArray = new byte[16];
             provider.GetBytes(byteArray);
-
-
             return Convert.ToBase64String(byteArray);
         }
         public static string GenerateHash(string salt, string password)
@@ -54,148 +33,97 @@ namespace CarCareHub.Services
             byte[] src = Convert.FromBase64String(salt);
             byte[] bytes = Encoding.Unicode.GetBytes(password);
             byte[] dst = new byte[src.Length + bytes.Length];
-
             System.Buffer.BlockCopy(src, 0, dst, 0, src.Length);
             System.Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
-
             HashAlgorithm algorithm = HashAlgorithm.Create("SHA1");
             byte[] inArray = algorithm.ComputeHash(dst);
             return Convert.ToBase64String(inArray);
         }
-
         public override IQueryable<Database.Zaposlenik> AddFilter(IQueryable<Database.Zaposlenik> query, ZaposlenikSearchObject? search = null)
         {
-
-
             if (!string.IsNullOrWhiteSpace(search?.Ime))
             {
                 query = query.Where(x => x.Ime.StartsWith(search.Ime));
             }
-
             if (!string.IsNullOrWhiteSpace(search?.Prezime))
             {
                 query = query.Where(x => x.Prezime.StartsWith(search.Prezime));
             }
-
-
             return base.AddFilter(query, search);
         }
-
         public override IQueryable<Database.Zaposlenik> AddInclude(IQueryable<Database.Zaposlenik> query, ZaposlenikSearchObject? search = null)
         {
-            // Uključujemo samo entitet Uloge
             if (search?.IsAllIncluded == true)
             {
                 query = query.Include(z => z.Uloga);
                 query = query.Include(z => z.FirmaAutodijelova);
                 query = query.Include(z => z.Autoservis);
                 query = query.Include(z => z.Grad);
-
-
             }
             return base.AddInclude(query, search);
         }
-
-
-
         public async Task<CarCareHub.Model.Zaposlenik> GetByGrad(int id)
         {
             var temp = await _dbContext.Set<CarCareHub.Services.Database.Grad>()
-                                        .Include(g => g.Zaposleniks) // Uključujemo Zaposlenike koji pripadaju tom gradu
+                                        .Include(g => g.Zaposleniks) 
                                         .FirstOrDefaultAsync(g => g.GradId == id);
-
             if (temp == null || temp.Zaposleniks == null || !temp.Zaposleniks.Any())
             {
-                return null; // ili neki drugi odgovor koji je prikladan za vaš slučaj
+                return null; 
             }
-
-            // Mapiramo svakog zaposlenika pojedinačno
             var mappedZaposlenici = temp.Zaposleniks.Select(z => _mapper.Map<CarCareHub.Model.Zaposlenik>(z)).ToList();
-
-            // Ako želite vratiti samo jednog zaposlenika, možete vratiti prvi ili specifičan
             return mappedZaposlenici.FirstOrDefault();
         }
-
-
         public async Task<Model.Zaposlenik> Login(string username, string password)
-
         {
-
             var entity = await _dbContext.Zaposleniks.Include(x => x.Uloga).FirstOrDefaultAsync(x => x.Username == username);
-
             if (entity == null)
-
             {
-
                 return null;
-
             }
-
             var hash = GenerateHash(entity.LozinkaSalt, password);
-
             if (hash != entity.LozinkaHash)
-
             {
-
                 return null;
-
             }
-
             return _mapper.Map<Model.Zaposlenik>(entity);
-
         }
-
-
-
         public override async Task<List<Model.Zaposlenik>> GetByID_(int id)
         {
             var temp = _dbContext.Zaposleniks.Where(x => x.autoservisId == id).ToList().AsQueryable();
-
             temp = temp.Include(x => x.Autoservis);
-
-
             return _mapper.Map<List<Model.Zaposlenik>>(temp);
         }
-
         public int? GetIdByUsernameAndPassword(string username, string password)
         {
-            // Koristi SingleOrDefault ako očekuješ da korisničko ime bude jedinstveno.
             var user = _dbContext.Zaposleniks
                 .SingleOrDefault(x => x.Password == password && x.Username == username);
-
-            // Ako korisnik nije pronađen, vraća null.
             return user?.ZaposlenikId;
         }
-
         public async Task AddZaposlenikAsync()
         {
-            // Provjerite da li postoji zaposlenik s ulogom "Zaposlenik"
-            if (!_dbContext.Zaposleniks.Any(z => z.UlogaId == 1)) // 1 pretpostavlja ID za ulogu "Zaposlenik"
+            if (!_dbContext.Zaposleniks.Any(z => z.UlogaId == 1))
             {
                 var noviZaposlenik = new ZaposlenikInsert
                 {
-                    Ime = "Zaposlenik", // Ime zaposlenika
-                    Prezime = "Test", // Prezime zaposlenika
-                    DatumRodjenja = new DateTime(1990, 5, 15), // Datum rođenja
-                    mb = "637454647484", // Matični broj zaposlenika
-                    BrojTelefona = "060000000", // Broj telefona
-                    GradId = 1, // ID grada, pretpostavlja se da grad sa ID 1 postoji
-                    Email = "zaposlenik@test.com", // Email adresa zaposlenika
-                    Username = "zaposlenik", // Korisničko ime
-                    Password = "zaposlenik", // Lozinka
-                    PasswordAgain = "zaposlenik", // Ponovljena lozinka
-                    UlogaId = 1, // Pretpostavlja se da je ID za "Zaposlenik" 1
-                    AutoservisId = 1, // Nijedna veza s autoservisom
-                    FirmaAutodijelovaId = 1, // Nijedna veza s firmom autodijelova
+                    Ime = "Zaposlenik",
+                    Prezime = "Test",
+                    DatumRodjenja = new DateTime(1990, 5, 15),
+                    mb = "637454647484", 
+                    BrojTelefona = "060000000", 
+                    GradId = 1, 
+                    Email = "zaposlenik@test.com", 
+                    Username = "zaposlenik", 
+                    Password = "zaposlenik", 
+                    PasswordAgain = "zaposlenik", 
+                    UlogaId = 1, 
+                    AutoservisId = 1, 
+                    FirmaAutodijelovaId = 1, 
                     Vidljivo = true,
                     Adresa = "Donje Putićevo bb"
                 };
-
-                // Mapiraj noviZaposlenik u entitet Zaposlenik za bazu podataka
-
                 var zapEntity = _mapper.Map<Database.Zaposlenik>(noviZaposlenik);
                 BeforeInsert(zapEntity, noviZaposlenik);
-                // Dodajte zaposlenika u bazu podataka
                 await _dbContext.Zaposleniks.AddAsync(zapEntity);
                 await _dbContext.SaveChangesAsync();
             }
@@ -231,22 +159,18 @@ namespace CarCareHub.Services
                 entity.Username = update.Username;
 
             if (update.Password != null)
-                entity.Password = update.Password; // razmisli o hashiranju
+                entity.Password = update.Password; 
 
             if (update.UlogaId.HasValue)
                 entity.UlogaId = update.UlogaId.Value;
 
-            // Ako je poslan autoservis, postavi vrijednost, inače null
             entity.autoservisId = update.AutoservisId.HasValue ? update.AutoservisId.Value : null;
 
-            // Ako je poslana firma autodijelova, postavi vrijednost, inače null
             entity.FirmaAutodijelovaId = update.FirmaAutodijelovaId.HasValue ? update.FirmaAutodijelovaId.Value : null;
 
             await _dbContext.SaveChangesAsync();
 
             return _mapper.Map<Model.Zaposlenik>(entity);
         }
-
-
     }
 }

@@ -9,26 +9,17 @@ namespace CarCareHub.Model
 {
     public class NarudzbaInsert
     {
-
-        //public int? NarudzbaStavkeId { get; set; }
         public int? KlijentId { get; set; }
         public int? AutoservisId { get; set; }
         public int? ZaposlenikId { get; set; }
-
-        [JsonIgnore] // Sakriva svojstvo prilikom serijalizacije u JSON
+        [JsonIgnore] 
         public string? Adresa { get; set; }
-
         public bool Vidljivo { get; set; }
-
         public DateTime? DatumNarudzbe { get; set; }
-
         public DateTime? DatumIsporuke { get; set; }
-
         public bool? ZavrsenaNarudzba { get; set; }
-
         public int? PopustId { get; set; }
         [JsonIgnore]
         public decimal? UkupnaCijenaNarudzbe { get; set; }
-
     }
 }

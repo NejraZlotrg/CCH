@@ -9,14 +9,9 @@ namespace CarCareHub.Model
 {
     public class NarudzbaStavkaInsert
     {
-
-    
     public int? Kolicina { get; set; }
-
         public int? KorpaId { get; set; }
         public int? NarudzbaId { get; set; }
-
         public bool Vidljivo { get; set; }
-
     }
 }

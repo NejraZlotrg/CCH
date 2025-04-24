@@ -10,7 +10,6 @@ namespace CarCareHub.Model
     {
         public string? NazivModela { get; set; }
         public int VoziloId { get; set; }
-
         public int GodisteId { get; set; }
     }
 }

@@ -16,7 +16,6 @@ namespace CarCareHub.Services
         public ProizvodjacService(Database.CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
         {
         }
-
         public override IQueryable<Database.Proizvodjac> AddFilter(IQueryable<Database.Proizvodjac> query, ProizvodjacSearchObject search = null)
         {
             if (!string.IsNullOrWhiteSpace(search?.NazivProizvodjaca))
@@ -25,16 +24,10 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
-
-
-
         public async Task AddInitialProizvodjacAsync()
         {
-            // Provjera koliko proizvoda već postoji u bazi
             var initialCount = await _dbContext.Proizvodjacs.CountAsync();
             Console.WriteLine($"Broj proizvodjaca prije dodavanja: {initialCount}");
-
-            // Ako nema proizvoda u bazi, dodaj tri početna proizvoda
             if (initialCount == 0)
             {
                 var proizvodjac = new List<ProizvodjacInsert>
@@ -65,19 +58,13 @@ namespace CarCareHub.Services
                NazivProizvodjaca = "SLine",
             },
         };
-
-                // Mapiranje i dodavanje proizvoda u bazu
                 var proizvodjacEntities = proizvodjac.Select(p => _mapper.Map<CarCareHub.Services.Database.Proizvodjac>(p)).ToList();
                 await _dbContext.Proizvodjacs.AddRangeAsync(proizvodjacEntities);
                 await _dbContext.SaveChangesAsync();
                 Console.WriteLine("Proizvodjaci su dodani.");
             }
-
-            // Provjera broja proizvoda nakon dodavanja
             var finalCount = await _dbContext.Proizvodjacs.CountAsync();
             Console.WriteLine($"Broj proizvodjaca nakon dodavanja: {finalCount}");
         }
-
-
     }
 }

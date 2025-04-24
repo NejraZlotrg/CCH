@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace CarCareHub.Services
 {
-
     public interface IProizvodiService : ICRUDService<Model.Proizvod, CarCareHub.Model.SearchObjects.ProizvodiSearchObject, ProizvodiInsert, ProizvodiUpdate>
     {
        Task<Model.Proizvod> Activate(int id);
@@ -18,12 +17,7 @@ namespace CarCareHub.Services
         Task<List<string>> AllowedActions(int id);
         Task<PagedResult<CarCareHub.Model.Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject search = null);
         Task<PagedResult<CarCareHub.Model.Proizvod>> GetByFirmaAutodijelovaID(int firmaautodijelovaid);
-
         Task<PagedResult<CarCareHub.Model.Proizvod>> GetForAutoservisSapoputomArtikli(int autoservisID, [FromQuery] ProizvodiSearchObject search = null);
-        
         Task AddInitialProizvodiAsync();
-
-
-
     }
 }

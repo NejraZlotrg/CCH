@@ -14,29 +14,24 @@ namespace CarCareHub.Services.ProizvodiStateMachine
         protected CarCareHub.Services.Database.CchV2AliContext _dbContext;
         protected IMapper _mapper { get; set; }
         public IServiceProvider _serviceProvider { get; set; }
-
         public BaseState(Database.CchV2AliContext dbContext, IMapper mapper, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _serviceProvider = serviceProvider;
         }
-
         public virtual Task<Model.Proizvod> Insert(CarCareHub.Model.ProizvodiInsert insert)
         {
             throw new UserException("not allowed");
         }
-
         public virtual Task<Model.Proizvod> Update(int id, CarCareHub.Model.ProizvodiUpdate insert)
         {
             throw new UserException("not allowed");
         }
-
         public virtual Task<Model.Proizvod> Activate(int id)
         {
             throw new UserException("not allowed");
         }
-
         public virtual Task<Model.Proizvod> Hide(int id)
         {
             throw new UserException("not allowed");
@@ -45,7 +40,6 @@ namespace CarCareHub.Services.ProizvodiStateMachine
         {
             throw new UserException("not allowed");
         }
-
         public BaseState CreateState(string stateName)
         {
             switch (stateName)
@@ -64,7 +58,6 @@ namespace CarCareHub.Services.ProizvodiStateMachine
                     throw new UserException("not allowed");
             }
         }
-
         public virtual async Task<List<string>> AllowedActions(int id)
         {
             return new List<string>();

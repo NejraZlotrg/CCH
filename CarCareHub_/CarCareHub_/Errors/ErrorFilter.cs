@@ -18,13 +18,9 @@ namespace CarCareHub_.Errors
             {
             context.ModelState.AddModelError("ERROR", "Server Side Error");
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-
             }
             var list = context.ModelState.Where(x => x.Value.Errors.Count()>0).ToDictionary(x => x.Key, y => y.Value.Errors.Select(z=>z.ErrorMessage));
             context.Result = new JsonResult(new { errors = list });
-
-           // base.OnException(context);
         }
     }
 }

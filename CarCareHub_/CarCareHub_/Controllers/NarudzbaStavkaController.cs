@@ -15,7 +15,6 @@ namespace CarCareHub_.Controllers
             INarudzbaStavkaService narudzbaStavkaService) : base(logger, narudzbaStavkaService)
         {
         }
-
         [HttpGet("{narudzbaId}/ByNarudzbaId")]
         public async Task<ActionResult<SearchResult<CarCareHub.Model.NarudzbaStavka>>> GetByNarudzbaId(int narudzbaId)
         {
@@ -30,6 +29,5 @@ namespace CarCareHub_.Controllers
                 return BadRequest(new { message = $"Greška pri dohvatu stavki narudžbe: {ex.Message}" });
             }
         }
-
     }
 }
