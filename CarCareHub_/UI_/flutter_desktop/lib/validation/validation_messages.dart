@@ -10,5 +10,6 @@ class ValidationMessages {
   static String godiste = "Neispravan format,(4 cifare)";
   static String lozinkaPonovo = "lozinke se ne podudaraju";
   static String required12Digits= "Matični broj mora sadržavati 12 cifri";
+  static String length5='Polje mora sadržavati najmanje 5 znakova.';
 
 }

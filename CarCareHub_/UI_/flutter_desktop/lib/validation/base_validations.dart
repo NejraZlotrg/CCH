@@ -78,6 +78,17 @@ var jibRegex = RegExp(r"^\d{13}$");
   return null; // Sve je validno
   }  
 
+String? requiredMin5Chars(dynamic value) {
+  if (value == null || (value is String && value.trim().isEmpty)) {
+    return ValidationMessages.required;
+  }
+
+  if (value is String && value.trim().length < 5) {
+    return ValidationMessages.length5;
+  }
+
+  return null; // Validno
+}
 
 
   String? mbs(dynamic value) {

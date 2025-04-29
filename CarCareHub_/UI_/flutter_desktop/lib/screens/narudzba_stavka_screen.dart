@@ -12,6 +12,8 @@ import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
+
 
 class NarudzbaStavkaScreen extends StatefulWidget {
   final int narudzbaId;
@@ -118,7 +120,7 @@ late ZaposlenikProvider _zaposlenikProvider;
       
       _buildDetailRow(
         "Datum narudžbe:", 
-        dateFormat.format(firstItem.narudzba?.datumIsporuke ?? DateTime.now())
+        dateFormat.format(firstItem.narudzba?.datumNarudzbe ?? DateTime.now())
       ),
       if (firstItem.narudzba?.adresa != null)
         _buildDetailRow("Adresa:", firstItem.narudzba!.adresa!),
@@ -234,6 +236,8 @@ Widget _buildDetailRow(String label, String value) {
 }
 
 Widget _buildProductsTable() {
+     var isAutoservisUser = context.read<UserProvider>().role != "Klijent";
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -242,41 +246,43 @@ Widget _buildProductsTable() {
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      Table(
-        border: TableBorder.all(color: Colors.grey.shade300),
-        columnWidths: const {
-          0: FlexColumnWidth(3), // Naziv
-          1: FlexColumnWidth(1), // Količina
-          2: FlexColumnWidth(1), // Osnovna cijena
-          3: FlexColumnWidth(1.3), // Cijena sa popustom
-          4: FlexColumnWidth(1.5), // Cijena za autoservise
-        },
-        children: [
-          TableRow(
-            decoration: BoxDecoration(color: Colors.grey.shade200),
-            children: const [
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text("Naziv", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text("Količina", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text("Osnovna", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text("Popust", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text("Za autoservise", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ],
+
+Table(
+  border: TableBorder.all(color: Colors.grey.shade300),
+  columnWidths: {
+    0: const FlexColumnWidth(3),
+    1: const FlexColumnWidth(1),
+    2: const FlexColumnWidth(1),
+    3: const FlexColumnWidth(1.3),
+    if (isAutoservisUser) 4: const FlexColumnWidth(1.5),
+  },
+  children: [
+    TableRow(
+      decoration: BoxDecoration(color: Colors.grey.shade200),
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8),
+          child: Text("Naziv", style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        const Padding(
+          padding: EdgeInsets.all(8),
+          child: Text("Količina", style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        const Padding(
+          padding: EdgeInsets.all(8),
+          child: Text("Osnovna", style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        const Padding(
+          padding: EdgeInsets.all(8),
+          child: Text("Popust", style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        if (isAutoservisUser)
+          const Padding(
+            padding: EdgeInsets.all(8),
+            child: Text("Za autoservise", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
+      ],
+    ),
           ...result!.result.map((stavka) {
             final kolicina = stavka.kolicina ?? 1;
             final basePrice = stavka.proizvod?.cijena ?? 0.0;
@@ -311,6 +317,7 @@ Widget _buildProductsTable() {
                     ),
                   ),
                 ),
+                 if (isAutoservisUser)
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Text(

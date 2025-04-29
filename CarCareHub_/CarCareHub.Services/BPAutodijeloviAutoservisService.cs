@@ -47,11 +47,23 @@ namespace CarCareHub.Services
         }
         public override async Task<List<Model.BPAutodijeloviAutoservis>> GetByID_(int id)
         {
-            var query = _dbContext.BPAutodijeloviAutoservis.AsQueryable();
+            var query = _dbContext.BPAutodijeloviAutoservis
+                .Where(x => x.FirmaAutodijelova.FirmaAutodijelovaID == id)
+                .AsQueryable();
+
             query = AutoservisInclude(query, new BPAutodijeloviAutoservisSearchObject { IsAllIncluded = true });
+
             var result = await query.ToListAsync();
-            
-            return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(result);
+
+            // Filtriranje po "Vidljivo" ako postoji takva kolona
+            var filtered = result.Where(x =>
+            {
+                var prop = x.GetType().GetProperty("Vidljivo");
+                return prop == null || (bool)(prop.GetValue(x) ?? false);
+            }).ToList();
+
+            return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(filtered);
         }
+
     }
 }

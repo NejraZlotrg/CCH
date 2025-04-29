@@ -233,8 +233,10 @@ namespace CarCareHub.Services
                 ProizvodjacId = 1,
                 Slika = sampleImage,
                 OriginalniBroj = "23442",
-                Sifra = "11111"
-                
+                Sifra = "11111",
+                CijenaSaPopustom = null,
+                CijenaSaPopustomZaAutoservis = Math.Round((decimal)(150 * 0.95m), 2),
+
             },
             new ProizvodiInsert
             {
@@ -249,7 +251,9 @@ namespace CarCareHub.Services
                 FirmaAutoDijelovaID = 1, 
                 ModelId = 2,
                 ProizvodjacId = 2, 
-                Slika = sampleImage 
+                Slika = sampleImage,
+                 CijenaSaPopustom = null,
+                CijenaSaPopustomZaAutoservis = Math.Round((decimal)(120 * 0.95m), 2),
             },
             new ProizvodiInsert
             {
@@ -257,16 +261,21 @@ namespace CarCareHub.Services
                 Sifra = "33333",
                 OriginalniBroj = "097739439",
                 Cijena = 80m,
-                Popust = 0,
+                Popust = 5,
                 Vidljivo = true,
                 Opis = "Filteri za zrak za motocikle.",
                 KategorijaId = 3, 
                 FirmaAutoDijelovaID = 1, 
                 ModelId = 3,
                 ProizvodjacId = 3, 
-                Slika = sampleImage
+                Slika = sampleImage,
+                CijenaSaPopustomZaAutoservis=null, 
+                CijenaSaPopustom=80-(80*5/100),
+               
             }
         };
+
+
 
                 var proizvodiEntities = proizvodiInsert.Select(p =>
                 {

@@ -71,118 +71,109 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
       ),
     );
   }
+Widget _buildDataListView() {
+  final userRole = context.read<UserProvider>().role;
 
-  Widget _buildDataListView() {
-    final userRole = context.read<UserProvider>().role;
-
-    return Card(
-      margin: const EdgeInsets.all(16.0),
-      elevation: 4.0,
+  return Card(
+    margin: const EdgeInsets.all(16.0),
+    elevation: 6.0,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    child: Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+      ),
       child: SizedBox(
-        height: 400,
+        height: 420,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              columnSpacing: 20,
+               showCheckboxColumn: false, 
+              columnSpacing: 24,
+              headingRowColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.grey.shade200),
+              headingTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.black),
+              dataRowHeight: 56,
               columns: [
-                const DataColumn(
-                  label: Text(
-                    'Datum narudžbe',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                const DataColumn(
-                  label: Text(
-                    'Datum isporuke',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                const DataColumn(
-                  label: Text(
-                    'Ukupna cijena narudžbe',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                const DataColumn(
-                  label: Text(
-                    'Adresa',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                const DataColumn(
-                  label: Text(
-                    'Završena',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
+                const DataColumn(label: Text('Datum narudžbe')),
+                const DataColumn(label: Text('Datum isporuke')),
+                const DataColumn(label: Text('Ukupna cijena')),
+                const DataColumn(label: Text('Adresa')),
+                const DataColumn(label: Text('Završena')),
                 if (userRole == "Firma autodijelova")
-                  const DataColumn(
-                    label: Text(
-                      'Akcija',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
+                  const DataColumn(label: Text('Akcija')),
               ],
               rows: result?.result.map((Narudzba e) {
-                return DataRow(
-  onSelectChanged: (_) {
-    debugPrint("Clicked on row with NarudzbaId: ${e.narudzbaId}"); // Debug print
-    // Navigacija na ekran sa stavkama narudžbe
-   Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => NarudzbaStavkaScreen(narudzbaId: e.narudzbaId),
-  ),
-);
-
-  },
-                  cells: [
-                    DataCell(Text(e.datumNarudzbe != null
-                        ? formatDate(e.datumNarudzbe!)
-                        : 'N/A')),
-                    DataCell(Text(e.datumIsporuke != null
-                        ? formatDate(e.datumIsporuke!)
-                        : 'N/A')),
-                    DataCell(Text(e.ukupnaCijenaNarudzbe != null
-                        ? '${e.ukupnaCijenaNarudzbe!.toStringAsFixed(2)} KM'
-                        : 'N/A')),
-                    DataCell(Text(e.adresa ?? 'Nema adrese')),
-                    DataCell(Icon(
-                      e.zavrsenaNarudzba ? Icons.check_circle : Icons.cancel,
-                      color: e.zavrsenaNarudzba ? Colors.green : Colors.red,
-                    )),
-                    if (userRole == "Firma autodijelova")
-                      DataCell(
-                        ElevatedButton(
-                          onPressed: e.zavrsenaNarudzba
-                              ? null
-                              : () async {
-                                  try {
-                                    await _narudzbaProvider
-                                        .potvrdiNarudzbu(e.narudzbaId);
-                                    _loadData();
-                                  } catch (error) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              'Greška pri završavanju narudžbe: $error')),
-                                    );
-                                  }
-                                },
-                          child: const Text('Označi kao završeno'),
-                        ),
-                      ),
-                  ],
-                );
-              }).toList() ?? [],
+                    return DataRow(
+                      onSelectChanged: (_) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NarudzbaStavkaScreen(narudzbaId: e.narudzbaId),
+                          ),
+                        );
+                      },
+                      cells: [
+                        DataCell(Text(
+                            e.datumNarudzbe != null ? formatDate(e.datumNarudzbe!) : 'N/A')),
+                        DataCell(Text(
+                            e.datumIsporuke != null ? formatDate(e.datumIsporuke!) : 'N/A')),
+                        DataCell(Text(e.ukupnaCijenaNarudzbe != null
+                            ? '${e.ukupnaCijenaNarudzbe!.toStringAsFixed(2)} KM'
+                            : 'N/A')),
+                        DataCell(Text(e.adresa ?? 'Nema adrese')),
+                        DataCell(Icon(
+                          e.zavrsenaNarudzba
+                              ? Icons.check_circle
+                              : Icons.cancel,
+                          color:
+                              e.zavrsenaNarudzba ? Colors.green : Colors.red,
+                        )),
+                        if (userRole == "Firma autodijelova")
+                          DataCell(
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: e.zavrsenaNarudzba
+                                  ? null
+                                  : () async {
+                                      try {
+                                        await _narudzbaProvider
+                                            .potvrdiNarudzbu(e.narudzbaId);
+                                        _loadData();
+                                      } catch (error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'Greška pri završavanju narudžbe: $error')),
+                                        );
+                                      }
+                                    },
+                              child: const Text('Završi'),
+                            ),
+                          ),
+                      ],
+                    );
+                  }).toList() ??
+                  [],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   String formatDate(DateTime date) {
     return "${date.day}.${date.month}.${date.year}";

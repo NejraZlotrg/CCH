@@ -282,7 +282,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "sifra",
-        validator: validator.required,
+        validator: validator.requiredMin5Chars,
         initialValue: widget.product?.sifra ?? '',
       ),
       const SizedBox(height: 10),
