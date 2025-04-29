@@ -55,9 +55,15 @@ namespace CarCareHub.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public override Task<Model.FirmaAutodijelova> Insert(Model.FirmaAutodijelovaInsert insert)
+        public override async Task<Model.FirmaAutodijelova> Insert(Model.FirmaAutodijelovaInsert insert)
         {
-            return base.Insert(insert);
+            // Provjera da li username već postoji
+            if (await UsernameExists(insert.Username))
+            {
+                throw new UserException("Korisničko ime već postoji"); // Koristite UserException
+            }
+
+            return await base.Insert(insert);
         }
         public override async Task<Model.FirmaAutodijelova> Update(int id, Model.FirmaAutodijelovaUpdate update)
         {
@@ -183,14 +189,14 @@ namespace CarCareHub.Services
             var temp = _dbContext.FirmaAutodijelovas.Where(x => x.FirmaAutodijelovaID == id).ToList().AsQueryable();
             return _mapper.Map<List<Model.FirmaAutodijelova>>(temp);
         }
+
+
+
+        public async Task<bool> UsernameExists(string username)
+        {
+            return await _dbContext.FirmaAutodijelovas
+                .AnyAsync(x => x.Username.ToLower() == username.ToLower());
+        }
     }
 }
-
-
-
-
-
-
-
-
 

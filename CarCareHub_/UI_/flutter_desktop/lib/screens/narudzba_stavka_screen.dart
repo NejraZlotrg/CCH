@@ -12,7 +12,6 @@ import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
 
 
 class NarudzbaStavkaScreen extends StatefulWidget {

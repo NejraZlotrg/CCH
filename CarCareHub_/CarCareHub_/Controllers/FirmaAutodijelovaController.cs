@@ -49,5 +49,15 @@ namespace CarCareHub_.Controllers
                 return StatusCode(500, new { Message = "An error occurred while generating the report", Error = ex.Message });
             }
         }
+
+
+
+        [HttpGet("check-username/{username}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckUsernameExists(string username)
+        {
+            var exists = await _firmaAutodijelovaService.UsernameExists(username);
+            return Ok(new { exists });
+        }
     }
 }

@@ -14,5 +14,8 @@ namespace CarCareHub.Services
         Task AddFirmaAsync();
         public int? GetIdByUsernameAndPassword(string username, string password);
         public  Task<string> GeneratePaidOrdersReportAsync();
+
+        public Task<bool> UsernameExists(string username); // Dodajte ovu metodu
+
     }
 }

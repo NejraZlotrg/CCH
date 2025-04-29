@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -34,7 +36,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
   final _formKey = GlobalKey<FormBuilderState>();
   Map<String, dynamic> _initialValues = {};
   late FirmaAutodijelovaProvider _firmaAutodijelovaProvider;
-  late UslugeProvider _uslugaProvider;
   late GradProvider _gradProvider;
 
   File? _imageFile;
@@ -42,6 +43,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
   SearchResult<Grad>? gradResult;
   List<Usluge> usluge = [];
   bool isLoading = true;
+  bool usernameExists = false; // Dodajte ovo stanje
 
 
     final validator = CreateValidator();
@@ -65,11 +67,9 @@ class _FirmaAutodijelovaRegistracijaScreenState
     };
 
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
-    _uslugaProvider = context.read<UslugeProvider>();
     _gradProvider = context.read<GradProvider>();
 
     initForm();
-    fetchUsluge();
   }
 
   Future initForm() async {
@@ -101,32 +101,29 @@ class _FirmaAutodijelovaRegistracijaScreenState
     }
   }
 
-  Future<void> fetchUsluge() async {
-    usluge =
-        await _uslugaProvider.getById(widget.firmaAutodijelova?.firmaAutodijelovaID ?? 0);
-    setState(() {});
-  }
 
-  Future<void> _saveForm() async {
-  // Save and validate form
+  Future<bool> _saveForm() async {
   _formKey.currentState?.saveAndValidate();
   var request = Map.from(_formKey.currentState!.value);
-  request['ulogaId'] = 3;  // Update role ID as per your requirements
+  request['ulogaId'] = 3;
 
-      if (_imageFile != null  ) {
-  final imageBytes = await _imageFile!.readAsBytes();
-  request['slikaProfila'] = base64Encode(imageBytes);
-} else {
-  // Ako nije poslana, učitaj iz assets-a
-  const assetImagePath = 'assets/images/firma_prazna_slika.jpg';
-  var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = imageFile.buffer.asUint8List();
-  request['slikaProfila'] = base64Encode(imageBytes);
-}
-
+  if (_imageFile != null) {
+    final imageBytes = await _imageFile!.readAsBytes();
+    request['slikaProfila'] = base64Encode(imageBytes);
+  } else {
+    const assetImagePath = 'assets/images/firma_prazna_slika.jpg';
+    var imageFile = await rootBundle.load(assetImagePath);
+    final imageBytes = imageFile.buffer.asUint8List();
+    request['slikaProfila'] = base64Encode(imageBytes);
+  }
 
   try {
-    // Insert new data or update existing data based on the condition
+    final exists = await _firmaAutodijelovaProvider.checkUsernameExists(request['username']);
+    if (exists) {
+      _formKey.currentState?.fields['username']?.invalidate("Username već postoji");
+      return false;
+    }
+
     if (widget.firmaAutodijelova == null) {
       await _firmaAutodijelovaProvider.insert(request);
     } else {
@@ -136,19 +133,22 @@ class _FirmaAutodijelovaRegistracijaScreenState
       );
     }
 
-    // Navigate to LogInPage after successful operation
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LogInPage()),
-      (Route<dynamic> route) => false,  // This will pop all previous routes from the stack
+      (Route<dynamic> route) => false,
     );
-  } on Exception catch (e) {
-    // Show error dialog if an exception occurs
+    return true;
+  } catch (e) {
+    String errorMessage = e.toString();
+    if (errorMessage.startsWith('Exception: ')) {
+      errorMessage = errorMessage.substring('Exception: '.length);
+    }
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text("Error"),
-        content: Text(e.toString()),
+        title: const Text("Greška"),
+        content: Text(errorMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -157,10 +157,9 @@ class _FirmaAutodijelovaRegistracijaScreenState
         ],
       ),
     );
+    return false;
   }
 }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,30 +181,30 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          ElevatedButton(
-                            onPressed: (){
-                  if (_formKey.currentState?.validate() ?? false) {
-                    // Forma je validna, nastavite dalje
-                    _saveForm();
-                  } else {
-                    // Forma nije validna
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Molimo popunite obavezna polja")),
-                    );
-                  }
-                },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              textStyle: const TextStyle(fontSize: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text("Spasi"),
-                          )
+                         ElevatedButton(
+  onPressed: () async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final success = await _saveForm();
+      if (!success) {
+        setState(() {});
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Molimo popunite obavezna polja")),
+      );
+    }
+  },
+  style: ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.red,
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    textStyle: const TextStyle(fontSize: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+  child: const Text("Spasi"),
+)
                         ],
                       ),
                     )
@@ -235,6 +234,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                   border: Border.all(color: Colors.grey, width: 2),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
@@ -269,7 +269,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
     );
   }
 
-  List<Widget> _buildFormFields() {
+List<Widget> _buildFormFields() {
   return [
     // Red 1: Naziv i adresa
     Row(
@@ -324,27 +324,30 @@ class _FirmaAutodijelovaRegistracijaScreenState
     ),
     const SizedBox(height: 10),
 
-    // Red 2: grad
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Korisničko ime",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          ),
-          name: "username",
-          validator: validator.required,
-        ),
-      ],
+  Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const Text(
+      "Korisničko ime",
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
+    FormBuilderTextField(
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        filled: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      ),
+      name: "username",
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Molimo unesite username';
+        }
+        return null;
+      },
+    ),
+  ],
+),
     const SizedBox(height: 10),
 
     // Red 3: Lozinka
@@ -370,7 +373,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
       ],
     ),
     const SizedBox(height: 10),
-
     // Red 4: Ponovljena Lozinka
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -510,7 +512,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "jib",
-                validator: validator.required,
+                validator: validator.jib,
               ),
             ],
           ),
@@ -533,7 +535,7 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "mbs",
-                validator: validator.required,
+                validator: validator.mbs,
               ),
             ],
           ),
