@@ -132,7 +132,7 @@ Widget _buildForm() {
         // Text Fields
         FormBuilderTextField(
           name: 'ime',
-          validator: validator.required,
+          validator: validator.prezime,
           decoration: const InputDecoration(
             labelText: 'Ime',
             labelStyle: TextStyle(color: Colors.black),
@@ -156,7 +156,7 @@ Widget _buildForm() {
         const SizedBox(height: 15),
  FormBuilderTextField(
           name: 'prezime',
-          validator: validator.required,
+          validator: validator.prezime,
           decoration: const InputDecoration(
             labelText: 'Prezime',
             labelStyle: TextStyle(color: Colors.black),
@@ -179,7 +179,7 @@ Widget _buildForm() {
         const SizedBox(height: 15),
    FormBuilderTextField(
           name: 'mb',
-          validator: validator.required,
+          validator: validator.numberWith12DigitsOnly,
           decoration: const InputDecoration(
             labelText: 'JMBG',
             labelStyle: TextStyle(color: Colors.black),
@@ -197,6 +197,7 @@ Widget _buildForm() {
             ),
           ),
           style: const TextStyle(color: Colors.black),
+       
           enabled: isAdminOrOwnProfile,
         ),
 
@@ -258,7 +259,7 @@ const SizedBox(height: 15),
         
         FormBuilderTextField(
           name: 'adresa',
-          validator: validator.required,
+          validator: validator.adresa,
           decoration: const InputDecoration(
             labelText: 'Adresa',
             labelStyle: TextStyle(color: Colors.black),
@@ -319,7 +320,8 @@ const SizedBox(height: 15),
         
         // Email and Conditional Inputs
         FormBuilderTextField(
-          name: 'email',          validator: validator.email,
+          name: 'email',         
+           validator: validator.email,
 
           decoration: const InputDecoration(
             labelText: 'Email',
@@ -347,15 +349,19 @@ const SizedBox(height: 15),
         if (isAdminOrOwnProfile) ...[
         FormBuilderTextField(
   name: 'username',
-  validator: (value) {
-    if (value == null || value.isEmpty) {
-      return 'Unesite korisničko ime';
-    }
+ 
+validator: (value) {
+    final error = validator.username3char(value); // koristi tvoju funkciju
+    if (error != null) return error;
+
     if (_usernameExists) {
       return 'Korisničko ime već postoji';
     }
+
     return null;
   },
+ 
+
   decoration: InputDecoration(
     labelText: 'Username',
     labelStyle: TextStyle(color: Colors.black),
@@ -381,7 +387,7 @@ const SizedBox(height: 15),
   ),
   style: TextStyle(color: Colors.black),
   enabled: isAdminOrOwnProfile,
-  onChanged: (value) {
+ onChanged: (value) {
     if (value != null && value.isNotEmpty) {
       setState(() {
         _usernameExists = false;
@@ -392,7 +398,7 @@ const SizedBox(height: 15),
 ),
           const SizedBox(height: 15),
           FormBuilderTextField(
-            name: 'password',          validator: validator.required,
+            name: 'password',          validator: validator.password,
 
             decoration: const InputDecoration(
               labelText: 'Password',
@@ -618,6 +624,21 @@ FormBuilderDropdown<String>(
         return;
       }
     }
+
+  final autoservisId = _formKey.currentState?.fields['autoservisId']?.value;
+  final firmaId = _formKey.currentState?.fields['firmaAutodijelovaId']?.value;
+
+  if ((autoservisId == null || autoservisId == '') &&
+      (firmaId == null || firmaId == '')) {
+    // Prikaži poruku ako nijedno nije odabrano
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Morate odabrati ili autoservis ili firmu autodijelova.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
 
     // Convert date to ISO format
     if (request['datumRodjenja'] != null) {

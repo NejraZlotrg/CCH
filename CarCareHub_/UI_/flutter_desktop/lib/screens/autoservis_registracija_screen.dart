@@ -387,7 +387,7 @@ List<Widget> _buildFormFields() {
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "username",
-          validator: validator.required, 
+          validator: validator.username3char, 
 
         ),
       ],

@@ -100,7 +100,7 @@ class _KlijentRegistracijaScreenState
   try {
     // Provjera username-a
     final username = request['username'];
-    if (username == null || username.toString().isEmpty) {
+    if (username == null || username.toString().isEmpty || (username.toString().length<3 || username.toString().length>50))  {
       formState.fields['username']?.invalidate("Username je obavezan");
       return false;
     }

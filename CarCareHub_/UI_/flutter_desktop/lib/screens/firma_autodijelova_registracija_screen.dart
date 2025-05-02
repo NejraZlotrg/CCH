@@ -292,7 +292,7 @@ List<Widget> _buildFormFields() {
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
-                validator: validator.required,
+                validator: validator.nazivFirme,
                 name: "nazivFirme",
                 
               ),
@@ -317,7 +317,7 @@ List<Widget> _buildFormFields() {
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 ),
                 name: "adresa",
-                validator: validator.required,
+                validator: validator.adresa,
               ),
             ],
           ),
@@ -334,20 +334,18 @@ List<Widget> _buildFormFields() {
       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     ),
     FormBuilderTextField(
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        fillColor: Colors.white,
-        filled: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      ),
-      name: "username",
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Molimo unesite username';
-        }
-        return null;
-      },
-    ),
+  decoration: const InputDecoration(
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+  ),
+  name: "username",
+  validator: (value) {
+    return validator.username3char(value);
+  },
+),
+
   ],
 ),
     const SizedBox(height: 10),
@@ -369,7 +367,7 @@ List<Widget> _buildFormFields() {
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "password",
-          validator: validator.required,
+          validator: validator.password,
           obscureText: true,
         ),
       ],
@@ -392,7 +390,7 @@ List<Widget> _buildFormFields() {
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "passwordAgain",
-          validator: validator.required,
+          validator: validator.lozinkaAgain,
           obscureText: true,
         ),
       ],

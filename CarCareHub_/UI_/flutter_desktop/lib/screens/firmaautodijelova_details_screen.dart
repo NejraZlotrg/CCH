@@ -412,7 +412,7 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "nazivFirme",
-            validator: validator.required,
+            validator: validator.nazivFirme,
             enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID),
           ),
         ),
@@ -441,7 +441,7 @@ List<Widget> _buildFormFields() {
             ),
             style: const TextStyle(color: Colors.black),
             name: "adresa",
-            validator: validator.required,
+            validator: validator.adresa,
             enabled: context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>().role == "Firma autodijelova") && context.read<UserProvider>().userId== widget.firmaAutodijelova!.firmaAutodijelovaID),
           ),
         ),
@@ -614,8 +614,9 @@ List<Widget> _buildFormFields() {
             "Korisničko ime",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          FormBuilderTextField(
-  decoration: InputDecoration(
+         FormBuilderTextField(
+  name: "username",
+  decoration: const InputDecoration(
     labelStyle: TextStyle(color: Colors.black),
     hintText: 'Unesite korisničko ime',
     hintStyle: TextStyle(color: Colors.black),
@@ -637,14 +638,14 @@ List<Widget> _buildFormFields() {
     ),
     errorStyle: TextStyle(color: Colors.red),
   ),
-  name: "username",
   validator: (value) {
-    if (value == null || value.isEmpty) {
-      return 'Unesite korisničko ime';
-    }
+    final error = validator.username3char(value); // koristi tvoju funkciju
+    if (error != null) return error;
+
     if (_usernameExists) {
       return 'Korisničko ime već postoji';
     }
+
     return null;
   },
   onChanged: (value) {
@@ -656,6 +657,7 @@ List<Widget> _buildFormFields() {
     }
   },
 ),
+
         ],
       ),
 

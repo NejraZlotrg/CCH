@@ -351,7 +351,7 @@ List<Widget> _buildFormFields() {
   ),
   name: "username",
   validator: (value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.isEmpty || (value.length<3 || value.length>50)) {
       return 'Unesite korisničko ime';
     }
     if (_usernameExists) {

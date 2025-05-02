@@ -26,6 +26,43 @@ class BaseValidator {
     return null;
   }
 
+String? nazivFirme(dynamic value) {
+  if (value is String?) {
+    if (value == null || value.isEmpty) {
+      return ValidationMessages.required;
+    }
+    if (value.length < 2 || value.length > 100) {
+      return 'Polje mora sadržavati između 2 i 100 karaktera.';
+    }
+    return null;
+  }
+    
+  if (value is num?) {
+    if (value == null || value == 0) {
+      return ValidationMessages.required;
+    }
+    return null;
+  }
+
+  if (value == null) {
+    return ValidationMessages.required;
+  }
+
+  return null;
+}
+
+  
+  String? adresa(dynamic value) {
+  if (value == null || value.isEmpty) {
+    return "Adresa je obavezna."; // Poruka za obavezno polje
+  }
+
+  if (value is String && (value.length < 5|| value.length > 100)) {
+    return "Adresa mora imati između 5 i 100 karaktera.";
+  }
+
+  return null; // Ako su svi uvjeti ispunjeni, nema greške
+}
   String? password(dynamic value) {
   if (value == null || value.isEmpty) {
     return "Lozinka je obavezna."; // Poruka za obavezno polje
@@ -37,8 +74,30 @@ class BaseValidator {
 
   return null; // Ako su svi uvjeti ispunjeni, nema greške
 }
+  String? prezime(dynamic value) {
+  if (value == null || value.isEmpty) {
+    return "Prezime je obavezno."; // Poruka za obavezno polje
+  }
+
+  if (value is String && (value.length < 2 || value.length > 50)) {
+    return "Prezime mora imati između 2 i 50 karaktera.";
+  }
+
+  return null; // Ako su svi uvjeti ispunjeni, nema greške
+}
 
 
+ String? username3char(dynamic value) {
+  if (value == null || value.isEmpty) {
+    return "Korsinicko ime je obavezno."; // Poruka za obavezno polje
+  }
+
+  if (value is String && (value.length < 3 || value.length > 50)) {
+    return "Korisnicko ime mora imati između 3 i 50 karaktera.";
+  }
+
+  return null; // Ako su svi uvjeti ispunjeni, nema greške
+}
 
   String? numberOnly(dynamic value) {
     if (value == null || value == 0 || value == '') {

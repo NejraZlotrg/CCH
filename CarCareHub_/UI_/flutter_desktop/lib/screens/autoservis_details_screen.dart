@@ -1051,7 +1051,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           TextStyle(color: Colors.black), // Crni tekst za hint
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.isEmpty || (value.length<3 || value.length>50)) {
                         return 'Unesite korisničko ime';
                       }
                       if (_usernameExists) {
@@ -1324,19 +1324,19 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   FormBuilderTextField(
                     name: "ime",
                     decoration: const InputDecoration(labelText: "Ime"),
-                    validator: validator.required,
+                    validator: validator.prezime,
                   ),
                   FormBuilderTextField(
                     name: "prezime",
                     decoration: const InputDecoration(labelText: "Prezime"),
-                    validator: validator.required,
+                    validator: validator.prezime,
                   ),
                   FormBuilderTextField(
                     name: 'adresa',
                     decoration: const InputDecoration(
                       labelText: 'Adresa',
                     ),
-                    validator: validator.required,
+                    validator: validator.adresa,
                   ),
                   FormBuilderDropdown<String>(
                     name: 'gradId',
@@ -1394,22 +1394,25 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     
                       errorStyle: TextStyle(color: Colors.red),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Unesite korisničko ime';
-                      }
-                      if (_usernameExists) {
-                        return 'Korisničko ime već postoji';
-                      }
-                      return null;
-                    },
+                  validator: (value) {
+    final error = validator.username3char(value); // koristi tvoju funkciju
+    if (error != null) return error;
+
+    if (_usernameExists) {
+      return 'Korisničko ime već postoji';
+    }
+
+    return null;
+  },
+ 
                     onChanged: (value) {
-                      if (value != null && value.isNotEmpty) {
-                        setState(() {
-                          _usernameExists = false;
-                        });
-                      }
-                    },
+    if (value != null && value.isNotEmpty) {
+      setState(() {
+        _usernameExists = false;
+      });
+      _formKey.currentState?.fields['username']?.validate();
+    }
+  },
                   ),
                  FormBuilderTextField(
   name: "password",
@@ -1606,24 +1609,29 @@ Future<void> _editZaposlenik(Zaposlenik zap) async {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.ime),
+                    validator: validator.prezime,
                     decoration: const InputDecoration(labelText: 'Ime'),
                     onChanged: (value) => zap.ime = value,
+                    
                   ),
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.prezime),
+                    validator: validator.prezime,
                     decoration: const InputDecoration(labelText: 'Prezime'),
                     onChanged: (value) => zap.prezime = value,
                   ),
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.mb),
+                    validator : validator.numberWith12DigitsOnly,
                     decoration:
                         const InputDecoration(labelText: 'Matični broj'),
                     onChanged: (value) => zap.mb = value,
                   ),
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.brojTelefona),
+                    validator: validator.phoneNumber,
                     decoration:
                         const InputDecoration(labelText: 'Broj telefona'),
                     onChanged: (value) => zap.brojTelefona = value,
@@ -1631,6 +1639,7 @@ Future<void> _editZaposlenik(Zaposlenik zap) async {
                   FormBuilderDateTimePicker(
                     name: "datumRodjenja",
                     inputType: InputType.date,
+                    validator: validator.required,
                     decoration:
                         const InputDecoration(labelText: "Datum Rođenja"),
                     format: DateFormat("dd.MM.yyyy"),
@@ -1641,26 +1650,30 @@ Future<void> _editZaposlenik(Zaposlenik zap) async {
                       }
                     },
                   ),
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.email),
+                    validator: validator.email,
                     decoration: const InputDecoration(labelText: 'Email'),
                     onChanged: (value) => zap.email = value,
                   ),
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.username),
+                    validator: validator.username3char,
                     decoration:
                         const InputDecoration(labelText: 'Korisničko ime'),
                     onChanged: (value) => zap.username = value,
                   ),
-                  TextField(
+                  TextFormField(
                     controller: TextEditingController(text: zap.password),
+                    validator: validator.password,
                     decoration: const InputDecoration(labelText: 'Lozinka'),
                     onChanged: (value) => zap.password = value,
                     obscureText: true,
                   ),
-                  TextField(
+                  TextFormField(
                     controller:
                         TextEditingController(),
+                        validator: validator.lozinkaAgain,
                     decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
                     onChanged: (value) {
                       zap.passwordAgain = value;
