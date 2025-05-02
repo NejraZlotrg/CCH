@@ -116,9 +116,7 @@ class _AutoservisRegistracijaScreenState
   //       await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
   //   setState(() {});
   // }
-
 Future<bool> _saveForm() async {
-  // Save and validate form
   final formState = _formKey.currentState;
   if (formState == null) return false;
 
@@ -129,19 +127,35 @@ Future<bool> _saveForm() async {
   request['ulogaId'] = 2;
 
   try {
-    // Dodavanje slike (ili default slike ako nije odabrana)
-    if (_imageFile != null) {
-      final imageBytes = await _imageFile!.readAsBytes();
-      request['slikaProfila'] = base64Encode(imageBytes);
-    } else {
-      // Ako nije poslana, učitaj iz assets-a
-      const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
-      var imageFile = await rootBundle.load(assetImagePath);
-      final imageBytes = imageFile.buffer.asUint8List();
-      request['slikaProfila'] = base64Encode(imageBytes);
+    // Handle image
+    String? base64Image;
+    
+    if (_imageFile != null && await _imageFile!.exists()) {
+      // Ako korisnik odabere sliku
+      try {
+        final imageBytes = await _imageFile!.readAsBytes();
+        if (imageBytes.isNotEmpty) {
+          base64Image = base64Encode(imageBytes);
+        }
+      } catch (e) {
+        print("Greška pri čitanju odabrane slike: $e");
+      }
     }
 
-    // Provjera da li username već postoji
+    // Ako nema odabrane slike ili nije uspelo čitanje, učitaj default
+    if (base64Image == null) {
+      try {
+        final ByteData imageData = await rootBundle.load('assets/images/autoservis_prazna_slika.jpg');
+        final imageBytes = imageData.buffer.asUint8List();
+        base64Image = base64Encode(imageBytes);
+        print("Korištena default slika iz assets");
+      } catch (e) {
+        print("Greška pri učitavanju default slike: $e");
+      }
+    }
+
+    request['slikaProfila'] = base64Image;
+    // Check if username exists
     final username = request['username'];
     if (username == null || username.toString().isEmpty) {
       formState.fields['username']?.invalidate("Username je obavezan");
@@ -154,7 +168,7 @@ Future<bool> _saveForm() async {
       return false;
     }
 
-    // Insert ili update
+    // Insert or update
     if (widget.autoservis == null) {
       await _autoservisProvider.insert(request);
     } else {
@@ -163,7 +177,7 @@ Future<bool> _saveForm() async {
       await _autoservisProvider.update(autoservisId, request);
     }
 
-    // Navigacija na login
+    // Navigate to login
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LogInPage()),
@@ -172,7 +186,7 @@ Future<bool> _saveForm() async {
 
     return true;
   } on Exception catch (e) {
-    // Dijalog sa greškom
+    // Show error dialog
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -189,7 +203,6 @@ Future<bool> _saveForm() async {
     return false;
   }
 }
-
 
   @override
   Widget build(BuildContext context) {
