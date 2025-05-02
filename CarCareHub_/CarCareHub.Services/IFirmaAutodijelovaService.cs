@@ -1,5 +1,6 @@
 ﻿using CarCareHub.Model;
 using CarCareHub.Model.SearchObjects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace CarCareHub.Services
         public  Task<string> GeneratePaidOrdersReportAsync();
 
         public Task<bool> UsernameExists(string username); // Dodajte ovu metodu
+        public bool? GetVidljivoByUsernameAndPassword(string username, string password);
+
 
     }
 }

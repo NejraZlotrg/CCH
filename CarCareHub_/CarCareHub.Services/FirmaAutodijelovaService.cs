@@ -135,6 +135,14 @@ namespace CarCareHub.Services
                 .SingleOrDefault(x => x.Password == password && x.Username == username);
             return user?.FirmaAutodijelovaID;
         }
+
+
+        public bool? GetVidljivoByUsernameAndPassword(string username, string password)
+        {
+            var user = _dbContext.FirmaAutodijelovas
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+            return user?.Vidljivo;
+        }
         public async Task<string> GeneratePaidOrdersReportAsync()
         {
             var korpe = await _dbContext.Korpas

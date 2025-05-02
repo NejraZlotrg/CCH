@@ -42,6 +42,8 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
     print('Error fetching ID: $e');
     return null;
   }
+
+  
 }
 
 
@@ -84,4 +86,35 @@ Future<bool> checkUsernameExists(String username) async {
     return false;
   }
 }
+
+
+ /// Dobavljanje ID-a na osnovu korisničkog imena i lozinke
+ Future<bool?> getVidljivoByUsernameAndPassword(String username, String password) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:7209/api/Autoservis/get-vidljivo?username=$username&password=$password'),  // Tačan API endpoint
+      headers: {
+        "Content-Type": "application/json",  // Potrebno za JSON podatke
+      },
+      body: jsonEncode({
+        "username": username,
+        "password": password,  // Poslati oba polja (username i password)
+      }),
+    );
+
+    // Proverite statusni kod odgovora i parsirajte ID ako je uspešno
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['vidljivo'];  // Pošaljite ID korisnika
+    } else {
+      // Ako odgovor nije 200, vrati null
+      return null;
+    }
+  } catch (e) {
+    // Ako dođe do greške u API pozivu, ispisivanje greške
+    print('Error fetching ID: $e');
+    return null;
+  }
+}
+
 }

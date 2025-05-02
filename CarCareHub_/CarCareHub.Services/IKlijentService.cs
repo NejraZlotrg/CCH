@@ -10,6 +10,8 @@ namespace CarCareHub.Services
         Task AddKlijentAsync();
 
         public Task<bool> UsernameExists(string username); // Dodajte ovu metodu    
+        public bool? GetVidljivoByUsernameAndPassword(string username, string password);
+
 
     }
 }

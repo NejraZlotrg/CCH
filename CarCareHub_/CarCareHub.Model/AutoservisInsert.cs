@@ -1,29 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarCareHub.Model
 {
     public class AutoservisInsert
     {
+        [Required(ErrorMessage = "Naziv autoservisa je obavezan.")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Naziv autoservisa mora imati između 2 i 100 karaktera.")]
         public string? Naziv { get; set; }
+
+        [StringLength(200, ErrorMessage = "Adresa može imati najviše 200 karaktera.")]
         public string? Adresa { get; set; }
+
+        [Required(ErrorMessage = "GradId je obavezan.")]
         public int? GradId { get; set; }
+
+        [StringLength(100, ErrorMessage = "Ime vlasnika firme može imati najviše 100 karaktera.")]
         public string? VlasnikFirme { get; set; }
+
+        [Phone(ErrorMessage = "Telefon nije u ispravnom formatu.")]
         public string? Telefon { get; set; }
-        public bool? Vidljivo { get; set; }
+
+        public bool? Vidljivo { get; set; } = true;
+
+        [Required(ErrorMessage = "Email je obavezan.")]
+        [EmailAddress(ErrorMessage = "Email nije u ispravnom formatu.")]
         public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Korisničko ime je obavezno.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Korisničko ime mora imati između 3 i 50 karaktera.")]
         public string? Username { get; set; }
-        [Compare("PasswordAgain", ErrorMessage = "Pass don't match")]
+
+        [Required(ErrorMessage = "Lozinka je obavezna.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Lozinka mora imati između 6 i 100 karaktera.")]
+        [Compare("PasswordAgain", ErrorMessage = "Lozinke se ne poklapaju.")]
         public string? Password { get; set; }
-        [Compare("Password", ErrorMessage = "Pass don't match")]
+
+        [Required(ErrorMessage = "Potvrda lozinke je obavezna.")]
+        [Compare("Password", ErrorMessage = "Lozinke se ne poklapaju.")]
         public string? PasswordAgain { get; set; }
+
+        [Required(ErrorMessage = "JIB je obavezan.")]
+        [StringLength(13, MinimumLength = 13, ErrorMessage = "JIB mora imati tačno 13 karaktera.")]
         public string? Jib { get; set; }
+
+        [Required(ErrorMessage = "MBS je obavezan.")]
+        [StringLength(9, MinimumLength = 9, ErrorMessage = "MBS mora imati tačno 9 karaktera.")]
         public string? Mbs { get; set; }
+
         public byte[]? SlikaProfila { get; set; }
+
+        [Required(ErrorMessage = "UlogaId je obavezno.")]
         public int? UlogaId { get; set; }
     }
 }

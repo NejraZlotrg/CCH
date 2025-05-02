@@ -34,6 +34,18 @@ namespace CarCareHub_.Controllers
             }
             return Ok(new { Id = id });
         }
+        [HttpPost("get-vidljivo")]
+        [AllowAnonymous]
+        public IActionResult GetVidljivoByUsernameAndPassword(string username, string password)
+        {
+            var vidljivo = (_service as IAutoservisService)?.GetVidljivoByUsernameAndPassword(username, password);
+            if (vidljivo == null)
+            {
+                return NotFound("Invalid username or password");
+            }
+            return Ok(new { Vidljivo = vidljivo });
+        }
+
         [HttpGet("check-username/{username}")]
         [AllowAnonymous]
         public async Task<IActionResult> CheckUsernameExists(string username)

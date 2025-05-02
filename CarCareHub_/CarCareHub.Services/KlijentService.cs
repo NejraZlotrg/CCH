@@ -76,7 +76,12 @@ namespace CarCareHub.Services
             return await _dbContext.Klijents
                 .AnyAsync(x => x.Username.ToLower() == username.ToLower());
         }
-    
+        public bool? GetVidljivoByUsernameAndPassword(string username, string password)
+        {
+            var user = _dbContext.Klijents
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+            return user?.Vidljivo;
+        }
         public override IQueryable<Database.Klijent> AddInclude(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
         {
             if (search?.IsAllIncluded == true)

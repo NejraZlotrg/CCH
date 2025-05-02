@@ -79,6 +79,7 @@ namespace CarCareHub.Services
                 query = query.Include(z => z.FirmaAutodijelova);
                 query = query.Include(z => z.Autoservis);
                 query = query.Include(z => z.Grad);
+                query = query.Include(z => z.Grad.Drzava);
             }
             return base.AddInclude(query, search);
         }
@@ -119,6 +120,13 @@ namespace CarCareHub.Services
             var user = _dbContext.Zaposleniks
                 .SingleOrDefault(x => x.Password == password && x.Username == username);
             return user?.ZaposlenikId;
+        }
+
+        public bool? GetVidljivoByUsernameAndPassword(string username, string password)
+        {
+            var user = _dbContext.Zaposleniks
+                .SingleOrDefault(x => x.Password == password && x.Username == username);
+            return user?.Vidljivo;
         }
         public async Task AddZaposlenikAsync()
         {

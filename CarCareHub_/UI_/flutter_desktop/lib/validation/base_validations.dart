@@ -26,6 +26,20 @@ class BaseValidator {
     return null;
   }
 
+  String? password(dynamic value) {
+  if (value == null || value.isEmpty) {
+    return "Lozinka je obavezna."; // Poruka za obavezno polje
+  }
+
+  if (value is String && (value.length < 6 || value.length > 100)) {
+    return "Lozinka mora imati između 6 i 100 karaktera.";
+  }
+
+  return null; // Ako su svi uvjeti ispunjeni, nema greške
+}
+
+
+
   String? numberOnly(dynamic value) {
     if (value == null || value == 0 || value == '') {
       return ValidationMessages.required;
@@ -49,8 +63,8 @@ String? numberWith12DigitsOnly(dynamic value) {
   String valueStr = value.toString();
   
   // Proveravamo da li broj ima tačno 12 cifara
-  if (valueStr.length != 12) {
-    return 'Broj mora imati tačno 12 cifara.';
+  if (valueStr.length != 13) {
+    return 'Broj mora imati tačno 13 cifara.';
   }
 
   // Proveravamo da li je broj validan (samo brojevi)
@@ -97,7 +111,7 @@ String? requiredMin5Chars(dynamic value) {
     }
 
    // Regex za validaciju emaila
-var mbsRegex = RegExp(r"^\d{8}$");
+var mbsRegex = RegExp(r"^\d{9}$");
 
   if (value is String && !mbsRegex.hasMatch(value)) {
     return ValidationMessages.mbs; // Neispravan format

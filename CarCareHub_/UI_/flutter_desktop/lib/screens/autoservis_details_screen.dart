@@ -397,7 +397,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovaj autoservis?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -423,7 +423,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content:
-                                            Text("Proizvod uspješno izbrisan."),
+                                            Text("Autoservis uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {
@@ -1080,35 +1080,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           ? Row(
               children: [
                 Expanded(
-                  child: FormBuilderTextField(
-                    decoration: const InputDecoration(
-                      labelText: "Lozinka",
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white, // Bela pozadina
-                      filled: true, // Da pozadina bude ispunjena
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black), // Crni okvir
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.black), // Crni okvir kada je disabled
-                      ),
-                      labelStyle: TextStyle(
-                          color: Colors.black), // Crni tekst za labelu
-                      hintStyle:
-                          TextStyle(color: Colors.black), // Crni tekst za hint
-                    ),
-                    name: "password",
-                    initialValue: widget.autoservis?.password ??
-                        "", // Održavanje unetog teksta
-                    validator: validator.required,
-                    obscureText: true, // Da lozinka bude sakrivena
-                    style: const TextStyle(
-                        color: Colors.black), // Crni tekst unutar inputa
-                  ),
+                  child:  FormBuilderTextField(
+          decoration: const InputDecoration(
+            labelStyle: TextStyle(color: Colors.black),
+            hintText: 'Unesite lozinku',
+            hintStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          name: "password",
+          validator: validator.password,
+          obscureText: true,
+        ),
                 ),
               ],
             )
@@ -1386,6 +1378,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     decoration:
                         const InputDecoration(labelText: "Datum Rođenja"),
                     format: DateFormat("dd.MM.yyyy"),
+                    validator: validator.required,
                   ),
                   FormBuilderTextField(
                     name: "email",
@@ -1397,12 +1390,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     name: "username",
                     decoration: const InputDecoration(
                       labelText: "Korisničko ime",
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
+                      
+                    
                       errorStyle: TextStyle(color: Colors.red),
                     ),
                     validator: (value) {
@@ -1422,62 +1411,75 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       }
                     },
                   ),
-                  FormBuilderTextField(
-                    name: "password",
-                    decoration: const InputDecoration(labelText: "Lozinka"),
-                    obscureText: true,
-                    validator: validator.required,
-                  ),
-                  FormBuilderTextField(
-                    name: "passwordAgain",
-                    decoration:
-                        const InputDecoration(labelText: "Ponovi lozinku"),
-                    obscureText: true,
-                    validator: validator.required,
-                  ),
+                 FormBuilderTextField(
+  name: "password",
+  decoration: const InputDecoration(labelText: "Lozinka"),
+  obscureText: true,
+  validator: validator.password,
+),
+
+FormBuilderTextField(
+  name: "passwordAgain",
+  decoration: const InputDecoration(labelText: "Ponovi lozinku"),
+  obscureText: true,
+  validator: (value) {
+    final password = zaposlenikFormKey.currentState?.fields['password']?.value;
+    if (value == null || value.isEmpty) {
+      return 'Potvrda lozinke je obavezna';
+    }
+    if (value != password) {
+      return 'Lozinke se ne podudaraju.';
+    }
+    return null;
+  },
+),
+
                 ],
               ),
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Odustani"),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Molimo popunite obavezna polja."),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
+  onPressed: () async {
+  // Prvo validiraj formu
+  final isValid = zaposlenikFormKey.currentState?.validate() ?? false;
 
-                // Provjera username-a
-                final username =
-                    zaposlenikFormKey.currentState?.fields['username']?.value;
-                if (username != null && username.toString().isNotEmpty) {
-                  final exists =
-                      await _zaposlenikProvider.checkUsernameExists(username);
-                  if (exists) {
-                    setState(() {
-                      _usernameExists = true;
-                    });
-                    zaposlenikFormKey.currentState?.fields['username']
-                        ?.validate();
-                    return;
-                  }
-                }
+  if (!isValid) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Molimo popunite obavezna polja."),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    return;
+  }
 
-                zaposlenikFormKey.currentState?.saveAndValidate();
-                var zaposlenikRequest = Map<String, dynamic>.from(
-                    zaposlenikFormKey.currentState!.value);
+  // Dohvati lozinku i potvrdu
+  final password = zaposlenikFormKey.currentState?.fields['password']?.value;
+  final passwordAgain = zaposlenikFormKey.currentState?.fields['passwordAgain']?.value;
 
+  // Provjera da li se lozinke podudaraju
+  if (password != passwordAgain) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Greška"),
+        content: const Text("Lozinke se ne podudaraju."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("U redu"),
+          ),
+        ],
+      ),
+    );
+    return;
+  }
+
+  // Forma je validna i lozinke su iste -> idi dalje
+  zaposlenikFormKey.currentState?.saveAndValidate();
+  var zaposlenikRequest = Map<String, dynamic>.from(
+      zaposlenikFormKey.currentState!.value);
                 // Provjeri da li `mb` postoji i nije null
                 if (zaposlenikRequest['mb'] == null ||
                     zaposlenikRequest['mb'].toString().trim().isEmpty) {
@@ -1590,123 +1592,143 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     );
   }
 
-  Future<void> _editZaposlenik(Zaposlenik zap) async {
-    // Future<void> _editZaposlenik(Zaposlenik zap) async {
-    final editedZap = await showDialog<Zaposlenik>(
-      context: context,
-      builder: (context) {
-        // Use StatefulBuilder to manage state within the dialog
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Uredi zaposlenika'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: TextEditingController(text: zap.ime),
-                      decoration: const InputDecoration(labelText: 'Ime'),
-                      onChanged: (value) => zap.ime = value,
-                    ),
-                    TextField(
-                      controller: TextEditingController(text: zap.prezime),
-                      decoration: const InputDecoration(labelText: 'Prezime'),
-                      onChanged: (value) => zap.prezime = value,
-                    ),
-                    TextField(
-                      controller: TextEditingController(text: zap.mb),
-                      decoration:
-                          const InputDecoration(labelText: 'Matični broj'),
-                      onChanged: (value) => zap.mb = value,
-                    ),
-                    TextField(
-                      controller: TextEditingController(text: zap.brojTelefona),
-                      decoration:
-                          const InputDecoration(labelText: 'Broj telefona'),
-                      onChanged: (value) => zap.brojTelefona = value,
-                    ),
-                    FormBuilderDateTimePicker(
-                      name: "datumRodjenja",
-                      inputType: InputType.date,
-                      decoration:
-                          const InputDecoration(labelText: "Datum Rođenja"),
-                      format: DateFormat("dd.MM.yyyy"),
-                      initialValue: zap.datumRodjenja, // Use DateTime directly
-                      onChanged: (DateTime? value) {
-                        if (value != null) {
-                          zap.datumRodjenja = value; // Store DateTime directly
-                        }
-                      },
-                    ),
-                    TextField(
-                      controller: TextEditingController(text: zap.email),
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      onChanged: (value) => zap.email = value,
-                    ),
-                    TextField(
-                      controller: TextEditingController(text: zap.username),
-                      decoration:
-                          const InputDecoration(labelText: 'Korisničko ime'),
-                      onChanged: (value) => zap.username = value,
-                    ),
-                    TextField(
-                      controller: TextEditingController(text: zap.password),
-                      decoration: const InputDecoration(labelText: 'Lozinka'),
-                      onChanged: (value) => zap.password = value,
-                      obscureText: true,
-                    ),
-                    TextField(
-                      controller:
-                          TextEditingController(text: zap.passwordAgain),
-                      decoration:
-                          const InputDecoration(labelText: 'Lozinka ponovo'),
-                      onChanged: (value) => zap.passwordAgain = value,
-                      obscureText: true,
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Otkaži'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, zap);
-                  },
-                  child: const Text('Spremi'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+Future<void> _editZaposlenik(Zaposlenik zap) async {
+  final editedZap = await showDialog<Zaposlenik>(
+    context: context,
+    builder: (context) {
+      String? passwordError;
 
-    if (editedZap != null) {
-      try {
-        final provider =
-            Provider.of<ZaposlenikProvider>(context, listen: false);
-        await provider.update(editedZap.zaposlenikId!, editedZap);
-        setState(() {
-          final index = zaposlenik
-              .indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
-          if (index != -1) {
-            zaposlenik[index] = editedZap;
-          }
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Greška pri ažuriranju: $e')),
-        );
-      }
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Uredi zaposlenika'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: TextEditingController(text: zap.ime),
+                    decoration: const InputDecoration(labelText: 'Ime'),
+                    onChanged: (value) => zap.ime = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.prezime),
+                    decoration: const InputDecoration(labelText: 'Prezime'),
+                    onChanged: (value) => zap.prezime = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.mb),
+                    decoration:
+                        const InputDecoration(labelText: 'Matični broj'),
+                    onChanged: (value) => zap.mb = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.brojTelefona),
+                    decoration:
+                        const InputDecoration(labelText: 'Broj telefona'),
+                    onChanged: (value) => zap.brojTelefona = value,
+                  ),
+                  FormBuilderDateTimePicker(
+                    name: "datumRodjenja",
+                    inputType: InputType.date,
+                    decoration:
+                        const InputDecoration(labelText: "Datum Rođenja"),
+                    format: DateFormat("dd.MM.yyyy"),
+                    initialValue: zap.datumRodjenja,
+                    onChanged: (DateTime? value) {
+                      if (value != null) {
+                        zap.datumRodjenja = value;
+                      }
+                    },
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.email),
+                    decoration: const InputDecoration(labelText: 'Email'),
+                    onChanged: (value) => zap.email = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.username),
+                    decoration:
+                        const InputDecoration(labelText: 'Korisničko ime'),
+                    onChanged: (value) => zap.username = value,
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: zap.password),
+                    decoration: const InputDecoration(labelText: 'Lozinka'),
+                    onChanged: (value) => zap.password = value,
+                    obscureText: true,
+                  ),
+                  TextField(
+                    controller:
+                        TextEditingController(),
+                    decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
+                    onChanged: (value) {
+                      zap.passwordAgain = value;
+                      if (passwordError != null) {
+                        setState(() {
+                          passwordError = null;
+                        });
+                      }
+                    },
+                    obscureText: true,
+                  ),
+                  if (passwordError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        passwordError!,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Otkaži'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (zap.password != zap.passwordAgain) {
+                    setState(() {
+                      passwordError = 'Lozinke se ne podudaraju.';
+                    });
+                  } else {
+                    Navigator.pop(context, zap);
+                  }
+                },
+                child: const Text('Spremi'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+
+  if (editedZap != null) {
+    try {
+      final provider =
+          Provider.of<ZaposlenikProvider>(context, listen: false);
+      await provider.update(editedZap.zaposlenikId!, editedZap);
+      setState(() {
+        final index = zaposlenik
+            .indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
+        if (index != -1) {
+          zaposlenik[index] = editedZap;
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri ažuriranju: $e')),
+      );
     }
   }
+}
 
   Future<void> _deleteZaposlenik(Zaposlenik zap) async {
     final confirmed = await showDialog<bool>(

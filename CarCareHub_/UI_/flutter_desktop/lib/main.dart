@@ -194,21 +194,50 @@ class _LogInPageState extends State<LogInPage> {
 
   // Provjera userId kroz sve providere
   final userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+  final vidljivoA = await autoservisProvider.getVidljivoByUsernameAndPassword(username, password);
+
   final userIdZ = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+  final vidljivoZ= await zaposlenikProvider.getVidljivoByUsernameAndPassword(username, password);
+
   final userIdK = await klijentProvider.getIdByUsernameAndPassword(username, password);
+  final vidljivoK = await klijentProvider.getVidljivoByUsernameAndPassword(username, password);
+
   final userIdF = await firmaAutodijelovaProvider.getIdByUsernameAndPassword(username, password);
+  final vidljivoF = await firmaAutodijelovaProvider.getVidljivoByUsernameAndPassword(username, password);
+
 
   // Provjera svih korisnika
   if (userIdA != null) {
-    final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userIdA, 'Autoservis', username);
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
+  if (vidljivoA == false) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Greška: Autoservis je obrisan ili deaktiviran.'),
+        backgroundColor: Colors.red,
       ),
     );
+    return; // prekida dalje izvršavanje
+  }
+
+  final userProvider = context.read<UserProvider>();
+  userProvider.setUser(userIdA, 'Autoservis', username);
+
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => const ProductScreen(),
+    ),
+  );
+
+
   } else if (userIdZ != null) {
+    if (vidljivoZ == false) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Greška: Zaposlenik je obrisan ili deaktiviran.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return; // prekida dalje izvršavanje
+  }
     final userProvider = context.read<UserProvider>();
     userProvider.setUser(userIdZ, 'Zaposlenik', username);
 
@@ -218,6 +247,15 @@ class _LogInPageState extends State<LogInPage> {
       ),
     );
   } else if (userIdK != null) {
+     if (vidljivoK == false) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Greška: Klijent je obrisan ili deaktiviran.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return; // prekida dalje izvršavanje
+  }
     final userProvider = context.read<UserProvider>();
     if (userIdK == 2) {
       userProvider.setUser(userIdK, 'Admin', username);
@@ -232,6 +270,16 @@ class _LogInPageState extends State<LogInPage> {
       ),
     );
   } else if (userIdF != null) {
+    if (vidljivoF == false) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Greška: Firma autodijelova je obrisana ili deaktivirana.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return; // prekida dalje izvršavanje
+  }
+
     final userProvider = context.read<UserProvider>();
     userProvider.setUser(userIdF, 'Firma autodijelova', username );
 

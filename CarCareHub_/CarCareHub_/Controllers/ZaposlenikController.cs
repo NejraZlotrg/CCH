@@ -51,5 +51,17 @@ namespace CarCareHub_.Controllers
             var exists = await _zaposlenikService.UsernameExists(username);
             return Ok(new { exists });
         }
+
+        [HttpPost("get-vidljivo")]
+        [AllowAnonymous]
+        public IActionResult GetVidljivoByUsernameAndPassword(string username, string password)
+        {
+            var vidljivo = (_service as IZaposlenikService)?.GetVidljivoByUsernameAndPassword(username, password);
+            if (vidljivo == null)
+            {
+                return NotFound("Invalid username or password");
+            }
+            return Ok(new { Vidljivo = vidljivo });
+        }
     }
 }

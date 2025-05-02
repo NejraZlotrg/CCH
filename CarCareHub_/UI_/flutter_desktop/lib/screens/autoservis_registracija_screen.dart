@@ -411,8 +411,9 @@ List<Widget> _buildFormFields() {
                 EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "password",
+          validator: validator.password,           
+
           obscureText: true,
-          validator: validator.required,           
 
         ),
       ],

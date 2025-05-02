@@ -397,7 +397,7 @@ List<Widget> _buildFormFields() {
             ),
           ),
           name: "password",
-          validator: validator.required,
+          validator: validator.password,
           obscureText: true,
         ),
       ],
