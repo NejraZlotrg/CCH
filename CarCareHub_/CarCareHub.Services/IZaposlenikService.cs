@@ -9,5 +9,7 @@ namespace CarCareHub.Services
         public Task<Model.Zaposlenik> Login(string username, string password);
         public int? GetIdByUsernameAndPassword(string username, string password);
         Task AddZaposlenikAsync();
+        public Task<bool> UsernameExists(string username); // Dodajte ovu metodu
+
     }
 }

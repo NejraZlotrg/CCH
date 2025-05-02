@@ -27,10 +27,8 @@ namespace CarCareHub.Model
         [Column(TypeName = "VARBINARY(MAX)")]
         public byte[]? SlikaProfila { get; set; }
         public int? UlogaId { get; set; }
-        public int? VoziloId { get; set; }
         public virtual Grad? Grad { get; set; }
         public virtual Uloge? Uloga { get; set; }
-        public virtual Vozilo? Vozilo { get; set; }
         public int? UslugeId { get; set; }
         public Usluge? Usluge { get; set; }
         public int? ZaposlenikId { get; set; }

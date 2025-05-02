@@ -45,6 +45,9 @@ class _AutoservisRegistracijaScreenState
  // List<Usluge> usluge = [];
   bool isLoading = true;
 
+  bool usernameExists = false; // Dodajte ovo stanje
+
+
   final validator = CreateValidator();
 
 
@@ -114,47 +117,66 @@ class _AutoservisRegistracijaScreenState
   //   setState(() {});
   // }
 
- Future<void> _saveForm() async {
+Future<bool> _saveForm() async {
   // Save and validate form
-  _formKey.currentState?.saveAndValidate();
-  var request = Map.from(_formKey.currentState!.value);
+  final formState = _formKey.currentState;
+  if (formState == null) return false;
+
+  final isValid = formState.saveAndValidate();
+  if (!isValid) return false;
+
+  var request = Map.from(formState.value);
   request['ulogaId'] = 2;
 
-       if (_imageFile != null  ) {
-  final imageBytes = await _imageFile!.readAsBytes();
-  request['slikaProfila'] = base64Encode(imageBytes);
-} else {
-  // Ako nije poslana, učitaj iz assets-a
-  const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
-  var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = imageFile.buffer.asUint8List();
-  request['slikaProfila'] = base64Encode(imageBytes);
-}
-
-
   try {
-    // If it's a new autoservis, insert it, otherwise update
+    // Dodavanje slike (ili default slike ako nije odabrana)
+    if (_imageFile != null) {
+      final imageBytes = await _imageFile!.readAsBytes();
+      request['slikaProfila'] = base64Encode(imageBytes);
+    } else {
+      // Ako nije poslana, učitaj iz assets-a
+      const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
+      var imageFile = await rootBundle.load(assetImagePath);
+      final imageBytes = imageFile.buffer.asUint8List();
+      request['slikaProfila'] = base64Encode(imageBytes);
+    }
+
+    // Provjera da li username već postoji
+    final username = request['username'];
+    if (username == null || username.toString().isEmpty) {
+      formState.fields['username']?.invalidate("Username je obavezan");
+      return false;
+    }
+
+    final exists = await _autoservisProvider.checkUsernameExists(username);
+    if (exists) {
+      formState.fields['username']?.invalidate("Username već postoji");
+      return false;
+    }
+
+    // Insert ili update
     if (widget.autoservis == null) {
       await _autoservisProvider.insert(request);
     } else {
-      await _autoservisProvider.update(
-        widget.autoservis!.autoservisId!,
-        request,
-      );
+      final autoservisId = widget.autoservis!.autoservisId;
+      if (autoservisId == null) return false;
+      await _autoservisProvider.update(autoservisId, request);
     }
 
-    // Navigate to LogInPage after successful operation
+    // Navigacija na login
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LogInPage()),
-      (Route<dynamic> route) => false,  // This will pop all the previous routes from the stack
+      (Route<dynamic> route) => false,
     );
+
+    return true;
   } on Exception catch (e) {
-    // Show error dialog if an exception occurs
+    // Dijalog sa greškom
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text("Error"),
+        title: const Text("Greška"),
         content: Text(e.toString()),
         actions: [
           TextButton(
@@ -164,6 +186,7 @@ class _AutoservisRegistracijaScreenState
         ],
       ),
     );
+    return false;
   }
 }
 

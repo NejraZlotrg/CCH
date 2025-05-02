@@ -40,6 +40,8 @@ class _ZaposlenikDetailsScreenState extends State<ZaposlenikDetailsScreen> {
 String? selectedAutoservisId;
 String? selectedFirmaId;
   bool isLoading = true;
+
+   bool _usernameExists = false;
   final validator = CreateValidator();
 
   @override
@@ -343,28 +345,51 @@ const SizedBox(height: 15),
 
         // Conditional fields for Admin role
         if (isAdminOrOwnProfile) ...[
-          FormBuilderTextField(
-            name: 'username',          validator: validator.required,
-
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite korisničko ime',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            enabled: isAdminOrOwnProfile,
-          ),
+        FormBuilderTextField(
+  name: 'username',
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Unesite korisničko ime';
+    }
+    if (_usernameExists) {
+      return 'Korisničko ime već postoji';
+    }
+    return null;
+  },
+  decoration: InputDecoration(
+    labelText: 'Username',
+    labelStyle: TextStyle(color: Colors.black),
+    hintText: 'Unesite korisničko ime',
+    hintStyle: TextStyle(color: Colors.black),
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+    ),
+    errorStyle: TextStyle(color: Colors.red),
+  ),
+  style: TextStyle(color: Colors.black),
+  enabled: isAdminOrOwnProfile,
+  onChanged: (value) {
+    if (value != null && value.isNotEmpty) {
+      setState(() {
+        _usernameExists = false;
+      });
+      _formKey.currentState?.fields['username']?.validate();
+    }
+  },
+),
           const SizedBox(height: 15),
           FormBuilderTextField(
             name: 'password',          validator: validator.required,
@@ -576,9 +601,23 @@ FormBuilderDropdown<String>(
                           ),
               if (isAdminOrOwnProfile) 
                 ElevatedButton(
-              onPressed: () async {
+   onPressed: () async {
   if (_formKey.currentState?.saveAndValidate() ?? false) {
     var request = Map.from(_formKey.currentState!.value);
+
+    // Provjera username-a
+    final username = request['username'];
+    if (username != null && username.toString().isNotEmpty) {
+      final exists = await _zaposlenikProvider.checkUsernameExists(username);
+      if (exists && (widget.zaposlenik == null || 
+          widget.zaposlenik?.username?.toLowerCase() != username.toLowerCase())) {
+        setState(() {
+          _usernameExists = true;
+        });
+        _formKey.currentState?.fields['username']?.validate();
+        return;
+      }
+    }
 
     // Convert date to ISO format
     if (request['datumRodjenja'] != null) {
@@ -590,17 +629,16 @@ FormBuilderDropdown<String>(
       request['gradId'] = int.tryParse(request['gradId']);
     }
 
-   request['ulogaId'] =1;
+    request['ulogaId'] = 1;
 
     // Handle autoservisId and firmaAutodijelovaId - only send one of them
     if (selectedAutoservisId != null && selectedAutoservisId!.isNotEmpty) {
       request['autoservisId'] = int.tryParse(selectedAutoservisId!);
-      request['firmaAutodijelovaId'] = null; // Explicitly set to null
+      request['firmaAutodijelovaId'] = null;
     } else if (selectedFirmaId != null && selectedFirmaId!.isNotEmpty) {
       request['firmaAutodijelovaId'] = int.tryParse(selectedFirmaId!);
-      request['autoservisId'] = null; // Explicitly set to null
+      request['autoservisId'] = null;
     } else {
-      // If neither is selected, set both to null
       request['autoservisId'] = null;
       request['firmaAutodijelovaId'] = null;
     }
@@ -612,21 +650,18 @@ FormBuilderDropdown<String>(
         await _zaposlenikProvider.update(widget.zaposlenik!.zaposlenikId!, request);
       }
 
-      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Greška"),
-          content: Text("Došlo je do greške prilikom spremanja: ${e.toString()}"),
-          actions: [],
+      // Ovdje možete prikazati grešku u polju umjesto dialoga
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Došlo je do greške: ${e.toString()}"),
+          backgroundColor: Colors.red,
         ),
       );
     }
   }
 },
-
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.red,

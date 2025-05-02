@@ -11,9 +11,11 @@ namespace CarCareHub_.Controllers
     [AllowAnonymous]
     public class AutoservisController : BaseCRUDController<CarCareHub.Model.Autoservis, AutoservisSearchObject, AutoservisInsert, AutoservisUpdate>
     {
+        private readonly IAutoservisService _autoservisService;
         public AutoservisController(ILogger<BaseController<CarCareHub.Model.Autoservis, AutoservisSearchObject>> logger,
             IAutoservisService autoservisService) : base(logger, autoservisService)
         {
+            _autoservisService = autoservisService;
         }
         [HttpPost("login")]
         [AllowAnonymous]
@@ -31,6 +33,13 @@ namespace CarCareHub_.Controllers
                 return NotFound("Invalid username or password");
             }
             return Ok(new { Id = id });
+        }
+        [HttpGet("check-username/{username}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckUsernameExists(string username)
+        {
+            var exists = await _autoservisService.UsernameExists(username);
+            return Ok(new { exists });
         }
     }
 }

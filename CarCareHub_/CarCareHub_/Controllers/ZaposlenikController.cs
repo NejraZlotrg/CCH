@@ -12,9 +12,12 @@ namespace CarCareHub_.Controllers
     [AllowAnonymous]
     public class ZaposleniciController : BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>
     {
+
+        private readonly IZaposlenikService _zaposlenikService;
         public ZaposleniciController(ILogger<BaseCRUDController<Zaposlenik, ZaposlenikSearchObject, ZaposlenikInsert, ZaposlenikUpdate>> logger,
             IZaposlenikService zaposlenikService ) : base(logger, zaposlenikService)
         {
+            _zaposlenikService = zaposlenikService;
         }
         [HttpGet("GetZByGrad")]
         [Authorize(Roles = "Zaposlenik")]
@@ -38,6 +41,15 @@ namespace CarCareHub_.Controllers
                 return NotFound("Invalid username or password");
             }
             return Ok(new { Id = id });
+        }
+
+
+        [HttpGet("check-username/{username}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckUsernameExists(string username)
+        {
+            var exists = await _zaposlenikService.UsernameExists(username);
+            return Ok(new { exists });
         }
     }
 }

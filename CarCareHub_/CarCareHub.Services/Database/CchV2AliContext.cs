@@ -111,7 +111,6 @@ public partial class CchV2AliContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("telefon");
             entity.Property(e => e.UlogaId).HasColumnName("ulogaID");
-            entity.Property(e => e.VoziloId).HasColumnName("voziloID");
 
             entity.HasOne(d => d.Grad).WithMany(p => p.Autoservis)
                 .HasForeignKey(d => d.GradId)
@@ -123,9 +122,7 @@ public partial class CchV2AliContext : DbContext
 
             
 
-            entity.HasOne(d => d.Vozilo).WithMany(p => p.Autoservis)
-                .HasForeignKey(d => d.VoziloId)
-                .HasConstraintName("fk_v_a");
+          
         });
 
         modelBuilder.Entity<ChatKlijentZaposlenik>(entity =>

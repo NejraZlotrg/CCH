@@ -26,7 +26,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
   Map<String, dynamic> _initialValues = {};
   late KlijentProvider _klijentProvider;
   late GradProvider _gradProvider;
-
+  bool _usernameExists = false;
   SearchResult<Grad>? gradResult;
   bool isLoading = true;
 
@@ -66,34 +66,57 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
     });
   }
 
-  Future<void> _saveForm() async {
-    _formKey.currentState?.saveAndValidate();
-    var request = Map.from(_formKey.currentState!.value);
-    request['ulogaId'] = 4;
+ Future<void> _saveForm() async {
+  // Provjera validacije forme
+  if (!(_formKey.currentState?.validate() ?? false)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Molimo popunite obavezna polja."),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    return;
+  }
 
-    try {
-      if (widget.klijent == null) {
-        await _klijentProvider.insert(request);
-      } else {
-        await _klijentProvider.update(
-          widget.klijent!.klijentId,
-          request,
-        );
-      }
-      Navigator.pop(context);
-    } on Exception {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => const AlertDialog(
-          title: Text("Greška"),
-          content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
-          actions: [
-         
-          ],
-        ),
-      );
+  // Provjera username-a
+  final username = _formKey.currentState?.fields['username']?.value;
+  if (username != null && username.toString().isNotEmpty) {
+    final exists = await _klijentProvider.checkUsernameExists(username);
+    if (exists && (widget.klijent == null || 
+        widget.klijent?.username?.toLowerCase() != username.toLowerCase())) {
+      setState(() {
+        _usernameExists = true;
+      });
+      _formKey.currentState?.fields['username']?.validate();
+      return;
     }
   }
+
+  _formKey.currentState?.saveAndValidate();
+  var request = Map.from(_formKey.currentState!.value);
+  request['ulogaId'] = 4;
+
+  try {
+    if (widget.klijent == null) {
+      await _klijentProvider.insert(request);
+    } else {
+      await _klijentProvider.update(
+        widget.klijent!.klijentId,
+        request,
+      );
+    }
+    Navigator.pop(context);
+  } on Exception {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => const AlertDialog(
+        title: Text("Greška"),
+        content: Text("Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
+        actions: [],
+      ),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -188,10 +211,12 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                                 );
                               }
                             },
+     
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.red,
                               padding: const EdgeInsets.symmetric(
+
                                   horizontal: 20, vertical: 10),
                               textStyle: const TextStyle(fontSize: 16),
                               shape: RoundedRectangleBorder(
@@ -301,26 +326,48 @@ List<Widget> _buildFormFields() {
           "Korisničko ime",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            labelStyle: TextStyle(color: Colors.black),
-            hintText: 'Unesite korisničko ime',
-            hintStyle: TextStyle(color: Colors.black),
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-          ),
-          name: "username",
-          validator: validator.required,
-        ),
+       FormBuilderTextField(
+  decoration: InputDecoration(
+    labelStyle: TextStyle(color: Colors.black),
+    hintText: 'Unesite korisničko ime',
+    hintStyle: TextStyle(color: Colors.black),
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+    ),
+    errorStyle: TextStyle(color: Colors.red),
+  ),
+  name: "username",
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Unesite korisničko ime';
+    }
+    if (_usernameExists) {
+      return 'Korisničko ime već postoji';
+    }
+    return null;
+  },
+  onChanged: (value) {
+    if (value != null && value.isNotEmpty) {
+      setState(() {
+        _usernameExists = false;
+      });
+      _formKey.currentState?.fields['username']?.validate();
+    }
+  },
+),
       ],
     ),
 

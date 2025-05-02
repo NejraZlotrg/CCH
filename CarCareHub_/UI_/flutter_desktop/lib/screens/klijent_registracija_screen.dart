@@ -44,6 +44,9 @@ class _KlijentRegistracijaScreenState
   List<Usluge> usluge = [];
   bool isLoading = true;
 
+
+  bool usernameExists = false; // Dodajte ovo stanje
+
   final validator = CreateValidator();
 
   @override
@@ -84,44 +87,64 @@ class _KlijentRegistracijaScreenState
   
 
 
-  Future<void> _saveForm() async {
-    _formKey.currentState?.saveAndValidate();
-    var request = Map.from(_formKey.currentState!.value);
+ Future<bool> _saveForm() async {
+  final formState = _formKey.currentState;
+  if (formState == null) return false;
 
-      request['ulogaId'] = 4;
+  final isValid = formState.saveAndValidate();
+  if (!isValid) return false;
 
-    try {
-      if (widget.klijent == null) {
-        await _klijentProvider.insert(request);
-      } else {
-        await _klijentProvider.update(
-          widget.klijent!.klijentId,
-          request,
-        );
-      }
+  var request = Map.from(formState.value);
+  request['ulogaId'] = 4;
 
-       Navigator.pushAndRemoveUntil(
+  try {
+    // Provjera username-a
+    final username = request['username'];
+    if (username == null || username.toString().isEmpty) {
+      formState.fields['username']?.invalidate("Username je obavezan");
+      return false;
+    }
+
+    final exists = await _klijentProvider.checkUsernameExists(username);
+    if (exists) {
+      formState.fields['username']?.invalidate("Username već postoji");
+      return false;
+    }
+
+    // Insert ili update
+    if (widget.klijent == null) {
+      await _klijentProvider.insert(request);
+    } else {
+      final klijentId = widget.klijent!.klijentId;
+      await _klijentProvider.update(klijentId, request);
+    }
+
+    // Navigacija na login
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LogInPage()),
-      (Route<dynamic> route) => false,  // This will pop all the previous routes from the stack
+      (Route<dynamic> route) => false,
     );
-    
-    } on Exception catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Error"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            )
-          ],
-        ),
-      );
-    }
+
+    return true;
+  } on Exception catch (e) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("Greška"),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+    return false;
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -58,9 +58,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   List<Grad> grad = [];
 
   bool isLoading = true;
-
+  bool _usernameExists = false;
   final validator = CreateValidator();
-
 
   @override
   void initState() {
@@ -88,8 +87,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
 
-
-
     initForm();
     fetchUsluge();
     fetchGrad();
@@ -98,11 +95,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   }
 
   Future initForm() async {
-     if (context.read<UserProvider>().role == "Admin") {
-       gradResult = await _gradProvider.getAdmin();
-     } else {
-       gradResult = await _gradProvider.get();
-     }
+    if (context.read<UserProvider>().role == "Admin") {
+      gradResult = await _gradProvider.getAdmin();
+    } else {
+      gradResult = await _gradProvider.get();
+    }
     if (widget.autoservis != null && widget.autoservis!.slikaProfila != null) {
       _imageFile =
           await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);
@@ -139,8 +136,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
@@ -156,24 +152,21 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
 
   Future<void> fetchGrad() async {
-   
-      grad = await _gradProvider.getById(widget.autoservis?.gradId);
-      if (grad.isNotEmpty && grad.first.vidljivo == false) {
+    grad = await _gradProvider.getById(widget.autoservis?.gradId);
+    if (grad.isNotEmpty && grad.first.vidljivo == false) {
       grad = []; // Postavi na praznu listu ako grad nije vidljiv
       _initialValues['gradId']; // Resetuj vrednost za dropdown
-  
+
       if (mounted) {
         setState(() {});
       }
     }
-   
   }
 
   @override
@@ -194,65 +187,66 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     const SizedBox(height: 20),
                     _buildForm(),
 
-Padding(
-  padding: const EdgeInsets.all(10),
-  child: usluge.isNotEmpty
-      ? Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey, width: 1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text("Naziv usluge")),
-              DataColumn(label: Text("Cijena")),
-              DataColumn(label: Text("Opis")),
-              DataColumn(label: Text("Uredi")),
-              DataColumn(label: Text("Obriši")),
-            ],
-            rows: usluge.map((usluga) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(usluga.nazivUsluge ?? "")),
-                  DataCell(Text(usluga.cijena?.toString() ?? "")),
-                  DataCell(Text(usluga.opis ?? "")),
-                  DataCell(
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () => _editUsluga(usluga),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: usluge.isNotEmpty
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: Colors.grey, width: 1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: DataTable(
+                                columns: const [
+                                  DataColumn(label: Text("Naziv usluge")),
+                                  DataColumn(label: Text("Cijena")),
+                                  DataColumn(label: Text("Opis")),
+                                  DataColumn(label: Text("Uredi")),
+                                  DataColumn(label: Text("Obriši")),
+                                ],
+                                rows: usluge.map((usluga) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(usluga.nazivUsluge ?? "")),
+                                      DataCell(Text(
+                                          usluga.cijena?.toString() ?? "")),
+                                      DataCell(Text(usluga.opis ?? "")),
+                                      DataCell(
+                                        IconButton(
+                                          icon: const Icon(Icons.edit,
+                                              color: Colors.blue),
+                                          onPressed: () => _editUsluga(usluga),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        IconButton(
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () =>
+                                              _deleteUsluga(usluga),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          : const Text(
+                              "Nema dostupnih usluga za ovaj autoservis."),
                     ),
-                  ),
-                  DataCell(
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteUsluga(usluga),
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-        )
-      : const Text("Nema dostupnih usluga za ovaj autoservis."),
-),
                     // Dugme za dodavanje usluge
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==
                                 widget.autoservis?.autoservisId))
-                      
-                      
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
-                          
-                          onPressed: () => 
-                          
-                          _showAddUslugaDialog(),
-                          
+                          onPressed: () => _showAddUslugaDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 251, 26, 10), // Crvena boja dugmeta
+                            backgroundColor: const Color.fromARGB(
+                                255, 251, 26, 10), // Crvena boja dugmeta
                             foregroundColor: Colors.white, // Bijela boja teksta
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -275,65 +269,89 @@ Padding(
                               ),
                               child: Column(
                                 children: [
-                                DataTable(
-  columns: [
-    const DataColumn(label: Text("Ime")),
-    const DataColumn(label: Text("Prezime")),
-    const DataColumn(label: Text("Email")),
-    const DataColumn(label: Text("Broj telefona")),
-    const DataColumn(label: Text("Uredi")),
-    const DataColumn(label: Text("Obriši")),
-    if (context.read<UserProvider>().role == "Klijent")
-      const DataColumn(label: Text("")), // Empty header for message button
-  ],
-  rows: zaposlenik.map((zap) {
-    return DataRow(
-      cells: [
-        DataCell(Text(zap.ime ?? "")),
-        DataCell(Text(zap.prezime ?? "")),
-        DataCell(Text(zap.email ?? "")),
-        DataCell(Text(zap.brojTelefona?.toString() ?? "")),
-        DataCell(
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.blue),
-            onPressed: () => _editZaposlenik(zap),
-          ),
-        ),
-        DataCell(
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () => _deleteZaposlenik(zap),
-          ),
-        ),
-        if (context.read<UserProvider>().role == "Klijent")
-          DataCell(
-            ElevatedButton(
-              onPressed: () {
-                final klijentId = context.read<UserProvider>().userId;
-                final zaposleniId = zap.zaposlenikId!;
-                _showSendMessageDialog2(context, klijentId, zaposleniId);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 247, 28, 13),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.chat, size: 20),
-                  SizedBox(width: 5),
-                  Text("Pošaljite poruku"),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }).toList(),
-),
+                                  DataTable(
+                                    columns: [
+                                      const DataColumn(label: Text("Ime")),
+                                      const DataColumn(label: Text("Prezime")),
+                                      const DataColumn(label: Text("Email")),
+                                      const DataColumn(
+                                          label: Text("Broj telefona")),
+                                      const DataColumn(label: Text("Uredi")),
+                                      const DataColumn(label: Text("Obriši")),
+                                      if (context.read<UserProvider>().role ==
+                                          "Klijent")
+                                        const DataColumn(
+                                            label: Text(
+                                                "")), // Empty header for message button
+                                    ],
+                                    rows: zaposlenik.map((zap) {
+                                      return DataRow(
+                                        cells: [
+                                          DataCell(Text(zap.ime ?? "")),
+                                          DataCell(Text(zap.prezime ?? "")),
+                                          DataCell(Text(zap.email ?? "")),
+                                          DataCell(Text(
+                                              zap.brojTelefona?.toString() ??
+                                                  "")),
+                                          DataCell(
+                                            IconButton(
+                                              icon: const Icon(Icons.edit,
+                                                  color: Colors.blue),
+                                              onPressed: () =>
+                                                  _editZaposlenik(zap),
+                                            ),
+                                          ),
+                                          DataCell(
+                                            IconButton(
+                                              icon: const Icon(Icons.delete,
+                                                  color: Colors.red),
+                                              onPressed: () =>
+                                                  _deleteZaposlenik(zap),
+                                            ),
+                                          ),
+                                          if (context
+                                                  .read<UserProvider>()
+                                                  .role ==
+                                              "Klijent")
+                                            DataCell(
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  final klijentId = context
+                                                      .read<UserProvider>()
+                                                      .userId;
+                                                  final zaposleniId =
+                                                      zap.zaposlenikId!;
+                                                  _showSendMessageDialog2(
+                                                      context,
+                                                      klijentId,
+                                                      zaposleniId);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          255, 247, 28, 13),
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                  ),
+                                                ),
+                                                child: const Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(Icons.chat, size: 20),
+                                                    SizedBox(width: 5),
+                                                    Text("Pošaljite poruku"),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    }).toList(),
+                                  ),
                                 ],
                               ),
                             )
@@ -350,7 +368,8 @@ Padding(
                         child: ElevatedButton(
                           onPressed: () => _showAddZaposlenikDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 253, 27, 11), // Crvena boja dugmeta
+                            backgroundColor: const Color.fromARGB(
+                                255, 253, 27, 11), // Crvena boja dugmeta
                             foregroundColor: Colors.white, // Bijela boja teksta
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -368,7 +387,7 @@ Padding(
                                     "Autoservis" &&
                                 context.read<UserProvider>().userId ==
                                     widget.autoservis?.autoservisId))
-                                                    Padding(
+                          Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
                               onPressed: () async {
@@ -399,16 +418,19 @@ Padding(
                                   try {
                                     await _autoservisProvider.delete(
                                         widget.autoservis!.autoservisId!);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                                    Navigator.pop(
+                                        context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content:
+                                            Text("Proizvod uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text("Greška prilikom brisanja: ${e.toString()}"),
+                                        content: Text(
+                                            "Greška prilikom brisanja: ${e.toString()}"),
                                       ),
                                     );
                                   }
@@ -416,7 +438,8 @@ Padding(
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: const Color.fromARGB(255, 249, 11, 11), // Crvena boja za brisanje
+                                backgroundColor: const Color.fromARGB(255, 249,
+                                    11, 11), // Crvena boja za brisanje
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -427,82 +450,85 @@ Padding(
                               child: const Text("Izbriši"),
                             ),
                           ),
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: ElevatedButton(
+                            onPressed: () async {
+      // Provjera validacije forme
+      if (!(_formKey.currentState?.validate() ?? false)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Molimo popunite obavezna polja."),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
 
+      // Provjera username-a
+      final username = _formKey.currentState?.fields['username']?.value;
+      if (username != null && username.toString().isNotEmpty) {
+        final exists = await _autoservisProvider.checkUsernameExists(username);
+        if (exists && (widget.autoservis == null || 
+            widget.autoservis?.username?.toLowerCase() != username.toLowerCase())) {
+          setState(() {
+            _usernameExists = true;
+          });
+          _formKey.currentState?.fields['username']?.validate();
+          return;
+        }
+      }
 
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: ElevatedButton(
-                              onPressed: () async {
+      if (_formKey.currentState?.saveAndValidate() ?? false) {
+        var request = Map.from(_formKey.currentState!.value);
+        request['ulogaId'] = 2;
+        request['voziloId'] = 1;
 
-                                    // Provjera validacije forme
-    if (!(_formKey.currentState?.validate() ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Molimo popunite obavezna polja."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Zaustavi obradu ako validacija nije prošla
-    }
-    
-                                if (_formKey.currentState?.saveAndValidate() ??
-                                    false) {
-                                  var request =
-                                      Map.from(_formKey.currentState!.value);
-                                  request['ulogaId'] = 2;
-                                  request['voziloId'] = 1;
+        if (_imageFile != null) {
+          final imageBytes = await _imageFile!.readAsBytes();
+          request['slikaProfila'] = base64Encode(imageBytes);
+        } else {
+          const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
+          var imageFile = await rootBundle.load(assetImagePath);
+          final imageBytes = imageFile.buffer.asUint8List();
+          request['slikaProfila'] = base64Encode(imageBytes);
+        }
 
-                                if (_imageFile != null  ) {
-  final imageBytes = await _imageFile!.readAsBytes();
-  request['slikaProfila'] = base64Encode(imageBytes);
-} else {
-  // Ako nije poslana, učitaj iz assets-a
-  const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
-  var imageFile = await rootBundle.load(assetImagePath);
-  final imageBytes = imageFile.buffer.asUint8List();
-  request['slikaProfila'] = base64Encode(imageBytes);
-}
-
-
-                                  try {
-                                    if (widget.autoservis == null) {
-                                      await _autoservisProvider.insert(request);
-                                    } else {
-                                      await _autoservisProvider.update(
-                                          widget.autoservis!.autoservisId!,
-                                          request);
-                                    }
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.pop(context);
-                                  } on Exception {
-                                    showDialog(
-                                      // ignore: use_build_context_synchronously
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          const AlertDialog(
-                                        title: Text("Greška"),
-                                        content: Text( "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
-                                        actions: [
-                                          
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: const Color.fromARGB(255, 253, 23, 7),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                textStyle: const TextStyle(fontSize: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+        try {
+          if (widget.autoservis == null) {
+            await _autoservisProvider.insert(request);
+          } else {
+            await _autoservisProvider.update(
+                widget.autoservis!.autoservisId!,
+                request);
+          }
+          Navigator.pop(context);
+        } on Exception {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => const AlertDialog(
+              title: Text("Greška"),
+              content: Text("Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
+              actions: [],
+            ),
+          );
+        }
+      }
+    },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 253, 23, 7),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              textStyle: const TextStyle(fontSize: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Text("Spasi"),
                             ),
+                            child: const Text("Spasi"),
                           ),
+                        ),
                       ],
                     ),
                   ],
@@ -512,112 +538,114 @@ Padding(
     );
   }
 
-Future<void> _editUsluga(Usluge usluga) async {
-  // Example implementation - you might want to navigate to an edit screen
-  final editedUsluga = await showDialog<Usluge>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Uredi uslugu'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: TextEditingController(text: usluga.nazivUsluge),
-            decoration: const InputDecoration(labelText: 'Naziv usluge'),
-            onChanged: (value) => usluga.nazivUsluge = value,
+  Future<void> _editUsluga(Usluge usluga) async {
+    // Example implementation - you might want to navigate to an edit screen
+    final editedUsluga = await showDialog<Usluge>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Uredi uslugu'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: TextEditingController(text: usluga.nazivUsluge),
+              decoration: const InputDecoration(labelText: 'Naziv usluge'),
+              onChanged: (value) => usluga.nazivUsluge = value,
+            ),
+            TextField(
+              controller:
+                  TextEditingController(text: usluga.cijena?.toString()),
+              decoration: const InputDecoration(labelText: 'Cijena'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) => usluga.cijena = double.tryParse(value),
+            ),
+            TextField(
+              controller: TextEditingController(text: usluga.opis),
+              decoration: const InputDecoration(labelText: 'Opis'),
+              onChanged: (value) => usluga.opis = value,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Otkaži'),
           ),
-          TextField(
-            controller: TextEditingController(text: usluga.cijena?.toString()),
-            decoration: const InputDecoration(labelText: 'Cijena'),
-            keyboardType: TextInputType.number,
-            onChanged: (value) => usluga.cijena = double.tryParse(value),
-          ),
-          TextField(
-            controller: TextEditingController(text: usluga.opis),
-            decoration: const InputDecoration(labelText: 'Opis'),
-            onChanged: (value) => usluga.opis = value,
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, usluga);
+            },
+            child: const Text('Spremi'),
           ),
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Otkaži'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context, usluga);
-          },
-          child: const Text('Spremi'),
-        ),
-      ],
-    ),
-  );
+    );
 
-  if (editedUsluga != null) {
-    try {
-      // ignore: use_build_context_synchronously
-      final provider = Provider.of<UslugeProvider>(context, listen: false);
-      await provider.update(editedUsluga.uslugeId, editedUsluga);
-      setState(() {
-        // Update the local list
-        final index = usluge.indexWhere((u) => u.uslugeId == editedUsluga.uslugeId);
-        if (index != -1) {
-          usluge[index] = editedUsluga;
-        }
-      });
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usluga uspješno ažurirana')),
-      );
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška pri ažuriranju: $e')),
-      );
+    if (editedUsluga != null) {
+      try {
+        // ignore: use_build_context_synchronously
+        final provider = Provider.of<UslugeProvider>(context, listen: false);
+        await provider.update(editedUsluga.uslugeId, editedUsluga);
+        setState(() {
+          // Update the local list
+          final index =
+              usluge.indexWhere((u) => u.uslugeId == editedUsluga.uslugeId);
+          if (index != -1) {
+            usluge[index] = editedUsluga;
+          }
+        });
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usluga uspješno ažurirana')),
+        );
+      } catch (e) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Greška pri ažuriranju: $e')),
+        );
+      }
     }
   }
-}
 
-Future<void> _deleteUsluga(Usluge usluga) async {
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Potvrda brisanja'),
-      content: Text('Da li ste sigurni da želite obrisati uslugu ${usluga.nazivUsluge}?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text('Otkaži'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: const Text('Obriši', style: TextStyle(color: Colors.red)),
-        ),
-      ],
-    ),
-  );
+  Future<void> _deleteUsluga(Usluge usluga) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Potvrda brisanja'),
+        content: Text(
+            'Da li ste sigurni da želite obrisati uslugu ${usluga.nazivUsluge}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Otkaži'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Obriši', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
 
-  if (confirmed == true) {
-    try {
-      final provider = Provider.of<UslugeProvider>(context, listen: false);
-      await provider.delete(usluga.uslugeId);
-      setState(() {
-        usluge.removeWhere((u) => u.uslugeId == usluga.uslugeId);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Usluga ${usluga.nazivUsluge} obrisana')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška pri brisanju: $e')),
-      );
+    if (confirmed == true) {
+      try {
+        final provider = Provider.of<UslugeProvider>(context, listen: false);
+        await provider.delete(usluga.uslugeId);
+        setState(() {
+          usluge.removeWhere((u) => u.uslugeId == usluga.uslugeId);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Usluga ${usluga.nazivUsluge} obrisana')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Greška pri brisanju: $e')),
+        );
+      }
     }
   }
-}
+
   FormBuilder _buildForm() {
-
-    
     return FormBuilder(
       key: _formKey,
       initialValue: _initialValues,
@@ -643,7 +671,8 @@ Future<void> _deleteUsluga(Usluge usluga) async {
                               context, klijentId, autoservisId);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 248, 26, 10),
+                          backgroundColor:
+                              const Color.fromARGB(255, 248, 26, 10),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
@@ -692,15 +721,17 @@ Future<void> _deleteUsluga(Usluge usluga) async {
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      ): const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.camera_alt, size: 60, color: Colors.black),
-              SizedBox(height: 10),
-              Text('Odaberite sliku',
-                  style: TextStyle(color: Colors.black, fontSize: 16)),
-            ],
-          ),
+                      )
+                    : const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt, size: 60, color: Colors.black),
+                          SizedBox(height: 10),
+                          Text('Odaberite sliku',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16)),
+                        ],
+                      ),
               ),
             ),
           ),
@@ -722,7 +753,7 @@ Future<void> _deleteUsluga(Usluge usluga) async {
       // Osnovni podaci
       Row(
         children: [
-         Expanded(
+          Expanded(
             child: FormBuilderTextField(
               decoration: const InputDecoration(
                 labelText: "Naziv autoservisa",
@@ -818,43 +849,45 @@ Future<void> _deleteUsluga(Usluge usluga) async {
           const SizedBox(width: 20),
           Expanded(
             child: FormBuilderDropdown(
-    name: 'gradId',
-    validator: validator.required,
-    decoration: const InputDecoration(
-      labelText: 'Grad',
-      labelStyle: TextStyle(color: Colors.black),
-      hintText: 'Izaberite grad',
-      hintStyle: TextStyle(color: Colors.black),
-      border: OutlineInputBorder(),
-      fillColor: Colors.white,
-      filled: true,
-      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.black),
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.black),
-      ),
-    ),
-    style: const TextStyle(color: Colors.black),
-    initialValue: widget.autoservis?.gradId?.toString(),
-    items: gradResult?.result
-            .map((item) => DropdownMenuItem(
-                  alignment: AlignmentDirectional.center,
-                  value: item.gradId.toString(),
-                  child: Text(
-                    item.nazivGrada ?? "",
-                    style: const TextStyle(
-                      color:  Colors.black,
-                    ),
-                    
-                  ),
-                ))
-            .toList() ??
-        [],
-    enabled: context.read<UserProvider>().role == "Admin" || ( context.read<UserProvider>().role == "Autoservis" && context.read<UserProvider>().userId == widget.autoservis!.autoservisId), // Enable if Admin
-  ),
-
+              name: 'gradId',
+              validator: validator.required,
+              decoration: const InputDecoration(
+                labelText: 'Grad',
+                labelStyle: TextStyle(color: Colors.black),
+                hintText: 'Izaberite grad',
+                hintStyle: TextStyle(color: Colors.black),
+                border: OutlineInputBorder(),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+              style: const TextStyle(color: Colors.black),
+              initialValue: widget.autoservis?.gradId?.toString(),
+              items: gradResult?.result
+                      .map((item) => DropdownMenuItem(
+                            alignment: AlignmentDirectional.center,
+                            value: item.gradId.toString(),
+                            child: Text(
+                              item.nazivGrada ?? "",
+                              style: const TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ))
+                      .toList() ??
+                  [],
+              enabled: context.read<UserProvider>().role == "Admin" ||
+                  (context.read<UserProvider>().role == "Autoservis" &&
+                      context.read<UserProvider>().userId ==
+                          widget.autoservis!.autoservisId), // Enable if Admin
+            ),
           ),
         ],
       ),
@@ -887,42 +920,40 @@ Future<void> _deleteUsluga(Usluge usluga) async {
               enabled: isAdmin, // Ako nije admin, polje je disabled
               style: const TextStyle(
                   color: Colors.black), // Crni tekst unutar inputa
-              initialValue:
-                  widget.autoservis?.telefon ?? "",
-                  validator: validator.phoneNumber, // Održavanje unetog teksta
+              initialValue: widget.autoservis?.telefon ?? "",
+              validator: validator.phoneNumber, // Održavanje unetog teksta
             ),
           ),
           const SizedBox(width: 20),
-Expanded(
-  child: FormBuilderTextField(
-    decoration: const InputDecoration(
-      labelText: "Email",
-      border: OutlineInputBorder(),
-      fillColor: Colors.white, // Bela pozadina
-      filled: true, // Da pozadina bude ispunjena
-      contentPadding:
-          EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.black), // Crni okvir
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-            color: Colors.black), // Crni okvir kada je disabled
-      ),
-      labelStyle:
-          TextStyle(color: Colors.black), // Crni tekst za labelu
-      hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
-    ),
-    name: "email",
-    enabled: isAdmin, // Ako nije admin, polje je disabled
-    style: const TextStyle(
-        color: Colors.black), // Crni tekst unutar inputa
-    initialValue:
-        widget.autoservis?.email ?? "", // Održavanje unetog teksta
-    validator: validator.email,
-  ),
-),
-
+          Expanded(
+            child: FormBuilderTextField(
+              decoration: const InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(),
+                fillColor: Colors.white, // Bela pozadina
+                filled: true, // Da pozadina bude ispunjena
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.black), // Crni okvir kada je disabled
+                ),
+                labelStyle:
+                    TextStyle(color: Colors.black), // Crni tekst za labelu
+                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+              ),
+              name: "email",
+              enabled: isAdmin, // Ako nije admin, polje je disabled
+              style: const TextStyle(
+                  color: Colors.black), // Crni tekst unutar inputa
+              initialValue:
+                  widget.autoservis?.email ?? "", // Održavanje unetog teksta
+              validator: validator.email,
+            ),
+          ),
         ],
       ),
       const SizedBox(height: 20),
@@ -998,6 +1029,7 @@ Expanded(
               children: [
                 Expanded(
                   child: FormBuilderTextField(
+                    name: "username",
                     decoration: const InputDecoration(
                       labelText: "Korisničko ime",
                       border: OutlineInputBorder(),
@@ -1018,10 +1050,22 @@ Expanded(
                       hintStyle:
                           TextStyle(color: Colors.black), // Crni tekst za hint
                     ),
-                    name: "username",
-                    initialValue: widget.autoservis?.username ??
-                        "", // Održavanje unetog teksta
-                    validator: validator.required,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Unesite korisničko ime';
+                      }
+                      if (_usernameExists) {
+                        return 'Korisničko ime već postoji';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        setState(() {
+                          _usernameExists = false;
+                        });
+                      }
+                    },
                     style: const TextStyle(
                         color: Colors.black), // Crni tekst unutar inputa
                   ),
@@ -1060,7 +1104,7 @@ Expanded(
                     name: "password",
                     initialValue: widget.autoservis?.password ??
                         "", // Održavanje unetog teksta
-                    validator:validator.required,
+                    validator: validator.required,
                     obscureText: true, // Da lozinka bude sakrivena
                     style: const TextStyle(
                         color: Colors.black), // Crni tekst unutar inputa
@@ -1213,7 +1257,6 @@ Expanded(
                 FormBuilderTextField(
                   name: "opis",
                   decoration: const InputDecoration(labelText: "Opis"),
-
                 ),
               ],
             ),
@@ -1227,18 +1270,17 @@ Expanded(
             ),
             TextButton(
               onPressed: () async {
+                // Provjera validacije forme
+                if (!(uslugaFormKey.currentState?.validate() ?? false)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Molimo popunite obavezna polja."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return; // Zaustavi obradu ako validacija nije prošla
+                }
 
-                                                    // Provjera validacije forme
-    if (!(uslugaFormKey.currentState?.validate() ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Molimo popunite obavezna polja."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Zaustavi obradu ako validacija nije prošla
-    }
-    
                 uslugaFormKey.currentState?.saveAndValidate();
                 var uslugaRequest = Map.from(uslugaFormKey.currentState!.value);
                 uslugaRequest['autoservisId'] = widget.autoservis?.autoservisId;
@@ -1272,375 +1314,436 @@ Expanded(
       },
     );
   }
-void _showAddZaposlenikDialog() {
-  final zaposlenikFormKey = GlobalKey<FormBuilderState>();
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Dodaj novog zaposlenika"),
-        content: SingleChildScrollView(
-          child: FormBuilder(
-            key: zaposlenikFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FormBuilderTextField(
-                  name: "ime",
-                  decoration: const InputDecoration(labelText: "Ime"),
-                  validator: validator.required,
-                ),
-                FormBuilderTextField(
-                  name: "prezime",
-                  decoration: const InputDecoration(labelText: "Prezime"),
-                  validator: validator.required,
-                ),      
-                FormBuilderTextField(
-  name: 'adresa',
-  decoration: const InputDecoration(
-    labelText: 'Adresa',
-  ),
-  validator: validator.required,
-),
-FormBuilderDropdown<String>(
-  name: 'gradId',
-  decoration: const InputDecoration(
-    labelText: 'Izaberite grad',
-  ),
-  validator: validator.required,
-  items: gradResult?.result.map((item) {
-    return DropdownMenuItem(
-      value: item.gradId.toString(),
-      child: Text(
-        item.nazivGrada ?? "",
-        style: TextStyle(
-          color: item.vidljivo == false ? Colors.red : Colors.black,
-        ),
-      ),
-    );
-  }).toList() ?? [],
-),
+  void _showAddZaposlenikDialog() {
+    final zaposlenikFormKey = GlobalKey<FormBuilderState>();
 
-                FormBuilderTextField(
-                  name: "mb",
-                  decoration: const InputDecoration(labelText: "Matični broj"),
-                  keyboardType: TextInputType.number,
-                  validator: validator.numberWith12DigitsOnly
-                ),
-                FormBuilderTextField(
-                  name: "brojTelefona",
-                  decoration: const InputDecoration(labelText: "Broj telefona"),
-                  keyboardType: TextInputType.phone,
-                  validator: validator.phoneNumber,
-                ),
-                FormBuilderDateTimePicker(
-                  name: "datumRodjenja",
-                  inputType: InputType.date,
-                  decoration: const InputDecoration(labelText: "Datum Rođenja"),
-                  format: DateFormat("dd.MM.yyyy"),
-                ),
-                FormBuilderTextField(
-                  name: "email",
-                  decoration: const InputDecoration(labelText: "Email"),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: validator.email,
-                ),
-                FormBuilderTextField(
-                  name: "username",
-                  decoration: const InputDecoration(labelText: "Korisničko ime"),
-                  validator: validator.required,
-                ),
-                FormBuilderTextField(
-                  name: "password",
-                  decoration: const InputDecoration(labelText: "Lozinka"),
-                  obscureText: true,
-                  validator: validator.required,
-                ),
-                FormBuilderTextField(
-                  name: "passwordAgain",
-                  decoration: const InputDecoration(labelText: "Ponovi lozinku"),
-                  obscureText: true,
-                  validator: validator.required,
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Odustani"),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Molimo popunite obavezna polja."),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-                return;
-              }
-              
-              zaposlenikFormKey.currentState?.saveAndValidate();
-              var zaposlenikRequest = Map<String, dynamic>.from(
-                  zaposlenikFormKey.currentState!.value);
-
-              // Provjeri da li `mb` postoji i nije null
-              if (zaposlenikRequest['mb'] == null || zaposlenikRequest['mb'].toString().trim().isEmpty) {
-                zaposlenikRequest['mb'] = "";  // Postavi praznu vrijednost ako je null
-              }
-
-              // Konverzija datuma u ISO format
-              if (zaposlenikRequest['datumRodjenja'] != null) {
-                zaposlenikRequest['datumRodjenja'] =
-                    (zaposlenikRequest['datumRodjenja'] as DateTime)
-                        .toIso8601String();
-              }
-
-              zaposlenikRequest['ulogaId'] = 1;
-              zaposlenikRequest['autoservisId'] = widget.autoservis?.autoservisId;
-zaposlenikRequest['mb'] = zaposlenikFormKey.currentState!.value['mb'] ?? "384748494949";
-
-              print("Zaposlenik request: $zaposlenikRequest"); // Debug ispis
-
-              try {
-                await _zaposlenikProvider.insert(zaposlenikRequest);
-                Navigator.pop(context);
-                fetchZaposlenik(); 
-              } catch (e) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: const Text("Greška"),
-                    content: Text(e.toString()),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-            child: const Text("Dodaj"),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showSendMessageDialog(
-    BuildContext context, int klijentId, int autoservisId) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      String message = "";
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return AlertDialog(
-            title: const Text("Pošalji poruku"),
-            content: TextField(
-              onChanged: (value) {
-                setState(() {
-                  message = value;
-                });
-              },
-              decoration: const InputDecoration(hintText: "Unesite poruku"),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text("Otkaži"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await Provider.of<ChatAutoservisKlijentProvider>(
-                      context,
-                      listen: false,
-                    ).sendMessage(klijentId, autoservisId, message);
-
-                    if (mounted && Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Poruka poslana uspješno")),
-                    );
-                  } catch (e) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Greška: ${e.toString()}")),
-                      );
-                    }
-                  }
-                },
-                child: const Text("Pošalji"),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
-
-Future<void> _editZaposlenik(Zaposlenik zap) async {
-  // Future<void> _editZaposlenik(Zaposlenik zap) async {
-  final editedZap = await showDialog<Zaposlenik>(
-    context: context,
-    builder: (context) {
-      // Use StatefulBuilder to manage state within the dialog
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Uredi zaposlenika'),
-            content: SingleChildScrollView(
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Dodaj novog zaposlenika"),
+          content: SingleChildScrollView(
+            child: FormBuilder(
+              key: zaposlenikFormKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    controller: TextEditingController(text: zap.ime),
-                    decoration: const InputDecoration(labelText: 'Ime'),
-                    onChanged: (value) => zap.ime = value,
+                  FormBuilderTextField(
+                    name: "ime",
+                    decoration: const InputDecoration(labelText: "Ime"),
+                    validator: validator.required,
                   ),
-                  TextField(
-                    controller: TextEditingController(text: zap.prezime),
-                    decoration: const InputDecoration(labelText: 'Prezime'),
-                    onChanged: (value) => zap.prezime = value,
+                  FormBuilderTextField(
+                    name: "prezime",
+                    decoration: const InputDecoration(labelText: "Prezime"),
+                    validator: validator.required,
                   ),
-                  TextField(
-                    controller: TextEditingController(text: zap.mb),
-                    decoration: const InputDecoration(labelText: 'Matični broj'),
-                    onChanged: (value) => zap.mb = value,
+                  FormBuilderTextField(
+                    name: 'adresa',
+                    decoration: const InputDecoration(
+                      labelText: 'Adresa',
+                    ),
+                    validator: validator.required,
                   ),
-                  TextField(
-                    controller: TextEditingController(text: zap.brojTelefona),
-                    decoration: const InputDecoration(labelText: 'Broj telefona'),
-                    onChanged: (value) => zap.brojTelefona = value,
+                  FormBuilderDropdown<String>(
+                    name: 'gradId',
+                    decoration: const InputDecoration(
+                      labelText: 'Izaberite grad',
+                    ),
+                    validator: validator.required,
+                    items: gradResult?.result.map((item) {
+                          return DropdownMenuItem(
+                            value: item.gradId.toString(),
+                            child: Text(
+                              item.nazivGrada ?? "",
+                              style: TextStyle(
+                                color: item.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                            ),
+                          );
+                        }).toList() ??
+                        [],
+                  ),
+                  FormBuilderTextField(
+                      name: "mb",
+                      decoration:
+                          const InputDecoration(labelText: "Matični broj"),
+                      keyboardType: TextInputType.number,
+                      validator: validator.numberWith12DigitsOnly),
+                  FormBuilderTextField(
+                    name: "brojTelefona",
+                    decoration:
+                        const InputDecoration(labelText: "Broj telefona"),
+                    keyboardType: TextInputType.phone,
+                    validator: validator.phoneNumber,
                   ),
                   FormBuilderDateTimePicker(
                     name: "datumRodjenja",
                     inputType: InputType.date,
-                    decoration: const InputDecoration(labelText: "Datum Rođenja"),
+                    decoration:
+                        const InputDecoration(labelText: "Datum Rođenja"),
                     format: DateFormat("dd.MM.yyyy"),
-                    initialValue: zap.datumRodjenja, // Use DateTime directly
-                    onChanged: (DateTime? value) {
-                      if (value != null) {
-                        zap.datumRodjenja = value; // Store DateTime directly
+                  ),
+                  FormBuilderTextField(
+                    name: "email",
+                    decoration: const InputDecoration(labelText: "Email"),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: validator.email,
+                  ),
+                  FormBuilderTextField(
+                    name: "username",
+                    decoration: const InputDecoration(
+                      labelText: "Korisničko ime",
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                      ),
+                      errorStyle: TextStyle(color: Colors.red),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Unesite korisničko ime';
+                      }
+                      if (_usernameExists) {
+                        return 'Korisničko ime već postoji';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        setState(() {
+                          _usernameExists = false;
+                        });
                       }
                     },
                   ),
-                  TextField(
-                    controller: TextEditingController(text: zap.email),
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    onChanged: (value) => zap.email = value,
-                  ),
-                  TextField(
-                    controller: TextEditingController(text: zap.username),
-                    decoration: const InputDecoration(labelText: 'Korisničko ime'),
-                    onChanged: (value) => zap.username = value,
-                  ),
-                  TextField(
-                    controller: TextEditingController(text: zap.password),
-                    decoration: const InputDecoration(labelText: 'Lozinka'),
-                    onChanged: (value) => zap.password = value,
+                  FormBuilderTextField(
+                    name: "password",
+                    decoration: const InputDecoration(labelText: "Lozinka"),
                     obscureText: true,
+                    validator: validator.required,
                   ),
-                  TextField(
-                    controller: TextEditingController(text: zap.passwordAgain),
-                    decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
-                    onChanged: (value) => zap.passwordAgain = value,
+                  FormBuilderTextField(
+                    name: "passwordAgain",
+                    decoration:
+                        const InputDecoration(labelText: "Ponovi lozinku"),
                     obscureText: true,
+                    validator: validator.required,
                   ),
                 ],
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Otkaži'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context, zap);
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Odustani"),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (!(zaposlenikFormKey.currentState?.validate() ?? false)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Molimo popunite obavezna polja."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+
+                // Provjera username-a
+                final username =
+                    zaposlenikFormKey.currentState?.fields['username']?.value;
+                if (username != null && username.toString().isNotEmpty) {
+                  final exists =
+                      await _zaposlenikProvider.checkUsernameExists(username);
+                  if (exists) {
+                    setState(() {
+                      _usernameExists = true;
+                    });
+                    zaposlenikFormKey.currentState?.fields['username']
+                        ?.validate();
+                    return;
+                  }
+                }
+
+                zaposlenikFormKey.currentState?.saveAndValidate();
+                var zaposlenikRequest = Map<String, dynamic>.from(
+                    zaposlenikFormKey.currentState!.value);
+
+                // Provjeri da li `mb` postoji i nije null
+                if (zaposlenikRequest['mb'] == null ||
+                    zaposlenikRequest['mb'].toString().trim().isEmpty) {
+                  zaposlenikRequest['mb'] =
+                      ""; // Postavi praznu vrijednost ako je null
+                }
+
+                // Konverzija datuma u ISO format
+                if (zaposlenikRequest['datumRodjenja'] != null) {
+                  zaposlenikRequest['datumRodjenja'] =
+                      (zaposlenikRequest['datumRodjenja'] as DateTime)
+                          .toIso8601String();
+                }
+
+                zaposlenikRequest['ulogaId'] = 1;
+                zaposlenikRequest['autoservisId'] =
+                    widget.autoservis?.autoservisId;
+                zaposlenikRequest['mb'] =
+                    zaposlenikFormKey.currentState!.value['mb'] ??
+                        "384748494949";
+
+                print("Zaposlenik request: $zaposlenikRequest"); // Debug ispis
+
+                try {
+                  await _zaposlenikProvider.insert(zaposlenikRequest);
+                  Navigator.pop(context);
+                  fetchZaposlenik();
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text("Greška"),
+                      content: Text(e.toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+              child: const Text("Dodaj"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSendMessageDialog(
+      BuildContext context, int klijentId, int autoservisId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String message = "";
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text("Pošalji poruku"),
+              content: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    message = value;
+                  });
                 },
-                child: const Text('Spremi'),
+                decoration: const InputDecoration(hintText: "Unesite poruku"),
               ),
-            ],
-          );
-        },
-      );
-    },
-  );
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text("Otkaži"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await Provider.of<ChatAutoservisKlijentProvider>(
+                        context,
+                        listen: false,
+                      ).sendMessage(klijentId, autoservisId, message);
 
-  if (editedZap != null) {
-    try {
-      final provider = Provider.of<ZaposlenikProvider>(context, listen: false);
-      await provider.update(editedZap.zaposlenikId!, editedZap);
-      setState(() {
-        final index = zaposlenik.indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
-        if (index != -1) {
-          zaposlenik[index] = editedZap;
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška pri ažuriranju: $e')),
-      );
+                      if (mounted && Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Poruka poslana uspješno")),
+                      );
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Greška: ${e.toString()}")),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text("Pošalji"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _editZaposlenik(Zaposlenik zap) async {
+    // Future<void> _editZaposlenik(Zaposlenik zap) async {
+    final editedZap = await showDialog<Zaposlenik>(
+      context: context,
+      builder: (context) {
+        // Use StatefulBuilder to manage state within the dialog
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Uredi zaposlenika'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: TextEditingController(text: zap.ime),
+                      decoration: const InputDecoration(labelText: 'Ime'),
+                      onChanged: (value) => zap.ime = value,
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: zap.prezime),
+                      decoration: const InputDecoration(labelText: 'Prezime'),
+                      onChanged: (value) => zap.prezime = value,
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: zap.mb),
+                      decoration:
+                          const InputDecoration(labelText: 'Matični broj'),
+                      onChanged: (value) => zap.mb = value,
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: zap.brojTelefona),
+                      decoration:
+                          const InputDecoration(labelText: 'Broj telefona'),
+                      onChanged: (value) => zap.brojTelefona = value,
+                    ),
+                    FormBuilderDateTimePicker(
+                      name: "datumRodjenja",
+                      inputType: InputType.date,
+                      decoration:
+                          const InputDecoration(labelText: "Datum Rođenja"),
+                      format: DateFormat("dd.MM.yyyy"),
+                      initialValue: zap.datumRodjenja, // Use DateTime directly
+                      onChanged: (DateTime? value) {
+                        if (value != null) {
+                          zap.datumRodjenja = value; // Store DateTime directly
+                        }
+                      },
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: zap.email),
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      onChanged: (value) => zap.email = value,
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: zap.username),
+                      decoration:
+                          const InputDecoration(labelText: 'Korisničko ime'),
+                      onChanged: (value) => zap.username = value,
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: zap.password),
+                      decoration: const InputDecoration(labelText: 'Lozinka'),
+                      onChanged: (value) => zap.password = value,
+                      obscureText: true,
+                    ),
+                    TextField(
+                      controller:
+                          TextEditingController(text: zap.passwordAgain),
+                      decoration:
+                          const InputDecoration(labelText: 'Lozinka ponovo'),
+                      onChanged: (value) => zap.passwordAgain = value,
+                      obscureText: true,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Otkaži'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, zap);
+                  },
+                  child: const Text('Spremi'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (editedZap != null) {
+      try {
+        final provider =
+            Provider.of<ZaposlenikProvider>(context, listen: false);
+        await provider.update(editedZap.zaposlenikId!, editedZap);
+        setState(() {
+          final index = zaposlenik
+              .indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
+          if (index != -1) {
+            zaposlenik[index] = editedZap;
+          }
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Greška pri ažuriranju: $e')),
+        );
+      }
     }
   }
-}
 
-Future<void> _deleteZaposlenik(Zaposlenik zap) async {
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Potvrda brisanja'),
-      content: Text('Da li ste sigurni da želite obrisati zaposlenika ${zap.ime}?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text('Otkaži'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: const Text('Obriši', style: TextStyle(color: Colors.red)),
-        ),
-      ],
-    ),
-  );
+  Future<void> _deleteZaposlenik(Zaposlenik zap) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Potvrda brisanja'),
+        content: Text(
+            'Da li ste sigurni da želite obrisati zaposlenika ${zap.ime}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Otkaži'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Obriši', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
 
-  if (confirmed == true) {
-    try {
-      final provider = Provider.of<ZaposlenikProvider>(context, listen: false);
-      await provider.delete(zap.zaposlenikId!);
-      setState(() {
-        zaposlenik.removeWhere((u) => u.zaposlenikId == zap.zaposlenikId);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Zaposlenik ${zap.ime} obrisan')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška pri brisanju: $e')),
-      );
+    if (confirmed == true) {
+      try {
+        final provider =
+            Provider.of<ZaposlenikProvider>(context, listen: false);
+        await provider.delete(zap.zaposlenikId!);
+        setState(() {
+          zaposlenik.removeWhere((u) => u.zaposlenikId == zap.zaposlenikId);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Zaposlenik ${zap.ime} obrisan')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Greška pri brisanju: $e')),
+        );
+      }
     }
   }
-}
 }

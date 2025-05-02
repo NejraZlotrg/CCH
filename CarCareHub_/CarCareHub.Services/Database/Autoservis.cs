@@ -26,12 +26,10 @@ public partial class Autoservis
     public int? UlogaId { get; set; }
     public virtual ICollection<BPAutodijeloviAutoservis> BPAutodijeloviAutoservis { get; set; } = new List<BPAutodijeloviAutoservis>();
     public virtual ICollection<Usluge> Usluges { get; set; } = new List<Usluge>();
-    public int? VoziloId { get; set; }
     public virtual ICollection<ChatKlijentZaposlenik> ChatKlijentServiss { get; set; } = new List<ChatKlijentZaposlenik>();
     public virtual Grad? Grad { get; set; }
     public virtual ICollection<PlacanjeAutoservisDijelovi> PlacanjeAutoservisDijelovis { get; set; } = new List<PlacanjeAutoservisDijelovi>();
     public virtual Uloge? Uloga { get; set; }
-    public virtual Vozilo? Vozilo { get; set; }
     public virtual ICollection<Zaposlenik> Zaposleniks { get; set; } = new List<Zaposlenik>();
     public virtual ICollection<ChatAutoservisKlijent> ChatPoruke { get; set; } = new List<ChatAutoservisKlijent>();
 } 

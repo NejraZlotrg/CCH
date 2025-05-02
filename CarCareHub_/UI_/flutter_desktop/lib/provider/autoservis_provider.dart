@@ -61,4 +61,27 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
     }
   }
 
+
+
+  
+Future<bool> checkUsernameExists(String username) async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:7209/api/autoservis/check-username/$username'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['exists'] as bool;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    print('Error checking username: $e');
+    return false;
+  }
+}
 }

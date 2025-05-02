@@ -43,6 +43,8 @@ class _FirmaAutodijelovaRegistracijaScreenState
   SearchResult<Grad>? gradResult;
   List<Usluge> usluge = [];
   bool isLoading = true;
+
+  
   bool usernameExists = false; // Dodajte ovo stanje
 
 

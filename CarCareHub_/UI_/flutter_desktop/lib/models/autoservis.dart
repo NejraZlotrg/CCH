@@ -23,12 +23,11 @@ bool? vidljivo;
   int? ulogaId;
   int? zaposlenikId;
 
-  int? voziloId;
   final Grad? grad;
 
 
   Autoservis(this.autoservisId, this.vidljivo, this.naziv,this.adresa,this.vlasnikFirme, this.gradId, this.telefon, this.password,
-  this.email, this.jib, this.mbs, this.slikaProfila, this.ulogaId, this.voziloId, this.grad,this.passwordAgain,this.username);
+  this.email, this.jib, this.mbs, this.slikaProfila, this.ulogaId, this.grad,this.passwordAgain,this.username);
 
   
   factory Autoservis.fromJson(Map<String,dynamic> json) => _$AutoservisFromJson(json);

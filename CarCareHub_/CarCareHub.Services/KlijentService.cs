@@ -59,10 +59,24 @@ namespace CarCareHub.Services
             }
             return base.AddFilter(query, search);
         }
-        public override Task<Model.Klijent> Insert(Model.KlijentInsert insert)
+        public override async Task<Model.Klijent> Insert(Model.KlijentInsert insert)
         {
-            return base.Insert(insert);
+            // Provjera da li username već postoji
+            if (await UsernameExists(insert.Username))
+            {
+                throw new UserException("Korisničko ime već postoji"); // Koristite UserException
+            }
+
+            return await base.Insert(insert);
         }
+
+
+        public async Task<bool> UsernameExists(string username)
+        {
+            return await _dbContext.Klijents
+                .AnyAsync(x => x.Username.ToLower() == username.ToLower());
+        }
+    
         public override IQueryable<Database.Klijent> AddInclude(IQueryable<Database.Klijent> query, KlijentSearchObject? search = null)
         {
             if (search?.IsAllIncluded == true)

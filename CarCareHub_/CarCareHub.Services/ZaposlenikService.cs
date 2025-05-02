@@ -39,6 +39,26 @@ namespace CarCareHub.Services
             byte[] inArray = algorithm.ComputeHash(dst);
             return Convert.ToBase64String(inArray);
         }
+
+        public override async Task<Model.Zaposlenik> Insert(Model.ZaposlenikInsert insert)
+        {
+            // Provjera da li username već postoji
+            if (await UsernameExists(insert.Username))
+            {
+                throw new UserException("Korisničko ime već postoji"); // Koristite UserException
+            }
+
+            return await base.Insert(insert);
+        }
+
+
+        public async Task<bool> UsernameExists(string username)
+        {
+            return await _dbContext.Zaposleniks
+                .AnyAsync(x => x.Username.ToLower() == username.ToLower());
+        }
+
+
         public override IQueryable<Database.Zaposlenik> AddFilter(IQueryable<Database.Zaposlenik> query, ZaposlenikSearchObject? search = null)
         {
             if (!string.IsNullOrWhiteSpace(search?.Ime))

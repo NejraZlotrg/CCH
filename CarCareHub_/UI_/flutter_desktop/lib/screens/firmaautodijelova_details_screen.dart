@@ -38,6 +38,7 @@ class _FirmaAutodijelovaDetailScreenState
   late GradProvider _gradProvider;
   late UlogeProvider _ulogaProvider;
   late BPAutodijeloviAutoservisProvider _bpProvider;
+  bool _usernameExists = false;
 
   SearchResult<Grad>? gradResult;
   SearchResult<Uloge>? ulogaResult;
@@ -239,6 +240,21 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
 
 
         try {
+          
+  // Provjera username-a
+  final username = _formKey.currentState?.fields['username']?.value;
+  if (username != null && username.toString().isNotEmpty) {
+    final exists = await _firmaAutodijelovaProvider.checkUsernameExists(username);
+    if (exists && (widget.firmaAutodijelova == null || 
+        widget.firmaAutodijelova?.username?.toLowerCase() != username.toLowerCase())) {
+      setState(() {
+        _usernameExists = true;
+      });
+      _formKey.currentState?.fields['username']?.validate();
+      return;
+    }
+  }
+
           if (widget.firmaAutodijelova == null) {
             await _firmaAutodijelovaProvider.insert(request);
           } else {
@@ -599,25 +615,47 @@ List<Widget> _buildFormFields() {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
           FormBuilderTextField(
-            decoration: const InputDecoration(
-              labelStyle: TextStyle(color: Colors.black),
-              hintText: 'Unesite korisničko ime',
-              hintStyle: TextStyle(color: Colors.black),
-              border: OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-            style: const TextStyle(color: Colors.black),
-            name: "username",
-            validator: validator.required,
-          ),
+  decoration: InputDecoration(
+    labelStyle: TextStyle(color: Colors.black),
+    hintText: 'Unesite korisničko ime',
+    hintStyle: TextStyle(color: Colors.black),
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+    ),
+    errorStyle: TextStyle(color: Colors.red),
+  ),
+  name: "username",
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Unesite korisničko ime';
+    }
+    if (_usernameExists) {
+      return 'Korisničko ime već postoji';
+    }
+    return null;
+  },
+  onChanged: (value) {
+    if (value != null && value.isNotEmpty) {
+      setState(() {
+        _usernameExists = false;
+      });
+      _formKey.currentState?.fields['username']?.validate();
+    }
+  },
+),
         ],
       ),
 

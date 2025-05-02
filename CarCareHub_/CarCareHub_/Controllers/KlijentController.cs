@@ -11,9 +11,14 @@ namespace CarCareHub_.Controllers
     [Route("api/klijent")]
     public class KlijentiController : BaseCRUDController<CarCareHub.Model.Klijent, KlijentSearchObject, KlijentInsert, KlijentUpdate>
     {
+
+        private readonly IKlijentService _klijentService;
+
         public KlijentiController(ILogger<BaseController<CarCareHub.Model.Klijent, KlijentSearchObject>> logger,
               IKlijentService Service) : base(logger, Service)
         {
+            _klijentService = Service;
+
         }
         [HttpPost("get-id")]
         [AllowAnonymous]
@@ -25,6 +30,14 @@ namespace CarCareHub_.Controllers
                 return NotFound("Invalid username or password");
             }
             return Ok(new { Id = id });
+        }
+
+        [HttpGet("check-username/{username}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckUsernameExists(string username)
+        {
+            var exists = await _klijentService.UsernameExists(username);
+            return Ok(new { exists });
         }
     }
 }
