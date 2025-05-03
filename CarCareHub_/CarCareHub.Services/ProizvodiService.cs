@@ -272,7 +272,43 @@ namespace CarCareHub.Services
                 CijenaSaPopustomZaAutoservis=null, 
                 CijenaSaPopustom=80-(80*5/100),
                
-            }
+            }, 
+           
+            new ProizvodiInsert
+{
+    Naziv = "Ulje za motor 10W-40",
+    Sifra = "22222",
+    OriginalniBroj = "MOT12345",
+    Cijena = 85m,
+    Popust = 0,
+    Vidljivo = true,
+    Opis = "Sintetičko motorno ulje visokih performansi za sve vrste motora.",
+    KategorijaId = 1, // Ulja i tečnosti
+    FirmaAutoDijelovaID = 1,
+    ModelId = 1,
+    ProizvodjacId = 1,
+    Slika = sampleImage,
+    CijenaSaPopustom = null,
+    CijenaSaPopustomZaAutoservis = Math.Round((decimal)(85 * 0.95m), 2),
+},
+
+new ProizvodiInsert
+{
+    Naziv = "Zračni filter",
+    Sifra = "33333",
+    OriginalniBroj = "AF78910",
+    Cijena = 65m,
+    Popust = 0,
+    Vidljivo = true,
+    Opis = "Visokokvalitetni zračni filter sa ugljenom aktivnom prevlakom.",
+    KategorijaId = 1, // Filteri
+    FirmaAutoDijelovaID = 1,
+    ModelId = 1,
+    ProizvodjacId = 1,
+    Slika = sampleImage,
+    CijenaSaPopustom = null,
+    CijenaSaPopustomZaAutoservis = Math.Round((decimal)(65 * 0.95m), 2),
+}
         };
 
 

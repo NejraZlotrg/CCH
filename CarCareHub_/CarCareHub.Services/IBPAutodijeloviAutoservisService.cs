@@ -10,5 +10,7 @@ namespace CarCareHub.Services
 {
     public interface IBPAutodijeloviAutoservisService : ICRUDService<BPAutodijeloviAutoservis, BPAutodijeloviAutoservisSearchObject, BPAutodijeloviAutoservisInsert, BPAutodijeloviAutoservisUpdate>
     {
+        public  Task AddBPAutodijeloviAutoservisAsync();
+
     }
 }

@@ -12,6 +12,7 @@ import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 
 
 class NarudzbaStavkaScreen extends StatefulWidget {
@@ -73,7 +74,29 @@ late ZaposlenikProvider _zaposlenikProvider;
       });
     }
   }
-
+// Add this to your _NarudzbaStavkaScreenState class
+Future<List<int>> _getAutoservisIdsForFirma(int firmaId) async {
+  try {
+    final provider = Provider.of<BPAutodijeloviAutoservisProvider>(
+      context,
+      listen: false,
+    );
+    
+    final filterParams = {
+      'IsAllIncluded': 'true',
+      'AutodijeloviID': firmaId.toString(),
+    };
+    
+    final result = await provider.get(filter: filterParams);
+    return result.result
+        .where((e) => e.autoservis?.autoservisId != null)
+        .map((e) => e.autoservis!.autoservisId!)
+        .toList();
+  } catch (e) {
+    print("Error fetching autoservis IDs: $e");
+    return [];
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
@@ -218,6 +241,8 @@ Widget _buildOrdererInfo(dynamic firstItem) {
     return _buildDetailRow("Naručilac:", "Nepoznato");
   }
 }
+
+
 Widget _buildDetailRow(String label, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -233,9 +258,8 @@ Widget _buildDetailRow(String label, String value) {
     ),
   );
 }
-
 Widget _buildProductsTable() {
-     var isAutoservisUser = context.read<UserProvider>().role != "Klijent";
+  var isAutoservisUser = context.read<UserProvider>().role != "Klijent" && context.read<UserProvider>().role != "Zaposlenik";
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,48 +269,58 @@ Widget _buildProductsTable() {
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-
-Table(
-  border: TableBorder.all(color: Colors.grey.shade300),
-  columnWidths: {
-    0: const FlexColumnWidth(3),
-    1: const FlexColumnWidth(1),
-    2: const FlexColumnWidth(1),
-    3: const FlexColumnWidth(1.3),
-    if (isAutoservisUser) 4: const FlexColumnWidth(1.5),
-  },
-  children: [
-    TableRow(
-      decoration: BoxDecoration(color: Colors.grey.shade200),
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text("Naziv", style: TextStyle(fontWeight: FontWeight.bold)),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text("Količina", style: TextStyle(fontWeight: FontWeight.bold)),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text("Osnovna", style: TextStyle(fontWeight: FontWeight.bold)),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text("Popust", style: TextStyle(fontWeight: FontWeight.bold)),
-        ),
-        if (isAutoservisUser)
-          const Padding(
-            padding: EdgeInsets.all(8),
-            child: Text("Za autoservise", style: TextStyle(fontWeight: FontWeight.bold)),
+      Table(
+        border: TableBorder.all(color: Colors.grey.shade300),
+        columnWidths: {
+          0: const FlexColumnWidth(3),  // Naziv
+          1: const FlexColumnWidth(1),  // Količina
+          2: const FlexColumnWidth(1),  // Osnovna cijena
+          3: const FlexColumnWidth(1.3), // Popust
+          if (isAutoservisUser) 4: const FlexColumnWidth(1.5), // Cijena za autoservise
+          5: const FlexColumnWidth(2),  // Fakturisano po jedinicnoj cijeni
+          6: const FlexColumnWidth(2),  // Ukupno fakturisano
+        },
+        children: [
+          TableRow(
+            decoration: BoxDecoration(color: Colors.grey.shade200),
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("Naziv", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("Količina", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("Osnovna (jedinična cijena)", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("Popust (jedinična cijena)", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              if (isAutoservisUser)
+                const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text("Cijena za autoservise (jedinična cijena)", style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("Fakturisano po jedinicnoj cijeni", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text("Ukupno fakturisano po cijeni", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
           ),
-      ],
-    ),
           ...result!.result.map((stavka) {
             final kolicina = stavka.kolicina ?? 1;
             final basePrice = stavka.proizvod?.cijena ?? 0.0;
             final discountPrice = stavka.proizvod?.cijenaSaPopustom;
             final autoservicePrice = stavka.proizvod?.cijenaSaPopustomZaAutoservis;
+            final firmaId = stavka.proizvod?.firmaAutodijelovaID;
             
             final hasRegularDiscount = discountPrice != null && discountPrice < basePrice;
             final hasAutoserviceDiscount = autoservicePrice != null && autoservicePrice < basePrice;
@@ -303,29 +337,109 @@ Table(
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Text(_formatCurrency(basePrice * kolicina)),
+                  child: Text(_formatCurrency(basePrice)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Text(
                     hasRegularDiscount 
-                      ? _formatCurrency(discountPrice * kolicina)
+                      ? _formatCurrency(discountPrice!)
                       : "Nema",
                     style: TextStyle(
                       color: hasRegularDiscount ? Colors.green : Colors.grey,
                     ),
                   ),
                 ),
-                 if (isAutoservisUser)
+                if (isAutoservisUser)
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      hasAutoserviceDiscount
+                        ? _formatCurrency(autoservicePrice!)
+                        : "Nema",
+                      style: TextStyle(
+                        color: hasAutoserviceDiscount ? Colors.blue : Colors.grey,
+                      ),
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Text(
-                    hasAutoserviceDiscount
-                      ? _formatCurrency(autoservicePrice * kolicina)
-                      : "Nema",
-                    style: TextStyle(
-                      color: hasAutoserviceDiscount ? Colors.blue : Colors.grey,
-                    ),
+                  child: FutureBuilder<List<int>>(
+                    future: firmaId != null ? _getAutoservisIdsForFirma(firmaId) : Future.value([]), //autoservisi za firmu ciji je proizvod
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text("Učitavanje...", style: TextStyle(fontSize: 12));
+                      }
+
+                      if (snapshot.hasError || !snapshot.hasData) {
+                        return const Text("Nema podataka", style: TextStyle(fontSize: 12));
+                      }
+
+                      final autoservisIds = snapshot.data!;
+                      final narudzbaAutoservisId = stavka.narudzba?.autoservisId;
+ print("Autoservis IDs for firma: $autoservisIds");
+      print("Narudzba autoservis ID: $narudzbaAutoservisId");
+                      final isLinked = narudzbaAutoservisId != null && autoservisIds.contains(narudzbaAutoservisId);
+                   
+                      final autoservisPrice = stavka.proizvod?.cijenaSaPopustomZaAutoservis;
+                      final discountPrice = stavka.proizvod?.cijenaSaPopustom;
+                      final regularPrice = stavka.proizvod?.cijena;
+                      final kolicina = stavka.kolicina ?? 1;
+
+                      double? shownPrice;
+
+                      if (isLinked) {
+                        shownPrice = autoservisPrice ?? discountPrice;
+                      } else {
+                        shownPrice = discountPrice ?? regularPrice;
+                      }
+
+                      return Text(
+                        shownPrice != null ? _formatCurrency(shownPrice) : "N/A",
+                        style: TextStyle(
+                          color: isLinked ? Colors.black : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: FutureBuilder<List<int>>(
+                    future: firmaId != null ? _getAutoservisIdsForFirma(firmaId) : Future.value([]),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text("Učitavanje...", style: TextStyle(fontSize: 12));
+                      }
+
+                      if (snapshot.hasError || !snapshot.hasData) {
+                        return const Text("Nema podataka", style: TextStyle(fontSize: 12));
+                      }
+
+                      final autoservisIds = snapshot.data!;
+                      final narudzbaAutoservisId = stavka.narudzba?.autoservisId;
+
+                      final isLinked = narudzbaAutoservisId != null && autoservisIds.contains(narudzbaAutoservisId);
+                      final autoservisPrice = stavka.proizvod?.cijenaSaPopustomZaAutoservis;
+                      final discountPrice = stavka.proizvod?.cijenaSaPopustom;
+                      final regularPrice = stavka.proizvod?.cijena;
+                      final kolicina = stavka.kolicina ?? 1;
+
+                      double? shownPrice;
+
+                      if (isLinked) {
+                        shownPrice = autoservisPrice ?? discountPrice;
+                      } else {
+                        shownPrice = discountPrice ?? regularPrice;
+                      }
+
+                      return Text(
+                        shownPrice != null ? _formatCurrency(shownPrice * kolicina) : "N/A",
+                        style: TextStyle(
+                          color: isLinked ? Colors.black : null,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -336,7 +450,6 @@ Table(
     ],
   );
 }
-
 String _formatCurrency(double amount) {
   return '${amount.toStringAsFixed(2).replaceAll('.', ',')} KM';
 }
@@ -398,7 +511,7 @@ String _formatCurrency(double amount) {
             fontSize: 16,
           ),
         ),
-      ],
-    );
-  }
+    ],
+);
+}
 }

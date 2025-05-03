@@ -191,6 +191,10 @@ static async Task SeedUloge(WebApplication app)
         var modelService = scope.ServiceProvider.GetRequiredService<IModelService>();
         var proizvodjacService = scope.ServiceProvider.GetRequiredService<IProizvodjacService>();
         var proizvodiService = scope.ServiceProvider.GetRequiredService<IProizvodiService>();
+        var narudzbaService = scope.ServiceProvider.GetRequiredService<INarudzbaService>();
+        var BPService = scope.ServiceProvider.GetRequiredService<IBPAutodijeloviAutoservisService>();
+
+
 
         await SeedUlogeAsync(ulogeService);
         await SeedDrzavaAsync(drzavaService);
@@ -206,6 +210,10 @@ static async Task SeedUloge(WebApplication app)
         await SeedUslugeAsync(uslugeService);
         await SeedProizvodjacAsync(proizvodjacService);
         await SeedProizvodiAsync(proizvodiService);
+        await SeedNarudzbaAsync(narudzbaService);
+        await SeedbpAsync(BPService);
+
+
     }
 }
 static async Task SeedUlogeAsync(IUlogeService ulogeService)
@@ -264,6 +272,15 @@ static async Task SeedProizvodiAsync(IProizvodiService proizvodiService)
 {
     await proizvodiService.AddInitialProizvodiAsync();
 }
+static async Task SeedNarudzbaAsync(INarudzbaService narudzbaService)
+{
+    await narudzbaService.AddSampleNarudzbeAsync();
+}
+static async Task SeedbpAsync(IBPAutodijeloviAutoservisService BPService)
+{
+    await BPService.AddBPAutodijeloviAutoservisAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

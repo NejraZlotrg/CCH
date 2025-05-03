@@ -65,5 +65,21 @@ namespace CarCareHub.Services
             return _mapper.Map<List<Model.BPAutodijeloviAutoservis>>(filtered);
         }
 
+        public async Task AddBPAutodijeloviAutoservisAsync()
+        {
+            if (!_dbContext.BPAutodijeloviAutoservis.Any())
+            {
+                var bpfirmaAutoservisInsert = new List<BPAutodijeloviAutoservisInsert>
+        {
+            new BPAutodijeloviAutoservisInsert { FirmaAutodijelovaID = 1,AutoservisId  = 2 , Vidljivo= true},
+           
+        };
+
+                var Entities = bpfirmaAutoservisInsert.Select(g => _mapper.Map<Database.BPAutodijeloviAutoservis>(g)).ToList();
+                await _dbContext.BPAutodijeloviAutoservis.AddRangeAsync(Entities);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
     }
 }

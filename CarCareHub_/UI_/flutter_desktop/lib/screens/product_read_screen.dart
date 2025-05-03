@@ -256,7 +256,7 @@ SearchResult<Product>? dataWithDiscount;
                                   if (confirmDelete == true) {
                                     try {
                                       await Provider.of<ProductProvider>(context, listen: false)
-                                          .deleteDraftProduct(widget.product!.proizvodId!);
+                                          .delete(widget.product!.proizvodId!);
 
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(

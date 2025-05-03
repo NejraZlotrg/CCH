@@ -12,5 +12,7 @@ namespace CarCareHub.Services
         public Task<List<AutoservisIzvjestaj>> GetAutoservisIzvjestaj();
         public Task<List<KlijentIzvjestaj>> GetNarudzbeZaSveKlijente();
         public  Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike();
+        public  Task AddSampleNarudzbeAsync();
+        
     }
 }

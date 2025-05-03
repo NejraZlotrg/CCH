@@ -132,7 +132,8 @@ namespace CarCareHub.Services
                 BrojTelefona = "38761123456",
                 GradId = 1,
                 UlogaId = 4,
-                Vidljivo = true
+                Vidljivo = true, 
+                Adresa= "D.Večeriska, Vitez"
             };
                 var klijentInsert2 =
            new KlijentInsert
@@ -147,7 +148,8 @@ namespace CarCareHub.Services
                BrojTelefona = "38761123456",
                GradId = 1,
                UlogaId = 5,
-               Vidljivo = true
+               Vidljivo = true, 
+               Adresa="Livač bb Mostar"
            };
                 var klijentEntities = _mapper.Map<Database.Klijent>(klijentInsert1);
                 BeforeInsert(klijentEntities, klijentInsert1);

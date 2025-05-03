@@ -69,9 +69,44 @@ public partial class CchV2AliContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer(" Integrated Security=SSPI;Initial Catalog=CCH_v2_Ali;Data Source=localhost; TrustServerCertificate=True");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Add this at the beginning of your OnModelCreating method
+        modelBuilder.Entity<Zaposlenik>(entity =>
+        {
+            entity.Property(e => e.Username)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for username
+
+            entity.Property(e => e.Password)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for password
+        });
+
+        modelBuilder.Entity<Klijent>(entity =>
+        {
+            entity.Property(e => e.Username)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for username
+
+            entity.Property(e => e.Password)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for password
+        });
+
+        modelBuilder.Entity<Autoservis>(entity =>
+        {
+            entity.Property(e => e.Email)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for email
+
+            entity.Property(e => e.Password)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for password
+        });
+
+        modelBuilder.Entity<FirmaAutodijelova>(entity =>
+        {
+            entity.Property(e => e.Email)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for email
+
+            entity.Property(e => e.Password)
+                .UseCollation("Latin1_General_CS_AS"); // Case-sensitive collation for password
+        });
         modelBuilder.Entity<Autoservis>(entity =>
         {
             entity.HasKey(e => e.AutoservisId).HasName("PK_autoservis");

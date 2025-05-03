@@ -423,5 +423,194 @@ namespace CarCareHub.Services
                 throw;
             }
         }
+
+
+
+        public async Task AddSampleNarudzbeAsync()
+        {
+            if (!_dbContext.Narudzbas.Any())
+            {
+                // Koristimo samo 5 artikala (ID 1-5)
+                var klijentId = 1;
+                var zaposlenikId = 1;
+                var autoservisId = 1;
+                var proizvodIds = Enumerable.Range(1, 5).ToList(); // Samo ID 1-5
+
+                // Provjera postojanja podataka
+                var klijentExists = await _dbContext.Klijents.AnyAsync(k => k.KlijentId == klijentId);
+                var zaposlenikExists = await _dbContext.Zaposleniks.AnyAsync(z => z.ZaposlenikId == zaposlenikId);
+                var autoservisExists = await _dbContext.Autoservis.AnyAsync(a => a.AutoservisId == autoservisId);
+                var proizvodiExist = await _dbContext.Proizvods
+                    .Where(p => proizvodIds.Contains(p.ProizvodId))
+                    .CountAsync() == proizvodIds.Count;
+
+                if (!klijentExists || !zaposlenikExists || !autoservisExists || !proizvodiExist)
+                {
+                    throw new Exception("Nedostaju potrebni podaci u bazi (klijent, zaposlenik, autoservis ili proizvodi sa ID 1-5)");
+                }
+
+                // Dohvat adresa
+                var klijentAdresa = await _dbContext.Klijents
+                    .Where(k => k.KlijentId == klijentId)
+                    .Select(k => k.Adresa)
+                    .FirstOrDefaultAsync();
+
+                var zaposlenikAdresa = await _dbContext.Zaposleniks
+                    .Where(z => z.ZaposlenikId == zaposlenikId)
+                    .Select(z => z.Adresa)
+                    .FirstOrDefaultAsync();
+
+                var autoservisAdresa = await _dbContext.Autoservis
+                    .Where(a => a.AutoservisId == autoservisId)
+                    .Select(a => a.Adresa)
+                    .FirstOrDefaultAsync();
+
+                var narudzbe = new List<Database.Narudzba>
+        {
+            // Narudžba 1 - Klijent (3 artikla)
+            new Database.Narudzba
+            {
+                KlijentId = klijentId,
+                DatumNarudzbe = DateTime.Now.AddDays(-10),
+                DatumIsporuke = DateTime.Now.AddDays(-5),
+                Adresa = klijentAdresa,
+                UkupnaCijenaNarudzbe = 648.0m,
+                ZavrsenaNarudzba = true,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 1, Kolicina = 2, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 2, Kolicina = 1, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 3, Vidljivo = true }
+                }
+            },
+            // Narudžba 2 - Klijent (2 artikla)
+            new Database.Narudzba
+            {
+                KlijentId = klijentId,
+                DatumNarudzbe = DateTime.Now.AddDays(-7),
+                DatumIsporuke = DateTime.Now.AddDays(-2),
+                Adresa = klijentAdresa,
+                UkupnaCijenaNarudzbe = 325m,
+                ZavrsenaNarudzba = true,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 2, Kolicina = 2, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 4, Kolicina = 1, Vidljivo = true }
+                }
+            },
+            // Narudžba 3 - Zaposlenik (4 artikla)
+            new Database.Narudzba
+            {
+                ZaposlenikId = zaposlenikId,
+                DatumNarudzbe = DateTime.Now.AddDays(-5),
+                DatumIsporuke = DateTime.Now.AddDays(-1),
+                Adresa = zaposlenikAdresa,
+                UkupnaCijenaNarudzbe = 727.0m,
+                ZavrsenaNarudzba = true,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 1, Kolicina = 1, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 2, Kolicina = 3, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 2, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
+                }
+            },
+            // Narudžba 4 - Zaposlenik (1 artikal)
+            new Database.Narudzba
+            {
+                ZaposlenikId = zaposlenikId,
+                DatumNarudzbe = DateTime.Now.AddDays(-3),
+                DatumIsporuke = DateTime.Now,
+                Adresa = zaposlenikAdresa,
+                UkupnaCijenaNarudzbe = 304.0m,
+                ZavrsenaNarudzba = false,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 4, Vidljivo = true }
+                }
+            },
+            // Narudžba 5 - Autoservis (3 artikla)
+            new Database.Narudzba
+            {
+                AutoservisId = autoservisId,
+                DatumNarudzbe = DateTime.Now.AddDays(-2),
+                DatumIsporuke = DateTime.Now.AddDays(2),
+                Adresa = autoservisAdresa,
+                UkupnaCijenaNarudzbe = 967.0m,
+                ZavrsenaNarudzba = false,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 1, Kolicina = 5, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 2, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
+                }
+            },
+            // Narudžba 6 - Autoservis (2 artikla)
+            new Database.Narudzba
+            {
+                AutoservisId = autoservisId,
+                DatumNarudzbe = DateTime.Now.AddDays(-1),
+                DatumIsporuke = DateTime.Now.AddDays(3),
+                Adresa = autoservisAdresa,
+                UkupnaCijenaNarudzbe = 530.0m,
+                ZavrsenaNarudzba = false,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 2, Kolicina = 3, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 4, Kolicina = 2, Vidljivo = true }
+                }
+            },
+            // Narudžba 7 - Klijent (5 artikala - svi dostupni proizvodi)
+            new Database.Narudzba
+            {
+                KlijentId = klijentId,
+                DatumNarudzbe = DateTime.Now.AddDays(-4),
+                DatumIsporuke = DateTime.Now.AddDays(1),
+                Adresa = klijentAdresa,
+                UkupnaCijenaNarudzbe = 496.0m,
+                ZavrsenaNarudzba = true,
+                Vidljivo = true,
+                NarudzbaStavkas = new List<Database.NarudzbaStavka>
+                {
+                    new Database.NarudzbaStavka { ProizvodId = 1, Kolicina = 1, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 2, Kolicina = 1, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 1, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 4, Kolicina = 1, Vidljivo = true },
+                    new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
+                }
+            },
+            // Narudžba 8 - Autoservis ID 2 (4 artikla)
+new Database.Narudzba
+{
+    AutoservisId = 2,  // Novi autoservis
+    DatumNarudzbe = DateTime.Now.AddDays(-3),
+    DatumIsporuke = DateTime.Now.AddDays(2),
+    Adresa = await _dbContext.Autoservis
+              .Where(a => a.AutoservisId == 2)
+              .Select(a => a.Adresa)
+              .FirstOrDefaultAsync(),
+    UkupnaCijenaNarudzbe = 1040.25m,
+    ZavrsenaNarudzba = false,
+    Vidljivo = true,
+    NarudzbaStavkas = new List<Database.NarudzbaStavka>
+    {
+        new Database.NarudzbaStavka { ProizvodId = 1, Kolicina = 3, Vidljivo = true },
+        new Database.NarudzbaStavka { ProizvodId = 2, Kolicina = 2, Vidljivo = true },
+        new Database.NarudzbaStavka { ProizvodId = 4, Kolicina = 4, Vidljivo = true },
+        new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
+    }
+}
+        };
+
+                await _dbContext.Narudzbas.AddRangeAsync(narudzbe);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

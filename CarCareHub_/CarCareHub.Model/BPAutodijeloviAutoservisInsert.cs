@@ -10,5 +10,6 @@ namespace CarCareHub.Model
     {
         public int? FirmaAutodijelovaID { get; set; }
         public int? AutoservisId { get; set; }
+        public bool Vidljivo { get; set; } = true;
     }
 }

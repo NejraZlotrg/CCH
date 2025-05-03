@@ -4,6 +4,7 @@ using CarCareHub.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarCareHub.Services.Migrations
 {
     [DbContext(typeof(CchV2AliContext))]
-    partial class CchV2AliContextModelSnapshot : ModelSnapshot
+    [Migration("20250503094801_treciMaja")]
+    partial class treciMaja
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,8 +44,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
-                        .HasColumnName("email")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("email");
 
                     b.Property<int?>("GradId")
                         .HasColumnType("int")
@@ -76,8 +78,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
-                        .HasColumnName("password_")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("password_");
 
                     b.Property<byte[]>("SlikaProfila")
                         .IsUnicode(false)
@@ -265,8 +266,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
-                        .HasColumnName("email")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("email");
 
                     b.Property<int?>("GradId")
                         .HasColumnType("int")
@@ -298,8 +298,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
-                        .HasColumnName("password_")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("password_");
 
                     b.Property<byte[]>("SlikaProfila")
                         .HasMaxLength(40)
@@ -470,8 +469,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("password_")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("password_");
 
                     b.Property<string>("Prezime")
                         .HasMaxLength(50)
@@ -492,8 +490,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(30)
                         .IsUnicode(false)
                         .HasColumnType("varchar(30)")
-                        .HasColumnName("username")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("username");
 
                     b.Property<bool>("Vidljivo")
                         .HasColumnType("bit");
@@ -967,8 +964,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("password_")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("password_");
 
                     b.Property<string>("Prezime")
                         .HasMaxLength(50)
@@ -983,8 +979,7 @@ namespace CarCareHub.Services.Migrations
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("username")
-                        .UseCollation("Latin1_General_CS_AS");
+                        .HasColumnName("username");
 
                     b.Property<bool>("Vidljivo")
                         .HasColumnType("bit");
