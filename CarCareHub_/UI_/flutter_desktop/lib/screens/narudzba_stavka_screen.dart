@@ -12,7 +12,6 @@ import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
 
 
 class NarudzbaStavkaScreen extends StatefulWidget {
@@ -343,7 +342,7 @@ Widget _buildProductsTable() {
                   padding: const EdgeInsets.all(8),
                   child: Text(
                     hasRegularDiscount 
-                      ? _formatCurrency(discountPrice!)
+                      ? _formatCurrency(discountPrice)
                       : "Nema",
                     style: TextStyle(
                       color: hasRegularDiscount ? Colors.green : Colors.grey,
@@ -355,7 +354,7 @@ Widget _buildProductsTable() {
                     padding: const EdgeInsets.all(8),
                     child: Text(
                       hasAutoserviceDiscount
-                        ? _formatCurrency(autoservicePrice!)
+                        ? _formatCurrency(autoservicePrice)
                         : "Nema",
                       style: TextStyle(
                         color: hasAutoserviceDiscount ? Colors.blue : Colors.grey,
@@ -444,7 +443,7 @@ Widget _buildProductsTable() {
                 ),
               ],
             );
-          }).toList(),
+          }),
         ],
       ),
     ],

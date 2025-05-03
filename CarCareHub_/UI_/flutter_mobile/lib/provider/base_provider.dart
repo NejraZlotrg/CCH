@@ -89,7 +89,7 @@ String buildUrl(String path) {
   }
 
   // Implementacija getById
-  Future<List<T>> getById(int id) async {
+  Future<List<T>> getById(int? id) async {
     String url = "$_baseURL$_endpoint/$id"; // Dodajemo ID u URL
 
     Uri uri = Uri.parse(url);
@@ -219,5 +219,23 @@ String buildUrl(String path) {
   // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {
     throw Exception("Method not implemented");
+  }
+
+
+
+   // Metoda za dohvaćanje jednog objekta po ID-u
+  Future<T> getSingleById(int id) async {
+    String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
+
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+    http.Response response = await http.get(uri, headers: headers);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data); // Vraća jedan objekat tipa T
+    } else {
+      throw Exception("Unknown error");
+    }
   }
 }

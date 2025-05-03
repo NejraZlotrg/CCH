@@ -105,10 +105,9 @@ SearchResult<Product>? dataWithDiscount;
       firmaAutodijelovaResult = await _firmaAutodijelovaProvider.getAdmin();
       proizvodjacResult = await _proizvodjacProvider.getAdmin();
     } 
-    if(context.read<UserProvider>().role == "Autoservis")
-    dataWithDiscount = await _productProvider.getForAutoservis( context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
-    
-    else {
+    if(context.read<UserProvider>().role == "Autoservis") {
+      dataWithDiscount = await _productProvider.getForAutoservis( context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+    } else {
       modelResult = await _modelProvider.get();
       kategorijaResult = await _kategorijaProvider.get();
       firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();

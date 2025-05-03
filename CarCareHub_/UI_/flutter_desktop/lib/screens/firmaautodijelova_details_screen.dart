@@ -184,7 +184,7 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
 
                                   if (confirmDelete == true) {
         try {
-          await _firmaAutodijelovaProvider.delete(widget.firmaAutodijelova!.firmaAutodijelovaID!);
+          await _firmaAutodijelovaProvider.delete(widget.firmaAutodijelova!.firmaAutodijelovaID);
 
           if (isOwnAccount) {
             // Logout i navigacija na login screen

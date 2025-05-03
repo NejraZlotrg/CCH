@@ -178,7 +178,7 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                                 // Ako korisnik potvrdi brisanje
                             if (confirmDelete == true) {
         try {
-          await _klijentProvider.delete(widget.klijent!.klijentId!);
+          await _klijentProvider.delete(widget.klijent!.klijentId);
 
           if (isOwnAccount) {
             // Logout i navigacija na login screen
@@ -346,7 +346,7 @@ List<Widget> _buildFormFields() {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
        FormBuilderTextField(
-  decoration: InputDecoration(
+  decoration: const InputDecoration(
     labelStyle: TextStyle(color: Colors.black),
     hintText: 'Unesite korisničko ime',
     hintStyle: TextStyle(color: Colors.black),

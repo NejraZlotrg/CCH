@@ -48,12 +48,39 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
   }
 }
 
+Future<bool?> getVidljivoByUsernameAndPassword(String username, String password) async {
+  try {
+    String url = buildUrl('/get-vidljivo?username=$username&password=$password');
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+
+    final response = await http.post(
+      uri,
+      headers: headers,
+      body: jsonEncode({
+        "username": username,
+        "password": password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['vidljivo'];
+    } else {
+      return null;
+    }
+  } catch (e) {
+    print('Error fetching visibility status: $e');
+    return null;
+  }
+}
+
 
 //   String url = "";
 
   @override
   Future<Zaposlenik> getSingleById(int id) async {
-    String url = "http://10.0.2.2:7209/api/zaposlenici/ZaposleniciGetByID/$id"; // Dodajemo ID u URL
+    String url = buildUrl('/ZaposleniciGetByID/$id'); // Dodajemo ID u URL
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
@@ -66,5 +93,28 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
       throw Exception("Unknown error");
     }
   }
+
+
+
+  Future<bool> checkUsernameExists(String username) async {
+  try {
+    String url = buildUrl('/check-username/$username');
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
+
+    final response = await http.get(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['exists'] as bool;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    print('Error checking username: $e');
+    return false;
+  }
+}
+
 
 }

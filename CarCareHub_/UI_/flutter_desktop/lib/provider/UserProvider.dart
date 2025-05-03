@@ -6,7 +6,7 @@ class UserProvider with ChangeNotifier {
   String _username='';
   String adrresa='';
   int telefon=0;
- bool _vidljivo=true;  int get userId => _userId;
+ final bool _vidljivo=true;  int get userId => _userId;
   String get role => _role;
   String get username => _username;
 

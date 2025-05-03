@@ -47,11 +47,11 @@ class _ChatMessagesScreenState
     var autoservisId = widget.selectedChat.autoservisId;
 
     // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
-    connection.on('ReceiveMessageAutoservisKlijent#${autoservisId}/${klijentId}', (arguments) {
+    connection.on('ReceiveMessageAutoservisKlijent#$autoservisId/$klijentId', (arguments) {
       fetchMessages();
     });
 
-    connection.on('ReceiveMessageAutoservisKlijent#${klijentId}/${autoservisId}', (arguments) {
+    connection.on('ReceiveMessageAutoservisKlijent#$klijentId/$autoservisId', (arguments) {
      
       print('dosla poruka');
       fetchMessages();

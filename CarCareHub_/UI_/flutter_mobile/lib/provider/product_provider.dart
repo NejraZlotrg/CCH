@@ -25,7 +25,7 @@ class ProductProvider extends BaseProvider<Product> {
   }
 
  Future<List<Product>> getByFirmaAutodijelovaID(int firmaAutodijelovaID) async {
-    String url = "http://10.0.2.2:7209/api/proizvodi/GetByFirmaAutodijelovaID/$firmaAutodijelovaID";
+    String url = buildUrl('/GetByFirmaAutodijelovaID/$firmaAutodijelovaID');
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();

@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 class AutoservisReadScreen extends StatefulWidget {
   final Autoservis? autoservis;
 
-  const AutoservisReadScreen({Key? key, this.autoservis}) : super(key: key);
+  const AutoservisReadScreen({super.key, this.autoservis});
 
   @override
   State<AutoservisReadScreen> createState() => _AutoservisReadScreenState();
@@ -307,7 +307,6 @@ class _AutoservisReadScreenState extends State<AutoservisReadScreen> {
         (userProvider.role == "Autoservis" &&
             userProvider.userId == widget.autoservis?.autoservisId)) {
       return FloatingActionButton(
-        child: const Icon(Icons.edit),
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -317,6 +316,7 @@ class _AutoservisReadScreenState extends State<AutoservisReadScreen> {
           ),
         ).then((_) => _loadInitialData()),
         backgroundColor: Colors.red,
+        child: const Icon(Icons.edit),
       );
     }
     return const SizedBox();

@@ -93,7 +93,7 @@ Widget _buildDataListView() {
             child: DataTable(
                showCheckboxColumn: false, 
               columnSpacing: 24,
-              headingRowColor: MaterialStateColor.resolveWith(
+              headingRowColor: WidgetStateColor.resolveWith(
                   (states) => Colors.grey.shade200),
               headingTextStyle: const TextStyle(
                   fontWeight: FontWeight.bold, color: Colors.black),

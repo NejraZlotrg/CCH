@@ -363,7 +363,7 @@ validator: (value) {
   },
  
 
-  decoration: InputDecoration(
+  decoration: const InputDecoration(
     labelText: 'Username',
     labelStyle: TextStyle(color: Colors.black),
     hintText: 'Unesite korisničko ime',
@@ -386,7 +386,7 @@ validator: (value) {
     ),
     errorStyle: TextStyle(color: Colors.red),
   ),
-  style: TextStyle(color: Colors.black),
+  style: const TextStyle(color: Colors.black),
   enabled: isAdminOrOwnProfile,
  onChanged: (value) {
     if (value != null && value.isNotEmpty) {
@@ -482,7 +482,7 @@ FormBuilderDropdown<String>(
           ),
         ),
       );
-    }).toList(),
+    }),
   ],
   enabled: isAdminOrOwnProfile && (selectedFirmaId == '' || selectedFirmaId==null), // Omogući ako firma nije odabrana
   onChanged: (value) {
@@ -529,7 +529,7 @@ FormBuilderDropdown<String>(
           ),
         ),
       );
-    }).toList(),
+    }),
   ],
   enabled: isAdminOrOwnProfile && (selectedAutoservisId == '' || selectedAutoservisId==null), // Omogući ako autoservis nije odabrana
   onChanged: (value) {
