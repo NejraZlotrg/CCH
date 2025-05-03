@@ -89,7 +89,7 @@ final validator = CreateValidator();
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovaj grad?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -113,7 +113,7 @@ final validator = CreateValidator();
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Grad uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {

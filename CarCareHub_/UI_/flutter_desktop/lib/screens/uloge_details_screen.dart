@@ -71,7 +71,7 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovu ulogu?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -95,7 +95,7 @@ class _UlogeDetailsScreenState extends State<UlogeDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Uloga uspješno izbrisana."),
                                       ),
                                     );
                                   } catch (e) {

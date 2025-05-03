@@ -94,7 +94,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovaj model?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -118,7 +118,7 @@ class _ModelDetailsScreenState extends State<ModelDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Model uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {

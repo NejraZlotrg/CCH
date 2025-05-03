@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
@@ -132,18 +133,26 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
+                        if (!(context.read<UserProvider>().role == "Klijent" &&
+          widget.klijent?.klijentId == 2))
                     const SizedBox(height: 20),
                     _buildForm(),
                                            
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    // Prikaži dugme "Izbriši" samo ako nije Klijent s ID-om 2
+    if (!(context.read<UserProvider>().role == "Admin" &&
+        widget.klijent?.klijentId == 2))
    Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
                               onPressed: () async {
+                                    final userProvider = context.read<UserProvider>();
+      final isOwnAccount = userProvider.role == "Klijent" &&
+          userProvider.userId == widget.klijent?.klijentId;
                                 // Potvrda brisanja
                                 bool confirmDelete = await showDialog(
                                   context: context,
@@ -167,11 +176,21 @@ class _KlijentDetailsScreenState extends State<KlijentDetailsScreen> {
                                 );
 
                                 // Ako korisnik potvrdi brisanje
-                                if (confirmDelete == true) {
-                                  try {
-                                    await _klijentProvider.delete(
-                                        widget.klijent!.klijentId);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                            if (confirmDelete == true) {
+        try {
+          await _klijentProvider.delete(widget.klijent!.klijentId!);
+
+          if (isOwnAccount) {
+            // Logout i navigacija na login screen
+         
+         Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LogInPage(),
+                  ),
+                );
+          } else {
+            Navigator.pop(context); // Vrati se na prethodni ekran
+          }
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text("Klijent uspješno izbrisan."),

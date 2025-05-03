@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
@@ -157,12 +158,15 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
                             child: ElevatedButton(
                               onPressed: () async {
                                 // Potvrda brisanja
+                                    final userProvider = context.read<UserProvider>();
+      final isOwnAccount = userProvider.role == "Firma autodijelova" &&
+          userProvider.userId == widget.firmaAutodijelova?.firmaAutodijelovaID;
                                 bool confirmDelete = await showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovu firmu utodijelova?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -178,15 +182,24 @@ if (context.read<UserProvider>().role == "Admin" || ((context.read<UserProvider>
                                   ),
                                 );
 
-                                // Ako korisnik potvrdi brisanje
-                                if (confirmDelete == true) {
-                                  try {
-                                    await _firmaAutodijelovaProvider.delete(
-                                        widget.firmaAutodijelova!.firmaAutodijelovaID);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                                  if (confirmDelete == true) {
+        try {
+          await _firmaAutodijelovaProvider.delete(widget.firmaAutodijelova!.firmaAutodijelovaID!);
+
+          if (isOwnAccount) {
+            // Logout i navigacija na login screen
+         
+         Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LogInPage(),
+                  ),
+                );
+          } else {
+            Navigator.pop(context); // Vrati se na prethodni ekran
+          }
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Firma autodijelova uspješno izbrisana."),
                                       ),
                                     );
                                   } catch (e) {

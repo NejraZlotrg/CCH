@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
@@ -389,8 +390,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                     widget.autoservis?.autoservisId))
                           Padding(
                             padding: const EdgeInsets.only(right: 10),
+                           
                             child: ElevatedButton(
                               onPressed: () async {
+                              final userProvider = context.read<UserProvider>();
+      final isOwnAccount = userProvider.role == "Autoservis" &&
+          userProvider.userId == widget.autoservis?.autoservisId;
                                 // Potvrda brisanja
                                 bool confirmDelete = await showDialog(
                                   context: context,
@@ -406,6 +411,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                       ),
                                       TextButton(
                                         onPressed: () =>
+                                        
                                             Navigator.pop(context, true),
                                         child: const Text("Izbriši"),
                                       ),
@@ -414,12 +420,21 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                 );
 
                                 // Ako korisnik potvrdi brisanje
-                                if (confirmDelete == true) {
-                                  try {
-                                    await _autoservisProvider.delete(
-                                        widget.autoservis!.autoservisId!);
-                                    Navigator.pop(
-                                        context); // Vrati se na prethodni ekran
+                                  if (confirmDelete == true) {
+        try {
+          await _autoservisProvider.delete(widget.autoservis!.autoservisId!);
+
+          if (isOwnAccount) {
+            // Logout i navigacija na login screen
+         
+         Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LogInPage(),
+                  ),
+                );
+          } else {
+            Navigator.pop(context); // Vrati se na prethodni ekran
+          }
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content:

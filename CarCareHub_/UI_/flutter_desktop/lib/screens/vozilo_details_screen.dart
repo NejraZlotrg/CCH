@@ -73,7 +73,7 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovo vozilo?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -97,7 +97,7 @@ class _VoziloDetailsScreenState extends State<VoziloDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Vozilo uspješno izbrisano."),
                                       ),
                                     );
                                   } catch (e) {

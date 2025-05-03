@@ -100,7 +100,7 @@ class _KategorijaDetailsScreenState extends State<KategorijaDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Kategorija uspješno izbrisana."),
                                       ),
                                     );
                                   } catch (e) {

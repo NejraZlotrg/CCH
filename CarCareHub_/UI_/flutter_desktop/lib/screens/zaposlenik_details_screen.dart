@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:flutter_mobile/models/grad.dart';
@@ -550,6 +551,8 @@ FormBuilderDropdown<String>(
                             padding: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
                               onPressed: () async {
+                                      final userProvider = context.read<UserProvider>();
+      final isOwnAccount = userProvider.role == "Klijent" &&    userProvider.userId == widget.zaposlenik?.zaposlenikId;
                                 // Potvrda brisanja
                                 bool confirmDelete = await showDialog(
                                   context: context,
@@ -572,12 +575,21 @@ FormBuilderDropdown<String>(
                                   ),
                                 );
 
-                                // Ako korisnik potvrdi brisanje
                                 if (confirmDelete == true) {
-                                  try {
-                                    await _zaposlenikProvider.delete(
-                                        widget.zaposlenik!.zaposlenikId!);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
+        try {
+          await _zaposlenikProvider.delete(widget.zaposlenik!.zaposlenikId!);
+
+          if (isOwnAccount) {
+            // Logout i navigacija na login screen
+         
+         Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LogInPage(),
+                  ),
+                );
+          } else {
+            Navigator.pop(context); // Vrati se na prethodni ekran
+          }
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text("Zaposlenik uspješno izbrisan."),

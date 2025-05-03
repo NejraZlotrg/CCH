@@ -76,7 +76,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovu uslugu?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -100,7 +100,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Usluga uspješno izbrisana."),
                                       ),
                                     );
                                   } catch (e) {

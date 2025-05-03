@@ -74,7 +74,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                                   builder: (context) => AlertDialog(
                                     title: const Text("Potvrda brisanja"),
                                     content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                        "Da li ste sigurni da želite izbrisati ovog proizvođača?"),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -98,7 +98,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                                     Navigator.pop(context); // Vrati se na prethodni ekran
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod uspješno izbrisan."),
+                                        content: Text("Proizvođač uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {
