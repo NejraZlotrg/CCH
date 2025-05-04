@@ -22,17 +22,12 @@ Future<Narudzba> potvrdiNarudzbu(int narudzbaId) async {
   Uri uri = Uri.parse(url);
 
   // Ispisivanje URL-a i status koda
-  print("Request URL: $url");
 
   Map<String, String> headers = createHeaders();
 
   try {
     // Send a PUT request to the API
     http.Response response = await http.put(uri, headers: headers);
-
-    // Ispisivanje status koda i tijela odgovora
-    print("Response status code: ${response.statusCode}");
-    print("Response body: ${response.body}");
 
     // Check if the response is successful (status code 200 OK)
     if (response.statusCode == 200) {

@@ -7,7 +7,6 @@ import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
 import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
-
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
@@ -39,9 +38,9 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY',
-      defaultValue:
-          "pk_test_51Qgz9yCdZMYTHaMlBcpXvZmiujxacKPAz49IXxSYChj3gv2lG5HJJCM2kqeJNEctQXSRAevbENhGTqlkvYW460wi00ZMCqgmp0");
+      defaultValue: "pk_test_51Qgz9yCdZMYTHaMlBcpXvZmiujxacKPAz49IXxSYChj3gv2lG5HJJCM2kqeJNEctQXSRAevbENhGTqlkvYW460wi00ZMCqgmp0");
 
   runApp(
     MultiProvider(
@@ -62,14 +61,12 @@ void main() {
         ChangeNotifierProvider(create: (_) => ZaposlenikProvider()),
         ChangeNotifierProvider(create: (_) => ProizvodjacProvider()),
         ChangeNotifierProvider(create: (_) => GodisteProvider()),
-        ChangeNotifierProvider(
-            create: (_) => BPAutodijeloviAutoservisProvider()),
+        ChangeNotifierProvider(create: (_) => BPAutodijeloviAutoservisProvider()),
         ChangeNotifierProvider(create: (_) => KorpaProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ChatAutoservisKlijentProvider()),
         ChangeNotifierProvider(create: (_) => ChatKlijentZaposlenikProvider()),
         ChangeNotifierProvider(create: (_) => PlacanjeProvider()),
-
       ],
       child: const MyApp(),
     ),
@@ -84,9 +81,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Car Care Hub',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            primary: const Color.fromARGB(255, 84, 83, 83)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
       home: const LogInPage(),
@@ -98,9 +93,9 @@ class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LogInPageState createState() => _LogInPageState();
 }
+
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -108,300 +103,146 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-    double containerWidth = MediaQuery.of(context).size.width * 0.9;
-
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: Center(
         child: SingleChildScrollView(
-          child: Container(
-            width: containerWidth,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade400,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(16.0),
-                      bottomRight: Radius.circular(16.0),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/images/cch_logo.png",
-                        height: 80,
-                      ),
-                      const SizedBox(height: 10.0),
-                      const Text(
-                        'Dobrodošli u Car Care Hub!',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10.0),
-                      const Text(
-                        'Brinemo o vašem vozilu s ljubavlju i pažnjom.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black54,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10.0),
-                      const Icon(
-                        Icons.directions_car_filled_outlined,
-                        size: 40,
-                        color: Color.fromARGB(255, 66, 65, 65),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Prijavite se na svoj račun',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      const Text(
-                        'Unesite vaše podatke da biste pristupili aplikaciji.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black45,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 30.0),
-                      _buildTextField(usernameController, 'Korisničko ime'),
-                      const SizedBox(height: 15.0),
-                      _buildTextField(passwordController, 'Lozinka',
-                          obscureText: true),
-                      const SizedBox(height: 10.0),
-                      if (errorMessage != null)
-                        Text(
-                          errorMessage!,
-                          style: const TextStyle(
-                              color: Colors.red, fontSize: 12),
-                          textAlign: TextAlign.center,
-                        ),
-                      const SizedBox(height: 15.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("assets/images/cch_logo.png", height: 80),
+              const SizedBox(height: 20),
+              const Text(
+                'Dobrodošli u Car Care Hub!',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Prijavite se kako biste nastavili.',
+                style: TextStyle(color: Colors.black54),
+              ),
+              const SizedBox(height: 30),
+              _buildTextField(usernameController, 'Korisničko ime'),
+              const SizedBox(height: 15),
+              _buildTextField(passwordController, 'Lozinka', obscureText: true),
+              const SizedBox(height: 10),
+              if (errorMessage != null)
+                Text(errorMessage!,
+                    style: const TextStyle(color: Colors.red, fontSize: 12)),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  var username = usernameController.text;
+                  var password = passwordController.text;
+
+                  Authorization.username = username;
+                  Authorization.password = password;
+
+                  try {
+                    final autoservisProvider = AutoservisProvider();
+                    final zaposlenikProvider = ZaposlenikProvider();
+                    final klijentProvider = KlijentProvider();
+                    final firmaAutodijelovaProvider = FirmaAutodijelovaProvider();
+
+                    final userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
+                    final vidljivoA = await autoservisProvider.getVidljivoByUsernameAndPassword(username, password);
+
+                    final userIdZ = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
+                    final vidljivoZ = await zaposlenikProvider.getVidljivoByUsernameAndPassword(username, password);
+
+                    final userIdK = await klijentProvider.getIdByUsernameAndPassword(username, password);
+                    final vidljivoK = await klijentProvider.getVidljivoByUsernameAndPassword(username, password);
+
+                    final userIdF = await firmaAutodijelovaProvider.getIdByUsernameAndPassword(username, password);
+                    final vidljivoF = await firmaAutodijelovaProvider.getVidljivoByUsernameAndPassword(username, password);
+
+                    final userProvider = context.read<UserProvider>();
+
+                    if (userIdA != null && vidljivoA == true) {
+                      userProvider.setUser(userIdA, 'Autoservis', username);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductScreen()));
+                    } else if (userIdZ != null && vidljivoZ == true) {
+                      userProvider.setUser(userIdZ, 'Zaposlenik', username);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductScreen()));
+                    } else if (userIdK != null && vidljivoK == true) {
+                      userProvider.setUser(userIdK, userIdK == 2 ? 'Admin' : 'Klijent', username);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductScreen()));
+                    } else if (userIdF != null && vidljivoF == true) {
+                      userProvider.setUser(userIdF, 'Firma autodijelova', username);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ProductScreen()));
+                    } else {
+                      setState(() {
+                        errorMessage = "Korisnik nije pronađen ili je deaktiviran.";
+                      });
+                    }
+                  } catch (e) {
+                    setState(() {
+                      errorMessage = "Greška prilikom prijave. Pokušajte ponovo.";
+                    });
+                  }
+                },
+                child: const Text("Prijavi se"),
+              ),
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Registruj se kao:"),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          ElevatedButton(
-                              onPressed: () async {
-                                var username = usernameController.text;
-                                var password = passwordController.text;
-
-                                // Pohranjujemo korisničke podatke u Authorization
-                                Authorization.username = username;
-                                Authorization.password = password;
-
-                              try {
-  // Inicijalizacija providera
-  final autoservisProvider = AutoservisProvider();
-  final zaposlenikProvider = ZaposlenikProvider();
-  final klijentProvider = KlijentProvider();
-  final firmaAutodijelovaProvider = FirmaAutodijelovaProvider();
-
-  // Provjera userId kroz sve providere
-  final userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
-  final userIdZ = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
-  final userIdK = await klijentProvider.getIdByUsernameAndPassword(username, password);
-  final userIdF = await firmaAutodijelovaProvider.getIdByUsernameAndPassword(username, password);
-
-  // Provjera svih korisnika
-  if (userIdA != null) {
-    final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userIdA, 'Autoservis', username);
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  } else if (userIdZ != null) {
-    final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userIdZ, 'Zaposlenik', username);
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  } else if (userIdK != null) {
-    final userProvider = context.read<UserProvider>();
-    if (userIdK == 2) {
-      userProvider.setUser(userIdK, 'Admin', username);
-    } else {
-      userProvider.setUser(userIdK, 'Klijent', username);
-    }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  } else if (userIdF != null) {
-    final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userIdF, 'Firma autodijelova', username );
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  }
-else {
-    // Ako userId nije pronađen, prikazujemo grešku
-    setState(() {
-      errorMessage = "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
-    });
-  }}
-catch (e) {
-  // Obrada grešaka
-  setState(() {
-    errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
-  });
-}
-},
-
-                              child: const Text("Prijavi se"),
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Registruj se kao:"),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ListTile(
-                                            leading: const Icon(Icons.store),
-                                            title: const Text(
-                                                "Firma autodijelova"),
-                                            onTap: () {
-                                              Navigator.pop(
-                                                  context); // Zatvaranje dijaloga
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FirmaAutodijelovaRegistracijaScreen(
-                                                          firmaAutodijelova:
-                                                              null,
-                                                        ) // poziv na drugi screen
-                                                    ),
-                                              );
-                                            },
-                                          ),
-                                          ListTile(
-                                            leading: const Icon(Icons.store),
-                                            title: const Text("Autoservis"),
-                                            onTap: () {
-                                              Navigator.pop(
-                                                  context); // Zatvaranje dijaloga
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AutoservisRegistracijaScreen(
-                                                          autoservis: null,
-                                                        ) // poziv na drugi screen
-                                                    ),
-                                              );
-                                            },
-                                          ),
-                                          ListTile(
-                                            leading: const Icon(Icons.store),
-                                            title: const Text("Klijent"),
-                                            onTap: () {
-                                              Navigator.pop(
-                                                  context); // Zatvaranje dijaloga
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        KlijentRegistracijaScreen(
-                                                          klijent: null,
-                                                        ) // poziv na drugi screen
-                                                    ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.black),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 24),
-                              ),
-                              child: const Text(
-                                'Registruj se',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
+                          _buildRegistrationOption(
+                            icon: Icons.store,
+                            text: "Firma autodijelova",
+                            screen: FirmaAutodijelovaRegistracijaScreen(firmaAutodijelova: null),
+                          ),
+                          _buildRegistrationOption(
+                            icon: Icons.build,
+                            text: "Autoservis",
+                            screen: AutoservisRegistracijaScreen(autoservis: null),
+                          ),
+                          _buildRegistrationOption(
+                            icon: Icons.person,
+                            text: "Klijent",
+                            screen: KlijentRegistracijaScreen(klijent: null),
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                
-              ],
-            ),
+                    ),
+                  );
+                },
+                child: const Text("Registruj se"),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label,
-      {bool obscureText = false}) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.grey[100],
-        ),
-        obscureText: obscureText,
+  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
+    );
+  }
+
+  Widget _buildRegistrationOption({required IconData icon, required String text, required Widget screen}) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(text),
+      onTap: () {
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+      },
     );
   }
 }

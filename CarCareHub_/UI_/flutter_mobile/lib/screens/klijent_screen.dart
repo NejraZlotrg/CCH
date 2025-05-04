@@ -28,7 +28,12 @@ class _KlijentScreenState extends State<KlijentScreen> {
   }
 
   Future<void> _loadData() async {
-    var data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
+    SearchResult<Klijent> data;
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _klijentProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+    } else {
+      data = await _klijentProvider.get(filter: {'IsAllncluded': 'true'});
+    }
     if (mounted) {
       setState(() {
         result = data;
@@ -42,7 +47,6 @@ class _KlijentScreenState extends State<KlijentScreen> {
       title: "Klijent",
       child: Container(
         color: const Color.fromARGB(255, 204, 204, 204),
-       // child: SingleChildScrollView( // Omogućava vertikalno skrolanje cijelog ekrana
           child: Column(
             children: [
               _buildSearch(),
@@ -50,10 +54,10 @@ class _KlijentScreenState extends State<KlijentScreen> {
             ],
           ),
         ),
-    //  ),
     );
   }
-Widget _buildSearch() {
+
+   Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
@@ -66,8 +70,8 @@ Widget _buildSearch() {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Ime
             TextField(
               decoration: const InputDecoration(
                 labelText: "Ime",
@@ -76,9 +80,10 @@ Widget _buildSearch() {
                 fillColor: Colors.white,
               ),
               controller: _imeController,
-             // margin: const EdgeInsets.only(bottom: 10),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
+
+            // Prezime
             TextField(
               decoration: const InputDecoration(
                 labelText: "Prezime",
@@ -87,84 +92,71 @@ Widget _buildSearch() {
                 fillColor: Colors.white,
               ),
               controller: _prezimeController,
-           //   margin: const EdgeInsets.only(bottom: 10),
             ),
-         Column(
-  children: [
-    // Dugme za pretragu klijenata
-    Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-        child: ElevatedButton.icon(
-          onPressed: () async {
-            var filterParams = {'IsAllncluded': 'true'};
-            if (_imeController.text.isNotEmpty) {
-              filterParams['ime'] = _imeController.text;
-            }
-            if (_prezimeController.text.isNotEmpty) {
-              filterParams['prezime'] = _prezimeController.text;
-            }
+            const SizedBox(height: 10),
 
-            var data = await _klijentProvider.get(filter: filterParams);
-            if (!mounted) return;
+            // Buttons: Pretraga + Dodaj (ako je Admin)
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      var filterParams = {'IsAllncluded': 'true'};
+                      if (_imeController.text.isNotEmpty) {
+                        filterParams['ime'] = _imeController.text;
+                      }
+                      if (_prezimeController.text.isNotEmpty) {
+                        filterParams['prezime'] = _prezimeController.text;
+                      }
 
-            setState(() {
-              result = data;
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
-          ),
-          icon: const Icon(Icons.search, color: Colors.white),
-          label: const Text(
-            "Pretraži",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14, // Veličina teksta
-            ),
-          ),
-        ),
-      ),
-    ),
-    // Dugme za dodavanje klijenata (samo za Admin korisnike)
-    if (context.read<UserProvider>().role == "Admin")
-      Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => KlijentDetailsScreen(klijent: null),
+                      SearchResult<Klijent> data;
+                      if (context.read<UserProvider>().role == "Admin") {
+                        data = await _klijentProvider.getAdmin(filter: filterParams);
+                      } else {
+                        data = await _klijentProvider.get(filter: filterParams);
+                      }
+
+                      if (!mounted) return;
+                      setState(() {
+                        result = data;
+                      });
+                    },
+                    icon: const Icon(Icons.search),
+                    label: const Text("Pretraga"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
                 ),
-              );
-              await _loadData();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                const SizedBox(width: 10),
+                if (context.read<UserProvider>().role == "Admin")
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => KlijentDetailsScreen(klijent: null),
+                          ),
+                        );
+                        await _loadData();
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text("Dodaj"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text(
-              'Dodaj',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-      ),
-  ],
-)
-
-         
           ],
         ),
       ),
@@ -173,71 +165,101 @@ Widget _buildSearch() {
 }
 
 
-  Widget _buildDataListView() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
-    
+Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(1.0),
         side: const BorderSide(color: Colors.black, width: 1.0),
       ),
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Ime',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+      child: DataTable(
+        showCheckboxColumn: false,
+        columns: const [
+          DataColumn(
+            label: Text(
+              'Ime',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-            DataColumn(
-              label: Text(
-                'Prezime',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+          ),
+          DataColumn(
+            label: Text(
+              'Prezime',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-            DataColumn(
-              label: Text(
-                'Username',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+          ),
+          DataColumn(
+            label: Text(
+              'Username',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-            DataColumn(
-              label: Text(
-                'Email',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
+          ),
+          DataColumn(
+            label: Text(
+              'Email',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Klijent e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  KlijentDetailsScreen(klijent: e),
-                            ),
-                          );
-                          await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(Text(e.ime ?? "")),
-                        DataCell(Text(e.prezime ?? "")),
-                        DataCell(Text(e.username ?? "")),
-                        DataCell(Text(e.email ?? "")),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
-        ),
+          ),
+        ],
+        rows: result?.result
+                .map(
+                  (Klijent e) => DataRow(
+                    onSelectChanged: (selected) async {
+                      if (selected == true) {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                KlijentDetailsScreen(klijent: e),
+                          ),
+                        );
+                        await _loadData();
+                      }
+                    },
+                    cells: [
+                      DataCell(
+                        Text(
+                          e.ime ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          e.prezime ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          e.username ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          e.email ?? "",
+                          style: TextStyle(
+                            color: e.vidljivo == false ? Colors.red : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                .toList() ??
+            [],
       ),
+        ))),
   );
 }
+
 }

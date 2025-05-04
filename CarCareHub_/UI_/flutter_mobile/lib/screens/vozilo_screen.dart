@@ -26,7 +26,13 @@ class _VoziloScreenState extends State<VoziloScreen> {
      _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Vozilo> data;
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _voziloProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _voziloProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
+
   if (mounted) {
     setState(() {
       result = data;
@@ -49,7 +55,7 @@ class _VoziloScreenState extends State<VoziloScreen> {
     );
   }
  
-  Widget _buildSearch() {
+ Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
@@ -63,6 +69,7 @@ class _VoziloScreenState extends State<VoziloScreen> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
+            // Input field row
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Marka vozila',
@@ -72,76 +79,93 @@ class _VoziloScreenState extends State<VoziloScreen> {
               ),
               controller: _markaVozilaController,
             ),
+            
             const SizedBox(height: 10),
-                     // Dugmad za pretragu
-Align(
-  alignment: Alignment.centerRight,
-  child: SizedBox(
-    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-    child: ElevatedButton.icon(
-      onPressed: _onSearchPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
-      ),
-      icon: const Icon(Icons.search, color: Colors.white),
-      label: const Text(
-        "Pretraži",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 14, // Veličina teksta
-        ),
-      ),
-    ),
-    
-  ),
-),
-if (context.read<UserProvider>().role == "Admin")
-      Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>  VoziloDetailsScreen(vozilo: null),
+            
+            // Buttons row - full width
+            Row(
+              children: [
+                // Search button - takes half width
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 5.0),
+                    child: ElevatedButton(
+                      onPressed: _onSearchPressed,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search, size: 20),
+                          SizedBox(width: 8.0),
+                          Text('Pretraga'),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              );
-              await _loadData();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Crvena boja za dugme
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                
+                // Add button - conditionally shown and takes half width
+                if (context.read<UserProvider>().role == "Admin")
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => VoziloDetailsScreen(vozilo: null),
+                            ),
+                          );
+                          await _loadData();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, size: 20),
+                            SizedBox(width: 8.0),
+                            Text('Dodaj'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
-          ),
-        ),
-      ),
-    
-
           ],
         ),
       ),
     ),
   );
 }
-
  
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};
     if (_markaVozilaController.text.isNotEmpty) {
       filterParams['markaVozila'] = _markaVozilaController.text;
     }
- 
-    var data = await _voziloProvider.get(filter: filterParams);
+
+    SearchResult<Vozilo> data;
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _voziloProvider.getAdmin(filter: filterParams);
+  } else {
+    data = await _voziloProvider.get(filter: filterParams);
+  }
+
  
     if (!mounted) return;
  
@@ -151,53 +175,66 @@ if (context.read<UserProvider>().role == "Admin")
   }
  
   Widget _buildDataListView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: SingleChildScrollView(
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Marka vozila',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+        child: Container(
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: SingleChildScrollView(
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Marka vozila',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16, // Povećan font zaglavlja
                 ),
               ),
-            ],
+            ),
+          ],
           rows: result?.result
-                    .map(
-                      (Vozilo e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    VoziloDetailsScreen(vozilo: e),
-                              ),
-                            );
-                    await _loadData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.markaVozila.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+                  .map(
+                    (Vozilo e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VoziloDetailsScreen(vozilo: e),
+                            ),
+                          );
+                          await _loadData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.markaVozila?.toString() ?? "",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: (e.markaVozila == null || e.markaVozila!.isEmpty)
+                                  ? Colors.red
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-    );
-  }
+    ),))
+  );
+}
+
 }

@@ -30,9 +30,13 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   }
   Future<void> _fetchInitialData() async {
     try {
-      var data = await _proizvodjacProvider.get(filter: {
-        'IsAllncluded': 'true',
-      });
+      SearchResult<Proizvodjac> data;
+       if (context.read<UserProvider>().role == "Admin") {
+         data = await _proizvodjacProvider.getAdmin(filter: {'IsAllncluded': 'true',});
+       } else {
+         data = await _proizvodjacProvider.get(filter: {'IsAllncluded': 'true',});
+       }
+
       if (mounted) {
         setState(() {
           result = data;
@@ -58,112 +62,98 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
       ),
     );
   }
-Widget _buildSearch() {
+
+ Widget _buildSearch() {
   return Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
     child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
+      elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        borderRadius: BorderRadius.circular(1.0),
         side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
+          color: Colors.black,
+          width: 1.0,
         ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Input row (full width)
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Naziv proizvođača',
+                labelText: 'Naziv proizvodjaca',
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
               ),
               controller: _nazivProizvodjacaController,
             ),
+            
             const SizedBox(height: 10),
-           Column(
-  children: [
-    // Dugme za pretragu Proizvođača
-    Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () async {
-            print("podaci proceed");
-            var data = await _proizvodjacProvider.get(filter: {
-              'nazivProizvodjaca': _nazivProizvodjacaController.text,
-            });
-
-            setState(() {
-              result = data;
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red, // Crvena boja dugmeta
-            foregroundColor: Colors.white, // Bijela boja teksta
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-            ),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.search),
-              SizedBox(width: 8.0),
-              Text('Pretraga'),
-            ],
-          ),
-        ),
-      ),
-    ),
-   
-    // Dugme za pretragu Države
-    
-    // Dugme za dodavanje, vidljivo samo za Admin korisnika
-    if (context.read<UserProvider>().role == "Admin")
-      Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>  DrzaveDetailsScreen(drzava: null),
-                ),
-              );
-              // Ponovno učitavanje podataka nakon povratka
-              await _fetchInitialData();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
+            
+            // Buttons row (full width)
+            Row(
               children: [
-                Icon(Icons.add),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
+                // Search button
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      print("podaci proceed");
+                      SearchResult<Proizvodjac> data;
+                      if (context.read<UserProvider>().role == "Admin") {
+                        data = await _proizvodjacProvider.getAdmin(
+                          filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text},
+                        );
+                      } else {
+                        data = await _proizvodjacProvider.get(
+                          filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text},
+                        );
+                      }
+                      setState(() => result = data);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    icon: const Icon(Icons.search),
+                    label: const Text('Pretraga'),
+                  ),
+                ),
+                
+                const SizedBox(width: 10),
+                
+                // Add button
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProizvodjacDetailsScreen(proizvodjac: null),
+                        ),
+                      );
+                      await _fetchInitialData();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Dodaj'),
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-      ),
-  ],
-)
-
           ],
         ),
       ),
@@ -171,12 +161,12 @@ Widget _buildSearch() {
   );
 }
 
-Widget _buildDataListView() {
-    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+ Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
       child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
         child: Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(top: 20.0),
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -185,44 +175,55 @@ Widget _buildDataListView() {
       ),
       child: SingleChildScrollView(
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
           columns: const [
             DataColumn(
               label: Text(
                 'Naziv proizvođača',
-                style: TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16, // Veći font za naslov kolone
+                ),
               ),
             ),
           ],
           rows: result?.result
-                   .map(
-                      (Proizvodjac e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProizvodjacDetailsScreen(proizvodjac: e),
-                              ),
-                            );
-                    await _fetchInitialData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.nazivProizvodjaca.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+                  .map(
+                    (Proizvodjac e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProizvodjacDetailsScreen(proizvodjac: e),
+                            ),
+                          );
+                          await _fetchInitialData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.nazivProizvodjaca.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                              fontWeight:
+                                  e.vidljivo == false ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-      )));
-  }
+    ),))
+  );
+}
+
 }
 
  

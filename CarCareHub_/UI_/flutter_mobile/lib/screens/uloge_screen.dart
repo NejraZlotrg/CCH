@@ -27,9 +27,13 @@ class _UlogeScreenState extends State<UlogeScreen> {
   }
    Future<void> _fetchInitialData() async {
     try {
-      var data = await _ulogeProvider.get(filter: {
-        'IsAllncluded': 'true',
-      });
+      SearchResult<Uloge> data;
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _ulogeProvider.getAdmin(filter: {'IsAllncluded': 'true',});
+      } else {
+        data = await _ulogeProvider.get(filter: {'IsAllncluded': 'true',});
+      }
+
       if (mounted) {
         setState(() {
           result = data;
@@ -55,7 +59,8 @@ class _UlogeScreenState extends State<UlogeScreen> {
       ),
     );
   }
- Widget _buildSearch() {
+ 
+Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
@@ -68,8 +73,8 @@ class _UlogeScreenState extends State<UlogeScreen> {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Input field
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Naziv uloge',
@@ -79,82 +84,88 @@ class _UlogeScreenState extends State<UlogeScreen> {
               ),
               controller: _nazivUlogeController,
             ),
+            
             const SizedBox(height: 10),
-          Column(
-  children: [
-    // Dugme za pretragu
-            // Dugmad za pretragu
-Align(
-  alignment: Alignment.centerRight,
-  child: SizedBox(
-    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-    child: ElevatedButton.icon(
-      onPressed: _onSearchPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
-      ),
-      icon: const Icon(Icons.search, color: Colors.white),
-      label: const Text(
-        "Pretraži",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 14, // Veličina teksta
-        ),
-      ),
-    ),
-    
-  ),
-),
-if (context.read<UserProvider>().role == "Admin")
-      Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>  UlogeDetailsScreen(uloge: null),
+            
+            // Buttons row - fills full width
+            Row(
+              children: [
+                // Search button - expanded to fill available space
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _onSearchPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search),
+                        SizedBox(width: 8.0),
+                        Text('Pretraga'),
+                      ],
+                    ),
+                  ),
                 ),
-              );
-              await _fetchInitialData();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Crvena boja za dugme
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                
+                if (context.read<UserProvider>().role == "Admin") ...[
+                  const SizedBox(width: 10),
+                  // Add button - expanded to fill available space
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => UlogeDetailsScreen(uloge: null),
+                          ),
+                        );
+                        await _fetchInitialData();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add),
+                          SizedBox(width: 8.0),
+                          Text('Dodaj'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
-          ),
-        ),
-      ),
-    
-
-  ],
-)
-
           ],
         ),
       ),
     ),
   );
 }
-
  
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};
     if (_nazivUlogeController.text.isNotEmpty) {
       filterParams['nazivUloge'] = _nazivUlogeController.text;
     }
- 
-    var data = await _ulogeProvider.get(filter: filterParams);
+  SearchResult<Uloge> data;
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _ulogeProvider.getAdmin(filter: filterParams);
+    } else {
+      data = await _ulogeProvider.get(filter: filterParams);
+    }
+
  
     if (!mounted) return;
  
@@ -162,59 +173,72 @@ if (context.read<UserProvider>().role == "Admin")
       result = data;
     });
   }
- 
-  Widget _buildDataListView() {
-     return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+
+
+
+ Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
       child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
         child: Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(top: 20.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0),
-          side: const BorderSide(color: Colors.black, width: 1.0),
-        ),
-        child: SingleChildScrollView(
-          child: DataTable(
-                      showCheckboxColumn: false,
-
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Naziv uloge',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
+    child: Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(color: Colors.black, width: 1.0),
+      ),
+      child: SingleChildScrollView(
+        child: DataTable(
+          showCheckboxColumn: false,
+          columns: const [
+            DataColumn(
+              label: Text(
+                'Naziv uloge',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16, // Veći font za naziv kolone
                 ),
               ),
-            ],
-            rows: result?.result
-                   .map(
-                      (Uloge e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    UlogeDetailsScreen(uloge: e),
-                              ),
-                            );
-                    await _fetchInitialData();
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.nazivUloge.toString())),
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
-          ),
+            ),
+          ],
+          rows: result?.result
+                  .map(
+                    (Uloge e) => DataRow(
+                      onSelectChanged: (selected) async {
+                        if (selected == true) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  UlogeDetailsScreen(uloge: e),
+                            ),
+                          );
+                          await _fetchInitialData();
+                        }
+                      },
+                      cells: [
+                        DataCell(
+                          Text(
+                            e.nazivUloge.toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                              fontWeight:
+                                  e.vidljivo == false ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList() ??
+              [],
         ),
       ),
-      )));
-  }
+    ),))
+  );
+}
+
 }
 
  

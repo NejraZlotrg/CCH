@@ -5,10 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductProvider extends BaseProvider<Product> {
-  ProductProvider() : super("/api/proizvodi");
+  ProductProvider() : super("api/proizvodi");
 
-
-// Dodajemo custom funkciju za sakrivanje proizvoda
+  // Dodajemo custom funkciju za sakrivanje proizvoda
   Future<Product> hideProduct(int id) async {
     String url = "$baseURL$endpoint/$id/hide"; // Koristimo generičku putanju iz BaseProvider-a
     Uri uri = Uri.parse(url);
@@ -23,9 +22,8 @@ class ProductProvider extends BaseProvider<Product> {
       throw Exception("Greška pri sakrivanju proizvoda (status: ${response.statusCode})");
     }
   }
-
  Future<List<Product>> getByFirmaAutodijelovaID(int firmaAutodijelovaID) async {
-    String url = buildUrl('/GetByFirmaAutodijelovaID/$firmaAutodijelovaID');
+    String url = "http://192.168.0.118:7209/api/proizvodi/GetByFirmaAutodijelovaID/$firmaAutodijelovaID";
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
@@ -39,7 +37,6 @@ class ProductProvider extends BaseProvider<Product> {
       throw Exception("Greška pri dohvaćanju proizvoda!");
     }
   }
-
 
     // Dodajemo custom funkciju za sakrivanje proizvoda
   Future<Product> activateProduct(int id) async {
@@ -83,7 +80,6 @@ class ProductProvider extends BaseProvider<Product> {
       throw Exception("Unknown error");
     }
   }
-
 
   // Dodajemo custom funkciju za brisanje draft proizvoda
   Future<Product> deleteDraftProduct(int id) async {

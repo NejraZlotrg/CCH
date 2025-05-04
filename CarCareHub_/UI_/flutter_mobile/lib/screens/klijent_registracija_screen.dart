@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_mobile/main.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
@@ -42,6 +44,9 @@ class _KlijentRegistracijaScreenState
   List<Usluge> usluge = [];
   bool isLoading = true;
 
+
+  bool usernameExists = false; // Dodajte ovo stanje
+
   final validator = CreateValidator();
 
   @override
@@ -58,6 +63,7 @@ class _KlijentRegistracijaScreenState
       'brojTelefona': widget.klijent?.brojTelefona ?? '',
       'gradId': widget.klijent?.gradId ?? '',
       'ulogaId': widget.klijent?.ulogaId ?? '',
+      'adresa' : widget.klijent?.adresa ?? '',
 
     };
 
@@ -68,8 +74,11 @@ class _KlijentRegistracijaScreenState
   }
 
   Future initForm() async {
-    gradResult = await _gradProvider.get();
-
+    if (context.read<UserProvider>().role == "Admin") {
+      gradResult = await _gradProvider.getAdmin();
+    } else {
+      gradResult = await _gradProvider.get();
+    }
     setState(() {
       isLoading = false;
     });
@@ -78,37 +87,64 @@ class _KlijentRegistracijaScreenState
   
 
 
-  Future<void> _saveForm() async {
-    _formKey.currentState?.saveAndValidate();
-    var request = Map.from(_formKey.currentState!.value);
+ Future<bool> _saveForm() async {
+  final formState = _formKey.currentState;
+  if (formState == null) return false;
 
-      request['ulogaId'] = 4;
+  final isValid = formState.saveAndValidate();
+  if (!isValid) return false;
 
-    try {
-      if (widget.klijent == null) {
-        await _klijentProvider.insert(request);
-      } else {
-        await _klijentProvider.update(
-          widget.klijent!.klijentId,
-          request,
-        );
-      }
-    } on Exception catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Error"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            )
-          ],
-        ),
-      );
+  var request = Map.from(formState.value);
+  request['ulogaId'] = 4;
+
+  try {
+    // Provjera username-a
+    final username = request['username'];
+    if (username == null || username.toString().isEmpty || (username.toString().length<3 || username.toString().length>50))  {
+      formState.fields['username']?.invalidate("Username je obavezan");
+      return false;
     }
+
+    final exists = await _klijentProvider.checkUsernameExists(username);
+    if (exists) {
+      formState.fields['username']?.invalidate("Username već postoji");
+      return false;
+    }
+
+    // Insert ili update
+    if (widget.klijent == null) {
+      await _klijentProvider.insert(request);
+    } else {
+      final klijentId = widget.klijent!.klijentId;
+      await _klijentProvider.update(klijentId, request);
+    }
+
+    // Navigacija na login
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LogInPage()),
+      (Route<dynamic> route) => false,
+    );
+
+    return true;
+  } on Exception catch (e) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("Greška"),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+    return false;
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -179,9 +215,9 @@ class _KlijentRegistracijaScreenState
     );
   }
 
- List<Widget> _buildFormFields() {
+List<Widget> _buildFormFields() {
   return [
-    // Red 1: Ime
+    // Ime
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -189,23 +225,21 @@ class _KlijentRegistracijaScreenState
           "Ime:",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "ime",
           validator: validator.required,
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 2: Prezime
+    // Prezime
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -213,62 +247,56 @@ class _KlijentRegistracijaScreenState
           "Prezime:",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "prezime",
           validator: validator.required,
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 3: Korisničko ime
+    // Korisničko ime
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Korisničko ime:",
+          "Korisničko ime",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "username",
           validator: validator.required,
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 4: Lozinka
+    // Lozinka
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Lozinka:",
+          "Lozinka",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "password",
           validator: validator.required,
@@ -276,24 +304,22 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 5: Ponovljena Lozinka
+    // Ponovite lozinku
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Ponovite lozinku:",
+          "Ponovite lozinku",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "passwordAgain",
           validator: validator.required,
@@ -301,17 +327,38 @@ class _KlijentRegistracijaScreenState
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 6: Grad
+    // Adresa
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Grad:",
+          "Adresa",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
+        FormBuilderTextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          ),
+          name: "adresa",
+          validator: validator.required,
+        ),
+      ],
+    ),
+    const SizedBox(height: 10),
+
+    // Grad
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Grad",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         FormBuilderDropdown(
           name: 'gradId',
           validator: validator.required,
@@ -319,94 +366,94 @@ class _KlijentRegistracijaScreenState
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
             hintText: 'Izaberite grad',
           ),
           items: gradResult?.result
                   .map((item) => DropdownMenuItem(
                         alignment: AlignmentDirectional.center,
                         value: item.gradId.toString(),
-                        child: Text(item.nazivGrada ?? ""),
+                        child: Text(
+                          item.nazivGrada ?? "",
+                          style: TextStyle(
+                            color: item.vidljivo == false
+                                ? Colors.red
+                                : Colors.black,
+                          ),
+                        ),
                       ))
                   .toList() ??
               [],
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 7: Email
+    // Email
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Email:",
+          "Email",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "email",
           validator: validator.email,
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 8: Telefon
+    // Broj telefona
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Broj telefona:",
+          "Broj telefona",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
-          name: "telefon",
+          name: "brojTelefona",
           validator: validator.phoneNumber,
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
 
-    // Red 9: Spol
+    // Spol
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Spol:",
+          "Spol",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 5),
         FormBuilderTextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             fillColor: Colors.white,
             filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
           name: "spol",
           validator: validator.required,
         ),
       ],
     ),
-    const SizedBox(height: 20),
+    const SizedBox(height: 10),
   ];
 }
 

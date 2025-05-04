@@ -28,6 +28,8 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
     super.initState();
     _initialValues = {
       'nazivUsluge': widget.usluge?.nazivUsluge,
+      'cijena': widget.usluge?.cijena.toString(),
+      'opis': widget.usluge?.opis
     };
  
     // Osiguraj da je provider dostupan
@@ -243,6 +245,28 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
               
             ],
           ),
+           const SizedBox(height: 20,),
+          Row(
+  children: [
+    Expanded(
+      child: FormBuilderTextField(
+        decoration: const InputDecoration(
+          labelText: "Opis",
+          border: OutlineInputBorder(),
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          alignLabelWithHint: true,  // This helps with multi-line fields
+        ),
+        name: "opis",
+        maxLines: 5,  // Set this to null for unlimited lines, or a specific number
+        minLines: 3,  // Minimum lines to show (makes the field taller initially)
+        keyboardType: TextInputType.multiline,  // Shows enter key on keyboard
+        validator: validator.required,
+      ),
+    ),
+  ],
+),
         ],
       ),
     );

@@ -28,6 +28,8 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
     super.initState();
     _initialValues = {
       'nazivUsluge': widget.usluge?.nazivUsluge,
+      'cijena': widget.usluge?.cijena.toString(),
+      'opis': widget.usluge?.opis
     };
  
     // Osiguraj da je provider dostupan
@@ -45,22 +47,86 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title: widget.usluge?.nazivUsluge ?? "Detalji usluge",
-      child: SingleChildScrollView(
+     return Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        appBar: AppBar(
+          title: Text(widget.usluge?.nazivUsluge ?? "Detalji usluge"),
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
               const SizedBox(height: 20),
-              isLoading
-                  ? const CircularProgressIndicator()
-                  : _buildForm(),
+              isLoading ? const CircularProgressIndicator() : _buildForm(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                       Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                // Potvrda brisanja
+                                bool confirmDelete = await showDialog(
+                                  context: context,
+                   
+                                  builder: (context) => AlertDialog(
+                                    title: const Text("Potvrda brisanja"),
+                                    content: const Text(
+                                        "Da li ste sigurni da želite izbrisati ovu uslugu?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text("Otkaži"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        child: const Text("Izbriši"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                // Ako korisnik potvrdi brisanje
+                                if (confirmDelete == true) {
+                                  try {
+                                    await _uslugeProvider.delete(
+                                        widget.usluge!.uslugeId);
+                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Usluga uspješno izbrisana."),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Greška prilikom brisanja: ${e.toString()}"),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                textStyle: const TextStyle(fontSize: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text("Izbriši"),
+                            ),
+                          ),
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
@@ -130,8 +196,7 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
               ),
             ],
           ),
-        ),
-      ),
+        ),)
     );
   }
  
@@ -180,6 +245,28 @@ class _UslugeDetailsScreenState extends State<UslugeDetailsScreen> {
               
             ],
           ),
+          const SizedBox(height: 20,),
+          Row(
+  children: [
+    Expanded(
+      child: FormBuilderTextField(
+        decoration: const InputDecoration(
+          labelText: "Opis",
+          border: OutlineInputBorder(),
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          alignLabelWithHint: true,  // This helps with multi-line fields
+        ),
+        name: "opis",
+        maxLines: 5,  // Set this to null for unlimited lines, or a specific number
+        minLines: 3,  // Minimum lines to show (makes the field taller initially)
+        keyboardType: TextInputType.multiline,  // Shows enter key on keyboard
+        validator: validator.required,
+      ),
+    ),
+  ],
+),
         ],
       ),
     );

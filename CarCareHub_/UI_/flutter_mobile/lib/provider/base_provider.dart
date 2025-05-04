@@ -12,27 +12,27 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) 
       : _endpoint = endpoint {
-    //_baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
     const apiHost = String.fromEnvironment("API_HOST", defaultValue: "10.0.2.2");
     const apiPort = String.fromEnvironment("API_PORT", defaultValue: "7209");
-    _baseURL= "http://$apiHost:$apiPort";
+    _baseURL= "http://$apiHost:$apiPort/";
   }
- String? get baseURL => _baseURL;
- String? get endpoint => _endpoint;
+
+  String? get baseURL => _baseURL;
+  String? get endpoint => _endpoint;
   
-String buildUrl(String path) {
-  // Osiguravanje da path počinje sa "/"
-  if (!path.startsWith('/')) {
-    path = '/$path';
+  String buildUrl(String path) {
+    // Osiguravanje da path počinje sa "/"
+    if (!path.startsWith('/')) {
+      path = '/$path';
+    }
+
+    // Osiguravanje da endpoint nema višak "/" na kraju
+    String endpoint = _endpoint.endsWith('/') ? _endpoint.substring(0, _endpoint.length - 1) : _endpoint;
+
+    print("Built URL: $_baseURL$endpoint$path");
+
+    return "$_baseURL$endpoint$path";
   }
-
-  // Osiguravanje da endpoint nema višak "/" na kraju
-  String endpoint = _endpoint.endsWith('/') ? _endpoint.substring(0, _endpoint.length - 1) : _endpoint;
-
-  print(_baseURL);
-
-  return "$_baseURL$endpoint$path";
-}
 
   Future<SearchResult<T>> get({dynamic filter}) async {
     String url = "$_baseURL$_endpoint";
@@ -44,7 +44,11 @@ String buildUrl(String path) {
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
+    print("Requesting URL: $url");  // Logovanje URL-a
     http.Response response = await http.get(uri, headers: headers);
+
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -71,7 +75,11 @@ String buildUrl(String path) {
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
+    print("Requesting URL: $url");  // Logovanje URL-a
     http.Response response = await http.get(uri, headers: headers);
+
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -88,13 +96,16 @@ String buildUrl(String path) {
     }
   }
 
-  // Implementacija getById
   Future<List<T>> getById(int? id) async {
-    String url = "$_baseURL$_endpoint/$id"; // Dodajemo ID u URL
+    String url = "$_baseURL$_endpoint/$id";  // Dodajemo ID u URL
+    print("Request URL: $url");  // Logovanje URL-a
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
+
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -107,18 +118,25 @@ String buildUrl(String path) {
 
       return resultList;
     } else {
+      print('Error: Invalid response from server');  // Logovanje greške
       throw Exception("Unknown error");
     }
   }
 
-  // Validacija HTTP odgovora
   bool isValidResponse(Response response) {
+    // Ispisivanje statusnog koda odgovora
+    print('Response status: ${response.statusCode}');
+
+    // Ako je status kod manji od 299, odgovor je validan
     if (response.statusCode < 299) {
       return true;
     } else if (response.statusCode == 401) {
+      // Ako je status kod 401, znači da je autentifikacija neuspešna
+      print('Unauthorized access: ${response.body}');
       throw Exception("Unauthorized");
     } else {
-      print(response.body);
+      // Ispisivanje tela odgovora za slučaj greške
+      print('Error response: ${response.body}');
       throw Exception("Something bad happened, please try again");
     }
   }
@@ -134,7 +152,6 @@ String buildUrl(String path) {
       "Authorization": basicAuth,
     };
   }
-
 
   // Generisanje query stringa iz mape parametara
   String getQueryString(Map params, {String prefix = '&', bool inRecursion = false}) {
@@ -174,7 +191,11 @@ String buildUrl(String path) {
     Map<String, String> headers = createHeaders();
 
     String jsonRequest = jsonEncode(request);
+    print("Request URL: $url");  // Logovanje URL-a
     http.Response response = await http.post(uri, headers: headers, body: jsonRequest);
+
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -191,7 +212,11 @@ String buildUrl(String path) {
     Map<String, String> headers = createHeaders();
 
     String jsonRequest = jsonEncode(request);
+    print("Request URL: $url");  // Logovanje URL-a
     http.Response response = await http.put(uri, headers: headers, body: jsonRequest);
+
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -202,34 +227,39 @@ String buildUrl(String path) {
   }
 
   Future<void> delete(int id) async {
-  String url = "$_baseURL$_endpoint/$id";
-  Uri uri = Uri.parse(url);
-  Map<String, String> headers = createHeaders();
+    String url = "$_baseURL$_endpoint/delete/$id";
+    Uri uri = Uri.parse(url);
+    Map<String, String> headers = createHeaders();
 
-  http.Response response = await http.delete(uri, headers: headers);
+    print("Request URL: $url");  // Logovanje URL-a
+    http.Response response = await http.delete(uri, headers: headers);
 
-  if (isValidResponse(response)) {
-    // Successful deletion, no content to return
-    return;
-  } else {
-    throw Exception("Unknown error");
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
+
+    if (isValidResponse(response)) {
+      return;
+    } else {
+      print("Nemoguće obrisati jer postoje povezani podaci.");
+    }
   }
-}
 
   // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {
     throw Exception("Method not implemented");
   }
 
-
-
-   // Metoda za dohvaćanje jednog objekta po ID-u
+  // Metoda za dohvaćanje jednog objekta po ID-u
   Future<T> getSingleById(int id) async {
     String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
+    print("Request URL: $url");  // Logovanje URL-a
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
+
+    print('Response status: ${response.statusCode}');  // Logovanje status koda odgovora
+    print('Response body: ${response.body}');  // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);

@@ -80,8 +80,7 @@ List<BPAutodijeloviAutoservis>? temp;
 
   
   Future<void> fetchGrad() async {
-   
-      grad = await _gradProvider.getById(widget.firmaAutodijelova!.gradId ?? 0);
+      grad = await _gradProvider.getById(widget.firmaAutodijelova?.gradId);
       if (grad.isNotEmpty && grad.first.vidljivo == false) {
       grad = []; // Postavi na praznu listu ako grad nije vidljiv
       _initialValues['gradId']; // Resetuj vrednost za dropdown
@@ -100,11 +99,8 @@ List<BPAutodijeloviAutoservis>? temp;
     await file.writeAsBytes(bytes);
     return file;
   }
-
-
-
   Future initForm() async {
-     if (context.read<UserProvider>().role == "Admin") {
+     if (context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Firma autodijelova" && context.read<UserProvider>().userId==widget.firmaAutodijelova?.firmaAutodijelovaID)) {
        gradResult = await _gradProvider.getAdmin();
      } else {
        gradResult = await _gradProvider.get();
@@ -117,10 +113,6 @@ List<BPAutodijeloviAutoservis>? temp;
       isLoading = false;
     });
   }
-
-
-
-  
   Future<void> _fetchInitialData() async {
   setState(() {
     isLoading = true;
@@ -160,38 +152,34 @@ List<BPAutodijeloviAutoservis>? temp;
 
 @override
 Widget build(BuildContext context) {
+
   return Scaffold(
     backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
     appBar: AppBar(
       title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme"),
     ),
-    body: isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      _buildFirmaDetails(),
-                    ],
+    body: SafeArea(
+      child: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _buildFirmaDetails(),
                   ),
                 ),
-              ),
-              // Dugme "Uredi" na dnu, vidljivo samo adminima
-              Consumer<UserProvider>(
-                builder: (context, userProvider, child) {
-                  if (userProvider.role == "Admin") {
-                    return Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity, // Dugme preko cele širine
-                            child: ElevatedButton(
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    if (userProvider.role == "Admin") {
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ElevatedButton(
                               onPressed: () {
-                                // Navigacija na ekran za uređivanje
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -206,191 +194,154 @@ Widget build(BuildContext context) {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color.fromARGB(255, 245, 19, 3),
                                 foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 15), // Veće dugme
                               ),
                               child: const Text(
                                 "Uredi",
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(fontSize: 16),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
                               onPressed: () {
-                                // Navigacija na BPAutodijeloviAutoservisScreen i prosleđivanje objekta
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BPAutodijeloviAutoservisScreen(
-                                      firmaAutodijelova: widget.firmaAutodijelova, // Prosleđivanje objekta
+                                      firmaAutodijelova: widget.firmaAutodijelova,
                                     ),
                                   ),
                                 );
                               },
+                              icon: const Icon(Icons.storage),
+                              label: const Text("Baza autoservisa"),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 248, 26, 10), // Crvena boja dugmeta
-                                foregroundColor: Colors.white, // Bijela boja teksta
+                                backgroundColor: const Color.fromARGB(255, 248, 26, 10),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 15), // Veće dugme
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.storage),
-                                  SizedBox(width: 8.0),
-                                  Text('Baza autoservisa'),
-                                ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                },
+                          ],
+                        ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+              ],
+            ),
+    ),
+  );
+}
+
+
+Widget _buildFirmaDetails() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      // Slika firme
+      Center(
+        child: Container(
+          width: double.infinity,
+          constraints: const BoxConstraints(maxWidth: 300),
+          height: 200,
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: Colors.grey[200],
+            border: Border.all(color: Colors.grey, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 5,
               ),
             ],
           ),
-  );
-}
-
-Widget _buildFirmaDetails() {
-  return Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(15), // Zaobljeni uglovi
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          spreadRadius: 2,
-          blurRadius: 5,
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Red za sliku i naziv
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Slika u gornjem levom uglu
-            if (_imageFile != null)
-              Container(
-                width: 100, // Širina slike
-                height: 100, // Visina slike
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey, width: 1),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+          child: _imageFile != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
                   child: Image.file(
                     _imageFile!,
+                    width: double.infinity,
+                    height: 200,
                     fit: BoxFit.cover,
                   ),
-                ),
-              )
-            else
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey[200],
-                  border: Border.all(color: Colors.grey, width: 1),
-                ),
-                child: const Column(
+                )
+              : const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.camera_alt, size: 30, color: Colors.black),
-                    SizedBox(height: 5),
-                    Text('Nema slike', style: TextStyle(fontSize: 12)),
+                    Icon(Icons.camera_alt, size: 60, color: Colors.black),
+                    SizedBox(height: 10),
+                    Text('Nema slike',
+                        style: TextStyle(color: Colors.black, fontSize: 16)),
                   ],
                 ),
-              ),
-
-            const SizedBox(width: 20), // Razmak između slike i naziva
-
-            // Naziv u gornjem desnom uglu
-            Expanded(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Text(
-                  widget.firmaAutodijelova?.nazivFirme ?? "Nema naziva",
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 20), // Razmak ispod slike i naziva
-
-        // Lokacija (adresa + grad) s ikonicom
-        Row(
-          children: [
-            const Icon(Icons.location_on, color: Colors.grey, size: 20), // Ikona lokacije
-            const SizedBox(width: 8), // Razmak između ikone i teksta
-            Text(
-              "${widget.firmaAutodijelova?.adresa ?? 'Nema podataka'}, ${widget.firmaAutodijelova?.grad?.nazivGrada ?? ''}",
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 20), // Razmak ispod lokacije
-
-        // Ostali podaci (telefon, email, JIB, MBS)
-        _buildInfoRow("Telefon", widget.firmaAutodijelova?.telefon),
-        const SizedBox(height: 12),
-        _buildInfoRow("Email", widget.firmaAutodijelova?.email),
-        const SizedBox(height: 12),
-        _buildInfoRow("JIB", widget.firmaAutodijelova?.jib),
-        const SizedBox(height: 12),
-        _buildInfoRow("MBS", widget.firmaAutodijelova?.mbs),
-      ],
-    ),
-  );
-}
-
-// Funkcija za kreiranje jednog reda s podacima
-Widget _buildInfoRow(String label, String? value) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        "$label: ",
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
         ),
       ),
-      Expanded(
-        child: Text(
-          value ?? 'Nema podataka',
-          style: const TextStyle(fontSize: 16, color: Colors.black87),
+
+      // Naziv firme
+      if (widget.firmaAutodijelova?.nazivFirme != null)
+        Text(
+          widget.firmaAutodijelova!.nazivFirme!,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-      ),
+
+      const SizedBox(height: 20),
+
+      // Kartice sa podacima
+      _buildInfoCard("Grad", widget.firmaAutodijelova?.grad?.nazivGrada),
+      _buildInfoCard("Adresa", widget.firmaAutodijelova?.adresa),
+      _buildInfoCard("Telefon", widget.firmaAutodijelova?.telefon),
+      _buildInfoCard("Email", widget.firmaAutodijelova?.email),
+      _buildInfoCard("JIB", widget.firmaAutodijelova?.jib),
+      _buildInfoCard("MBS", widget.firmaAutodijelova?.mbs),
     ],
   );
 }
 
+Widget _buildInfoCard(String title, String? value) {
+  return Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    margin: const EdgeInsets.symmetric(vertical: 6),
+    elevation: 2,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value ?? "-",
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.right,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
-
+}

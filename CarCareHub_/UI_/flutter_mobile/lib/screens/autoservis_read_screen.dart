@@ -33,34 +33,33 @@ class _AutoservisReadScreenState extends State<AutoservisReadScreen> {
   List<Zaposlenik> zaposlenik = [];
   bool isLoading = true;
 
-  late AutoservisProvider _autoservisProvider;
   late UslugeProvider _uslugaProvider;
   late ZaposlenikProvider _zaposlenikProvider;
-  late GradProvider _gradProvider;
 
   @override
   void initState() {
     super.initState();
-    _autoservisProvider = context.read<AutoservisProvider>();
     _uslugaProvider = context.read<UslugeProvider>();
     _zaposlenikProvider = context.read<ZaposlenikProvider>();
-    _gradProvider = context.read<GradProvider>();
 
     _loadInitialData();
   }
 
   Future<void> _loadInitialData() async {
     setState(() => isLoading = true);
-    
+
     try {
       if (widget.autoservis?.slikaProfila != null) {
-        _imageFile = await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);
+        _imageFile =
+            await _getImageFileFromBase64(widget.autoservis!.slikaProfila!);
       }
-      
-      usluge = await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
-      
+
+      usluge =
+          await _uslugaProvider.getById(widget.autoservis?.autoservisId ?? 0);
+
       if (widget.autoservis?.autoservisId != null) {
-        zaposlenik = await _zaposlenikProvider.getzaposlenikById(widget.autoservis!.autoservisId!);
+        zaposlenik = await _zaposlenikProvider
+            .getzaposlenikById(widget.autoservis!.autoservisId!);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -207,9 +206,15 @@ class _AutoservisReadScreenState extends State<AutoservisReadScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Usluge",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.only(left: 15),
+            child: const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Usluge",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           usluge.isEmpty
@@ -251,9 +256,15 @@ class _AutoservisReadScreenState extends State<AutoservisReadScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Zaposlenici",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.only(left: 15),
+            child: const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Zaposlenici",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           zaposlenik.isEmpty

@@ -41,7 +41,6 @@ class NarudzbaStavkeProvider extends BaseProvider<NarudzbaStavke> {
             result.result.add(NarudzbaStavke.fromJson(item));
           }
         }
-
         return result;
       } else {
         throw Exception('Greška: ${response.statusCode} - ${response.body}');
@@ -51,6 +50,4 @@ class NarudzbaStavkeProvider extends BaseProvider<NarudzbaStavke> {
       throw Exception('Greška pri slanju zahtjeva: $error');
     }
   }
-
-
 }

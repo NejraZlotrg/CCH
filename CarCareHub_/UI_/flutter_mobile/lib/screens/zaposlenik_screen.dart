@@ -30,7 +30,13 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
    _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Zaposlenik> data;
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _zaposlenikProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _zaposlenikProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
+
   if (mounted) {
     setState(() {
       result = data;
@@ -54,19 +60,22 @@ class _ZaposlenikScreenState extends State<ZaposlenikScreen> {
   }
 Widget _buildSearch() {
   return Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0),
     child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
+      elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-        side: const BorderSide(color: Colors.black, width: 1.0), // Crni okvir
+        borderRadius: BorderRadius.circular(1.0),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.0,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // First name input
             TextField(
               decoration: InputDecoration(
                 labelText: 'Ime',
@@ -76,7 +85,10 @@ Widget _buildSearch() {
               ),
               controller: _imeController,
             ),
+            
             const SizedBox(height: 10),
+            
+            // Last name input
             TextField(
               decoration: InputDecoration(
                 labelText: "Prezime",
@@ -86,89 +98,91 @@ Widget _buildSearch() {
               ),
               controller: _prezimeController,
             ),
+            
             const SizedBox(height: 10),
-      Column(
-  mainAxisAlignment: MainAxisAlignment.start, // Razmak između dugmadi
-  children: [
-    // Dugme za pretragu
-    Align(
-      alignment: Alignment.center, 
-       child: SizedBox(
-          width: double.infinity,
-       // Centriranje dugmeta
-      child: ElevatedButton(
-        onPressed: () async {
-          var filterParams = {'IsAllIncluded': 'true'};
-
-          if (_imeController.text.isNotEmpty) {
-            filterParams['ime'] = _imeController.text;
-          }
-          if (_prezimeController.text.isNotEmpty) {
-            filterParams['prezime'] = _prezimeController.text;
-          }
-
-          var data = await _zaposlenikProvider.get(filter: filterParams);
-
-          setState(() {
-            result = data;
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search),
-            SizedBox(width: 8.0),
-            Text('Pretraga'),
-          ],
-        ),
-      ),
-    ),
-    ),
-    
-    
-    // Dugme za dodavanje zaposlenika (samo za Admin korisnike)
-    if (context.read<UserProvider>().role == "Admin")
-      Align(
-        alignment: Alignment.center, // Centriranje dugmeta
-         child: SizedBox(
-          width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () async {
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    const ZaposlenikDetailsScreen(zaposlenik: null),
-              ),
-            );
-            await _loadData();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+            
+            // Buttons row - full width
+            Row(
+              children: [
+                // Search button - takes available space
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      var filterParams = {
+                        'IsAllIncluded': 'true',
+                      };
+                      
+                      if (_imeController.text.isNotEmpty) {
+                        filterParams['ime'] = _imeController.text;
+                      }
+                      if (_prezimeController.text.isNotEmpty) {
+                        filterParams['prezime'] = _prezimeController.text;
+                      }
+                      
+                      SearchResult<Zaposlenik> data;
+                      if (context.read<UserProvider>().role == "Admin") {
+                        data = await _zaposlenikProvider.getAdmin(filter: filterParams);
+                      } else {
+                        data = await _zaposlenikProvider.get(filter: filterParams);
+                      }
+                      
+                      setState(() {
+                        result = data;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search),
+                        SizedBox(width: 8.0),
+                        Text('Pretraga'),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                if (context.read<UserProvider>().role == "Admin") ...[
+                  const SizedBox(width: 10),
+                  // Add button - takes available space
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ZaposlenikDetailsScreen(zaposlenik: null),
+                          ),
+                        );
+                        await _loadData();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add),
+                          SizedBox(width: 8.0),
+                          Text('Dodaj'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add),
-              SizedBox(width: 8.0),
-              Text('Dodaj'),
-            ],
-          ),
-        ),
-    ),)
-  ],
-)
-
           ],
         ),
       ),
@@ -177,63 +191,72 @@ Widget _buildSearch() {
 }
 
 
-
-
-  Widget _buildDataListView() {
-    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
+Widget _buildDataListView() {
+  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
       child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
         child: Container(
-    width: MediaQuery.of(context).size.width * 1, // Širina 90% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
+    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
     child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
+      elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+        borderRadius: BorderRadius.circular(8.0), // Zaobljeniji uglovi kartice
         side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
+          color: Colors.black,
+          width: 1.0,
         ),
       ),
       child: SingleChildScrollView(
         child: DataTable(
-                    showCheckboxColumn: false,
-
+          showCheckboxColumn: false,
           columns: const [
-            DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold))),
+           
+            DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+            DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+            DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
           ],
           rows: result?.result.map((Zaposlenik e) {
             return DataRow(
               onSelectChanged: (selected) async {
                 if (selected == true) {
-                await   Navigator.of(context).push(
+                  await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ZaposlenikDetailsScreen( zaposlenik: e,),
+                      builder: (context) => ZaposlenikDetailsScreen(zaposlenik: e),
                     ),
                   );
-                    await _loadData();
-
+                  await _loadData();
                 }
               },
               cells: [
-            
+                
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.ime ?? ""),
+                  child: Text(
+                    e.ime ?? "-",
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 )),
                 DataCell(Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(e.prezime ?? ""),
+                  child: Text(
+                    e.prezime ?? "-",
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                )),
+                DataCell(Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    e.grad?.nazivGrada ?? "-",
+                    style: const TextStyle(color: Colors.blueGrey),
+                  ),
                 )),
               ],
             );
           }).toList() ?? [],
-         ),
+        ),
       ),
-    ),
-      )));
-}
+    ),))
+  );
 }
 
+}

@@ -27,7 +27,13 @@ class _UslugeScreenState extends State<UslugeScreen> {
      _loadData();
   }
  Future<void> _loadData() async {
-  var data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+  SearchResult<Usluge> data;
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _uslugaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+  } else {
+    data = await _uslugaProvider.get(filter: {'IsAllIncluded': 'true'});
+  }
+
   if (mounted) {
     setState(() {
       result = data;
@@ -50,7 +56,7 @@ class _UslugeScreenState extends State<UslugeScreen> {
     );
   }
  
- Widget _buildSearch() {
+Widget _buildSearch() {
   return Container(
     width: MediaQuery.of(context).size.width,
     margin: const EdgeInsets.only(top: 20.0),
@@ -63,8 +69,8 @@ class _UslugeScreenState extends State<UslugeScreen> {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Input field row
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Naziv usluge',
@@ -74,84 +80,89 @@ class _UslugeScreenState extends State<UslugeScreen> {
               ),
               controller: _nazivUslugeController,
             ),
+            
             const SizedBox(height: 10),
-     
-              Column(
-  mainAxisAlignment: MainAxisAlignment.start, // Možete koristiti start ili center, zavisno od željenog efekta
-  children: [
-    // Dugme za pretragu
-             // Dugmad za pretragu
-Align(
-  alignment: Alignment.centerRight,
-  child: SizedBox(
-    width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-    child: ElevatedButton.icon(
-      onPressed: _onSearchPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 10), // Povećava visinu dugmeta
-      ),
-      icon: const Icon(Icons.search, color: Colors.white),
-      label: const Text(
-        "Pretraži",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 14, // Veličina teksta
-        ),
-      ),
-    ),
-    
-  ),
-),
-if (context.read<UserProvider>().role == "Admin")
-      Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          width: double.infinity, // Postavlja dugme da zauzme cijelu širinu reda
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>  UslugeDetailsScreen(usluge: null),
+            
+            // Buttons row - full width
+            Row(
+              children: [
+                // Search button - expanded to fill space
+                Expanded(
+                  flex: 1,
+                  child: ElevatedButton(
+                    onPressed: _onSearchPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search),
+                        SizedBox(width: 8.0),
+                        Text('Pretraga'),
+                      ],
+                    ),
+                  ),
                 ),
-              );
-              await _loadData();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Crvena boja za dugme
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                
+                if (context.read<UserProvider>().role == "Admin") ...[
+                  const SizedBox(width: 10),
+                  // Add button - expanded to fill space
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => UslugeDetailsScreen(usluge: null),
+                          ),
+                        );
+                        await _loadData();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add),
+                          SizedBox(width: 8.0),
+                          Text('Dodaj'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
-          ),
+          ],
         ),
       ),
-    
-
-  ],
-)
-
-          ]
-      ),
-      
     ),
-  ));
+  );
 }
-
- 
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};
     if (_nazivUslugeController.text.isNotEmpty) {
       filterParams['nazivUsluge'] = _nazivUslugeController.text;
     }
- 
-    var data = await _uslugaProvider.get(filter: filterParams);
+    SearchResult<Usluge> data;
+  if (context.read<UserProvider>().role == "Admin") {
+    data = await _uslugaProvider.getAdmin(filter: filterParams);
+  } else {
+    data = await _uslugaProvider.get(filter: filterParams);
+  }
+
  
     if (!mounted) return;
  
@@ -159,67 +170,90 @@ if (context.read<UserProvider>().role == "Admin")
       result = data;
     });
   }
- 
-  Widget _buildDataListView() {
-    return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.only(top: 20.0),
-          child: Card(
-            elevation: 4.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(1.0),
-              side: const BorderSide(color: Colors.black, width: 1.0),
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical, // Vertikalno skrolovanje
-              child: DataTable(
-                          showCheckboxColumn: false,
-
-                columns: const [
-                  DataColumn(
-                    label: Text(
-                      'Naziv usluge',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+ Widget _buildDataListView() {
+  return Expanded(
+    child: SingleChildScrollView(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        margin: const EdgeInsets.only(top: 20.0),
+        child: Card(
+          elevation: 4.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1.0),
+            side: const BorderSide(color: Colors.black, width: 1.0),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: DataTable(
+              showCheckboxColumn: false,
+              columns: const [
+                DataColumn(
+                  label: Text(
+                    'Naziv usluge',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16, // Veći font za zaglavlje
                     ),
                   ),
-                  DataColumn(
-                    label: Text(
-                      'Cijena',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Cijena',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16, // Veći font za zaglavlje
                     ),
                   ),
-                ],
-                rows: result?.result
-                    .map(
-                      (Usluge e) => DataRow(
-                        onSelectChanged: (selected) async  {
-                          if (selected == true) {
-                           await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    UslugeDetailsScreen(usluge: e),
+                ),
+              ],
+              rows: result?.result
+                      .map(
+                        (Usluge e) => DataRow(
+                          onSelectChanged: (selected) async {
+                            if (selected == true) {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UslugeDetailsScreen(usluge: e),
+                                ),
+                              );
+                              await _loadData();
+                            }
+                          },
+                          cells: [
+                            DataCell(
+                              Text(
+                                e.nazivUsluge ?? "",
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
                               ),
-                            );
-                    await _loadData();
-
-
-                  }
-                },
-                cells: [
-                  DataCell(Text(e.nazivUsluge.toString())),
-                  DataCell(Text(e.cijena.toString())),
-
-                ],
-             
-                      ),
-                    )
-                    .toList() ??
-                [],
+                            ),
+                            DataCell(
+                              Text(
+                                "${e.cijena?.toStringAsFixed(2)} KM",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: (e.cijena ?? 0) <= 0
+                                      ? Colors.red
+                                      : Colors.black,
+                                  fontWeight: (e.cijena ?? 0) <= 0
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList() ??
+                  [],
+            ),
           ),
         ),
       ),
-    )));
-  }
+    ),
+  );
+}
+
 }

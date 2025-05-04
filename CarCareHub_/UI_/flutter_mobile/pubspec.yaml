@@ -88,7 +88,10 @@ flutter:
         - asset: assets/fonts/NotoSans-Regular.ttf
 
   assets:
+    - assets/images/autoservis_prazna_slika.jpg
     - assets/images/cch_logo.png
+    - assets/images/firma_prazna_slika.jpg
+    - assets/images/proizvod_prazna_slika.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
