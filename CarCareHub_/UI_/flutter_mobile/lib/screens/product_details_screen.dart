@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -68,9 +70,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
     firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
     proizvodjacResult = await _proizvodjacProvider.get();
 
-    // Check if product exists and slika is not null
     if (widget.product != null && widget.product!.slika != null) {
-      // Use the null assertion operator (!) to treat slika as non-null
+   
       _imageFile = await _getImageFileFromBase64(widget.product!.slika!);
     }
 
@@ -79,7 +80,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
     });
   }
 
-// Function to convert base64 image to File
   Future<File> _getImageFileFromBase64(String base64String) async {
     final bytes = base64Decode(base64String);
     final tempDir = await Directory.systemTemp.createTemp();
@@ -101,7 +101,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:
-          const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+          const Color.fromARGB(255, 204, 204, 204), 
       appBar: AppBar(
         title: Text(widget.product?.naziv ?? "Detalji proizvoda"),
       ),
@@ -113,19 +113,20 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    _buildForm(), // Call the form builder function
+                    _buildForm(), 
+
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                                                  // Dugme za brisanje (prikazuje se samo ako proizvod postoji)
+                                              
                         if (widget.product != null)
                           Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
                               onPressed: () async {
-                                // Potvrda brisanja
+                           
                                 bool confirmDelete = await showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -147,12 +148,12 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                   ),
                                 );
 
-                                // Ako korisnik potvrdi brisanje
+                                
                                 if (confirmDelete == true) {
                                   try {
                                     await _productProvider.delete(
                                         widget.product!.proizvodId!);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                                    Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text("Proizvod uspješno izbrisan."),
@@ -169,7 +170,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
+                                backgroundColor: Colors.red[700],
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -181,7 +182,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                             ),
                           ),
 
-                          // Dugme za spašavanje
+                        
                           ElevatedButton(
                             onPressed: () async {
                                   if (!(_formKey.currentState?.validate() ?? false)) {
@@ -191,14 +192,14 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
           duration: Duration(seconds: 2),
         ),
       );
-      return; // Zaustavi obradu ako validacija nije prošla
+      return;
     }
                               if (_formKey.currentState?.saveAndValidate() ??
                                   false) {
                                 var request =
                                     Map.from(_formKey.currentState!.value);
 
-                                // Dodaj sliku u request
+                              
                                 if (_imageFile != null) {
                                   final imageBytes =
                                       await _imageFile!.readAsBytes();
@@ -206,7 +207,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                                   request['slikaThumb'] =
                                       base64Encode(imageBytes);
                                 } else {
-  // Ako nije poslana, učitaj iz assets-a
+
   const assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
   var imageFile = await rootBundle.load(assetImagePath);
   final imageBytes = imageFile.buffer.asUint8List();
@@ -266,7 +267,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
       key: _formKey,
       child: Column(
         crossAxisAlignment:
-            CrossAxisAlignment.start, // Align elements to the left
+            CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
           Center(
@@ -309,7 +310,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          ..._buildFormFields(), // Adding the form fields here
+          ..._buildFormFields(), 
           const SizedBox(height: 10),
         ],
       ),
@@ -322,8 +323,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
           labelText: "Šifra",
           border: OutlineInputBorder(),
-          fillColor: Colors.white, // Bela pozadina
-          filled: true, // Da pozadina bude ispunjena
+          fillColor: Colors.white, 
+          filled: true, 
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "sifra",
@@ -334,8 +335,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
       FormBuilderTextField(
         decoration: const InputDecoration(
           labelText: "Naziv", border: OutlineInputBorder(),
-          fillColor: Colors.white, // Bela pozadina
-          filled: true, // Da pozadina bude ispunjena
+          fillColor: Colors.white, 
+          filled: true, 
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "naziv",
@@ -347,8 +348,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
             labelText: "Originalni broj",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white, 
+            filled: true,
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "originalniBroj",
         validator: validator.required,
@@ -365,8 +366,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
             decoration: const InputDecoration(
               labelText: 'Kategorija',
               border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               hintText: 'kategorija',
@@ -393,8 +394,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
             decoration: const InputDecoration(
               labelText: 'Proizvodjac',
               border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               hintText: 'proizvodjac',
@@ -421,8 +422,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
             decoration: const InputDecoration(
               labelText: 'FirmaAutoDijelova',
               border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               hintText: 'firmaAutoDijelova',
@@ -449,8 +450,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
               decoration: const InputDecoration(
                 labelText: 'Model',
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
 
@@ -473,8 +474,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
             labelText: "Cijena",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white, 
+            filled: true, 
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "cijena",
         validator: validator.required,
@@ -485,8 +486,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
             labelText: "Popust",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white, 
+            filled: true, 
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "popust",
         initialValue: widget.product?.popust.toString(),
@@ -496,8 +497,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
             labelText: "Opis",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white, 
+            filled: true, 
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "opis",
 

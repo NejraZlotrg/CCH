@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, empty_catches, library_private_types_in_public_api, camel_case_types
 
 import 'dart:convert';
 
@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
-// ignore: camel_case_types
 class chatKlijentZaposlenikMessagesScreen extends StatefulWidget {
   final chatKlijentZaposlenik selectedChat;
 
@@ -18,7 +17,6 @@ class chatKlijentZaposlenikMessagesScreen extends StatefulWidget {
       {super.key, required this.selectedChat});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ChatMessagesScreenState createState() => _ChatMessagesScreenState();
 }
 
@@ -28,12 +26,12 @@ class _ChatMessagesScreenState
   List<chatKlijentZaposlenik> messages = [];
   late bool isConnected = false;
   final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController(); // ScrollController
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    fetchMessages(); // Pozivamo fetchMessages iz provider-a
+    fetchMessages(); 
     runSignalR();
   }
 
@@ -50,7 +48,6 @@ class _ChatMessagesScreenState
     var klijentId = widget.selectedChat.klijentId;
     var zaposlenikId = widget.selectedChat.zaposlenikId;
 
-    // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
     connection.on('ReceiveMessageZaposlenikKlijent#$zaposlenikId/$klijentId', (arguments) {
       fetchMessages();
     });
@@ -67,7 +64,6 @@ class _ChatMessagesScreenState
     }
   }
 
-  // Fetch messages for the selected chat
   Future<void> fetchMessages() async {
     try {
       final provider = Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false);
@@ -80,41 +76,36 @@ class _ChatMessagesScreenState
         messages = fetchedMessages;
       });
 
-      // Automatsko skrolovanje na dno kad se učitaju poruke
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
 
-    // ignore: empty_catches
     } catch (e) {
     }
   }
 
-  // Funckija koja skroluje na dno
   void _scrollToBottom() {
-    // Provjeravamo da li je lista poruka prazna
     if (_scrollController.hasClients) {
-      // Skrolujemo na dno liste
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
   @override
 Widget build(BuildContext context) {
   final userProvider = context.read<UserProvider>();
-  final isLoggedUserZaposlenik = userProvider.role == 'Zaposlenik'; // Check if the logged-in user is 'Zaposlenik'
+  final isLoggedUserZaposlenik = userProvider.role == 'Zaposlenik';
 
   return Scaffold(
-    backgroundColor: Colors.grey[300], // Set background color of the entire screen to light gray
+    backgroundColor: Colors.grey[300], 
     appBar: AppBar(
       title: Text(
         'Chat with ${widget.selectedChat.klijentIme} - ${widget.selectedChat.zaposlenikIme}',
-        textAlign: TextAlign.center, // Ensures the title text itself is centered
+        textAlign: TextAlign.center, 
       ),
-      backgroundColor: Colors.grey[400], // Set the AppBar background color to grey
-      centerTitle: true, // Center the title in the AppBar
+      backgroundColor: Colors.grey[400], 
+      centerTitle: true, 
     ),
     body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0), // Add left and right margin for the body
+      padding: const EdgeInsets.symmetric(horizontal: 15.0), 
       child: Column(
         children: [
           Expanded(
@@ -127,32 +118,30 @@ Widget build(BuildContext context) {
                       final message = messages[index];
                       final isMessageFromKlijent = message.poslanoOdKlijenta == true;
 
-                      // Determine if the message is from the logged-in user
                       bool isMessageFromLoggedUser = isLoggedUserZaposlenik
-                          ? isMessageFromKlijent // If the logged-in user is Zaposlenik, messages from Klijent go left
-                          : !isMessageFromKlijent; // If the logged-in user is not Zaposlenik, messages from Klijent go right
+                          ? isMessageFromKlijent 
+                          : !isMessageFromKlijent; 
 
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0), // More vertical space between messages
+                        padding: const EdgeInsets.symmetric(vertical: 8.0), 
                         child: Align(
                           alignment: isMessageFromLoggedUser
-                              ? Alignment.centerLeft // Message goes left
-                              : Alignment.centerRight, // Message goes right
+                              ? Alignment.centerLeft 
+                              : Alignment.centerRight,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15.0, vertical: 10.0),
                             decoration: BoxDecoration(
                               color: isMessageFromLoggedUser
-                                  ? Colors.blue[50] // Light blue background for the logged-in user
-                                  : Colors.green[50], // Light green background for the other user
+                                  ? Colors.blue[50]
+                                  : Colors.green[50],
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(
-                                color: Colors.grey[400]!, // Grey border around each message
+                                color: Colors.grey[400]!,
                                 width: 1.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  // ignore: deprecated_member_use
                                   color: Colors.grey.withOpacity(0.2),
                                   spreadRadius: 1,
                                   blurRadius: 5,
@@ -177,19 +166,19 @@ Widget build(BuildContext context) {
                   ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0), // Vertical space around the input field
+            padding: const EdgeInsets.symmetric(vertical: 8.0), 
             child: Row(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 5.0), // Margin at the top of the TextField
+                    padding: const EdgeInsets.only(top: 5.0),
                     child: TextField(
                       controller: _messageController,
                       decoration: const InputDecoration(
                         labelText: 'Enter message',
-                        labelStyle: TextStyle(color: Colors.grey), // Grey text for the label
+                        labelStyle: TextStyle(color: Colors.grey),
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0), // Padding inside the field
+                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                       ),
                     ),
                   ),
@@ -199,7 +188,6 @@ Widget build(BuildContext context) {
                   onPressed: () {
                     String message = _messageController.text;
                     if (message.isNotEmpty) {
-                      // Calling sendMessage function from the provider
                       Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false)
                           .sendMessage(
                               widget.selectedChat.klijentId,
@@ -207,7 +195,7 @@ Widget build(BuildContext context) {
                               message)
                           .then((_) {
                         _messageController.clear();
-                        fetchMessages(); // Refresh messages after sending
+                        fetchMessages(); 
                       }).catchError((error) {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(error.toString())));

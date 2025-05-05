@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, empty_catches
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
@@ -10,7 +12,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class BPAutodijeloviAutoservisScreen extends StatefulWidget {
-  final FirmaAutodijelova? firmaAutodijelova; 
+  final FirmaAutodijelova? firmaAutodijelova;
 
   const BPAutodijeloviAutoservisScreen({super.key, this.firmaAutodijelova});
 
@@ -19,7 +21,8 @@ class BPAutodijeloviAutoservisScreen extends StatefulWidget {
       _BPAutodijeloviAutoservisScreenState();
 }
 
-class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservisScreen> {
+class _BPAutodijeloviAutoservisScreenState
+    extends State<BPAutodijeloviAutoservisScreen> {
   SearchResult<BPAutodijeloviAutoservis>? result;
   late BPAutodijeloviAutoservisProvider _provider;
   bool isLoading = true;
@@ -33,7 +36,6 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Ako je firmaAutodijelova prosleđena, pozivamo pretragu odmah prilikom učitavanja ekrana
     if (widget.firmaAutodijelova != null && isLoading) {
       _fetchData();
     }
@@ -45,7 +47,6 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
       'AutodijeloviID': widget.firmaAutodijelova?.firmaAutodijelovaID,
     };
 
-
     try {
       if (context.read<UserProvider>().role == "Admin") {
         result = await _provider.getAdmin(filter: filterParams);
@@ -53,12 +54,10 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
         result = await _provider.get(filter: filterParams);
       }
 
-
       setState(() {
         isLoading = false;
       });
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Greška pri pretrazi: $e')),
       );
@@ -76,47 +75,46 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
         color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
-          _buildSearch(), 
-          _buildDataListView(),
-        ],
-      ),
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSearch() {
-  return Padding(
-    padding: const EdgeInsets.only( left: 50, right: 50, top: 20, bottom: 20),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center, 
-      children: [
-
-        const SizedBox(height: 10), 
-        ElevatedButton(
-          onPressed: () { 
-            _showAutoservisDialog(context); 
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+    return Padding(
+      padding: const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              _showAutoservisDialog(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              minimumSize: const Size(double.infinity, 50),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            minimumSize: const Size(double.infinity, 50), 
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add, color: Colors.white),
+                SizedBox(width: 8.0),
+                Text('Dodaj Autoservis', style: TextStyle(color: Colors.white)),
+              ],
+            ),
           ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add, color: Colors.white),
-              SizedBox(width: 8.0),
-              Text('Dodaj Autoservis', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Future<void> _showAutoservisDialog(BuildContext context) async {
     var autoservisiResult = await context.read<AutoservisProvider>().get();
@@ -127,14 +125,16 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
     String searchQuery = "";
 
     await showDialog(
-      // ignore: use_build_context_synchronously
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
             List<Autoservis> filteredAutoservisi = autoservisiResult.result
                 .where((autoservis) =>
-                    autoservis.naziv?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false)
+                    autoservis.naziv
+                        ?.toLowerCase()
+                        .contains(searchQuery.toLowerCase()) ??
+                    false)
                 .toList();
 
             return AlertDialog(
@@ -150,7 +150,7 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                       ),
                       onChanged: (value) {
                         setState(() {
-                          searchQuery = value; 
+                          searchQuery = value;
                         });
                       },
                     ),
@@ -166,8 +166,8 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                                 DataCell(
                                   Text(e.naziv ?? ""),
                                   onTap: () {
-                                    selectedAutoservis = e; 
-                                    Navigator.of(context).pop(); 
+                                    selectedAutoservis = e;
+                                    Navigator.of(context).pop();
                                   },
                                 ),
                               ],
@@ -181,7 +181,7 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); 
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Otkaži'),
                 ),
@@ -209,94 +209,92 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
 
     try {
       await context.read<BPAutodijeloviAutoservisProvider>().insert(request);
-      _fetchData(); // Refresh the data after insertion
-    // ignore: empty_catches
-    } catch (e) {
+      _fetchData();
+    } catch (e) {}
+  }
+
+  Widget _buildDataListView() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
-  }
 
- Widget _buildDataListView() {
-  if (isLoading) {
-    return const Center(child: CircularProgressIndicator());
-  }
+    return Expanded(
+      child: ListView.builder(
+        itemCount: result?.result.length ?? 0,
+        itemBuilder: (context, index) {
+          final e = result!.result[index];
 
-  return Expanded(
-    child: ListView.builder(
-      itemCount: result?.result.length ?? 0,
-      itemBuilder: (context, index) {
-        final e = result!.result[index];
-
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(
-              color: Colors.black,
-              width: 1,
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(
+                color: Colors.black,
+                width: 1,
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Firma autodijelova:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  e.firmaAutodijelova?.nazivFirme ?? "Nepoznato",
-                  style: TextStyle(
-                    color: (e.firmaAutodijelova?.vidljivo == null || e.vidljivo == false)
-                        ? Colors.red
-                        : Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Firma autodijelova:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Autoservis:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  e.autoservis?.naziv ?? "Nepoznato",
-                  style: TextStyle(
-                    color: (e.autoservis?.vidljivo == null || e.vidljivo == false)
-                        ? Colors.red
-                        : Colors.black,
+                  Text(
+                    e.firmaAutodijelova?.nazivFirme ?? "Nepoznato",
+                    style: TextStyle(
+                      color: (e.firmaAutodijelova?.vidljivo == null ||
+                              e.vidljivo == false)
+                          ? Colors.red
+                          : Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _deleteBPAutodijeloviAutoservis(e.bpAutodijeloviAutoservisId);
-                    },
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Autoservis:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                ),
-              ],
+                  Text(
+                    e.autoservis?.naziv ?? "Nepoznato",
+                    style: TextStyle(
+                      color: (e.autoservis?.vidljivo == null ||
+                              e.vidljivo == false)
+                          ? Colors.red
+                          : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        _deleteBPAutodijeloviAutoservis(
+                            e.bpAutodijeloviAutoservisId);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    ),
-  );
-}
-
+          );
+        },
+      ),
+    );
+  }
 
   void _deleteBPAutodijeloviAutoservis(int? id) async {
     if (id != null) {
       try {
-        await _provider.delete(id); // Pozovi delete metodu iz providera
-        _fetchData(); // Osvježi podatke nakon brisanja
-        // ignore: use_build_context_synchronously
+        await _provider.delete(id);
+        _fetchData();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Zapis uspješno obrisan')),
         );
       } catch (e) {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Greška pri brisanju: $e')),
         );

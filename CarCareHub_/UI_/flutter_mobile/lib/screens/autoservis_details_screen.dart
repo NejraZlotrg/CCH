@@ -11,16 +11,16 @@ import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:flutter_mobile/models/uloge.dart';
-import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
-import 'package:flutter_mobile/models/zaposlenik.dart'; // Dodaj model za usluge
+import 'package:flutter_mobile/models/usluge.dart';
+import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/chat_autoservis_klijent_provider.dart';
 import 'package:flutter_mobile/provider/chat_klijent_zaposlenik_provider.dart';
-import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
-import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
+import 'package:flutter_mobile/provider/usluge_provider.dart';
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chat_autoservis_klijent_messages_screen.dart';
@@ -191,7 +191,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   children: [
                     const SizedBox(height: 20),
                     _buildForm(),
-
                     Container(
                       padding: const EdgeInsets.only(left: 15),
                       child: const Align(
@@ -203,8 +202,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         ),
                       ),
                     ),
-
-                    // Usluge
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: usluge.isNotEmpty
@@ -259,7 +256,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           : const Text(
                               "Nema dostupnih usluga za ovaj autoservis."),
                     ),
-
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==
@@ -279,7 +275,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           child: const Text("Dodaj uslugu"),
                         ),
                       ),
-
                     Container(
                       padding: const EdgeInsets.only(left: 15),
                       child: const Align(
@@ -291,7 +286,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         ),
                       ),
                     ),
-                    // Zaposlenici
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: zaposlenik.isNotEmpty
@@ -378,7 +372,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           : const Text(
                               "Nema dostupnih zaposlenika za ovaj autoservis."),
                     ),
-
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==
@@ -398,8 +391,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           child: const Text("Dodaj zaposlenika"),
                         ),
                       ),
-
-                    // Dugmad za brisanje i spremanje
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -967,73 +958,63 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
               title: const Text("Pošaljite poruku"),
-              contentPadding:
-                  const EdgeInsets.all(16), // Dodaj padding za komfor
+              contentPadding: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // Okrugli uglovi
+                borderRadius: BorderRadius.circular(12),
               ),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width *
-                    0.8, // Prilagodi širinu dijaloga
+                width: MediaQuery.of(context).size.width * 0.8,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Sažmi veličinu
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
                       onChanged: (value) {
                         setState(() {
-                          message = value; // Ažuriraj poruku kad se unese tekst
+                          message = value;
                         });
                       },
                       decoration: const InputDecoration(
                         hintText: "Unesite poruku",
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 16), // Padding u text polju
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                       ),
-                      maxLines: 3, // Ograniči visinu na nekoliko linija
+                      maxLines: 3,
                       keyboardType: TextInputType.text,
                     ),
                   ],
                 ),
               ),
               actions: [
-                // Otkaži dugme
                 TextButton(
                   onPressed: () {
                     if (Navigator.canPop(context)) {
-                      Navigator.pop(context); // Zatvori dijalog
+                      Navigator.pop(context);
                     }
                   },
                   child: const Text(
                     "Otkaži",
-                    style: TextStyle(
-                        fontSize: 16), // Povećaj font za lakše čitanje
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
-                // Pošaljite dugme
                 ElevatedButton(
                   onPressed: () async {
                     if (message.isNotEmpty) {
                       try {
-                        // Poziv za slanje poruke
                         await Provider.of<ChatKlijentZaposlenikProvider>(
                           context,
                           listen: false,
                         ).sendMessage(klijentId, zaposleniId, message);
 
-                        // Zatvori dijalog nakon slanja poruke
                         if (mounted && Navigator.canPop(context)) {
                           Navigator.pop(context);
                         }
 
-                        // Obavijesti korisnika o uspjehu
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Poruka poslana uspješno"),
                           ),
                         );
                       } catch (e) {
-                        // Obavijesti korisnika o grešci
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("Greška: ${e.toString()}")),
@@ -1041,7 +1022,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         }
                       }
                     } else {
-                      // Ako poruka nije uneta, obavesti korisnika
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Poruka ne može biti prazna"),
@@ -1050,15 +1030,14 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(MediaQuery.of(context).size.width * 0.3,
-                        50), // Povećaj širinu dugmeta
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width * 0.3, 50),
                     padding: const EdgeInsets.symmetric(
                         vertical: 12, horizontal: 20),
                   ),
                   child: const Text(
                     "Pošaljite",
-                    style: TextStyle(
-                        fontSize: 16), // Povećaj font za lakšu interakciju
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ],
@@ -1069,7 +1048,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     );
   }
 
-  // Dijalog za dodavanje nove usluge
   void _showAddUslugaDialog() {
     final uslugaFormKey = GlobalKey<FormBuilderState>();
     showDialog(
@@ -1077,15 +1055,13 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text("Dodaj novu uslugu"),
-          contentPadding: const EdgeInsets.all(16), // Dodaj padding za komfor
+          contentPadding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Okrugli uglovi
+            borderRadius: BorderRadius.circular(12),
           ),
           content: SizedBox(
-            width: MediaQuery.of(context).size.width *
-                0.8, // Prilagodi širinu dijaloga
+            width: MediaQuery.of(context).size.width * 0.8,
             child: SingleChildScrollView(
-              // Dodaj SingleChildScrollView za scrollable sadržaj
               child: FormBuilder(
                 key: uslugaFormKey,
                 child: Column(
@@ -1095,29 +1071,29 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       name: "nazivUsluge",
                       decoration: const InputDecoration(
                         labelText: "Naziv usluge",
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16), // Unutrašnji padding
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                       ),
                       validator: validator.required,
                     ),
-                    const SizedBox(height: 8), // Razmak između polja
+                    const SizedBox(height: 8),
                     FormBuilderTextField(
                       name: "cijena",
                       decoration: const InputDecoration(
                         labelText: "Cijena",
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16), // Unutrašnji padding
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                       ),
                       keyboardType: TextInputType.number,
                       validator: validator.required,
                     ),
-                    const SizedBox(height: 8), // Razmak između polja
+                    const SizedBox(height: 8),
                     FormBuilderTextField(
                       name: "opis",
                       decoration: const InputDecoration(
                         labelText: "Opis",
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16), // Unutrašnji padding
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                       ),
                     ),
                   ],
@@ -1132,13 +1108,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               },
               child: const Text(
                 "Odustani",
-                style: TextStyle(
-                    fontSize: 16), // Povećaj font za bolju interakciju
+                style: TextStyle(fontSize: 16),
               ),
             ),
             ElevatedButton(
               onPressed: () async {
-                // Provjera validacije forme
                 if (!(uslugaFormKey.currentState?.validate() ?? false)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -1146,7 +1120,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       duration: Duration(seconds: 2),
                     ),
                   );
-                  return; // Zaustavi obradu ako validacija nije prošla
+                  return;
                 }
 
                 uslugaFormKey.currentState?.saveAndValidate();
@@ -1157,7 +1131,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   await _uslugaProvider.insert(uslugaRequest);
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
-                  fetchUsluge(); // Osvježi usluge nakon dodavanja nove
+                  fetchUsluge();
                 } on Exception catch (e) {
                   showDialog(
                     // ignore: use_build_context_synchronously
@@ -1176,15 +1150,13 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(MediaQuery.of(context).size.width * 0.3,
-                    50), // Povećaj širinu dugmeta
+                minimumSize: Size(MediaQuery.of(context).size.width * 0.3, 50),
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               ),
               child: const Text(
                 "Dodaj",
-                style: TextStyle(
-                    fontSize: 16), // Povećaj font za bolju interakciju
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ],
@@ -1201,12 +1173,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text("Dodaj novog zaposlenika"),
-          contentPadding: const EdgeInsets.all(16), // Dodaj padding
+          contentPadding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Okrugli uglovi
+            borderRadius: BorderRadius.circular(12),
           ),
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8, // 80% širine ekrana
+            width: MediaQuery.of(context).size.width * 0.8,
             child: SingleChildScrollView(
               child: FormBuilder(
                 key: zaposlenikFormKey,
@@ -1382,8 +1354,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               },
               child: const Text(
                 "Odustani",
-                style:
-                    TextStyle(fontSize: 16), // Povećaj font za mobilnu verziju
+                style: TextStyle(fontSize: 16),
               ),
             ),
             ElevatedButton(
@@ -1491,13 +1462,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
               title: const Text("Pošaljite poruku"),
-              contentPadding: const EdgeInsets.all(16), // Dodaj padding
+              contentPadding: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // Okrugli uglovi
+                borderRadius: BorderRadius.circular(12),
               ),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width *
-                    0.8, // 80% širine ekrana
+                width: MediaQuery.of(context).size.width * 0.8,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1513,10 +1483,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                         ),
-                        maxLines: 4, // Omogućava više linija za unos
+                        maxLines: 4,
                       ),
-                      const SizedBox(
-                          height: 16), // Razmak između inputa i dugmadi
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -1530,8 +1499,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   },
                   child: const Text(
                     "Otkaži",
-                    style:
-                        TextStyle(fontSize: 16), // Veći font za mobilnu verziju
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
                 ElevatedButton(
@@ -1575,8 +1543,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   ),
                   child: const Text(
                     "Pošaljite",
-                    style:
-                        TextStyle(fontSize: 16), // Veći font za mobilnu verziju
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ],
@@ -1597,13 +1564,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
           builder: (context, setState) {
             return AlertDialog(
               title: const Text('Uredi zaposlenika'),
-              contentPadding: const EdgeInsets.all(16), // Dodaj padding
+              contentPadding: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // Okrugli uglovi
+                borderRadius: BorderRadius.circular(12),
               ),
               content: SizedBox(
-                width: MediaQuery.of(context).size.width *
-                    0.8, // 80% širine ekrana
+                width: MediaQuery.of(context).size.width * 0.8,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1756,12 +1722,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Potvrda brisanja'),
-          contentPadding: const EdgeInsets.all(16), // Dodaj padding
+          contentPadding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Okrugli uglovi
+            borderRadius: BorderRadius.circular(12),
           ),
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8, // 80% širine ekrana
+            width: MediaQuery.of(context).size.width * 0.8,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1781,7 +1747,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Boja dugmeta
+                backgroundColor: Colors.red,
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.3, 50),
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 20),

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
@@ -6,7 +8,8 @@ import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
-// ignore: must_be_immutable
+
+
 class ProizvodjacDetailsScreen extends StatefulWidget {
   Proizvodjac? proizvodjac;
   ProizvodjacDetailsScreen({super.key, this.proizvodjac});
@@ -46,7 +49,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
   Widget build(BuildContext context) {
        return Scaffold(
         backgroundColor:
-            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+            const Color.fromARGB(255, 204, 204, 204),
         appBar: AppBar(
           title: Text(widget.proizvodjac?.nazivProizvodjaca ?? "Detalji proizvodjaca"),
         ),
@@ -68,7 +71,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                             padding: const EdgeInsets.only(right: 10),
                             child: ElevatedButton(
                               onPressed: () async {
-                                // Potvrda brisanja
+                           
                                 bool confirmDelete = await showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -90,12 +93,12 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                                   ),
                                 );
 
-                                // Ako korisnik potvrdi brisanje
+                            
                                 if (confirmDelete == true) {
                                   try {
                                     await _proizvodjacProvider.delete(
                                         widget.proizvodjac!.proizvodjacId!);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
+                                    Navigator.pop(context); 
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text("Proizvođač uspješno izbrisan."),
@@ -112,7 +115,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
+                                backgroundColor: Colors.red[700], 
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -134,7 +137,7 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
           duration: Duration(seconds: 2),
         ),
       );
-      return; // Zaustavi obradu ako validacija nije prošla
+      return; 
     }
                           _formKey.currentState?.saveAndValidate();
  
@@ -219,5 +222,3 @@ class _ProizvodjacDetailsScreenState extends State<ProizvodjacDetailsScreen> {
     );
   }
 }
- 
- 

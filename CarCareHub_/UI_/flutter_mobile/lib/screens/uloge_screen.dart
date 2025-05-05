@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/uloge.dart';
 import 'package:flutter_mobile/models/search_result.dart';
@@ -49,7 +51,7 @@ class _UlogeScreenState extends State<UlogeScreen> {
     return MasterScreenWidget(
       title: "Uloge",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -74,7 +76,7 @@ Widget _buildSearch() {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            // Input field
+          
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Naziv uloge',
@@ -86,11 +88,9 @@ Widget _buildSearch() {
             ),
             
             const SizedBox(height: 10),
-            
-            // Buttons row - fills full width
+           
             Row(
               children: [
-                // Search button - expanded to fill available space
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _onSearchPressed,
@@ -115,7 +115,7 @@ Widget _buildSearch() {
                 
                 if (context.read<UserProvider>().role == "Admin") ...[
                   const SizedBox(width: 10),
-                  // Add button - expanded to fill available space
+          
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
@@ -177,11 +177,11 @@ Widget _buildSearch() {
 
 
  Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+  return Expanded(
+      child: SingleChildScrollView( 
         child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
+    width: MediaQuery.of(context).size.width, 
+    margin: const EdgeInsets.only(top: 20.0), 
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -197,7 +197,7 @@ Widget _buildSearch() {
                 'Naziv uloge',
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
-                  fontSize: 16, // Veći font za naziv kolone
+                  fontSize: 16, 
                 ),
               ),
             ),
@@ -240,5 +240,3 @@ Widget _buildSearch() {
 }
 
 }
-
- 

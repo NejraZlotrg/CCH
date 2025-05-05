@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
@@ -52,7 +54,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
     return MasterScreenWidget(
       title: "Proizvodjac",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -80,7 +82,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            // Input row (full width)
+          
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Naziv proizvodjaca',
@@ -94,10 +96,10 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
             
             const SizedBox(height: 10),
             
-            // Buttons row (full width)
+         
             Row(
               children: [
-                // Search button
+              
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () async {
@@ -129,7 +131,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
                 
                 const SizedBox(width: 10),
                 
-                // Add button
+            
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () async {
@@ -161,12 +163,13 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   );
 }
 
+
  Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
+  return Expanded( 
+      child: SingleChildScrollView( 
         child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
+    width: MediaQuery.of(context).size.width,
+    margin: const EdgeInsets.only(top: 20.0), 
     child: Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
@@ -182,7 +185,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
                 'Naziv proizvođača',
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
-                  fontSize: 16, // Veći font za naslov kolone
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -225,5 +228,3 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
 }
 
 }
-
- 

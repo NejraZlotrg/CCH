@@ -17,12 +17,12 @@ class RegistrationPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.grey[400], // Background color for entire screen
+        color: Colors.grey[400],
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400), // Max width for larger screens
+              constraints: const BoxConstraints(maxWidth: 400),
               child: Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(

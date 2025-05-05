@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, avoid_print, use_build_context_synchronously, deprecated_member_use
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -74,10 +76,12 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
 
       switch (userRole) {
         case "Admin":
-          data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+          data = await _productProvider
+              .getAdmin(filter: {'IsAllIncluded': 'true'});
           break;
         case "Firma autodijelova":
-          List<Product> products = await _productProvider.getByFirmaAutodijelovaID(userId);
+          List<Product> products =
+              await _productProvider.getByFirmaAutodijelovaID(userId);
           data = SearchResult<Product>()
             ..result = products
             ..count = products.length;
@@ -148,7 +152,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Naziv proizvoda
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Naziv proizvoda',
@@ -159,8 +162,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
               controller: _nazivController,
             ),
             const SizedBox(height: 10),
-
-            // Poredaj po cijeni
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(
                 labelText: "Poredaj po cijeni",
@@ -177,8 +178,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
               onChanged: _handleSortChange,
             ),
             const SizedBox(height: 10),
-
-            // Naziv firme
             TextField(
               decoration: const InputDecoration(
                 labelText: "Naziv firme",
@@ -189,8 +188,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
               controller: _nazivFirmeController,
             ),
             const SizedBox(height: 10),
-
-            // JIB ili MBS
             TextField(
               decoration: const InputDecoration(
                 labelText: "JIB ili MBS",
@@ -201,8 +198,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
               controller: _JIBMBScontroller,
             ),
             const SizedBox(height: 10),
-
-            // Grad
             FormBuilderDropdown<Grad>(
               name: 'gradId',
               decoration: InputDecoration(
@@ -215,31 +210,31 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                 fillColor: Colors.white,
               ),
               items: [
-                const DropdownMenuItem<Grad>(value: null, child: Text('Odaberite grad')),
+                const DropdownMenuItem<Grad>(
+                    value: null, child: Text('Odaberite grad')),
                 ...?grad?.map((g) => DropdownMenuItem(
                       value: g,
                       child: Text(
                         g.nazivGrada ?? "",
                         style: TextStyle(
-                          color: g.vidljivo == false ? Colors.red : Colors.black,
+                          color:
+                              g.vidljivo == false ? Colors.red : Colors.black,
                         ),
                       ),
                     ))
               ],
             ),
             const SizedBox(height: 10),
-
-            // Dodatne opcije
             ExpansionTile(
               title: const Center(
-                child: Text("Dodatne opcije pretrage", style: TextStyle(color: Colors.red)),
+                child: Text("Dodatne opcije pretrage",
+                    style: TextStyle(color: Colors.red)),
               ),
               children: [
                 const SizedBox(height: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Marka vozila
                     FormBuilderDropdown<Vozilo>(
                       name: 'voziloId',
                       decoration: const InputDecoration(
@@ -250,21 +245,22 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                         fillColor: Colors.white,
                       ),
                       items: [
-                        const DropdownMenuItem<Vozilo>(value: null, child: Text('Odaberite marku vozila')),
+                        const DropdownMenuItem<Vozilo>(
+                            value: null, child: Text('Odaberite marku vozila')),
                         ...?vozila?.map((v) => DropdownMenuItem(
                               value: v,
                               child: Text(
                                 v.markaVozila ?? "",
                                 style: TextStyle(
-                                  color: v.vidljivo == false ? Colors.red : Colors.black,
+                                  color: v.vidljivo == false
+                                      ? Colors.red
+                                      : Colors.black,
                                 ),
                               ),
                             ))
                       ],
                     ),
                     const SizedBox(height: 10),
-
-                    // Godište
                     FormBuilderDropdown<Godiste>(
                       name: 'godisteId',
                       decoration: const InputDecoration(
@@ -275,21 +271,22 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                         fillColor: Colors.white,
                       ),
                       items: [
-                        const DropdownMenuItem<Godiste>(value: null, child: Text('Odaberite godište')),
+                        const DropdownMenuItem<Godiste>(
+                            value: null, child: Text('Odaberite godište')),
                         ...?godiste?.map((g) => DropdownMenuItem(
                               value: g,
                               child: Text(
                                 g.godiste_?.toString() ?? "",
                                 style: TextStyle(
-                                  color: g.vidljivo == false ? Colors.red : Colors.black,
+                                  color: g.vidljivo == false
+                                      ? Colors.red
+                                      : Colors.black,
                                 ),
                               ),
                             ))
                       ],
                     ),
                     const SizedBox(height: 10),
-
-                    // Model
                     FormBuilderDropdown<Model>(
                       name: 'modelId',
                       decoration: const InputDecoration(
@@ -300,13 +297,16 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                         fillColor: Colors.white,
                       ),
                       items: [
-                        const DropdownMenuItem<Model>(value: null, child: Text('Odaberite model')),
+                        const DropdownMenuItem<Model>(
+                            value: null, child: Text('Odaberite model')),
                         ...?model?.map((m) => DropdownMenuItem(
                               value: m,
                               child: Text(
                                 m.nazivModela ?? "",
                                 style: TextStyle(
-                                  color: m.vidljivo == false ? Colors.red : Colors.black,
+                                  color: m.vidljivo == false
+                                      ? Colors.red
+                                      : Colors.black,
                                 ),
                               ),
                             ))
@@ -317,8 +317,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                 const SizedBox(height: 10),
               ],
             ),
-
-            // Dugmad
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -328,28 +326,35 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                     onPressed: () async {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const ProductDetailScreen(product: null),
+                          builder: (context) =>
+                              const ProductDetailScreen(product: null),
                         ),
                       );
                       await _loadData();
                     },
                     icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text('Dodaj', style: TextStyle(color: Colors.white)),
+                    label: const Text('Dodaj',
+                        style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                     ),
                   ),
                 const SizedBox(width: 10),
                 ElevatedButton.icon(
                   onPressed: _onSearchPressed,
                   icon: const Icon(Icons.search, color: Colors.white),
-                  label: const Text('Pretraga', style: TextStyle(color: Colors.white)),
+                  label: const Text('Pretraga',
+                      style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                   ),
                 ),
               ],
@@ -386,7 +391,7 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
 
   Future<void> _onSearchPressed() async {
     print("Pokretanje pretrage: ${_nazivController.text}");
-    
+
     Map<dynamic, dynamic> filterParams = {
       'IsAllIncluded': 'true',
     };
@@ -415,7 +420,8 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
 
     var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
     if (selectedGodiste != null && selectedGodiste is Godiste) {
-      filterParams['GodisteVozila'] = int.parse(selectedGodiste.godiste_!.toString());
+      filterParams['GodisteVozila'] =
+          int.parse(selectedGodiste.godiste_!.toString());
     }
 
     var modelValue = _formKey.currentState?.fields['modelId']?.value;
@@ -446,7 +452,7 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Dvije kolone za mobilni prikaz
+          crossAxisCount: 2,
           childAspectRatio: 0.75,
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
@@ -456,9 +462,11 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           Product e = result!.result[index];
-          bool hasDiscount = e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
+          bool hasDiscount =
+              e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
           double originalPrice = e.cijena ?? 0.0;
-          double discountPrice = hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
+          double discountPrice =
+              hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
           bool isHidden = e.vidljivo == false;
 
           return GestureDetector(
@@ -484,7 +492,6 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Slika proizvoda
                     Expanded(
                       flex: 5,
                       child: ClipRRect(
@@ -499,38 +506,37 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // Naziv proizvoda
                     Text(
                       e.naziv ?? "",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16, // Smanjen font za mobilni
+                        fontSize: 16,
                         color: isHidden ? Colors.red : Colors.black,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    // Kratak opis proizvoda
                     Text(
                       e.opis != null && e.opis!.length > 20
                           ? "${e.opis!.substring(0, 20)}..."
                           : e.opis ?? "",
                       style: TextStyle(
                         color: isHidden ? Colors.red : Colors.blueGrey,
-                        fontSize: 12, // Smanjen font za mobilni
+                        fontSize: 12,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const Spacer(),
-                    // Cena i dugmad za admina ili firmu
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if ((context.read<UserProvider>().role == "Admin" ||
-                            (context.read<UserProvider>().role == "Firma autodijelova" &&
-                                context.read<UserProvider>().userId == e.firmaAutodijelovaID)) &&
+                                (context.read<UserProvider>().role ==
+                                        "Firma autodijelova" &&
+                                    context.read<UserProvider>().userId ==
+                                        e.firmaAutodijelovaID)) &&
                             e.vidljivo == true)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -539,50 +545,63 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                                 ElevatedButton(
                                   onPressed: () async {
                                     try {
-                                      await _productProvider.activateProduct(e.proizvodId!);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Proizvod uspješno prikazan na profilu")),
+                                      await _productProvider
+                                          .activateProduct(e.proizvodId!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                "Proizvod uspješno prikazan na profilu")),
                                       );
                                       await _loadData();
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Greška prilikom aktivacije: $e")),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "Greška prilikom aktivacije: $e")),
                                       );
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green,
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    minimumSize: const Size(0, 30), // Smanjena visina dugmeta
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    minimumSize: const Size(0, 30),
                                   ),
                                   child: const Text(
                                     "Prikazi",
-                                    style: TextStyle(fontSize: 10), // Smanjen font
+                                    style: TextStyle(fontSize: 10),
                                   ),
                                 ),
                               if (e.stateMachine == "active")
                                 ElevatedButton(
                                   onPressed: () async {
                                     try {
-                                      await _productProvider.hideProduct(e.proizvodId!);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Proizvod sakriven")),
+                                      await _productProvider
+                                          .hideProduct(e.proizvodId!);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text("Proizvod sakriven")),
                                       );
                                       await _loadData();
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(content: Text("Greška: $e")),
                                       );
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    minimumSize: const Size(0, 30), // Smanjena visina dugmeta
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    minimumSize: const Size(0, 30),
                                   ),
                                   child: const Text(
                                     "Sakrij",
-                                    style: TextStyle(fontSize: 10), // Smanjen font
+                                    style: TextStyle(fontSize: 10),
                                   ),
                                 ),
                             ],
@@ -592,7 +611,8 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                           children: [
                             if (hasDiscount)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: Colors.redAccent.withOpacity(0.7),
                                   borderRadius: BorderRadius.circular(5),
@@ -602,13 +622,14 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12, // Smanjen font
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),
                             const SizedBox(height: 4),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.blueGrey.withOpacity(0.7),
                                 borderRadius: BorderRadius.circular(5),
@@ -616,10 +637,14 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                               child: Text(
                                 "${formatNumber(originalPrice)} KM",
                                 style: TextStyle(
-                                  color: hasDiscount ? Colors.white70 : Colors.white,
+                                  color: hasDiscount
+                                      ? Colors.white70
+                                      : Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12, // Smanjen font
-                                  decoration: hasDiscount ? TextDecoration.lineThrough : null,
+                                  fontSize: 12,
+                                  decoration: hasDiscount
+                                      ? TextDecoration.lineThrough
+                                      : null,
                                 ),
                               ),
                             ),

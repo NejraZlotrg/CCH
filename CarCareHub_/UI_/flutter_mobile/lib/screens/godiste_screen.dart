@@ -44,109 +44,81 @@ class _GodisteScreenState extends State<GodisteScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Godiste",
-        child: Container(
-          color: const Color.fromARGB(255, 204, 204, 204),
-          child: Column(
-            children: [
-              _buildSearch(),
-              _buildDataListView(),
-            ],
-          ),
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204),
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
 
-Widget _buildSearch() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    margin: const EdgeInsets.only(
-      top: 20.0,
-      left: 10.0, // Dodan razmak sa leve strane
-      right: 10.0, // Dodan razmak sa desne strane
-    ),
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0), // Zaobljeni ivice
-        side: const BorderSide(
-          color: Colors.black,
-          width: 1.0,
-        ),
+  Widget _buildSearch() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(
+        top: 20.0,
+        left: 10.0,
+        right: 10.0,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0), // Povećan razmak unutar kartice
-        child: Column(
-          children: [
-            // Row za input
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _nazivModelaController,
-                    decoration: const InputDecoration(
-                      labelText: 'Godiste:',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12.0), // Razmak između inputa i dugmadi
-            // Row za dugmadi
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      var filterParams = {
-                        'IsAllIncluded': 'true',
-                      };
-
-                      if (_nazivModelaController.text.isNotEmpty) {
-                        filterParams['godiste_'] = _nazivModelaController.text;
-                      }
-                      SearchResult<Godiste> data;
-                      if (context.read<UserProvider>().role == "Admin") {
-                        data = await _godisteProvider.getAdmin(filter: filterParams);
-                      } else {
-                        data = await _godisteProvider.get(filter: filterParams);
-                      }
-                      if (!mounted) return;
-
-                      setState(() {
-                        result = data;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          side: const BorderSide(
+            color: Colors.black,
+            width: 1.0,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _nazivModelaController,
+                      decoration: const InputDecoration(
+                        labelText: 'Godiste:',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
                     ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.search),
-                        SizedBox(width: 8.0),
-                        Text('Pretraga'),
-                      ],
-                    ),
                   ),
-                ),
-                const SizedBox(width: 10), // Razmak između dugmadi
-                if (context.read<UserProvider>().role == "Admin")
+                ],
+              ),
+              const SizedBox(height: 12.0),
+              Row(
+                children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => GodisteDetailsScreen(godiste: null),
-                          ),
-                        );
-                        await _loadData();
+                        var filterParams = {
+                          'IsAllIncluded': 'true',
+                        };
+
+                        if (_nazivModelaController.text.isNotEmpty) {
+                          filterParams['godiste_'] =
+                              _nazivModelaController.text;
+                        }
+                        SearchResult<Godiste> data;
+                        if (context.read<UserProvider>().role == "Admin") {
+                          data = await _godisteProvider.getAdmin(
+                              filter: filterParams);
+                        } else {
+                          data =
+                              await _godisteProvider.get(filter: filterParams);
+                        }
+                        if (!mounted) return;
+
+                        setState(() {
+                          result = data;
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -158,81 +130,112 @@ Widget _buildSearch() {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.add),
+                          Icon(Icons.search),
                           SizedBox(width: 8.0),
-                          Text('Dodaj'),
+                          Text('Pretraga'),
                         ],
                       ),
                     ),
                   ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(
-          color: Colors.black,
-          width: 1.0,
-        ),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Godiste:',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Godiste e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
+                  const SizedBox(width: 10),
+                  if (context.read<UserProvider>().role == "Admin")
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  GodisteDetailsScreen(godiste: e),
+                                  GodisteDetailsScreen(godiste: null),
                             ),
                           );
                           await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(
-                          Text(
-                            e.godiste_.toString(),
-                            style: TextStyle(
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
-                            ),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
-                      ],
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add),
+                            SizedBox(width: 8.0),
+                            Text('Dodaj'),
+                          ],
+                        ),
+                      ),
                     ),
-                  )
-                  .toList() ??
-              [],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),))
-  );
-}
+    );
+  }
 
+  Widget _buildDataListView() {
+    return Expanded(
+        child: SingleChildScrollView(
+            child: Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(
+            color: Colors.black,
+            width: 1.0,
+          ),
+        ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: DataTable(
+            showCheckboxColumn: false,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Godiste:',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
+            rows: result?.result
+                    .map(
+                      (Godiste e) => DataRow(
+                        onSelectChanged: (selected) async {
+                          if (selected == true) {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    GodisteDetailsScreen(godiste: e),
+                              ),
+                            );
+                            await _loadData();
+                          }
+                        },
+                        cells: [
+                          DataCell(
+                            Text(
+                              e.godiste_.toString(),
+                              style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
+        ),
+      ),
+    )));
+  }
 }

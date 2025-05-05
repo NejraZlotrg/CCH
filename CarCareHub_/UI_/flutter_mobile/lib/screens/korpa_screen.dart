@@ -20,7 +20,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_mobile/models/placanje_insert.dart';
 import 'package:flutter_mobile/models/rezultat_placanja.dart';
 import 'package:flutter_mobile/provider/placanje_provider.dart';
-import 'package:flutter_stripe/flutter_stripe.dart' show Address, BillingDetails, SetupPaymentSheetParameters, Stripe;
+import 'package:flutter_stripe/flutter_stripe.dart'
+    show Address, BillingDetails, SetupPaymentSheetParameters, Stripe;
 
 class KorpaScreen extends StatefulWidget {
   const KorpaScreen({super.key});
@@ -64,21 +65,22 @@ class _KorpaScreenState extends State<KorpaScreen> {
   Future<void> _loadData() async {
     try {
       List<Korpa> data = await _korpaProvider.getById(userId);
-      if(context.read<UserProvider>().role == "Autoservis") {
-        dataWithDiscount = await _productProvider.getForAutoservis(context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+      if (context.read<UserProvider>().role == "Autoservis") {
+        dataWithDiscount = await _productProvider.getForAutoservis(
+            context.read<UserProvider>().userId,
+            filter: {'IsAllIncluded': 'true'});
       }
-      
+
       setState(() {
         korpaList = data;
 
-        // Calculate correct prices for each item
         for (var item in korpaList) {
           double pricePerItem = _calculateItemPrice(item);
           item.ukupnaCijenaProizvoda = item.kolicina! * pricePerItem;
         }
 
-        // Calculate total price
-        ukupnaCijena = korpaList.fold(0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
+        ukupnaCijena = korpaList.fold(
+            0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
       });
     } catch (e) {
       print('Greška prilikom učitavanja podataka iz korpe: $e');
@@ -87,14 +89,14 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
   Future<void> _finishOrder() async {
     try {
-      // Koristimo ukupnu cijenu koja je već izračunata u _loadData()
       double finalnaCijena = ukupnaCijena;
 
       late dynamic narudzbaObjekat;
       String adresa = "N/A";
 
       if (_userProvider.role == 'Klijent') {
-        var klijent = await _klijentProvider.getSingleById(_userProvider.userId);
+        var klijent =
+            await _klijentProvider.getSingleById(_userProvider.userId);
         adresa = klijent.adresa ?? "N/A";
         narudzbaObjekat = {
           "klijentId": _userProvider.userId,
@@ -105,9 +107,9 @@ class _KorpaScreenState extends State<KorpaScreen> {
           "ukupnaCijenaNarudzbe": finalnaCijena,
           "adresa": adresa,
         };
-      }
-      else if (_userProvider.role == 'Autoservis') {
-        var autos = await _autoservisProvider.getSingleById(_userProvider.userId);
+      } else if (_userProvider.role == 'Autoservis') {
+        var autos =
+            await _autoservisProvider.getSingleById(_userProvider.userId);
         adresa = autos.adresa ?? "N/A";
         narudzbaObjekat = {
           "klijentId": null,
@@ -118,9 +120,9 @@ class _KorpaScreenState extends State<KorpaScreen> {
           "ukupnaCijenaNarudzbe": finalnaCijena,
           "adresa": adresa,
         };
-      }
-      else if (_userProvider.role == 'Zaposlenik') {
-        var zaposlenik = await _zaposlenikProvider.getSingleById(_userProvider.userId);
+      } else if (_userProvider.role == 'Zaposlenik') {
+        var zaposlenik =
+            await _zaposlenikProvider.getSingleById(_userProvider.userId);
         adresa = zaposlenik.adresa ?? "N/A";
         narudzbaObjekat = {
           "klijentId": null,
@@ -133,9 +135,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
         };
       }
 
-      // Pozivamo Stripe plaćanje
       await _handlePayment(narudzbaObjekat);
-
     } catch (e) {
       print('Greška prilikom kreiranja narudžbe: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -146,12 +146,11 @@ class _KorpaScreenState extends State<KorpaScreen> {
 
   Future<void> _handlePayment(dynamic narudzba) async {
     try {
-      double ukupno = narudzba['ukupnaCijenaNarudzbe'] * 100; // Stripe očekuje iznos u centima
+      double ukupno = narudzba['ukupnaCijenaNarudzbe'] * 100;
 
-      // Kreiranje payment intenta
-      RezultatPlacanja paymentResult = await _placanjeProvider.create(PlacanjeInsert(ukupno: ukupno));
+      RezultatPlacanja paymentResult =
+          await _placanjeProvider.create(PlacanjeInsert(ukupno: ukupno));
 
-      // Inicijalizacija payment sheeta
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentResult.clientSecret,
@@ -169,25 +168,23 @@ class _KorpaScreenState extends State<KorpaScreen> {
         ),
       );
 
-      // Prikaz payment sheeta korisniku
       await Stripe.instance.presentPaymentSheet();
 
-      // Ako je plaćanje uspješno, šaljemo narudžbu
       await _narudzbaProvider.insert(narudzba);
 
-      // Čistimo korpu
       await _korpaProvider.ocistiKorpu(
-        klijentId: _userProvider.role == 'Klijent' ? _userProvider.userId : null,
-        zaposlenikId: _userProvider.role == 'Zaposlenik' ? _userProvider.userId : null,
-        autoservisId: _userProvider.role == 'Autoservis' ? _userProvider.userId : null,
+        klijentId:
+            _userProvider.role == 'Klijent' ? _userProvider.userId : null,
+        zaposlenikId:
+            _userProvider.role == 'Zaposlenik' ? _userProvider.userId : null,
+        autoservisId:
+            _userProvider.role == 'Autoservis' ? _userProvider.userId : null,
       );
 
-      // Prikazujemo poruku o uspjehu
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Narudžba je uspješno kreirana.')),
       );
 
-      // Navigiramo na ekran narudžbi
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const NarudzbaScreen()),
@@ -217,7 +214,6 @@ class _KorpaScreenState extends State<KorpaScreen> {
   }
 
   Widget _buildDataListView() {
-    // Calculate total price based on updated quantity
     ukupnaCijena = korpaList.fold(0.0, (sum, e) {
       double cijena = _calculateItemPrice(e);
       return sum + (cijena * (e.kolicina ?? 1));
@@ -241,7 +237,8 @@ class _KorpaScreenState extends State<KorpaScreen> {
                   children: [
                     if (index == 0) _buildKupacRow(e),
                     Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 12.0),
                       elevation: 3.0,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -251,7 +248,6 @@ class _KorpaScreenState extends State<KorpaScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Slika proizvoda
                                 Container(
                                   width: 80,
                                   height: 80,
@@ -259,39 +255,47 @@ class _KorpaScreenState extends State<KorpaScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(color: Colors.grey),
                                   ),
-                                  child: e.proizvod?.slika != null && e.proizvod!.slika!.isNotEmpty
+                                  child: e.proizvod?.slika != null &&
+                                          e.proizvod!.slika!.isNotEmpty
                                       ? Image.memory(
                                           base64Decode(e.proizvod!.slika!),
                                           fit: BoxFit.cover,
                                         )
                                       : const Center(
-                                          child: Icon(Icons.image, size: 20, color: Colors.grey),
+                                          child: Icon(Icons.image,
+                                              size: 20, color: Colors.grey),
                                         ),
                                 ),
                                 const SizedBox(width: 12.0),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         e.proizvod?.naziv ?? 'Nema naziva',
-                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 6.0),
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(Icons.remove, size: 20),
+                                            icon: const Icon(Icons.remove,
+                                                size: 20),
                                             onPressed: () {
-                                              if (e.kolicina != null && e.kolicina! > 1) {
+                                              if (e.kolicina != null &&
+                                                  e.kolicina! > 1) {
                                                 _updateQuantity(e, -1);
                                               }
                                             },
                                           ),
                                           Text(e.kolicina?.toString() ?? "0"),
                                           IconButton(
-                                            icon: const Icon(Icons.add, size: 20),
+                                            icon:
+                                                const Icon(Icons.add, size: 20),
                                             onPressed: () {
                                               _updateQuantity(e, 1);
                                             },
@@ -309,9 +313,11 @@ class _KorpaScreenState extends State<KorpaScreen> {
                                         e.korpaId, e.proizvod?.proizvodId);
                                     setState(() {
                                       korpaList.removeAt(index);
-                                      ukupnaCijena = korpaList.fold(0.0, (sum, item) {
+                                      ukupnaCijena =
+                                          korpaList.fold(0.0, (sum, item) {
                                         return sum +
-                                            (_calculateItemPrice(item) * (item.kolicina ?? 1));
+                                            (_calculateItemPrice(item) *
+                                                (item.kolicina ?? 1));
                                       });
                                     });
                                   },
@@ -328,9 +334,9 @@ class _KorpaScreenState extends State<KorpaScreen> {
                 );
               },
             ),
-            // Ukupna cijena
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -361,20 +367,20 @@ class _KorpaScreenState extends State<KorpaScreen> {
     final product = item.proizvod;
     if (product == null) return 0.0;
 
-    // 1. Check if user is Autoservis, product has special price AND is in discount list
-    if (_userProvider.role == "Autoservis" && 
+    if (_userProvider.role == "Autoservis" &&
         product.cijenaSaPopustomZaAutoservis != null &&
-        (dataWithDiscount?.result.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
+        (dataWithDiscount?.result
+                .any((p) => p.proizvodId == product.proizvodId) ??
+            false)) {
       return product.cijenaSaPopustomZaAutoservis!;
     }
-    
-    // 2. Check if product has regular discount
-    if (product.popust != null && product.popust! > 0 && 
+
+    if (product.popust != null &&
+        product.popust! > 0 &&
         product.cijenaSaPopustom != null) {
       return product.cijenaSaPopustom!;
     }
-    
-    // 3. Default to regular price
+
     return product.cijena ?? 0.0;
   }
 
@@ -382,10 +388,11 @@ class _KorpaScreenState extends State<KorpaScreen> {
     final product = e.proizvod;
     if (product == null) return const SizedBox();
 
-    // Case 1: Autoservis with special price (only if product is in discount list)
-    if (_userProvider.role == "Autoservis" && 
+    if (_userProvider.role == "Autoservis" &&
         product.cijenaSaPopustomZaAutoservis != null &&
-        (dataWithDiscount?.result.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
+        (dataWithDiscount?.result
+                .any((p) => p.proizvodId == product.proizvodId) ??
+            false)) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -416,9 +423,9 @@ class _KorpaScreenState extends State<KorpaScreen> {
         ],
       );
     }
-    
-    // Case 2: Regular discount for all users
-    if (product.popust != null && product.popust! > 0 && 
+
+    if (product.popust != null &&
+        product.popust! > 0 &&
         product.cijenaSaPopustom != null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,8 +457,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
         ],
       );
     }
-    
-    // Case 3: Regular price
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -492,7 +498,10 @@ class _KorpaScreenState extends State<KorpaScreen> {
         setState(() {
           e.kolicina = novaKolicina;
           e.ukupnaCijenaProizvoda = _calculateItemPrice(e) * novaKolicina;
-          ukupnaCijena = korpaList.fold(0.0, (sum, item) => sum + (_calculateItemPrice(item) * (item.kolicina ?? 1)));
+          ukupnaCijena = korpaList.fold(
+              0.0,
+              (sum, item) =>
+                  sum + (_calculateItemPrice(item) * (item.kolicina ?? 1)));
         });
       } else {
         print('Greška pri ažuriranju količine');
@@ -503,7 +512,6 @@ class _KorpaScreenState extends State<KorpaScreen> {
   }
 
   Widget _buildKupacRow(Korpa e) {
-    // Prikazujemo samo onaj ID koji nije null
     String kupacLabel = 'Kupac: ';
     if (e.klijentId != null) {
       kupacLabel += "${e.klijent!.ime!} ${e.klijent!.prezime}";
@@ -540,7 +548,8 @@ class _KorpaScreenState extends State<KorpaScreen> {
             await _finishOrder();
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
             textStyle: const TextStyle(fontSize: 18),
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,

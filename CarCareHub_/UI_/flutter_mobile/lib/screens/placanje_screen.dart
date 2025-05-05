@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/placanje_insert.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
@@ -66,7 +68,7 @@ class _PlacanjeScreenState extends State<PlacanjeScreen> {
       appBar: AppBar(
         title: const Text("Placanje"),
       ),
-      body: Container(), // Empty container for the body
+      body: Container(), 
     );
   }
 }

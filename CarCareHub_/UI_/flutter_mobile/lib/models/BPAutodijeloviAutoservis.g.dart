@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'BPAutodijeloviAutoservis.dart';
+part of 'bpautodijeloviautoservis.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

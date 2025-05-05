@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously, non_constant_identifier_names, avoid_print
+
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
@@ -511,7 +513,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Price information column (stacked vertically)
+                         
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -588,7 +590,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             ],
                           ),
 
-                          // Full-width button - only shown for admin/firma autodijelova
+                      
                           if ((isAdmin ||
                                   (context.read<UserProvider>().role ==
                                           "Firma autodijelova" &&

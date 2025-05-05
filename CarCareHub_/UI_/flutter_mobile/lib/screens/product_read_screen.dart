@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, must_be_immutable
+
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
@@ -25,7 +28,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 
-// ignore: must_be_immutable
+
 class ProductReadScreen extends StatefulWidget {
   Product? product;
   ProductReadScreen({super.key, this.product});
@@ -311,7 +314,7 @@ SearchResult<Product>? dataWithDiscount;
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Slika proizvoda
+    
         Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
@@ -330,7 +333,7 @@ SearchResult<Product>? dataWithDiscount;
         ),
         const SizedBox(height: 20),
 
-        // Naziv proizvoda
+    
         if (widget.product?.naziv != null)
           Text(
             widget.product!.naziv!,
@@ -342,7 +345,7 @@ SearchResult<Product>? dataWithDiscount;
 
         const SizedBox(height: 20),
 
-        // Opis
+     
         const Text(
           "Opis",
           style: TextStyle(
@@ -367,7 +370,7 @@ SearchResult<Product>? dataWithDiscount;
 
         const SizedBox(height: 20),
 
-        // Informacije (kao lista umjesto DataTable)
+     
         _buildInfoItem("Šifra", widget.product?.sifra),
         _buildInfoItem("Originalni broj", widget.product?.originalniBroj),
         _buildInfoItem("Kategorija", widget.product?.kategorija?.nazivKategorije),
@@ -377,12 +380,11 @@ SearchResult<Product>? dataWithDiscount;
 
         const SizedBox(height: 20),
 
-        // Cijena
         _buildPriceSection(),
 
         const SizedBox(height: 20),
 
-        // Dodaj u korpu
+       
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -458,7 +460,7 @@ SearchResult<Product>? dataWithDiscount;
     return Align(
       alignment: Alignment.center,
       child: FractionallySizedBox(
-        widthFactor: 0.8, // 90% širine ekrana
+        widthFactor: 0.8,
         child: _buildProductCard(recommendedProducts[index], context),
       ),
     );
@@ -586,11 +588,11 @@ Widget _buildProductCard(Product product, BuildContext context) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Slika
+    
         Align(
   alignment: Alignment.center,
   child: FractionallySizedBox(
-    widthFactor: 0.9, // 90% širine
+    widthFactor: 0.9, 
     child: Container(
       height: 120,
       decoration: BoxDecoration(
@@ -611,7 +613,7 @@ Widget _buildProductCard(Product product, BuildContext context) {
 )
 ,
 
-          // Detalji
+         
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(

@@ -3,7 +3,7 @@ import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'BPAutodijeloviAutoservis.g.dart';
+part 'bpautodijeloviautoservis.g.dart';
 
 @JsonSerializable()
 class BPAutodijeloviAutoservis {

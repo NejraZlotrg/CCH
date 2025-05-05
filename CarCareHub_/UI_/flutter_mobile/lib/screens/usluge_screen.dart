@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/usluge.dart'; // Importuj svoju klasu za uslugu
+import 'package:flutter_mobile/models/usluge.dart'; 
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart';
  
-import 'package:flutter_mobile/screens/usluge_details_screen.dart'; // Importuj ekran za detalje usluge
+import 'package:flutter_mobile/screens/usluge_details_screen.dart'; 
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
  
@@ -45,7 +45,7 @@ class _UslugeScreenState extends State<UslugeScreen> {
     return MasterScreenWidget(
       title: "Usluge",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -70,7 +70,7 @@ Widget _buildSearch() {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            // Input field row
+       
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Naziv usluge',
@@ -83,10 +83,10 @@ Widget _buildSearch() {
             
             const SizedBox(height: 10),
             
-            // Buttons row - full width
+          
             Row(
               children: [
-                // Search button - expanded to fill space
+             
                 Expanded(
                   flex: 1,
                   child: ElevatedButton(
@@ -112,7 +112,7 @@ Widget _buildSearch() {
                 
                 if (context.read<UserProvider>().role == "Admin") ...[
                   const SizedBox(width: 10),
-                  // Add button - expanded to fill space
+              
                   Expanded(
                     flex: 1,
                     child: ElevatedButton(
@@ -192,7 +192,7 @@ Widget _buildSearch() {
                     'Naziv usluge',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
-                      fontSize: 16, // Veći font za zaglavlje
+                      fontSize: 16, 
                     ),
                   ),
                 ),
@@ -201,7 +201,7 @@ Widget _buildSearch() {
                     'Cijena',
                     style: TextStyle(
                       fontStyle: FontStyle.italic,
-                      fontSize: 16, // Veći font za zaglavlje
+                      fontSize: 16,
                     ),
                   ),
                 ),

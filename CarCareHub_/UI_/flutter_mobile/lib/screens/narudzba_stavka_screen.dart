@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/narudzba_stavke.dart';
@@ -312,7 +314,7 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
                     _buildMobileProductDetailRow("Količina:", kolicina.toString()),
                     _buildMobileProductDetailRow("Osnovna cijena:", _formatCurrency(basePrice)),
                     
-                    // Discount price if available
+                
                     if (stavka.proizvod?.cijenaSaPopustom != null && 
                         stavka.proizvod!.cijenaSaPopustom! < basePrice)
                       _buildMobileProductDetailRow(
@@ -321,7 +323,7 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
                         isDiscount: true
                       ),
                     
-                    // Autoservice price if available and user is autoservis
+            
                     if (isAutoservisUser && 
                         stavka.proizvod?.cijenaSaPopustomZaAutoservis != null &&
                         stavka.proizvod!.cijenaSaPopustomZaAutoservis! < basePrice)
@@ -344,7 +346,7 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
                     
                     const Divider(),
                     
-                    // Final price per item
+                 
                     FutureBuilder<List<int>>(
                       future: firmaId != null ? _getAutoservisIdsForFirma(firmaId) : Future.value([]),
                       builder: (context, snapshot) {
@@ -370,7 +372,7 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
                       },
                     ),
                     
-                    // Total price for this item
+                 
                     FutureBuilder<List<int>>(
                       future: firmaId != null ? _getAutoservisIdsForFirma(firmaId) : Future.value([]),
                       builder: (context, snapshot) {
@@ -462,13 +464,13 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
           child: Table(
             border: TableBorder.all(color: Colors.grey.shade300),
             columnWidths: {
-              0: const FlexColumnWidth(3),  // Naziv
-              1: const FlexColumnWidth(1),  // Količina
-              2: const FlexColumnWidth(1.5),  // Osnovna cijena
-              3: const FlexColumnWidth(1.5), // Popust
-              if (isAutoservisUser) 4: const FlexColumnWidth(2), // Cijena za autoservise
-              5: const FlexColumnWidth(2),  // Fakturisano po jedinicnoj cijeni
-              6: const FlexColumnWidth(2),  // Ukupno fakturisano
+              0: const FlexColumnWidth(3),  
+              1: const FlexColumnWidth(1), 
+              2: const FlexColumnWidth(1.5),  
+              3: const FlexColumnWidth(1.5),
+              if (isAutoservisUser) 4: const FlexColumnWidth(2), 
+              5: const FlexColumnWidth(2),  
+              6: const FlexColumnWidth(2),  
             },
             children: [
               TableRow(

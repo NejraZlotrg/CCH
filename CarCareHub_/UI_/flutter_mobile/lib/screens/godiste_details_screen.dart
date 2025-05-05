@@ -1,5 +1,4 @@
-// ignore_for_file: sort_child_properties_last
-
+// ignore_for_file: sort_child_properties_last, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/vozilo_provider.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:flutter/src/foundation/key.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -50,8 +48,7 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor:
-            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        backgroundColor: const Color.fromARGB(255, 204, 204, 204),
         appBar: AppBar(
           title: Text(widget.godiste?.godiste_.toString() ?? "Godiste"),
         ),
@@ -69,78 +66,82 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                                                      Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                // Potvrda brisanja
-                                bool confirmDelete = await showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text("Potvrda brisanja"),
-                                    content: const Text(
-                                        "Da li ste sigurni da želite izbrisati ovo godište?"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                        child: const Text("Otkaži"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        child: const Text("Izbriši"),
-                                      ),
-                                    ],
-                                  ),
-                                );
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  bool confirmDelete = await showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("Potvrda brisanja"),
+                                      content: const Text(
+                                          "Da li ste sigurni da želite izbrisati ovo godište?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
+                                          child: const Text("Otkaži"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: const Text("Izbriši"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
 
-                                // Ako korisnik potvrdi brisanje
-                                if (confirmDelete == true) {
-                                  try {
-                                    await _godisteProvider.delete(
-                                        widget.godiste!.godisteId!);
-                                    Navigator.pop(context); // Vrati se na prethodni ekran
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("Godište uspješno izbrisano."),
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Greška prilikom brisanja: ${e.toString()}"),
-                                      ),
-                                    );
+                                  if (confirmDelete == true) {
+                                    try {
+                                      await _godisteProvider
+                                          .delete(widget.godiste!.godisteId!);
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              "Godište uspješno izbrisano."),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "Greška prilikom brisanja: ${e.toString()}"),
+                                        ),
+                                      );
+                                    }
                                   }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.red[700], // Crvena boja za brisanje
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                textStyle: const TextStyle(fontSize: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.red[700],
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  textStyle: const TextStyle(fontSize: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                 ),
+                                child: const Text("Izbriši"),
                               ),
-                              child: const Text("Izbriši"),
                             ),
-                          ),
                             Padding(
                               padding: const EdgeInsets.all(10),
                               child: ElevatedButton(
                                 onPressed: () async {
-                                     if (!(_formKey.currentState?.validate() ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Molimo popunite obavezna polja."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Zaustavi obradu ako validacija nije prošla
-    }
+                                  if (!(_formKey.currentState?.validate() ??
+                                      false)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            "Molimo popunite obavezna polja."),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   _formKey.currentState?.saveAndValidate();
 
                                   var request =
@@ -149,27 +150,27 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
                                   try {
                                     if (widget.godiste == null) {
                                       await _godisteProvider.insert(request);
-                                      
                                     } else {
                                       await _godisteProvider.update(
                                           widget.godiste!.godisteId!,
                                           _formKey.currentState?.value);
                                     }
-                                         Navigator.pop(context);
-
+                                    Navigator.pop(context);
                                   } on Exception catch (e) {
                                     showDialog(
-                                       context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Greška"),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        ),
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text("Greška"),
+                                        content: Text(e.toString()),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text("OK"),
+                                          ),
+                                        ],
+                                      ),
                                     );
                                   }
                                 },
@@ -217,19 +218,16 @@ class _GodisteDetailsScreenState extends State<GodisteDetailsScreen> {
                   decoration: const InputDecoration(
                     labelText: "Godiste: ",
                     border: OutlineInputBorder(),
-                    fillColor: Colors.white, // Bela pozadina
-                    filled: true, // Da pozadina bude ispunjena
+                    fillColor: Colors.white,
+                    filled: true,
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),
                   validator: validator.godiste,
-                  name: "godiste_")
-                  )
-                  
+                  name: "godiste_"))
         ],
       ),
-            const SizedBox(height: 20),
-
+      const SizedBox(height: 20),
     ];
   }
 }
