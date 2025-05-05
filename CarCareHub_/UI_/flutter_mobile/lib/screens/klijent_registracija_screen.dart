@@ -10,7 +10,7 @@ import 'package:flutter_mobile/models/klijent.dart';
 import 'package:flutter_mobile/models/usluge.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';

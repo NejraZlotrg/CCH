@@ -537,9 +537,9 @@ Widget build(BuildContext context) {
               child: Column(
                 children: [
                   // Add indicator text for horizontal scrolling
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(Icons.arrow_forward_ios, size: 16),
                       Text('Povucite za više', style: TextStyle(fontSize: 12)),
                     ],

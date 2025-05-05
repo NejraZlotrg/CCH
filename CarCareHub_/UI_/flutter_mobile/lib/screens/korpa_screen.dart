@@ -1,18 +1,26 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobile/models/korpa.dart';
-import 'package:flutter_mobile/models/placanje_insert.dart';
-import 'package:flutter_mobile/models/rezultat_placanja.dart';
+import 'package:flutter_mobile/models/product.dart';
+import 'package:flutter_mobile/models/search_result.dart';
+import 'package:flutter_mobile/provider/autoservis_provider.dart';
+import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/korpa_provider.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
-import 'package:flutter_mobile/provider/placanje_provider.dart';
-import 'package:flutter_mobile/screens/placanje_screen.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
+import 'package:flutter_mobile/provider/product_provider.dart';
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
+import 'package:flutter_mobile/screens/narudzba_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
-import 'package:flutter_stripe/flutter_stripe.dart' show Address, BillingDetails, SetupPaymentSheetParameters, Stripe;
 import 'package:provider/provider.dart';
+import 'package:flutter_mobile/models/placanje_insert.dart';
+import 'package:flutter_mobile/models/rezultat_placanja.dart';
+import 'package:flutter_mobile/provider/placanje_provider.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' show Address, BillingDetails, SetupPaymentSheetParameters, Stripe;
 
 class KorpaScreen extends StatefulWidget {
   const KorpaScreen({super.key});
@@ -25,7 +33,12 @@ class _KorpaScreenState extends State<KorpaScreen> {
   late KorpaProvider _korpaProvider;
   late NarudzbaProvider _narudzbaProvider;
   late UserProvider _userProvider;
-  late PlacanjeProvider placanjeProvider;
+  late KlijentProvider _klijentProvider;
+  late AutoservisProvider _autoservisProvider;
+  late ZaposlenikProvider _zaposlenikProvider;
+  SearchResult<Product>? dataWithDiscount;
+  late ProductProvider _productProvider;
+  late PlacanjeProvider _placanjeProvider;
 
   List<Korpa> korpaList = [];
   late int userId;
@@ -37,7 +50,12 @@ class _KorpaScreenState extends State<KorpaScreen> {
     _korpaProvider = context.read<KorpaProvider>();
     _narudzbaProvider = context.read<NarudzbaProvider>();
     _userProvider = context.read<UserProvider>();
-    placanjeProvider = context.read<PlacanjeProvider>();
+    _klijentProvider = context.read<KlijentProvider>();
+    _autoservisProvider = context.read<AutoservisProvider>();
+    _zaposlenikProvider = context.read<ZaposlenikProvider>();
+    _productProvider = context.read<ProductProvider>();
+    _placanjeProvider = context.read<PlacanjeProvider>();
+
     userId = _userProvider.userId;
 
     _loadData();
@@ -46,34 +64,103 @@ class _KorpaScreenState extends State<KorpaScreen> {
   Future<void> _loadData() async {
     try {
       List<Korpa> data = await _korpaProvider.getById(userId);
+      if(context.read<UserProvider>().role == "Autoservis") {
+        dataWithDiscount = await _productProvider.getForAutoservis(context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+      }
+      
       setState(() {
         korpaList = data;
+
+        // Calculate correct prices for each item
+        for (var item in korpaList) {
+          double pricePerItem = _calculateItemPrice(item);
+          item.ukupnaCijenaProizvoda = item.kolicina! * pricePerItem;
+        }
+
+        // Calculate total price
+        ukupnaCijena = korpaList.fold(0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
       });
     } catch (e) {
       print('Greška prilikom učitavanja podataka iz korpe: $e');
     }
   }
 
-  void handlePayment(dynamic narudzba) async {
-    print("handlePayment called");
+  Future<void> _finishOrder() async {
     try {
-      double ukupno = narudzba['ukupnaCijenaNarudzbe'] * 100;
-      print("Creating payment intent for amount: $ukupno");
+      // Koristimo ukupnu cijenu koja je već izračunata u _loadData()
+      double finalnaCijena = ukupnaCijena;
 
-      // Call the create method and get the RezultatPlacanja object
-      RezultatPlacanja paymentResult = await placanjeProvider.create(PlacanjeInsert(ukupno: ukupno));
-      print("Payment intent created: ${paymentResult.clientSecret}");
+      late dynamic narudzbaObjekat;
+      String adresa = "N/A";
 
-      // Initialize the payment sheet with the client secret
+      if (_userProvider.role == 'Klijent') {
+        var klijent = await _klijentProvider.getSingleById(_userProvider.userId);
+        adresa = klijent.adresa ?? "N/A";
+        narudzbaObjekat = {
+          "klijentId": _userProvider.userId,
+          "autoservisId": null,
+          "ZaposlenikId": null,
+          "zavrsenaNarudzba": true,
+          "popustId": null,
+          "ukupnaCijenaNarudzbe": finalnaCijena,
+          "adresa": adresa,
+        };
+      }
+      else if (_userProvider.role == 'Autoservis') {
+        var autos = await _autoservisProvider.getSingleById(_userProvider.userId);
+        adresa = autos.adresa ?? "N/A";
+        narudzbaObjekat = {
+          "klijentId": null,
+          "autoservisId": _userProvider.userId,
+          "ZaposlenikId": null,
+          "zavrsenaNarudzba": true,
+          "popustId": null,
+          "ukupnaCijenaNarudzbe": finalnaCijena,
+          "adresa": adresa,
+        };
+      }
+      else if (_userProvider.role == 'Zaposlenik') {
+        var zaposlenik = await _zaposlenikProvider.getSingleById(_userProvider.userId);
+        adresa = zaposlenik.adresa ?? "N/A";
+        narudzbaObjekat = {
+          "klijentId": null,
+          "autoservisId": null,
+          "ZaposlenikId": _userProvider.userId,
+          "zavrsenaNarudzba": true,
+          "popustId": null,
+          "ukupnaCijenaNarudzbe": finalnaCijena,
+          "adresa": adresa,
+        };
+      }
+
+      // Pozivamo Stripe plaćanje
+      await _handlePayment(narudzbaObjekat);
+
+    } catch (e) {
+      print('Greška prilikom kreiranja narudžbe: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Greška prilikom kreiranja narudžbe.')),
+      );
+    }
+  }
+
+  Future<void> _handlePayment(dynamic narudzba) async {
+    try {
+      double ukupno = narudzba['ukupnaCijenaNarudzbe'] * 100; // Stripe očekuje iznos u centima
+
+      // Kreiranje payment intenta
+      RezultatPlacanja paymentResult = await _placanjeProvider.create(PlacanjeInsert(ukupno: ukupno));
+
+      // Inicijalizacija payment sheeta
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentResult.clientSecret,
           merchantDisplayName: 'CarCareHub',
-          billingDetails: const BillingDetails(
+          billingDetails: BillingDetails(
             address: Address(
-              city: 'Mostar',
+              city: narudzba['adresa']?.split(',')?.last.trim() ?? 'Mostar',
               country: 'BA',
-              line1: '',
+              line1: narudzba['adresa'] ?? '',
               line2: '',
               postalCode: '',
               state: '',
@@ -81,72 +168,34 @@ class _KorpaScreenState extends State<KorpaScreen> {
           ),
         ),
       );
-      print("Payment sheet initialized");
 
-      // Present the payment sheet to the user
-      displayPaymentSheet(context, narudzba);
+      // Prikaz payment sheeta korisniku
+      await Stripe.instance.presentPaymentSheet();
+
+      // Ako je plaćanje uspješno, šaljemo narudžbu
+      await _narudzbaProvider.insert(narudzba);
+
+      // Čistimo korpu
+      await _korpaProvider.ocistiKorpu(
+        klijentId: _userProvider.role == 'Klijent' ? _userProvider.userId : null,
+        zaposlenikId: _userProvider.role == 'Zaposlenik' ? _userProvider.userId : null,
+        autoservisId: _userProvider.role == 'Autoservis' ? _userProvider.userId : null,
+      );
+
+      // Prikazujemo poruku o uspjehu
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Narudžba je uspješno kreirana.')),
+      );
+
+      // Navigiramo na ekran narudžbi
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const NarudzbaScreen()),
+      );
     } catch (e) {
       print('Greška prilikom plaćanja: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška prilikom plaćanja: $e')),
-      );
-    }
-  }
-
-  void displayPaymentSheet(BuildContext context, dynamic narudzba) async {
-    print("displayPaymentSheet called");
-    await Stripe.instance.presentPaymentSheet().then((value) async {
-      handleSubmit(narudzba);
-    });
-  }
-
-  void handleSubmit(dynamic narudzba) async {
-    await _narudzbaProvider.insert(narudzba);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Narudžba je uspješno kreirana.')),
-    );
-  }
-
-  Future<void> _finishOrder() async {
-    print("_finishOrder called");
-    try {
-      late dynamic narudzbaObjekat;
-      if (_userProvider.role == 'Klijent') {
-        narudzbaObjekat = {
-          "klijentId": _userProvider.userId,
-          "autoservisId": null,
-          "firmaAutodijelovaId": null,
-          "zavrsenaNarudzba": true,
-          "popustId": null,
-        };
-      }
-      if (_userProvider.role == 'Autoservis') {
-        narudzbaObjekat = {
-          "klijentId": null,
-          "autoservisId": _userProvider.userId,
-          "ZaposlenikId": null,
-          "zavrsenaNarudzba": true,
-          "popustId": null,
-        };
-      }
-      if (_userProvider.role == 'Zaposlenik') {
-        narudzbaObjekat = {
-          "klijentId": null,
-          "autoservisId": null,
-          "ZaposlenikId": _userProvider.userId,
-          "zavrsenaNarudzba": true,
-          "popustId": null,
-        };
-      }
-
-      narudzbaObjekat = {...narudzbaObjekat, 'ukupnaCijenaNarudzbe': ukupnaCijena};
-
-      handlePayment(narudzbaObjekat);
-    } catch (e) {
-      print('Greška prilikom kreiranja narudžbe: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Greška prilikom kreiranja narudžbe.')),
+        SnackBar(content: Text('Greška prilikom plaćanja: ${e.toString()}')),
       );
     }
   }
@@ -157,153 +206,301 @@ class _KorpaScreenState extends State<KorpaScreen> {
       title: "Korpa",
       child: Container(
         color: const Color.fromARGB(255, 204, 204, 204),
-        child: 
-        SingleChildScrollView(
         child: Column(
           children: [
             _buildDataListView(),
-            _buildPlatiButton(),
+            _buildFinishOrderButton(),
           ],
-        ),
         ),
       ),
     );
   }
 
-Widget _buildDataListView() {
-  // Calculate total price based on updated quantity
-  ukupnaCijena = korpaList.fold(0.0, (sum, e) => sum + (e.ukupnaCijenaProizvoda ?? 0.0));
+  Widget _buildDataListView() {
+    // Calculate total price based on updated quantity
+    ukupnaCijena = korpaList.fold(0.0, (sum, e) {
+      double cijena = _calculateItemPrice(e);
+      return sum + (cijena * (e.kolicina ?? 1));
+    });
 
-  return SingleChildScrollView(
-    child: Column(
-      mainAxisSize: MainAxisSize.min, // Let the Column shrink to fit its children
-      children: [
-        ListView.builder(
-          shrinkWrap: true, // Let the ListView take only as much height as needed
-          physics: const NeverScrollableScrollPhysics(), // Disable inner scrolling if the parent scrolls
-          padding: const EdgeInsets.all(8.0),
-          itemCount: korpaList.length,
-          itemBuilder: (context, index) {
-            final e = korpaList[index];
-            return Column(
-              children: [
-                if (index == 0) _buildKupacRow(e),
-                Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    side: const BorderSide(
-                      color: Colors.black,
-                      width: 1.0,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: e.proizvod?.slika != null && e.proizvod!.slika!.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(6),
-                                  child: Image.memory(
-                                    base64Decode(e.proizvod!.slika!),
-                                    fit: BoxFit.cover,
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(8.0),
+              itemCount: korpaList.length,
+              itemBuilder: (context, index) {
+                final e = korpaList[index];
+                final cijenaPoKomadu = _calculateItemPrice(e);
+
+                return Column(
+                  children: [
+                    if (index == 0) _buildKupacRow(e),
+                    Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      elevation: 3.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Slika proizvoda
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: Colors.grey),
                                   ),
-                                )
-                              : const Center(
-                                  child: Icon(Icons.image, size: 20, color: Colors.grey),
+                                  child: e.proizvod?.slika != null && e.proizvod!.slika!.isNotEmpty
+                                      ? Image.memory(
+                                          base64Decode(e.proizvod!.slika!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : const Center(
+                                          child: Icon(Icons.image, size: 20, color: Colors.grey),
+                                        ),
                                 ),
-                        ),
-                        const SizedBox(width: 16.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                e.proizvod?.naziv ?? 'Nema naziva',
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8.0),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove),
-                                    onPressed: () {
-                                      if (e.kolicina! > 1) {
-                                        _updateQuantity(e, -1);
-                                      }
-                                    },
+                                const SizedBox(width: 12.0),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        e.proizvod?.naziv ?? 'Nema naziva',
+                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 6.0),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.remove, size: 20),
+                                            onPressed: () {
+                                              if (e.kolicina != null && e.kolicina! > 1) {
+                                                _updateQuantity(e, -1);
+                                              }
+                                            },
+                                          ),
+                                          Text(e.kolicina?.toString() ?? "0"),
+                                          IconButton(
+                                            icon: const Icon(Icons.add, size: 20),
+                                            onPressed: () {
+                                              _updateQuantity(e, 1);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    e.kolicina.toString(),
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () {
-                                      _updateQuantity(e, 1);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                'Cijena: ${e.ukupnaCijenaProizvoda?.toStringAsFixed(2) ?? '0.00'} KM',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline),
+                                  iconSize: 28,
+                                  onPressed: () async {
+                                    await _korpaProvider.deleteProizvodIzKorpe(
+                                        e.korpaId, e.proizvod?.proizvodId);
+                                    setState(() {
+                                      korpaList.removeAt(index);
+                                      ukupnaCijena = korpaList.fold(0.0, (sum, item) {
+                                        return sum +
+                                            (_calculateItemPrice(item) * (item.kolicina ?? 1));
+                                      });
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            _buildPriceDisplay(e, cijenaPoKomadu),
+                          ],
                         ),
-                        // Trashcan Icon on the right
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () {
-                            // Do nothing on press
-                          },
-                        ),
-                      ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            // Ukupna cijena
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Ukupna cijena',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ],
-            );
-          },
+                  Text(
+                    '${ukupnaCijena.toStringAsFixed(2)} KM',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Ukupna cijena',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+      ),
+    );
+  }
+
+  double _calculateItemPrice(Korpa item) {
+    final product = item.proizvod;
+    if (product == null) return 0.0;
+
+    // 1. Check if user is Autoservis, product has special price AND is in discount list
+    if (_userProvider.role == "Autoservis" && 
+        product.cijenaSaPopustomZaAutoservis != null &&
+        (dataWithDiscount?.result.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
+      return product.cijenaSaPopustomZaAutoservis!;
+    }
+    
+    // 2. Check if product has regular discount
+    if (product.popust != null && product.popust! > 0 && 
+        product.cijenaSaPopustom != null) {
+      return product.cijenaSaPopustom!;
+    }
+    
+    // 3. Default to regular price
+    return product.cijena ?? 0.0;
+  }
+
+  Widget _buildPriceDisplay(Korpa e, double currentPrice) {
+    final product = e.proizvod;
+    if (product == null) return const SizedBox();
+
+    // Case 1: Autoservis with special price (only if product is in discount list)
+    if (_userProvider.role == "Autoservis" && 
+        product.cijenaSaPopustomZaAutoservis != null &&
+        (dataWithDiscount?.result.any((p) => p.proizvodId == product.proizvodId) ?? false)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (product.cijena != null)
+            Text(
+              "Cijena: ${product.cijena} KM",
+              style: const TextStyle(
+                decoration: TextDecoration.lineThrough,
+                color: Colors.grey,
+                fontSize: 14,
               ),
-              Text(
-                '${ukupnaCijena.toStringAsFixed(2)} KM',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+          Text(
+            "Cijena za autoservis: ${currentPrice.toStringAsFixed(2)} KM",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.orange,
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            "Ukupno: ${(currentPrice * (e.kolicina ?? 1)).toStringAsFixed(2)} KM",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      );
+    }
+    
+    // Case 2: Regular discount for all users
+    if (product.popust != null && product.popust! > 0 && 
+        product.cijenaSaPopustom != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (product.cijena != null)
+            Text(
+              "Cijena: ${product.cijena} KM",
+              style: const TextStyle(
+                decoration: TextDecoration.lineThrough,
+                color: Colors.grey,
+                fontSize: 14,
               ),
-            ],
+            ),
+          Text(
+            "Cijena sa popustom: ${currentPrice.toStringAsFixed(2)} KM",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            "Ukupno: ${(currentPrice * (e.kolicina ?? 1)).toStringAsFixed(2)} KM",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      );
+    }
+    
+    // Case 3: Regular price
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Cijena: ${currentPrice.toStringAsFixed(2)} KM",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        Text(
+          "Ukupno: ${(currentPrice * (e.kolicina ?? 1)).toStringAsFixed(2)} KM",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
       ],
-    ),
-  );
-}
+    );
+  }
 
+  void _updateQuantity(Korpa e, int change) async {
+    int novaKolicina = (e.kolicina ?? 0) + change;
 
+    if (novaKolicina < 1) {
+      print('Količina ne može biti manja od 1.');
+      return;
+    }
+
+    try {
+      bool uspesno = await _korpaProvider.updateKolicina(
+        e.korpaId,
+        e.proizvod?.proizvodId,
+        novaKolicina,
+      );
+
+      if (uspesno) {
+        setState(() {
+          e.kolicina = novaKolicina;
+          e.ukupnaCijenaProizvoda = _calculateItemPrice(e) * novaKolicina;
+          ukupnaCijena = korpaList.fold(0.0, (sum, item) => sum + (_calculateItemPrice(item) * (item.kolicina ?? 1)));
+        });
+      } else {
+        print('Greška pri ažuriranju količine');
+      }
+    } catch (e) {
+      print("Greška prilikom ažuriranja količine: $e");
+    }
+  }
 
   Widget _buildKupacRow(Korpa e) {
     // Prikazujemo samo onaj ID koji nije null
@@ -317,14 +514,14 @@ Widget _buildDataListView() {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             kupacLabel,
             style: const TextStyle(
-              fontSize: 16.0,
+              fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -333,39 +530,23 @@ Widget _buildDataListView() {
     );
   }
 
-
-void _updateQuantity(Korpa e, int change) {
-  setState(() {
-    // Ensure kolicina is not null and doesn't go below 1
-    if (e.kolicina != null && e.kolicina! + change >= 1) {
-      e.kolicina = e.kolicina! + change; // Add change to kolicina
-
-      // Check if discount is valid and apply accordingly
-      if (e.proizvod?.popust != null && e.proizvod!.popust! > 0) {
-        // Use price with discount if available
-        e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijenaSaPopustom ?? 0.0);
-      } else {
-        // Use regular price if no discount or popust is 0
-        e.ukupnaCijenaProizvoda = e.kolicina! * (e.proizvod?.cijena ?? 0.0);
-      }
-
-      // Recalculate total price for the entire cart
-      ukupnaCijena = korpaList.fold(0.0, (sum, item) => sum + (item.ukupnaCijenaProizvoda ?? 0.0));
-    }
-  });
-}
-
-
-  Widget _buildPlatiButton() {
+  Widget _buildFinishOrderButton() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: _finishOrder,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
-          textStyle: const TextStyle(fontSize: 18),
+      child: Visibility(
+        visible: korpaList.isNotEmpty,
+        child: ElevatedButton(
+          onPressed: () async {
+            await _finishOrder();
+          },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
+            textStyle: const TextStyle(fontSize: 18),
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+          ),
+          child: const Text('Završi narudžbu'),
         ),
-        child: const Text('Završi narudžbu'),
       ),
     );
   }

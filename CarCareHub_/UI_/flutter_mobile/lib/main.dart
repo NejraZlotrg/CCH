@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
-import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/bpautodijelovi_autoservis_provider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
-import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
-import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
+import 'package:flutter_mobile/provider/chat_autoservis_klijent_provider.dart';
+import 'package:flutter_mobile/provider/chat_klijent_zaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_details_screen.dart';
 import 'package:flutter_mobile/screens/firmaautodijelova_read_screen.dart';

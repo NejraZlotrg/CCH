@@ -44,11 +44,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
-    // Logovanje URL-a
     http.Response response = await http.get(uri, headers: headers);
-
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -75,11 +71,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
-    // Logovanje URL-a
     http.Response response = await http.get(uri, headers: headers);
-
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -97,48 +89,36 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
   Future<List<T>> getById(int? id) async {
-    String url = "$_baseURL$_endpoint/$id"; // Dodajemo ID u URL
-    // Logovanje URL-a
+    String url = "$_baseURL$_endpoint/$id";
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
 
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
-
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
       List<T> resultList = [];
 
-      // Pretvaramo svaki element u model tipa T
       for (var item in data) {
         resultList.add(fromJson(item));
       }
 
       return resultList;
     } else {
-      // Logovanje greške
       throw Exception("Unknown error");
     }
   }
 
   bool isValidResponse(Response response) {
-    // Ispisivanje statusnog koda odgovora
-
-    // Ako je status kod manji od 299, odgovor je validan
     if (response.statusCode < 299) {
       return true;
     } else if (response.statusCode == 401) {
-      // Ako je status kod 401, znači da je autentifikacija neuspešna
       throw Exception("Unauthorized");
     } else {
-      // Ispisivanje tela odgovora za slučaj greške
       throw Exception("Something bad happened, please try again");
     }
   }
 
-  // Kreiranje headera s osnovnom autorizacijom
   Map<String, String> createHeaders() {
     String username = Authorization.username ?? "";
     String password = Authorization.password ?? "";
@@ -151,7 +131,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     };
   }
 
-  // Generisanje query stringa iz mape parametara
   String getQueryString(Map params,
       {String prefix = '&', bool inRecursion = false}) {
     String query = '';
@@ -184,19 +163,14 @@ abstract class BaseProvider<T> with ChangeNotifier {
     return query;
   }
 
-  // Metoda za unos novih podataka u API
   Future<T> insert(dynamic request) async {
     String url = "$_baseURL$_endpoint";
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
 
     String jsonRequest = jsonEncode(request);
-    // Logovanje URL-a
     http.Response response =
         await http.post(uri, headers: headers, body: jsonRequest);
-
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -206,19 +180,14 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-  // Metoda za ažuriranje postojećih podataka u API-ju
   Future<T> update(int id, [dynamic request]) async {
     String url = "$_baseURL$_endpoint/$id";
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
 
     String jsonRequest = jsonEncode(request);
-    // Logovanje URL-a
     http.Response response =
         await http.put(uri, headers: headers, body: jsonRequest);
-
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -233,37 +202,27 @@ abstract class BaseProvider<T> with ChangeNotifier {
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
 
-    // Logovanje URL-a
     http.Response response = await http.delete(uri, headers: headers);
-
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
 
     if (isValidResponse(response)) {
       return;
     } else {}
   }
 
-  // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {
     throw Exception("Method not implemented");
   }
 
-  // Metoda za dohvaćanje jednog objekta po ID-u
   Future<T> getSingleById(int id) async {
-    String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
-    // Logovanje URL-a
+    String url = "$baseURL$endpoint/$id";
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
 
-    // Logovanje status koda odgovora
-    // Logovanje tela odgovora
-
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
-      return fromJson(data); // Vraća jedan objekat tipa T
+      return fromJson(data);
     } else {
       throw Exception("Unknown error");
     }

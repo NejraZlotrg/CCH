@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/drzave_provider.dart';
 import 'package:flutter_mobile/provider/proizvodjac_provider.dart';
 import 'package:flutter_mobile/screens/drzave_details_screen.dart';

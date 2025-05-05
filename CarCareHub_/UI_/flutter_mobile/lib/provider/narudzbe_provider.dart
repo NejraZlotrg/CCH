@@ -16,61 +16,47 @@ class NarudzbaProvider extends BaseProvider<Narudzba> {
     return Narudzba.fromJson(data);
   }
 
-  /// Funkcija za potvrdu narudžbe (označavanje kao završene)
   Future<Narudzba> potvrdiNarudzbu(int narudzbaId) async {
-    String url = buildUrl("/$narudzbaId/potvrdi"); // API endpoint
+    String url = buildUrl("/$narudzbaId/potvrdi");
     Uri uri = Uri.parse(url);
-
-    // Ispisivanje URL-a i status koda
 
     Map<String, String> headers = createHeaders();
 
     try {
-      // Send a PUT request to the API
       http.Response response = await http.put(uri, headers: headers);
 
-      // Check if the response is successful (status code 200 OK)
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         Narudzba narudzba = Narudzba.fromJson(data);
-        return narudzba; // Return the updated Narudzba object
+        return narudzba;
       } else {
         throw Exception('Greška: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
-      // Ako dođe do greške u slanju zahtjeva
       throw Exception('Greška pri slanju zahtjeva: $error');
     }
   }
 
   Future<SearchResult<Narudzba>> getNarudzbePoUseru(int id) async {
-    String url = buildUrl(
-        "/$id/GetPoUseru"); // API endpoint za pretragu narudžbi korisnika
+    String url = buildUrl("/$id/GetPoUseru");
     Uri uri = Uri.parse(url);
-
-    // Ispisivanje URL-a i status koda
 
     Map<String, String> headers = createHeaders();
 
     try {
-      // Send a GET request to the API
       http.Response response = await http.get(uri, headers: headers);
 
-      // Ispisivanje status koda i tijela odgovora
-
-      // Check if the response is successful (status code 200 OK)
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         SearchResult<Narudzba> narudzbe = SearchResult<Narudzba>();
         for (var item in data) {
           narudzbe.result.add(fromJson(item));
         }
-        return narudzbe; // Return the list of Narudzba objects
+        return narudzbe;
       } else {
         throw Exception('Greška: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
-      // Ako dođe do greške u slanju zahtjeva
       throw Exception('Greška pri slanju zahtjeva: $error');
     }
   }
@@ -133,17 +119,13 @@ class NarudzbaProvider extends BaseProvider<Narudzba> {
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
 
-        // Create a new SearchResult object
         SearchResult<Narudzba> result = SearchResult<Narudzba>();
 
-        // Check if the response is a list or an object
         if (data is List) {
-          // If it's a list, add all items to the result
           for (var item in data) {
             result.result.add(fromJson(item));
           }
         } else if (data is Map<String, dynamic>) {
-          // If it's a map (SearchResult-like structure)
           result.count = data['count'] ?? 0;
           if (data['result'] is List) {
             for (var item in data['result']) {

@@ -9,7 +9,8 @@ import 'package:json_annotation/json_annotation.dart';
 part 'klijentIzvjestaj.g.dart';
 
 @JsonSerializable()
-class KlijentIzvjestaj {  final int klijentId;
+class KlijentIzvjestaj {
+  final int klijentId;
   final String imePrezime;
   final double ukupanIznos;
   final int brojNarudzbi;
@@ -25,7 +26,8 @@ class KlijentIzvjestaj {  final int klijentId;
     required this.najpopularnijiProizvodi,
   });
 
-  factory KlijentIzvjestaj.fromJson(Map<String, dynamic> json) => _$KlijentIzvjestajFromJson(json);
+  factory KlijentIzvjestaj.fromJson(Map<String, dynamic> json) =>
+      _$KlijentIzvjestajFromJson(json);
 
   Map<String, dynamic> toJson() => _$KlijentIzvjestajToJson(this);
 }

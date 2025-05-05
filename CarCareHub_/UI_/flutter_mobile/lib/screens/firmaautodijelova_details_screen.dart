@@ -12,12 +12,12 @@ import 'package:flutter_mobile/models/firmaautodijelova.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/uloge.dart';
-import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/bpautodijelovi_autoservis_provider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/firmaautodijelova_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/uloge_provider.dart';
-import 'package:flutter_mobile/screens/BPAutodijeloviAutoservis_screen.dart';
+import 'package:flutter_mobile/screens/bp_autodijelovi_autoservis_screen.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -384,20 +384,20 @@ List<Widget> _buildFormFields() {
     ((context.read<UserProvider>().role == "Firma autodijelova") &&
      context.read<UserProvider>().userId == widget.firmaAutodijelova?.firmaAutodijelovaID);
 
-  InputDecoration _decoration(String label, String hint) {
+  InputDecoration decoration(String label, String hint) {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      labelStyle: TextStyle(color: Colors.black),
-      hintStyle: TextStyle(color: Colors.black),
-      border: OutlineInputBorder(),
+      labelStyle: const TextStyle(color: Colors.black),
+      hintStyle: const TextStyle(color: Colors.black),
+      border: const OutlineInputBorder(),
       fillColor: Colors.white,
       filled: true,
-      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-      enabledBorder: OutlineInputBorder(
+      contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      enabledBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.black),
       ),
-      disabledBorder: OutlineInputBorder(
+      disabledBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.black),
       ),
     );
@@ -406,7 +406,7 @@ List<Widget> _buildFormFields() {
   return [
     // Naziv firme
     FormBuilderTextField(
-      decoration: _decoration("Naziv firme", "Unesite naziv firme"),
+      decoration: decoration("Naziv firme", "Unesite naziv firme"),
       style: const TextStyle(color: Colors.black),
       name: "nazivFirme",
       validator: validator.nazivFirme,
@@ -416,7 +416,7 @@ List<Widget> _buildFormFields() {
 
     // Adresa
     FormBuilderTextField(
-      decoration: _decoration("Adresa", "Unesite adresu"),
+      decoration: decoration("Adresa", "Unesite adresu"),
       style: const TextStyle(color: Colors.black),
       name: "adresa",
       validator: validator.adresa,
@@ -428,7 +428,7 @@ List<Widget> _buildFormFields() {
     FormBuilderDropdown(
       name: 'gradId',
       validator: validator.required,
-      decoration: _decoration("Grad", "Izaberite grad"),
+      decoration: decoration("Grad", "Izaberite grad"),
       style: const TextStyle(color: Colors.black),
       initialValue: widget.firmaAutodijelova?.gradId?.toString(),
       items: gradResult?.result.map((item) => DropdownMenuItem(
@@ -445,7 +445,7 @@ List<Widget> _buildFormFields() {
 
     // Telefon
     FormBuilderTextField(
-      decoration: _decoration("Telefon", "Unesite telefon"),
+      decoration: decoration("Telefon", "Unesite telefon"),
       style: const TextStyle(color: Colors.black),
       name: "telefon",
       validator: validator.phoneNumber,
@@ -455,7 +455,7 @@ List<Widget> _buildFormFields() {
 
     // Email
     FormBuilderTextField(
-      decoration: _decoration("Email", "Unesite email"),
+      decoration: decoration("Email", "Unesite email"),
       style: const TextStyle(color: Colors.black),
       name: "email",
       validator: validator.email,
@@ -465,7 +465,7 @@ List<Widget> _buildFormFields() {
 
     // JIB
     FormBuilderTextField(
-      decoration: _decoration("JIB", "Unesite JIB"),
+      decoration: decoration("JIB", "Unesite JIB"),
       style: const TextStyle(color: Colors.black),
       name: "jib",
       validator: validator.jib,
@@ -475,7 +475,7 @@ List<Widget> _buildFormFields() {
 
     // MBS
     FormBuilderTextField(
-      decoration: _decoration("MBS", "Unesite MBS"),
+      decoration: decoration("MBS", "Unesite MBS"),
       style: const TextStyle(color: Colors.black),
       name: "mbs",
       validator: validator.mbs,
@@ -487,7 +487,7 @@ List<Widget> _buildFormFields() {
     if (isEditable) ...[
       FormBuilderTextField(
         name: "username",
-        decoration: _decoration("Korisničko ime", "Unesite korisničko ime"),
+        decoration: decoration("Korisničko ime", "Unesite korisničko ime"),
         style: const TextStyle(color: Colors.black),
         validator: (value) {
           final error = validator.username3char(value);
@@ -509,7 +509,7 @@ List<Widget> _buildFormFields() {
       FormBuilderTextField(
         name: "password",
         obscureText: true,
-        decoration: _decoration("Lozinka", "Unesite lozinku"),
+        decoration: decoration("Lozinka", "Unesite lozinku"),
         style: const TextStyle(color: Colors.black),
         validator: validator.required,
       ),
@@ -518,7 +518,7 @@ List<Widget> _buildFormFields() {
       FormBuilderTextField(
         name: "passwordAgain",
         obscureText: true,
-        decoration: _decoration("Ponovite lozinku", "Ponovo unesite lozinku"),
+        decoration: decoration("Ponovite lozinku", "Ponovo unesite lozinku"),
         style: const TextStyle(color: Colors.black),
         validator: validator.lozinkaAgain,
       ),

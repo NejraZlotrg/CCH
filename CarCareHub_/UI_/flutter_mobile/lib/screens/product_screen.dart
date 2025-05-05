@@ -9,7 +9,7 @@ import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
@@ -218,10 +218,10 @@ class _ProductScreenState extends State<ProductScreen> {
             const SizedBox(height: 10),
             FormBuilderDropdown<Grad>(
               name: 'gradId',
-              decoration: InputDecoration(
-                suffixIcon: const Icon(Icons.location_city),
+              decoration: const InputDecoration(
+                suffixIcon: Icon(Icons.location_city),
                 hintText: 'Odaberite grad',
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -251,10 +251,10 @@ class _ProductScreenState extends State<ProductScreen> {
               children: [
                 FormBuilderDropdown<Vozilo>(
                   name: 'voziloId',
-                  decoration: InputDecoration(
-                    suffixIcon: const Icon(Icons.directions_car),
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(Icons.directions_car),
                     hintText: 'Odaberite marku vozila',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Colors.white,
                   ),
@@ -287,10 +287,10 @@ class _ProductScreenState extends State<ProductScreen> {
                 const SizedBox(height: 10),
                 FormBuilderDropdown<Model>(
                   name: 'modelId',
-                  decoration: InputDecoration(
-                    suffixIcon: const Icon(Icons.dashboard_customize),
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(Icons.dashboard_customize),
                     hintText: 'Odaberite model',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Colors.white,
                   ),
@@ -315,10 +315,10 @@ class _ProductScreenState extends State<ProductScreen> {
                 const SizedBox(height: 10),
                 FormBuilderDropdown<Godiste>(
                   name: 'godisteId',
-                  decoration: InputDecoration(
-                    suffixIcon: const Icon(Icons.date_range),
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(Icons.date_range),
                     hintText: 'Odaberite godište',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Colors.white,
                   ),

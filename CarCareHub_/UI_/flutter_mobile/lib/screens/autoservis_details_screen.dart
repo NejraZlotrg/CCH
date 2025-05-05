@@ -15,15 +15,15 @@ import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/zaposlenik.dart'; // Dodaj model za usluge
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
-import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
-import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
+import 'package:flutter_mobile/provider/chat_autoservis_klijent_provider.dart';
+import 'package:flutter_mobile/provider/chat_klijent_zaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
-import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
+import 'package:flutter_mobile/screens/chat_autoservis_klijent_messages_screen.dart';
 import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:flutter_test/flutter_test.dart';

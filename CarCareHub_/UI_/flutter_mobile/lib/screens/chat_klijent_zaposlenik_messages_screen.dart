@@ -1,16 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
-import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
+import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
+import 'package:flutter_mobile/provider/chat_klijent_zaposlenik_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
-class ChatAutoservisKlijentMessagesScreen extends StatefulWidget {
-  final chatAutoservisKlijent selectedChat;
+// ignore: camel_case_types
+class chatKlijentZaposlenikMessagesScreen extends StatefulWidget {
+  final chatKlijentZaposlenik selectedChat;
 
-  const ChatAutoservisKlijentMessagesScreen(
+  const chatKlijentZaposlenikMessagesScreen(
       {super.key, required this.selectedChat});
 
   @override
@@ -19,9 +23,9 @@ class ChatAutoservisKlijentMessagesScreen extends StatefulWidget {
 }
 
 class _ChatMessagesScreenState
-    extends State<ChatAutoservisKlijentMessagesScreen> {
+    extends State<chatKlijentZaposlenikMessagesScreen> {
   late HubConnection connection;
-  List<chatAutoservisKlijent> messages = [];
+  List<chatKlijentZaposlenik> messages = [];
   late bool isConnected = false;
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController(); // ScrollController
@@ -33,74 +37,56 @@ class _ChatMessagesScreenState
     runSignalR();
   }
 
-   Future<void> runSignalR() async {
+
+  Future<void> runSignalR() async {
     connection = HubConnectionBuilder()
         .withUrl('http://192.168.0.131:7209/chat-hub')
         .build();
 
     connection.onclose(({Exception? error}) {
-      print('Connection closed: $error');
       isConnected = false;
     });
 
     var klijentId = widget.selectedChat.klijentId;
-    var autoservisId = widget.selectedChat.autoservisId;
+    var zaposlenikId = widget.selectedChat.zaposlenikId;
 
     // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
-    connection.on('ReceiveMessageAutoservisKlijent#$autoservisId/$klijentId', (arguments) {
+    connection.on('ReceiveMessageZaposlenikKlijent#$zaposlenikId/$klijentId', (arguments) {
       fetchMessages();
     });
 
-    connection.on('ReceiveMessageAutoservisKlijent#$klijentId/$autoservisId', (arguments) {
-     
-      print('dosla poruka');
+    connection.on('ReceiveMessageZaposlenikKlijent#$klijentId/$zaposlenikId', (arguments) {
       fetchMessages();
     });
 
     try {
       await connection.start();
       isConnected = true;
-      print("SignalR connection established.");
     } catch (e) {
       isConnected = false;
-      print('Error starting SignalR connection: $e');
     }
   }
 
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _scrollController.dispose();
-
-    if (isConnected) {
-      connection.stop(); // Zaustavi SignalR konekciju
-    }
-    
-    super.dispose();
-  }
   // Fetch messages for the selected chat
   Future<void> fetchMessages() async {
     try {
-      final provider = Provider.of<ChatAutoservisKlijentProvider>(context, listen: false);
+      final provider = Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false);
       final fetchedMessages = await provider.getMessages(
         widget.selectedChat.klijentId,
-        widget.selectedChat.autoservisId,
+        widget.selectedChat.zaposlenikId,
       );
 
-      if (mounted) { // Sprječava crash ako je widget unmountovan
-        setState(() {
-          messages = fetchedMessages;
-        });
+      setState(() {
+        messages = fetchedMessages;
+      });
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollToBottom();
-        });
-      }
+      // Automatsko skrolovanje na dno kad se učitaju poruke
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
 
+    // ignore: empty_catches
     } catch (e) {
-      if (mounted) { // Provjeri da li je widget još uvijek aktivan
-        print('Error fetching messages: $e');
-      }
     }
   }
 
@@ -112,20 +98,16 @@ class _ChatMessagesScreenState
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
-  
-  
   @override
 Widget build(BuildContext context) {
   final userProvider = context.read<UserProvider>();
-  final isLoggedUserAutoservis = userProvider.role == 'Klijent'; // Check if the logged-in user is 'Zaposlenik'
-
+  final isLoggedUserZaposlenik = userProvider.role == 'Zaposlenik'; // Check if the logged-in user is 'Zaposlenik'
 
   return Scaffold(
     backgroundColor: Colors.grey[300], // Set background color of the entire screen to light gray
-
     appBar: AppBar(
       title: Text(
-        'Chat with ${widget.selectedChat.klijentIme} - ${widget.selectedChat.autoservisNaziv}',
+        'Chat with ${widget.selectedChat.klijentIme} - ${widget.selectedChat.zaposlenikIme}',
         textAlign: TextAlign.center, // Ensures the title text itself is centered
       ),
       backgroundColor: Colors.grey[400], // Set the AppBar background color to grey
@@ -146,7 +128,7 @@ Widget build(BuildContext context) {
                       final isMessageFromKlijent = message.poslanoOdKlijenta == true;
 
                       // Determine if the message is from the logged-in user
-                      bool isMessageFromLoggedUser = isLoggedUserAutoservis
+                      bool isMessageFromLoggedUser = isLoggedUserZaposlenik
                           ? isMessageFromKlijent // If the logged-in user is Zaposlenik, messages from Klijent go left
                           : !isMessageFromKlijent; // If the logged-in user is not Zaposlenik, messages from Klijent go right
 
@@ -154,8 +136,8 @@ Widget build(BuildContext context) {
                         padding: const EdgeInsets.symmetric(vertical: 8.0), // More vertical space between messages
                         child: Align(
                           alignment: isMessageFromLoggedUser
-                              ? Alignment.centerRight // Message goes left
-                              : Alignment.centerLeft, // Message goes right
+                              ? Alignment.centerLeft // Message goes left
+                              : Alignment.centerRight, // Message goes right
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15.0, vertical: 10.0),
@@ -170,6 +152,7 @@ Widget build(BuildContext context) {
                               ),
                               boxShadow: [
                                 BoxShadow(
+                                  // ignore: deprecated_member_use
                                   color: Colors.grey.withOpacity(0.2),
                                   spreadRadius: 1,
                                   blurRadius: 5,
@@ -217,10 +200,10 @@ Widget build(BuildContext context) {
                     String message = _messageController.text;
                     if (message.isNotEmpty) {
                       // Calling sendMessage function from the provider
-                      Provider.of<ChatAutoservisKlijentProvider>(context, listen: false)
+                      Provider.of<ChatKlijentZaposlenikProvider>(context, listen: false)
                           .sendMessage(
                               widget.selectedChat.klijentId,
-                              widget.selectedChat.autoservisId,
+                              widget.selectedChat.zaposlenikId,
                               message)
                           .then((_) {
                         _messageController.clear();
@@ -239,4 +222,5 @@ Widget build(BuildContext context) {
       ),
     ),
   );
-}}
+}
+}

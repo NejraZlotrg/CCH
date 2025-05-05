@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/narudzba.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/narudzbe_provider.dart';
 import 'package:flutter_mobile/screens/narudzba_stavka_screen.dart';
 import 'package:flutter_mobile/utils/utils.dart';

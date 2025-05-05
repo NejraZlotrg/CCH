@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/narudzba_stavke.dart';
 import 'package:flutter_mobile/models/search_result.dart';
-import 'package:flutter_mobile/provider/BPAutodijeloviAutoservis_provider.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/bpautodijelovi_autoservis_provider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/klijent_provider.dart';
 import 'package:flutter_mobile/provider/narudzba_stavka_provider.dart';
@@ -276,7 +276,7 @@ class _NarudzbaStavkaScreenState extends State<NarudzbaStavkaScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "Proizvodi:",
           style: TextStyle(
             fontSize: 16,

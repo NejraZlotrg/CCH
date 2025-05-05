@@ -1,47 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
-import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
-import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
+import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
+import 'package:flutter_mobile/provider/chat_klijent_zaposlenik_provider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
+import 'package:flutter_mobile/screens/chat_klijent_zaposlenik_messages_screen.dart';
 import 'package:provider/provider.dart';
 
-class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({super.key});
+class ChatListScreen2 extends StatefulWidget {
+  const ChatListScreen2({super.key});
 
   @override
   _ChatListScreenState createState() => _ChatListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
-  List<chatAutoservisKlijent> chats = [];
-  late ChatAutoservisKlijentProvider chatAutoservisKlijentProvider;
+class _ChatListScreenState extends State<ChatListScreen2> {
+  List<chatKlijentZaposlenik> chats = [];
+  late ChatKlijentZaposlenikProvider chatKlijentZaposlenikProvider;
 
   @override
   void initState() {
     super.initState();
-    chatAutoservisKlijentProvider = context.read<ChatAutoservisKlijentProvider>();
+    chatKlijentZaposlenikProvider = context.read<ChatKlijentZaposlenikProvider>();
     fetchChats();
   }
 
-  Future<void> fetchChats() async {
-    final userProvider = context.read<UserProvider>();
-    int userId = userProvider.userId;
+Future<void> fetchChats() async {
+  final userProvider = context.read<UserProvider>();
+  int userId = userProvider.userId;
 
-    try {
-      var response = await chatAutoservisKlijentProvider.getById__(userId);
+  // Print the userId
+  print("User ID: $userId");
 
-      if (response.isNotEmpty) {
-        setState(() {
-          chats = response;
-        });
-      } else {
-        print("No chats available for this user.");
-      }
-    } catch (e) {
-      print("Error fetching chats: $e");
+  try {
+    var response = await chatKlijentZaposlenikProvider.getById__(userId);
+
+    if (response.isNotEmpty) {
+      // Iterate over the response to check for nulls and handle them
+      for (var chat in response) {
+        // Check for null values in the response before accessing them
+        int? klijentId = chat.klijentId;
+        int? zaposlenikId = chat.zaposlenikId;
+
+        // Make sure you handle nulls properly
+        print('Chat with Klijent ID: $klijentId and Zaposlenik ID: $zaposlenikId');
+            }
+
+      setState(() {
+        chats = response;
+      });
+    } else {
+      print("No chats available for this user.");
     }
+  } catch (e) {
+    print("Error fetching chats: $e");
   }
-@override
+}
+
+
+
+ @override
 Widget build(BuildContext context) {
   final userProvider = context.read<UserProvider>();
   final username = userProvider.username;
@@ -58,8 +74,8 @@ Widget build(BuildContext context) {
               final chat = chats[index];
               final isKlijent = userProvider.role == 'Klijent';
               final chatName = isKlijent
-                  ? chat.autoservisNaziv
-                  : chat.klijentIme;
+                  ? '${chat.zaposlenikIme} '
+                  : '${chat.klijentIme} ';
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
@@ -97,7 +113,8 @@ Widget build(BuildContext context) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatAutoservisKlijentMessagesScreen(
+                          builder: (context) =>
+                              chatKlijentZaposlenikMessagesScreen(
                             selectedChat: chat,
                           ),
                         ),
@@ -109,5 +126,6 @@ Widget build(BuildContext context) {
             },
           ),
   );
-}}
+}
 
+}

@@ -19,24 +19,22 @@ class Korpa {
   Zaposlenik? zaposlenik;
   int? kolicina;
   double? ukupnaCijenaProizvoda;
-bool? vidljivo;
-
+  bool? vidljivo;
 
   // Konstruktor
-  Korpa({
-    this.korpaId,
-    this.proizvodId,
-    this.klijentId,
-    this.autoservisId,
-    this.zaposlenikId,
-    this.kolicina,
-    this.ukupnaCijenaProizvoda,
-    this.autoservis,
-    this.klijent,
-    this.proizvod,
-    this.zaposlenik,
-    this.vidljivo
-  });
+  Korpa(
+      {this.korpaId,
+      this.proizvodId,
+      this.klijentId,
+      this.autoservisId,
+      this.zaposlenikId,
+      this.kolicina,
+      this.ukupnaCijenaProizvoda,
+      this.autoservis,
+      this.klijent,
+      this.proizvod,
+      this.zaposlenik,
+      this.vidljivo});
 
   // Factory metoda za deserializaciju JSON-a u Korpa objekt
   factory Korpa.fromJson(Map<String, dynamic> json) => _$KorpaFromJson(json);

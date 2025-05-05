@@ -1,43 +1,36 @@
 import 'dart:convert';
-import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
+import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
-class ChatAutoservisKlijentProvider
-    extends BaseProvider<chatAutoservisKlijent> {
-  ChatAutoservisKlijentProvider() : super("/api/chatAutoservisKlijent");
+class ChatKlijentZaposlenikProvider
+    extends BaseProvider<chatKlijentZaposlenik> {
+  ChatKlijentZaposlenikProvider() : super("api/chatKlijentZaposlenik");
 
   @override
-  chatAutoservisKlijent fromJson(data) {
-    return chatAutoservisKlijent.fromJson(data);
+  chatKlijentZaposlenik fromJson(data) {
+    return chatKlijentZaposlenik.fromJson(data);
   }
 
   late HubConnection connection;
   late bool isConnected = false;
 
-  String getSignalRUrl(String path) {
-    return buildUrl(path);
-  }
-
-  // Pokreće SignalR konekciju i osluškuje poruke
   Future<void> runSignalR(Function onMessageReceived) async {
-    String signalRUrl = getSignalRUrl('/chatAutoservisKlijent');
     connection = HubConnectionBuilder()
-        .withUrl(signalRUrl) // Koristi URL dobiven iz BaseProvider
+        .withUrl(buildUrl('chatKlijentZaposlenik'))
         .build();
 
     connection.onclose(({Exception? error}) {
       isConnected = false;
     });
 
-    // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
     connection.on('ReceiveMessage', (arguments) {
       if (arguments != null && arguments.isNotEmpty) {
         if (arguments[0] != null) {
           try {
-            var chatMessage = chatAutoservisKlijent
+            var chatMessage = chatKlijentZaposlenik
                 .fromJson(arguments[0] as Map<String, dynamic>);
             onMessageReceived(chatMessage);
             // ignore: empty_catches
@@ -54,17 +47,16 @@ class ChatAutoservisKlijentProvider
     }
   }
 
-  // Dohvatiti poruke između klijenta i autoservis-a sa backend-a
-  Future<List<chatAutoservisKlijent>> getMessages(
-      int klijentId, int autoservisId) async {
+  Future<List<chatKlijentZaposlenik>> getMessages(
+      int klijentId, int zaposlenikId) async {
     try {
-      final url = Uri.parse(buildUrl("/$klijentId/$autoservisId"));
+      final url = Uri.parse(buildUrl("/$klijentId/$zaposlenikId"));
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final List<dynamic> messagesData = jsonDecode(response.body);
         return messagesData
-            .map((msg) => chatAutoservisKlijent.fromJson(msg))
+            .map((msg) => chatKlijentZaposlenik.fromJson(msg))
             .toList();
       } else {
         throw Exception('Failed to load messages');
@@ -74,9 +66,8 @@ class ChatAutoservisKlijentProvider
     }
   }
 
-  // Slanje poruke između klijenta i autoservis-a
   Future<void> sendMessage(
-      int klijentId, int autoservisId, String message) async {
+      int klijentId, int zaposlenikId, String message) async {
     try {
       final url = Uri.parse(buildUrl("/posalji"));
       final response = await http.post(
@@ -84,7 +75,7 @@ class ChatAutoservisKlijentProvider
         headers: createHeaders(),
         body: jsonEncode({
           'klijentId': klijentId,
-          'autoservisId': autoservisId,
+          'zaposlenikId': zaposlenikId,
           'poruka': message,
         }),
       );
@@ -98,7 +89,8 @@ class ChatAutoservisKlijentProvider
     }
   }
 
-  Future<List<chatAutoservisKlijent>> getById__(int userId) async {
+  // ignore: non_constant_identifier_names
+  Future<List<chatKlijentZaposlenik>> getById__(int userId) async {
     final url = Uri.parse(buildUrl("/byLoggedUser?klijent_id=$userId"));
     final headers = createHeaders();
 
@@ -107,7 +99,7 @@ class ChatAutoservisKlijentProvider
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        return data.map((e) => chatAutoservisKlijent.fromJson(e)).toList();
+        return data.map((e) => chatKlijentZaposlenik.fromJson(e)).toList();
       } else {
         throw Exception('Failed to load chats: ${response.statusCode}');
       }

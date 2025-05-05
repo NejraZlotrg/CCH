@@ -8,7 +8,7 @@ import 'package:flutter_mobile/models/model.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/models/vozilo.dart';
-import 'package:flutter_mobile/provider/UserProvider.dart';
+import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/godiste_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
@@ -242,10 +242,10 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                     // Marka vozila
                     FormBuilderDropdown<Vozilo>(
                       name: 'voziloId',
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Marka vozila',
-                        suffixIcon: const Icon(Icons.directions_car),
-                        border: const OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.directions_car),
+                        border: OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
                       ),
@@ -267,10 +267,10 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                     // Godište
                     FormBuilderDropdown<Godiste>(
                       name: 'godisteId',
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Godište',
-                        suffixIcon: const Icon(Icons.date_range),
-                        border: const OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.date_range),
+                        border: OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
                       ),
@@ -292,10 +292,10 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
                     // Model
                     FormBuilderDropdown<Model>(
                       name: 'modelId',
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Model',
-                        suffixIcon: const Icon(Icons.dashboard_customize),
-                        border: const OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.dashboard_customize),
+                        border: OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
                       ),
