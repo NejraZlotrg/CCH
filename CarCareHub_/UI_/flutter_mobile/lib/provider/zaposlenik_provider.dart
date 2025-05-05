@@ -12,13 +12,14 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
   }
 
   Future<List<Zaposlenik>> getzaposlenikById(int id) async {
-    return await getById(id); // Pozivanje funkcije getById iz osnovnog provider-a
+    return await getById(id);
   }
 
-  Future<int?> getIdByUsernameAndPassword(String username, String password) async {
+  Future<int?> getIdByUsernameAndPassword(
+      String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(buildUrl("get-id?username=$username&password=$password")), // Korišćenje buildUrl
+        Uri.parse(buildUrl("get-id?username=$username&password=$password")),
         headers: {
           "Content-Type": "application/json",
         },
@@ -35,15 +36,16 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
         return null;
       }
     } catch (e) {
-      print('Error fetching ID: $e');
       return null;
     }
   }
 
-  Future<bool?> getVidljivoByUsernameAndPassword(String username, String password) async {
+  Future<bool?> getVidljivoByUsernameAndPassword(
+      String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(buildUrl("get-vidljivo?username=$username&password=$password")), // Korišćenje buildUrl
+        Uri.parse(
+            buildUrl("get-vidljivo?username=$username&password=$password")),
         headers: {
           "Content-Type": "application/json",
         },
@@ -60,19 +62,17 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
         return null;
       }
     } catch (e) {
-      print('Error fetching vidljivo: $e');
       return null;
     }
   }
 
   @override
   Future<Zaposlenik> getSingleById(int id) async {
-    String url = buildUrl("ZaposleniciGetByID/$id"); // Korišćenje buildUrl sa ID-jem
+    String url = buildUrl("ZaposleniciGetByID/$id");
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
-    print("API odgovor: ${response.body}");
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
@@ -85,7 +85,7 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
   Future<bool> checkUsernameExists(String username) async {
     try {
       final response = await http.get(
-        Uri.parse(buildUrl("check-username/$username")), // Korišćenje buildUrl
+        Uri.parse(buildUrl("check-username/$username")),
         headers: {
           "Content-Type": "application/json",
         },
@@ -98,7 +98,6 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
         return false;
       }
     } catch (e) {
-      print('Error checking username: $e');
       return false;
     }
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -32,39 +34,37 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
   final TextEditingController _nazivController = TextEditingController();
 
   @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-  _autoservisProvider = context.read<AutoservisProvider>();
-  _gradProvider = context.read<GradProvider>();
+    _autoservisProvider = context.read<AutoservisProvider>();
+    _gradProvider = context.read<GradProvider>();
 
-  if (!_isDataFetched) {
-    _isDataFetched = true;
-    _loadGradovi();
+    if (!_isDataFetched) {
+      _isDataFetched = true;
+      _loadGradovi();
+    }
   }
-}
 
-Future<void> _loadGradovi() async {
-  try {
-    SearchResult<Grad> gradoviResult;
-     if (context.read<UserProvider>().role == "Admin")
-       {  gradoviResult = await _gradProvider.getAdmin(); }
-    else 
-      {   gradoviResult = await _gradProvider.get(); }
+  Future<void> _loadGradovi() async {
+    try {
+      SearchResult<Grad> gradoviResult;
+      if (context.read<UserProvider>().role == "Admin") {
+        gradoviResult = await _gradProvider.getAdmin();
+      } else {
+        gradoviResult = await _gradProvider.get();
+      }
 
-    setState(() {
-      gradovi = gradoviResult.result;
-    });
-    // Nakon učitavanja gradova, odmah učitajte podatke
-    await _fetchInitialData();
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Greška pri učitavanju gradova: $e')),
-    );
+      setState(() {
+        gradovi = gradoviResult.result;
+      });
+      await _fetchInitialData();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri učitavanju gradova: $e')),
+      );
+    }
   }
-}
-
-
 
   Future<void> _fetchInitialData() async {
     setState(() {
@@ -72,11 +72,15 @@ Future<void> _loadGradovi() async {
     });
     try {
       SearchResult<Autoservis> data;
-        if (context.read<UserProvider>().role == "Admin") {
-          data = await _autoservisProvider.getAdmin(filter: { 'IsAllIncluded': 'true',});
-        } else {
-          data = await _autoservisProvider.get(filter: { 'IsAllIncluded': 'true',});
-        }
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _autoservisProvider.getAdmin(filter: {
+          'IsAllIncluded': 'true',
+        });
+      } else {
+        data = await _autoservisProvider.get(filter: {
+          'IsAllIncluded': 'true',
+        });
+      }
       setState(() {
         result = data;
       });
@@ -142,40 +146,40 @@ Future<void> _loadGradovi() async {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-  child: FormBuilderDropdown<Grad>(
-    name: 'gradId',
-    decoration: InputDecoration(
-      labelText: 'Grad',
-      suffixIcon: const Icon(Icons.location_city),
-      hintText: 'Odaberite grad',
-      hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-      border: const OutlineInputBorder(),
-      filled: true,
-      fillColor: Colors.white,
-    ),
-    items: [
-          const DropdownMenuItem<Grad>(
-            value: null,
-            child: Text('Odaberite grad'),
-          ),
-        ] +
-        (gradovi
-                ?.map((grad) => DropdownMenuItem(
-                      value: grad,
-                      child: Text(
-                        grad.nazivGrada ?? "",
-                        style: TextStyle(
-                          color: grad.vidljivo == false
-                              ? Colors.red // Crveno za nevidljive gradove
-                              : Colors.black, // Crno za ostale
+                      child: FormBuilderDropdown<Grad>(
+                        name: 'gradId',
+                        decoration: InputDecoration(
+                          labelText: 'Grad',
+                          suffixIcon: const Icon(Icons.location_city),
+                          hintText: 'Odaberite grad',
+                          hintStyle: TextStyle(
+                              color: Colors.blueGrey.withOpacity(0.6)),
+                          border: const OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
+                        items: [
+                              const DropdownMenuItem<Grad>(
+                                value: null,
+                                child: Text('Odaberite grad'),
+                              ),
+                            ] +
+                            (gradovi
+                                    ?.map((grad) => DropdownMenuItem(
+                                          value: grad,
+                                          child: Text(
+                                            grad.nazivGrada ?? "",
+                                            style: TextStyle(
+                                              color: grad.vidljivo == false
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ))
+                                    .toList() ??
+                                []),
                       ),
-                    ))
-                .toList() ??
-            []),
-  ),
-)
-
+                    )
                   ],
                 ),
                 const SizedBox(height: 5),
@@ -184,27 +188,29 @@ Future<void> _loadGradovi() async {
                   children: [
                     if (context.read<UserProvider>().role == "Admin")
                       ElevatedButton(
-                  onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AutoservisDetailsScreen(autoservis: null),
-                              ),
-                            );
-                    await _fetchInitialData();
+                        onPressed: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  AutoservisDetailsScreen(autoservis: null),
+                            ),
+                          );
+                          await _fetchInitialData();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                         ),
                         child: const Row(
                           children: [
                             Icon(Icons.add, color: Colors.white),
                             SizedBox(width: 8.0),
-                            Text('Dodaj', style: TextStyle(color: Colors.white)),
+                            Text('Dodaj',
+                                style: TextStyle(color: Colors.white)),
                           ],
                         ),
                       ),
@@ -215,13 +221,15 @@ Future<void> _loadGradovi() async {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
                       ),
                       child: const Row(
                         children: [
                           Icon(Icons.search, color: Colors.white),
                           SizedBox(width: 8.0),
-                          Text('Pretraga', style: TextStyle(color: Colors.white)),
+                          Text('Pretraga',
+                              style: TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),
@@ -252,11 +260,11 @@ Future<void> _loadGradovi() async {
 
     try {
       SearchResult<Autoservis> data;
-        if (context.read<UserProvider>().role == "Admin") {
-          data = await _autoservisProvider.getAdmin(filter: filterParams);
-        } else {
-          data = await _autoservisProvider.get(filter: filterParams);
-        }
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _autoservisProvider.getAdmin(filter: filterParams);
+      } else {
+        data = await _autoservisProvider.get(filter: filterParams);
+      }
       setState(() {
         result = data;
       });
@@ -268,80 +276,84 @@ Future<void> _loadGradovi() async {
   }
 
   Widget _buildCardList() {
-  if (result?.result.isEmpty ?? true) {
-    return const Center(child: Text('Nema dostupnih autoservisa.'));
-  }
+    if (result?.result.isEmpty ?? true) {
+      return const Center(child: Text('Nema dostupnih autoservisa.'));
+    }
 
-  return ListView.builder(
-    itemCount: result?.result.length ?? 0,
-    itemBuilder: (context, index) {
-      var e = result!.result[index];
-      bool isHidden = e.vidljivo == false;
-      Color textColor = isHidden ? Colors.red : Colors.black;
+    return ListView.builder(
+      itemCount: result?.result.length ?? 0,
+      itemBuilder: (context, index) {
+        var e = result!.result[index];
+        bool isHidden = e.vidljivo == false;
+        Color textColor = isHidden ? Colors.red : Colors.black;
 
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Card(
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            side: BorderSide(
-              color: isHidden ? Colors.red : Colors.transparent,
-              width: 2,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              side: BorderSide(
+                color: isHidden ? Colors.red : Colors.transparent,
+                width: 2,
+              ),
             ),
-          ),
-          elevation: 5,
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16.0),
-            onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AutoservisReadScreen(autoservis: e),
-                ),
-              );
-              await _fetchInitialData();
-            },
-            title: Row(
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: MemoryImage(base64Decode(e.slikaProfila ?? "")),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
+            elevation: 5,
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16.0),
+              onTap: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AutoservisReadScreen(autoservis: e),
                   ),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        e.naziv ?? "",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: textColor,
-                        ),
+                );
+                await _fetchInitialData();
+              },
+              title: Row(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: MemoryImage(base64Decode(e.slikaProfila ?? "")),
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 8.0),
-                      Text('Adresa: ${e.adresa ?? ""}', style: TextStyle(color: textColor)),
-                      Text('Grad: ${e.grad?.nazivGrada ?? ""}',  style: TextStyle(color: e.vidljivo == false ? Colors.red : Colors.black)),
-                      Text('Telefon: ${e.telefon ?? ""}', style: TextStyle(color: textColor)),
-                    ],
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 16.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          e.naziv ?? "",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text('Adresa: ${e.adresa ?? ""}',
+                            style: TextStyle(color: textColor)),
+                        Text('Grad: ${e.grad?.nazivGrada ?? ""}',
+                            style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black)),
+                        Text('Telefon: ${e.telefon ?? ""}',
+                            style: TextStyle(color: textColor)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
-  
+        );
+      },
+    );
+  }
 }

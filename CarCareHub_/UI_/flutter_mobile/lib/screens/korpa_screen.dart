@@ -333,27 +333,6 @@ Widget _buildDataListView() {
     );
   }
 
-  Widget _buildRow(String label, dynamic value) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            value?.toString() ?? '',
-            style: const TextStyle(fontSize: 16.0),
-          ),
-        ],
-      ),
-    );
-  }
 
 void _updateQuantity(Korpa e, int change) {
   setState(() {

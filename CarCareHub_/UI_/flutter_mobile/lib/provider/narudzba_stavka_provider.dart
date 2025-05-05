@@ -6,29 +6,23 @@ import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:http/http.dart' as http;
 
 class NarudzbaStavkeProvider extends BaseProvider<NarudzbaStavke> {
-  NarudzbaStavkeProvider():super("api/narudzbaStavka");
+  NarudzbaStavkeProvider() : super("api/narudzbaStavka");
 
   @override
   NarudzbaStavke fromJson(data) {
-    // TODO: implement fromJson
     return NarudzbaStavke.fromJson(data);
   }
 
- 
-  Future<SearchResult<NarudzbaStavke>> getStavkeZaNarudzbu(int narudzbaId) async {
- String url = buildUrl("/$narudzbaId/ByNarudzbaId");
+  Future<SearchResult<NarudzbaStavke>> getStavkeZaNarudzbu(
+      int narudzbaId) async {
+    String url = buildUrl("/$narudzbaId/ByNarudzbaId");
 
     Uri uri = Uri.parse(url);
-
-    print("Request URL: $url");
 
     Map<String, String> headers = createHeaders();
 
     try {
       http.Response response = await http.get(uri, headers: headers);
-
-      print("Response status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
@@ -46,7 +40,6 @@ class NarudzbaStavkeProvider extends BaseProvider<NarudzbaStavke> {
         throw Exception('Greška: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
-      print("Greška pri slanju zahtjeva: $error");
       throw Exception('Greška pri slanju zahtjeva: $error');
     }
   }

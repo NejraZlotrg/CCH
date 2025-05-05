@@ -14,16 +14,17 @@ class BPAutodijeloviAutoservis {
   bool? vidljivo;
   int? autoservisId; // ID autoservisa
 
+  BPAutodijeloviAutoservis(
+    this.bpAutodijeloviAutoservisId,
+    this.vidljivo,
+    this.firmaAutodijelova,
+    this.firmaAutodijelovaId,
+    this.autoservis,
+    this.autoservisId,
+  );
 
-  BPAutodijeloviAutoservis(this.bpAutodijeloviAutoservisId, this.vidljivo, this.firmaAutodijelova,this.firmaAutodijelovaId,
-  this.autoservis, this.autoservisId,);
+  factory BPAutodijeloviAutoservis.fromJson(Map<String, dynamic> json) =>
+      _$BPAutodijeloviAutoservisFromJson(json);
 
-  
-  factory BPAutodijeloviAutoservis.fromJson(Map<String,dynamic> json) => _$BPAutodijeloviAutoservisFromJson(json);
-
-
-  Map<String,dynamic> toJson() => _$BPAutodijeloviAutoservisToJson(this);
+  Map<String, dynamic> toJson() => _$BPAutodijeloviAutoservisToJson(this);
 }
-
-
-

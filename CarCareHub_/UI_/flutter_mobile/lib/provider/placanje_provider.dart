@@ -14,8 +14,10 @@ class PlacanjeProvider extends BaseProvider<PlacanjeInsert> {
   }
 
 Future<RezultatPlacanja> create(PlacanjeInsert request) async {
+  String url = buildUrl('/plati');
+  final uri = Uri.parse(url);
   final response = await http.post(
-    Uri.parse('http://192.168.0.118:7209/api/placanjeAutoservisDijelovi/plati'),
+    uri,
     headers: createHeaders(),
     body: jsonEncode({
       'ukupno': request.ukupno.toInt()

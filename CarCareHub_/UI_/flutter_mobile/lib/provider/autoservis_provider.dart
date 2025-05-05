@@ -12,37 +12,38 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
   }
 
   Future<List<Autoservis>> getAutoservisById(int id) async {
-    return await getById(id); // Pozivanje funkcije getById iz osnovnog provider-a
+    return await getById(
+        id); // Pozivanje funkcije getById iz osnovnog provider-a
   }
 
-  Future<int?> getIdByUsernameAndPassword(String username, String password) async {
+  Future<int?> getIdByUsernameAndPassword(
+      String username, String password) async {
     try {
       // Kreiraj URL koristeći buildUrl metodu
       String url = buildUrl("get-id?username=$username&password=$password");
 
       // Pošaljite POST zahtev sa korisničkim imenom i lozinkom
       final response = await http.post(
-        Uri.parse(url),  // Koristi URL generisan iz buildUrl
+        Uri.parse(url), // Koristi URL generisan iz buildUrl
         headers: {
-          "Content-Type": "application/json",  // Potrebno za JSON podatke
+          "Content-Type": "application/json", // Potrebno za JSON podatke
         },
         body: jsonEncode({
           "username": username,
-          "password": password,  // Poslati oba polja (username i password)
+          "password": password, // Poslati oba polja (username i password)
         }),
       );
 
       // Proverite statusni kod odgovora i parsirajte ID ako je uspešno
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['id'];  // Pošaljite ID korisnika
+        return data['id']; // Pošaljite ID korisnika
       } else {
         // Ako odgovor nije 200, vrati null
         return null;
       }
     } catch (e) {
       // Ako dođe do greške u API pozivu, ispisivanje greške
-      print('Error fetching ID: $e');
       return null;
     }
   }
@@ -83,39 +84,39 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
         return false;
       }
     } catch (e) {
-      print('Error checking username: $e');
       return false;
     }
   }
 
   /// Dobavljanje ID-a na osnovu korisničkog imena i lozinke
-  Future<bool?> getVidljivoByUsernameAndPassword(String username, String password) async {
+  Future<bool?> getVidljivoByUsernameAndPassword(
+      String username, String password) async {
     try {
       // Kreiraj URL koristeći buildUrl metodu
-      String url = buildUrl('get-vidljivo?username=$username&password=$password');
+      String url =
+          buildUrl('get-vidljivo?username=$username&password=$password');
 
       final response = await http.post(
-        Uri.parse(url),  // Koristi URL generisan iz buildUrl
+        Uri.parse(url), // Koristi URL generisan iz buildUrl
         headers: {
-          "Content-Type": "application/json",  // Potrebno za JSON podatke
+          "Content-Type": "application/json", // Potrebno za JSON podatke
         },
         body: jsonEncode({
           "username": username,
-          "password": password,  // Poslati oba polja (username i password)
+          "password": password, // Poslati oba polja (username i password)
         }),
       );
 
       // Proverite statusni kod odgovora i parsirajte ID ako je uspešno
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['vidljivo'];  // Pošaljite ID korisnika
+        return data['vidljivo']; // Pošaljite ID korisnika
       } else {
         // Ako odgovor nije 200, vrati null
         return null;
       }
     } catch (e) {
       // Ako dođe do greške u API pozivu, ispisivanje greške
-      print('Error fetching ID: $e');
       return null;
     }
   }

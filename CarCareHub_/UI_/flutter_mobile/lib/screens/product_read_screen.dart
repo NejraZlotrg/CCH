@@ -436,33 +436,38 @@ SearchResult<Product>? dataWithDiscount;
 
         const SizedBox(height: 40),
 
-        // Preporučeni proizvodi
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Preporučeni proizvodi",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            if (isRecommendationsLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (recommendedProducts.isEmpty)
-              const Center(child: Text("Nema preporučenih proizvoda"))
-            else
-              SizedBox(
-                height: 250,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: recommendedProducts.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 20),
-                  itemBuilder: (context, index) {
-                    return _buildProductCard(recommendedProducts[index], context);
-                  },
-                ),
-              ),
-          ],
-        ),
+      Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const Text(
+      "Preporučeni proizvodi",
+      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(height: 10),
+    if (isRecommendationsLoading)
+      const Center(child: CircularProgressIndicator())
+    else if (recommendedProducts.isEmpty)
+      const Center(child: Text("Nema preporučenih proizvoda"))
+    else
+      ListView.separated(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: recommendedProducts.length,
+  separatorBuilder: (_, __) => const SizedBox(height: 16),
+  itemBuilder: (context, index) {
+    return Align(
+      alignment: Alignment.center,
+      child: FractionallySizedBox(
+        widthFactor: 0.8, // 90% širine ekrana
+        child: _buildProductCard(recommendedProducts[index], context),
+      ),
+    );
+  },
+)
+
+  ],
+),
+
       ],
     ),
   );
@@ -582,23 +587,29 @@ Widget _buildProductCard(Product product, BuildContext context) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Slika
-          Container(
-            height: 120,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              image: product.slika != null
-                  ? DecorationImage(
-                      image: MemoryImage(base64Decode(product.slika!)),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: product.slika == null
-                ? const Center(child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey))
-                : null,
-          ),
+        Align(
+  alignment: Alignment.center,
+  child: FractionallySizedBox(
+    widthFactor: 0.9, // 90% širine
+    child: Container(
+      height: 120,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        image: product.slika != null
+            ? DecorationImage(
+                image: MemoryImage(base64Decode(product.slika!)),
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
+      child: product.slika == null
+          ? const Center(child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey))
+          : null,
+    ),
+  ),
+)
+,
 
           // Detalji
           Padding(

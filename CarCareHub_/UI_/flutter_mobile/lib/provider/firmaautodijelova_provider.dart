@@ -11,10 +11,11 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
     return FirmaAutodijelova.fromJson(data);
   }
 
-  Future<int?> getIdByUsernameAndPassword(String username, String password) async {
+  Future<int?> getIdByUsernameAndPassword(
+      String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(buildUrl("get-id?username=$username&password=$password")), // Korišćenje buildUrl
+        Uri.parse(buildUrl("get-id?username=$username&password=$password")),
         headers: {
           "Content-Type": "application/json",
         },
@@ -31,15 +32,16 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
         return null;
       }
     } catch (e) {
-      print('Error fetching ID: $e');
       return null;
     }
   }
 
-  Future<bool?> getVidljivoByUsernameAndPassword(String username, String password) async {
+  Future<bool?> getVidljivoByUsernameAndPassword(
+      String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse(buildUrl("get-vidljivo?username=$username&password=$password")), // Korišćenje buildUrl
+        Uri.parse(
+            buildUrl("get-vidljivo?username=$username&password=$password")),
         headers: {
           "Content-Type": "application/json",
         },
@@ -56,14 +58,13 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
         return null;
       }
     } catch (e) {
-      print('Error fetching vidljivo: $e');
       return null;
     }
   }
 
   @override
   Future<FirmaAutodijelova> getSingleById(int id) async {
-    String url = buildUrl("FirmaAutodijelovaGetByID/$id"); // Korišćenje buildUrl sa ID-jem
+    String url = buildUrl("FirmaAutodijelovaGetByID/$id");
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
@@ -80,7 +81,7 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
   Future<bool> checkUsernameExists(String username) async {
     try {
       final response = await http.get(
-        Uri.parse(buildUrl("check-username/$username")), // Korišćenje buildUrl
+        Uri.parse(buildUrl("check-username/$username")),
         headers: {
           "Content-Type": "application/json",
         },
@@ -93,9 +94,7 @@ class FirmaAutodijelovaProvider extends BaseProvider<FirmaAutodijelova> {
         return false;
       }
     } catch (e) {
-      print('Error checking username: $e');
       return false;
     }
   }
 }
-    

@@ -5,25 +5,25 @@ import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
-class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> {
+class ChatKlijentZaposlenikProvider
+    extends BaseProvider<chatKlijentZaposlenik> {
   ChatKlijentZaposlenikProvider() : super("/api/chatKlijentZaposlenik");
 
   @override
   chatKlijentZaposlenik fromJson(data) {
     return chatKlijentZaposlenik.fromJson(data);
   }
-  
+
   late HubConnection connection;
   late bool isConnected = false;
 
-
   String getSignalRUrl(String path) {
-  return buildUrl(path);  // Koristi metodu buildUrl koju već imamo
-}
-
+    return buildUrl(path);
+  }
 
   // Dohvatiti poruke između klijenta i zaposleik-a sa backend-a
-  Future<List<chatKlijentZaposlenik>> getMessages(int klijentId, int zaposlenikId) async {
+  Future<List<chatKlijentZaposlenik>> getMessages(
+      int klijentId, int zaposlenikId) async {
     try {
       final url = Uri.parse(buildUrl("/$klijentId/$zaposlenikId"));
       final response = await http.get(url);
@@ -34,17 +34,16 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
             .map((msg) => chatKlijentZaposlenik.fromJson(msg))
             .toList();
       } else {
-        print('Error fetching messages: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to load messages');
       }
     } catch (e) {
-      print('Error fetching messages: $e');
       rethrow;
     }
   }
 
-  // Slanje poruke između klijenta i zaposleik-a
-  Future<void> sendMessage(int klijentId, int zaposlenikId, String message) async {
+  // Slanje poruke između klijenta i zaposlenika
+  Future<void> sendMessage(
+      int klijentId, int zaposlenikId, String message) async {
     try {
       final url = Uri.parse(buildUrl("/posalji"));
       final response = await http.post(
@@ -58,26 +57,21 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
       );
 
       if (response.statusCode == 200) {
-        print('Message sent successfully');
       } else {
-        print('Error sending message: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to send message');
       }
     } catch (e) {
-      print('Error sending message: $e');
       rethrow;
     }
   }
 
-  // Implementing getById method
+  // ignore: non_constant_identifier_names
   Future<List<chatKlijentZaposlenik>> getById__(int userId) async {
     final url = Uri.parse(buildUrl("/byLoggedUser?klijent_id=$userId"));
     final headers = createHeaders();
 
     try {
       final response = await http.get(url, headers: headers);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
@@ -86,7 +80,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
         throw Exception('Failed to load chats: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching chats: $e');
       rethrow;
     }
   }

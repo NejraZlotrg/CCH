@@ -9,7 +9,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'zaposlenikIzvjestaj.g.dart';
 
 @JsonSerializable()
-class ZaposlenikIzvjestaj { 
+class ZaposlenikIzvjestaj {
   late final int zaposlenikId;
   late final String imePrezime;
   late final double ukupanIznos;
@@ -28,8 +28,8 @@ class ZaposlenikIzvjestaj {
     required this.autoservis,
   });
 
-
-  factory ZaposlenikIzvjestaj.fromJson(Map<String, dynamic> json) => _$ZaposlenikIzvjestajFromJson(json);
+  factory ZaposlenikIzvjestaj.fromJson(Map<String, dynamic> json) =>
+      _$ZaposlenikIzvjestajFromJson(json);
 
   Map<String, dynamic> toJson() => _$ZaposlenikIzvjestajToJson(this);
 }

@@ -15,12 +15,18 @@ class chatAutoservisKlijent {
   DateTime vrijemeSlanja;
 //bool? vidljivo;
 
-  chatAutoservisKlijent(this.id,  this.klijentId,this.autoservisId, this.autoservisNaziv, this.klijentIme, 
-  this.poruka,this.poslanoOdKlijenta,this.vrijemeSlanja);
+  chatAutoservisKlijent(
+      this.id,
+      this.klijentId,
+      this.autoservisId,
+      this.autoservisNaziv,
+      this.klijentIme,
+      this.poruka,
+      this.poslanoOdKlijenta,
+      this.vrijemeSlanja);
 
-  
-  factory chatAutoservisKlijent.fromJson(Map<String,dynamic> json) => _$chatAutoservisKlijentFromJson(json);
+  factory chatAutoservisKlijent.fromJson(Map<String, dynamic> json) =>
+      _$chatAutoservisKlijentFromJson(json);
 
-
-  Map<String,dynamic> toJson() => _$chatAutoservisKlijentToJson(this);
+  Map<String, dynamic> toJson() => _$chatAutoservisKlijentToJson(this);
 }

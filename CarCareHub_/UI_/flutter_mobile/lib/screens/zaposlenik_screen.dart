@@ -206,55 +206,47 @@ Widget _buildDataListView() {
           width: 1.0,
         ),
       ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-           
-            DataColumn(label: Text('Ime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
-            DataColumn(label: Text('Prezime', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
-            DataColumn(label: Text('Grad', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
-          ],
-          rows: result?.result.map((Zaposlenik e) {
-            return DataRow(
-              onSelectChanged: (selected) async {
-                if (selected == true) {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ZaposlenikDetailsScreen(zaposlenik: e),
-                    ),
-                  );
-                  await _loadData();
-                }
-              },
-              cells: [
-                
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    e.ime ?? "-",
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    e.prezime ?? "-",
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                )),
-                DataCell(Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    e.grad?.nazivGrada ?? "-",
-                    style: const TextStyle(color: Colors.blueGrey),
-                  ),
-                )),
-              ],
-            );
-          }).toList() ?? [],
+      child:ListView.builder(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: result?.result.length ?? 0,
+  itemBuilder: (context, index) {
+    final zaposlenik = result!.result[index];
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
+          ),
+        );
+        await _loadData();
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${zaposlenik.ime ?? "-"} ${zaposlenik.prezime ?? "-"}",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Grad: ${zaposlenik.grad?.nazivGrada ?? "-"}",
+                style: const TextStyle(color: Colors.blueGrey),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  },
+)
+
     ),))
   );
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
@@ -15,6 +14,7 @@ class ChatAutoservisKlijentMessagesScreen extends StatefulWidget {
       {super.key, required this.selectedChat});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChatMessagesScreenState createState() => _ChatMessagesScreenState();
 }
 
