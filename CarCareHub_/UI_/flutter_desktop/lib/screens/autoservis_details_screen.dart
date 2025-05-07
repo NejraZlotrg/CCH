@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print, deprecated_member_use
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,16 +11,16 @@ import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:flutter_mobile/models/uloge.dart';
-import 'package:flutter_mobile/models/usluge.dart'; // Dodaj model za usluge
-import 'package:flutter_mobile/models/zaposlenik.dart'; // Dodaj model za usluge
+import 'package:flutter_mobile/models/usluge.dart'; 
+import 'package:flutter_mobile/models/zaposlenik.dart'; 
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
 import 'package:flutter_mobile/provider/chatAutoservisKlijent_provider.dart';
 import 'package:flutter_mobile/provider/chatKlijentZaposlenik_provider.dart';
-import 'package:flutter_mobile/provider/usluge_provider.dart'; // Dodaj provider za usluge
-import 'package:flutter_mobile/provider/zaposlenik_provider.dart'; // Dodaj provider za usluge
+import 'package:flutter_mobile/provider/usluge_provider.dart';
+import 'package:flutter_mobile/provider/zaposlenik_provider.dart';
 import 'package:flutter_mobile/provider/grad_provider.dart';
 import 'package:flutter_mobile/screens/autoservis_screen.dart';
 import 'package:flutter_mobile/screens/chatAutoservisKlijentMessagesScreen.dart';
@@ -31,7 +33,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
 class AutoservisDetailsScreen extends StatefulWidget {
   Autoservis? autoservis;
 
@@ -110,7 +111,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     });
   }
 
-  // Function to convert base64 image to File
   Future<File> _getImageFileFromBase64(String base64String) async {
     final bytes = base64Decode(base64String);
     final tempDir = await Directory.systemTemp.createTemp();
@@ -161,8 +161,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   Future<void> fetchGrad() async {
     grad = await _gradProvider.getById(widget.autoservis?.gradId);
     if (grad.isNotEmpty && grad.first.vidljivo == false) {
-      grad = []; // Postavi na praznu listu ako grad nije vidljiv
-      _initialValues['gradId']; // Resetuj vrednost za dropdown
+      grad = [];
+      _initialValues['gradId'];
 
       if (mounted) {
         setState(() {});
@@ -174,7 +174,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:
-          const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+          const Color.fromARGB(255, 204, 204, 204), 
       appBar: AppBar(
         title: Text(widget.autoservis?.naziv ?? "Detalji autoservisa"),
       ),
@@ -236,7 +236,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           : const Text(
                               "Nema dostupnih usluga za ovaj autoservis."),
                     ),
-                    // Dugme za dodavanje usluge
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==
@@ -247,8 +246,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           onPressed: () => _showAddUslugaDialog(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(
-                                255, 251, 26, 10), // Crvena boja dugmeta
-                            foregroundColor: Colors.white, // Bijela boja teksta
+                                255, 251, 26, 10), 
+                            foregroundColor: Colors.white, 
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -256,17 +255,16 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           child: const Text("Dodaj uslugu"),
                         ),
                       ),
-                    // Prikaz zaposlenika
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: zaposlenik.isNotEmpty
                           ? Container(
                               decoration: BoxDecoration(
-                                color: Colors.white, // Bela pozadina
+                                color: Colors.white,
                                 border: Border.all(
-                                    color: Colors.grey, width: 1), // Sivi okvir
+                                    color: Colors.grey, width: 1), 
                                 borderRadius: BorderRadius.circular(
-                                    10), // Zaobljeni uglovi
+                                    10), 
                               ),
                               child: Column(
                                 children: [
@@ -283,7 +281,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                           "Klijent")
                                         const DataColumn(
                                             label: Text(
-                                                "")), // Empty header for message button
+                                                "")), 
                                     ],
                                     rows: zaposlenik.map((zap) {
                                       return DataRow(
@@ -363,15 +361,15 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==
                                 widget.autoservis
-                                    ?.autoservisId)) // Dugme za dodavanje zaposlenika
+                                    ?.autoservisId)) 
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
                           onPressed: () => _showAddZaposlenikDialog(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(
-                                255, 253, 27, 11), // Crvena boja dugmeta
-                            foregroundColor: Colors.white, // Bijela boja teksta
+                                255, 253, 27, 11), 
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -379,7 +377,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           child: const Text("Dodaj zaposlenika"),
                         ),
                       ),
-                    // Spremanje podataka
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -396,7 +393,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                               final userProvider = context.read<UserProvider>();
       final isOwnAccount = userProvider.role == "Autoservis" &&
           userProvider.userId == widget.autoservis?.autoservisId;
-                                // Potvrda brisanja
                                 bool confirmDelete = await showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -419,13 +415,11 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                   ),
                                 );
 
-                                // Ako korisnik potvrdi brisanje
                                   if (confirmDelete == true) {
         try {
           await _autoservisProvider.delete(widget.autoservis!.autoservisId!);
 
           if (isOwnAccount) {
-            // Logout i navigacija na login screen
          
          Navigator.of(context).push(
                   MaterialPageRoute(
@@ -433,7 +427,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   ),
                 );
           } else {
-            Navigator.pop(context); // Vrati se na prethodni ekran
+            Navigator.pop(context);
           }
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -454,7 +448,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: const Color.fromARGB(255, 249,
-                                    11, 11), // Crvena boja za brisanje
+                                    11, 11),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -469,7 +463,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           padding: const EdgeInsets.all(10),
                           child: ElevatedButton(
                             onPressed: () async {
-      // Provjera validacije forme
       if (!(_formKey.currentState?.validate() ?? false)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -480,7 +473,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
         return;
       }
 
-      // Provjera username-a
       final username = _formKey.currentState?.fields['username']?.value;
       if (username != null && username.toString().isNotEmpty) {
         final exists = await _autoservisProvider.checkUsernameExists(username);
@@ -554,7 +546,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   }
 
   Future<void> _editUsluga(Usluge usluga) async {
-    // Example implementation - you might want to navigate to an edit screen
     final editedUsluga = await showDialog<Usluge>(
       context: context,
       builder: (context) => AlertDialog(
@@ -598,23 +589,19 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
     if (editedUsluga != null) {
       try {
-        // ignore: use_build_context_synchronously
         final provider = Provider.of<UslugeProvider>(context, listen: false);
         await provider.update(editedUsluga.uslugeId, editedUsluga);
         setState(() {
-          // Update the local list
           final index =
               usluge.indexWhere((u) => u.uslugeId == editedUsluga.uslugeId);
           if (index != -1) {
             usluge[index] = editedUsluga;
           }
         });
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Usluga uspješno ažurirana')),
         );
       } catch (e) {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Greška pri ažuriranju: $e')),
         );
@@ -668,20 +655,18 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
         children: [
           const SizedBox(height: 20),
           Align(
-            alignment: Alignment.centerRight, // Poravnanje na desnu stranu
+            alignment: Alignment.centerRight, 
             child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Consumer<UserProvider>(
                   builder: (context, userProvider, child) {
-                    // Provjera da li je korisnik klijent
                     if (userProvider.role == "Klijent") {
                       return ElevatedButton(
                         onPressed: () {
                           final klijentId = userProvider
-                              .userId; // Dohvati ID logiranog klijenta
+                              .userId; 
                           final autoservisId = widget.autoservis!.autoservisId!;
 
-                          // Prikaži popup za unos poruke
                           _showSendMessageDialog(
                               context, klijentId, autoservisId);
                         },
@@ -696,14 +681,14 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.chat, size: 20), // Ikona chata
-                            SizedBox(width: 5), // Razmak između ikone i teksta
+                            Icon(Icons.chat, size: 20),
+                            SizedBox(width: 5), 
                             Text("Pošalji poruku"),
                           ],
                         ),
                       );
                     } else {
-                      return const SizedBox(); // Prazan widget ako korisnik nije klijent
+                      return const SizedBox();
                     }
                   },
                 )),
@@ -720,7 +705,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   border: Border.all(color: Colors.grey, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
@@ -762,10 +746,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
         (context.read<UserProvider>().role == "Autoservis" &&
             context.read<UserProvider>().userId ==
                 widget.autoservis
-                    ?.autoservisId); // Proveravamo da li je korisnik Admin
+                    ?.autoservisId); 
 
     return [
-      // Osnovni podaci
       Row(
         children: [
           Expanded(
@@ -773,27 +756,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Naziv autoservisa",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white,
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black), 
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black), 
+                hintStyle: TextStyle(color: Colors.black), 
               ),
               name: "naziv",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin, 
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black),
               initialValue: widget.autoservis?.naziv ?? "",
-              validator: validator.required, // Održavanje unetog teksta
+              validator: validator.required, 
             ),
           ),
           const SizedBox(width: 20),
@@ -802,25 +785,25 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Vlasnik autoservisa",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white,
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black), 
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black), 
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black), 
               ),
               name: "vlasnikFirme",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin, 
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black),
               initialValue: widget.autoservis?.vlasnikFirme ?? "",
               validator: validator.required,
             ),
@@ -829,7 +812,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       ),
       const SizedBox(height: 20),
 
-      // Ostala polja
       Row(
         children: [
           Expanded(
@@ -837,27 +819,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Adresa",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black), 
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black),
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black), 
+                hintStyle: TextStyle(color: Colors.black), 
               ),
               name: "adresa",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin, 
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black),
               initialValue:
-                  widget.autoservis?.adresa ?? "", // Održavanje unetog teksta
+                  widget.autoservis?.adresa ?? "",
               validator: validator.required,
             ),
           ),
@@ -901,14 +883,13 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               enabled: context.read<UserProvider>().role == "Admin" ||
                   (context.read<UserProvider>().role == "Autoservis" &&
                       context.read<UserProvider>().userId ==
-                          widget.autoservis!.autoservisId), // Enable if Admin
+                          widget.autoservis!.autoservisId), 
             ),
           ),
         ],
       ),
       const SizedBox(height: 20),
 
-      // Polja za telefon, email, JIB i MBS
       Row(
         children: [
           Expanded(
@@ -916,27 +897,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Telefon",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black), 
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black), 
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black), 
+                hintStyle: TextStyle(color: Colors.black), 
               ),
               name: "telefon",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin, 
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black), 
               initialValue: widget.autoservis?.telefon ?? "",
-              validator: validator.phoneNumber, // Održavanje unetog teksta
+              validator: validator.phoneNumber,
             ),
           ),
           const SizedBox(width: 20),
@@ -945,27 +926,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Email",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white,
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black), 
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "email",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin, 
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black),
               initialValue:
-                  widget.autoservis?.email ?? "", // Održavanje unetog teksta
+                  widget.autoservis?.email ?? "", 
               validator: validator.email,
             ),
           ),
@@ -980,27 +961,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "JIB",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black), 
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black), 
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black), 
               ),
               name: "jib",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin, 
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black),
               initialValue:
-                  widget.autoservis?.jib ?? "", // Održavanje unetog teksta
+                  widget.autoservis?.jib ?? "", 
               validator: validator.jib,
             ),
           ),
@@ -1010,27 +991,27 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "MBS",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, // Bela pozadina
-                filled: true, // Da pozadina bude ispunjena
+                fillColor: Colors.white, 
+                filled: true, 
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Crni okvir
+                  borderSide: BorderSide(color: Colors.black), 
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black), // Crni okvir kada je disabled
+                      color: Colors.black),
                 ),
                 labelStyle:
-                    TextStyle(color: Colors.black), // Crni tekst za labelu
-                hintStyle: TextStyle(color: Colors.black), // Crni tekst za hint
+                    TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "mbs",
-              enabled: isAdmin, // Ako nije admin, polje je disabled
+              enabled: isAdmin,
               style: const TextStyle(
-                  color: Colors.black), // Crni tekst unutar inputa
+                  color: Colors.black),
               initialValue:
-                  widget.autoservis?.mbs ?? "", // Održavanje unetog teksta
+                  widget.autoservis?.mbs ?? "", 
               validator: validator.mbs,
             ),
           ),
@@ -1038,7 +1019,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
       ),
       const SizedBox(height: 20),
 
-      // Korisničko ime, lozinka i ponovljena lozinka (samo za admina)
       isAdmin
           ? Row(
               children: [
@@ -1048,22 +1028,22 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     decoration: const InputDecoration(
                       labelText: "Korisničko ime",
                       border: OutlineInputBorder(),
-                      fillColor: Colors.white, // Bela pozadina
-                      filled: true, // Da pozadina bude ispunjena
+                      fillColor: Colors.white,
+                      filled: true, 
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Colors.black), // Crni okvir
+                            BorderSide(color: Colors.black), 
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Colors.black), // Crni okvir kada je disabled
+                            color: Colors.black),
                       ),
                       labelStyle: TextStyle(
-                          color: Colors.black), // Crni tekst za labelu
+                          color: Colors.black),
                       hintStyle:
-                          TextStyle(color: Colors.black), // Crni tekst za hint
+                          TextStyle(color: Colors.black), 
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty || (value.length<3 || value.length>50)) {
@@ -1082,12 +1062,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       }
                     },
                     style: const TextStyle(
-                        color: Colors.black), // Crni tekst unutar inputa
+                        color: Colors.black), 
                   ),
                 ),
               ],
             )
-          : const SizedBox.shrink(), // Sakrivanje za ne-admin korisnike
+          : const SizedBox.shrink(), 
 
       const SizedBox(height: 20),
 
@@ -1119,7 +1099,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 ),
               ],
             )
-          : const SizedBox.shrink(), // Sakrivanje za ne-admin korisnike
+          : const SizedBox.shrink(), 
 
       const SizedBox(height: 20),
 
@@ -1131,34 +1111,34 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     decoration: const InputDecoration(
                       labelText: "Ponovite lozinku",
                       border: OutlineInputBorder(),
-                      fillColor: Colors.white, // Bela pozadina
-                      filled: true, // Da pozadina bude ispunjena
+                      fillColor: Colors.white,
+                      filled: true, 
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Colors.black), // Crni okvir
+                            BorderSide(color: Colors.black), 
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Colors.black), // Crni okvir kada je disabled
+                            color: Colors.black), 
                       ),
                       labelStyle: TextStyle(
-                          color: Colors.black), // Crni tekst za labelu
+                          color: Colors.black),
                       hintStyle:
-                          TextStyle(color: Colors.black), // Crni tekst za hint
+                          TextStyle(color: Colors.black), 
                     ),
                     name: "passwordAgain",
-                    initialValue: "", // Održavanje unetog teksta
+                    initialValue: "",
                     validator: validator.lozinkaAgain,
-                    obscureText: true, // Da lozinka bude sakrivena
+                    obscureText: true,
                     style: const TextStyle(
-                        color: Colors.black), // Crni tekst unutar inputa
+                        color: Colors.black),
                   ),
                 ),
               ],
             )
-          : const SizedBox.shrink(), // Sakrivanje za ne-admin korisnike
+          : const SizedBox.shrink(), 
     ];
   }
 
@@ -1175,44 +1155,38 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               content: TextField(
                 onChanged: (value) {
                   setState(() {
-                    message = value; // Ažuriraj poruku kad se unese tekst
+                    message = value; 
                   });
                 },
                 decoration: const InputDecoration(hintText: "Unesite poruku"),
               ),
               actions: [
-                // Otkaži dugme
                 TextButton(
                   onPressed: () {
                     if (Navigator.canPop(context)) {
-                      Navigator.pop(context); // Zatvori dijalog
+                      Navigator.pop(context); 
                     }
                   },
                   child: const Text("Otkaži"),
                 ),
-                // Pošaljite dugme
                 ElevatedButton(
                   onPressed: () async {
                     if (message.isNotEmpty) {
                       try {
-                        // Poziv za slanje poruke
                         await Provider.of<ChatKlijentZaposlenikProvider>(
                           context,
                           listen: false,
                         ).sendMessage(klijentId, zaposleniId, message);
 
-                        // Zatvori dijalog nakon slanja poruke
                         if (mounted && Navigator.canPop(context)) {
                           Navigator.pop(context);
                         }
 
-                        // Obavijesti korisnika o uspjehu
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text("Poruka poslana uspješno")),
                         );
                       } catch (e) {
-                        // Obavijesti korisnika o grešci
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("Greška: ${e.toString()}")),
@@ -1220,7 +1194,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         }
                       }
                     } else {
-                      // Ako poruka nije uneta, obavesti korisnika
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text("Poruka ne može biti prazna")),
@@ -1237,7 +1210,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     );
   }
 
-  // Dijalog za dodavanje nove usluge
   void _showAddUslugaDialog() {
     final uslugaFormKey = GlobalKey<FormBuilderState>();
     showDialog(
@@ -1277,7 +1249,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
             ),
             TextButton(
               onPressed: () async {
-                // Provjera validacije forme
                 if (!(uslugaFormKey.currentState?.validate() ?? false)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -1285,7 +1256,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       duration: Duration(seconds: 2),
                     ),
                   );
-                  return; // Zaustavi obradu ako validacija nije prošla
+                  return; 
                 }
 
                 uslugaFormKey.currentState?.saveAndValidate();
@@ -1294,12 +1265,10 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
 
                 try {
                   await _uslugaProvider.insert(uslugaRequest);
-                  // ignore: use_build_context_synchronously
                   Navigator.pop(context);
-                  fetchUsluge(); // Osvježi usluge nakon dodavanja nove
+                  fetchUsluge();
                 } on Exception catch (e) {
                   showDialog(
-                    // ignore: use_build_context_synchronously
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: const Text("Greška"),
@@ -1410,7 +1379,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       errorStyle: TextStyle(color: Colors.red),
                     ),
                   validator: (value) {
-    final error = validator.username3char(value); // koristi tvoju funkciju
+    final error = validator.username3char(value); 
     if (error != null) return error;
 
     if (_usernameExists) {
@@ -1459,7 +1428,6 @@ FormBuilderTextField(
           actions: [
             TextButton(
   onPressed: () async {
-  // Prvo validiraj formu
   final isValid = zaposlenikFormKey.currentState?.validate() ?? false;
 
   if (!isValid) {
@@ -1472,11 +1440,9 @@ FormBuilderTextField(
     return;
   }
 
-  // Dohvati lozinku i potvrdu
   final password = zaposlenikFormKey.currentState?.fields['password']?.value;
   final passwordAgain = zaposlenikFormKey.currentState?.fields['passwordAgain']?.value;
 
-  // Provjera da li se lozinke podudaraju
   if (password != passwordAgain) {
     showDialog(
       context: context,
@@ -1494,18 +1460,15 @@ FormBuilderTextField(
     return;
   }
 
-  // Forma je validna i lozinke su iste -> idi dalje
   zaposlenikFormKey.currentState?.saveAndValidate();
   var zaposlenikRequest = Map<String, dynamic>.from(
       zaposlenikFormKey.currentState!.value);
-                // Provjeri da li `mb` postoji i nije null
                 if (zaposlenikRequest['mb'] == null ||
                     zaposlenikRequest['mb'].toString().trim().isEmpty) {
                   zaposlenikRequest['mb'] =
-                      ""; // Postavi praznu vrijednost ako je null
+                      ""; 
                 }
 
-                // Konverzija datuma u ISO format
                 if (zaposlenikRequest['datumRodjenja'] != null) {
                   zaposlenikRequest['datumRodjenja'] =
                       (zaposlenikRequest['datumRodjenja'] as DateTime)
@@ -1519,7 +1482,7 @@ FormBuilderTextField(
                     zaposlenikFormKey.currentState!.value['mb'] ??
                         "384748494949";
 
-                print("Zaposlenik request: $zaposlenikRequest"); // Debug ispis
+                print("Zaposlenik request: $zaposlenikRequest");
 
                 try {
                   await _zaposlenikProvider.insert(zaposlenikRequest);
