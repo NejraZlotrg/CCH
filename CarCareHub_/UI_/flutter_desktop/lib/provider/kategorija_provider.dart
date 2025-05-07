@@ -6,7 +6,6 @@ class KategorijaProvider extends BaseProvider<Kategorija> {
 
   @override
   Kategorija fromJson(data) {
-    // TODO: implement fromJson
     return Kategorija.fromJson(data);
   }
 

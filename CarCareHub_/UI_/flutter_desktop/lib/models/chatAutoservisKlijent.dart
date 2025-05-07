@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, file_names
+
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:json_annotation/json_annotation.dart';

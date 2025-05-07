@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/klijent.dart';

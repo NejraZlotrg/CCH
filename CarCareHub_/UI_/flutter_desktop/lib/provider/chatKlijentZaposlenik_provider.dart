@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, avoid_print, file_names
+
 import 'dart:convert';
 import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +18,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
   late HubConnection connection;
   late bool isConnected = false;
 
-  // Ovo je metoda koja pokreće SignalR konekciju i osluškuje poruke
   Future<void> runSignalR(Function onMessageReceived) async {
     connection = HubConnectionBuilder()
         .withUrl('http://localhost:7209/chatKlijentZaposlenik')
@@ -27,14 +28,13 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
       isConnected = false;
     });
 
-    // Kad stigne nova poruka, poziva onMessageReceived funkciju (callback)
     connection.on('ReceiveMessage', (arguments) {
       if (arguments != null && arguments.isNotEmpty) {
         if (arguments[0] != null) {
           try {
             var chatMessage = chatKlijentZaposlenik
                 .fromJson(arguments[0] as Map<String, dynamic>);
-            onMessageReceived(chatMessage); // Prosleđujemo poruku u ekran
+            onMessageReceived(chatMessage);
           } catch (e) {
             print("Error parsing message from SignalR: $e");
           }
@@ -54,7 +54,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
 
 
 
-  // Dohvatiti poruke između klijenta i zaposleik-a sa backend-a
   Future<List<chatKlijentZaposlenik>> getMessages(int klijentId, int zaposlenikId) async {
     try {
       final url = Uri.parse(buildUrl("/$klijentId/$zaposlenikId"));
@@ -75,7 +74,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
     }
   }
 
-  // Slanje poruke između klijenta i zaposleik-a
   Future<void> sendMessage(int klijentId, int zaposlenikId, String message) async {
     try {
       final url = Uri.parse(buildUrl("/posalji"));
@@ -101,7 +99,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
     }
   }
 
-  // Implementing getById method
   Future<List<chatKlijentZaposlenik>> getById__(int userId) async {
     final url = Uri.parse(buildUrl("/byLoggedUser?klijent_id=$userId"));
     final headers = createHeaders();

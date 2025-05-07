@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter_mobile/models/autoservis.dart';
 
 import 'package:flutter_mobile/models/firmaautodijelova.dart';

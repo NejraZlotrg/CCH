@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_initializing_formals
+
 import 'dart:convert';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/product.dart';
@@ -9,18 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
-  static String? baseURL; // Bazni URL aplikacije
-  final String endpoint;  // Endpoint za specifične API zahtjeve
+  static String? baseURL;
+  final String endpoint;  
 
   BaseProvider(String endpoint) 
       : endpoint = endpoint {
-    baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); // Bazni URL
+    baseURL = const String.fromEnvironment("baseURL", defaultValue: "http://localhost:7209/"); 
   }
 
    String buildUrl(String path) {
-    return "$baseURL$endpoint$path";  // Spaja osnovni URL sa endpointom i dodatnim dijelom
+    return "$baseURL$endpoint$path";  
   }
-//get klasicni 
   Future<SearchResult<T>> get({dynamic filter}) async {
     String url = "$baseURL$endpoint";
 
@@ -48,7 +49,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-//get za admina geta i true i false properti vidljivo 
   Future<SearchResult<T>> getAdmin({dynamic filter}) async {
     String url = "$baseURL$endpoint/Admin";
 
@@ -77,10 +77,8 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
 
-  // Implementacija getById getata Listu po nekom idu nekog properija
   Future<List<T>>  getById(int? id) async {
-    String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
-
+    String url = "$baseURL$endpoint/$id"; 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
     http.Response response = await http.get(uri, headers: headers);
@@ -89,7 +87,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
       var data = jsonDecode(response.body);
       List<T> resultList = [];
 
-      // Pretvaramo svaki element u model tipa T
       for (var item in data) {
         resultList.add(fromJson(item));
       }
@@ -100,7 +97,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-  // Validacija HTTP odgovora
   bool isValidResponse(Response response) {
     if (response.statusCode < 299) {
       return true;
@@ -112,7 +108,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-  // Kreiranje headera s osnovnom autorizacijom
   Map<String, String> createHeaders() {
     String username = Authorization.username ?? "";
     String password = Authorization.password ?? "";
@@ -125,7 +120,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
   }
 
 
-  // Generisanje query stringa iz mape parametara
   String getQueryString(Map params, {String prefix = '&', bool inRecursion = false}) {
     String query = '';
     params.forEach((key, value) {
@@ -156,7 +150,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     return query;
   }
 
-  // Metoda za unos novih podataka u API
   Future<T> insert(dynamic request) async {
     String url = "$baseURL$endpoint";
     Uri uri = Uri.parse(url);
@@ -171,7 +164,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
       throw Exception("Unknown error");
     }
   }
-  // Metoda za ažuriranje postojećih podataka u API-ju
   Future<T> update(int id, [dynamic request]) async {
     String url = "$baseURL$endpoint/$id";
     Uri uri = Uri.parse(url);
@@ -197,20 +189,17 @@ abstract class BaseProvider<T> with ChangeNotifier {
   http.Response response = await http.delete(uri, headers: headers);
 
   if (isValidResponse(response)) {
-    // Successful deletion, no content to return
     return;
   } else {
      print("Nemoguće obrisati jer postoje povezani podaci.");
   }
 }
-  // Metoda koju moraš implementirati u naslijeđenoj klasi
   T fromJson(data) {
     throw Exception("Method not implemented");
   }
 
-   // Metoda za dohvaćanje jednog objekta po ID-u
   Future<T> getSingleById(int id) async {
-    String url = "$baseURL$endpoint/$id"; // Dodajemo ID u URL
+    String url = "$baseURL$endpoint/$id";
 
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
@@ -218,7 +207,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
-      return fromJson(data); // Vraća jedan objekat tipa T
+      return fromJson(data); 
     } else {
       throw Exception("Unknown error");
     }

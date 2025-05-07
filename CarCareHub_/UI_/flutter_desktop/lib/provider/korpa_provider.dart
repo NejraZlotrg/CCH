@@ -1,5 +1,7 @@
-import 'dart:convert'; // Dodato za JSON parsiranje
-import 'package:http/http.dart' as http; // Dodato za HTTP zahteve
+// ignore_for_file: avoid_print
+
+import 'dart:convert';  
+import 'package:http/http.dart' as http; 
 import 'package:flutter_mobile/models/korpa.dart';
 import 'package:flutter_mobile/provider/base_provider.dart';
 
@@ -12,18 +14,17 @@ class KorpaProvider extends BaseProvider<Korpa> {
   }
 
   
-  // Specijalna DELETE metoda za Korpa
   Future<bool> deleteProizvodIzKorpe(int? korpaId, int? proizvodId) async {
-    String url = buildUrl("/deleteProizvodIzKorpe/$korpaId/$proizvodId"); // API endpoint sa dva parametra
+    String url = buildUrl("/deleteProizvodIzKorpe/$korpaId/$proizvodId");
     Uri uri = Uri.parse(url);
     Map<String, String> headers = createHeaders();
 
     http.Response response = await http.delete(uri, headers: headers);
 
     if (isValidResponse(response)) {
-      return true; // Uspješno obrisano
+      return true; 
     } else {
-      return false; // Neuspješno brisanje
+      return false; 
     }
   }
 Future<bool> updateKolicina(int? korpaId, int? proizvodId, int novaKolicina) async {

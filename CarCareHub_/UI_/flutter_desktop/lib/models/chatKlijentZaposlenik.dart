@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:flutter_mobile/models/klijent.dart';
 import 'package:json_annotation/json_annotation.dart';

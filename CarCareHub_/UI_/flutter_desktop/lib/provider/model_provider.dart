@@ -6,7 +6,6 @@ class ModelProvider extends BaseProvider<Model> {
 
   @override
   Model fromJson(data) {
-    // TODO: implement fromJson
     return Model.fromJson(data);
   }
 

@@ -6,7 +6,6 @@ class GodisteProvider extends BaseProvider<Godiste> {
 
   @override
   Godiste fromJson(data) {
-    // TODO: implement fromJson
     return Godiste.fromJson(data);
   }
 

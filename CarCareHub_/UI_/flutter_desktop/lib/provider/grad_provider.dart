@@ -6,7 +6,6 @@ class GradProvider extends BaseProvider<Grad> {
 
   @override
   Grad fromJson(data) {
-    // TODO: implement fromJson
     return Grad.fromJson(data);
   }
 

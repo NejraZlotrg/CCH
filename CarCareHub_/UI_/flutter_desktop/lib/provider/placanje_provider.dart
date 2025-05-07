@@ -10,12 +10,12 @@ class PlacanjeProvider extends BaseProvider<PlacanjeInsert> {
 
   @override
   PlacanjeInsert fromJson(data) {
-    return PlacanjeInsert(ukupno: 0); // Napraviti .g fajl onaj
+    return PlacanjeInsert(ukupno: 0); 
   }
 
   Future<RezultatPlacanja> create(PlacanjeInsert request) async {
     final response = await http.post(
-      Uri.parse('http://localhost:7209/api/placanjeAutoservisDijelovi/plati'),  // Tačan API endpoint
+      Uri.parse('http://localhost:7209/api/placanjeAutoservisDijelovi/plati'),  
       headers: createHeaders(),
       body: jsonEncode({
         'ukupno': request.ukupno

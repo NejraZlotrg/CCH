@@ -6,12 +6,11 @@ class UslugeProvider extends BaseProvider<Usluge> {
 
   @override
   Usluge fromJson(data) {
-    // TODO: implement fromJson
     return Usluge.fromJson(data);
   }
 
    Future<List<Usluge>> getUslugaById(int id) async {
-    return await getById(id); // Pozivanje funkcije getById iz osnovnog provider-a
+    return await getById(id); 
   }
 
 }

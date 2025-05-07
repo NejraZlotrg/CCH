@@ -8,7 +8,6 @@ class UlogeProvider extends BaseProvider<Uloge> {
 
   @override
   Uloge fromJson(data) {
-    // TODO: implement fromJson
     return Uloge.fromJson(data);
   }
 

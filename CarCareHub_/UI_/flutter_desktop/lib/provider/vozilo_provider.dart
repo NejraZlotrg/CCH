@@ -6,7 +6,6 @@ class VoziloProvider extends BaseProvider<Vozilo> {
 
   @override
   Vozilo fromJson(data) {
-    // TODO: implement fromJson
     return Vozilo.fromJson(data);
   }
 
