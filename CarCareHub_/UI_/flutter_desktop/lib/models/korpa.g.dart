@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'korpa.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Korpa _$KorpaFromJson(Map<String, dynamic> json) => Korpa(
       korpaId: (json['korpaId'] as num?)?.toInt(),

@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'narudzba_stavke.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 NarudzbaStavke _$NarudzbaStavkeFromJson(Map<String, dynamic> json) =>
     NarudzbaStavke(

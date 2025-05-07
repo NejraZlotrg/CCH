@@ -13,7 +13,7 @@ class chatAutoservisKlijent {
   String? poruka;
   bool poslanoOdKlijenta;
   DateTime vrijemeSlanja;
-//bool? vidljivo;
+
 
   chatAutoservisKlijent(this.id,  this.klijentId,this.autoservisId, this.autoservisNaziv, this.klijentIme, 
   this.poruka,this.poslanoOdKlijenta,this.vrijemeSlanja);

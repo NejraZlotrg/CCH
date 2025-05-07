@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'BPAutodijeloviAutoservis.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 BPAutodijeloviAutoservis _$BPAutodijeloviAutoservisFromJson(
         Map<String, dynamic> json) =>

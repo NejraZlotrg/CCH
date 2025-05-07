@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'kategorija.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Kategorija _$KategorijaFromJson(Map<String, dynamic> json) => Kategorija(
       (json['kategorijaId'] as num?)?.toInt(),

@@ -1,10 +1,5 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'firmaautodijelova.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 FirmaAutodijelova _$FirmaAutodijelovaFromJson(Map<String, dynamic> json) =>
     FirmaAutodijelova(

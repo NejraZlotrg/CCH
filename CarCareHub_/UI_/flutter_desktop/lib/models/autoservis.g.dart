@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'autoservis.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Autoservis _$AutoservisFromJson(Map<String, dynamic> json) => Autoservis(
       (json['autoservisId'] as num?)?.toInt(),

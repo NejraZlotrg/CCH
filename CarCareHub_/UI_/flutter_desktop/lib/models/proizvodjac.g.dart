@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'proizvodjac.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Proizvodjac _$ProizvodjacFromJson(Map<String, dynamic> json) => Proizvodjac(
       (json['proizvodjacId'] as num?)?.toInt(),

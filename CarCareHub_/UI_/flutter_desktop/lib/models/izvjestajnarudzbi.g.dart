@@ -1,10 +1,5 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'IzvjestajNarudzbi.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 IzvjestajNarudzbi _$IzvjestajNarudzbiFromJson(Map<String, dynamic> json) =>
     IzvjestajNarudzbi(

@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'zaposlenik.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Zaposlenik _$ZaposlenikFromJson(Map<String, dynamic> json) => Zaposlenik(
       zaposlenikId: (json['zaposlenikId'] as num?)?.toInt(),

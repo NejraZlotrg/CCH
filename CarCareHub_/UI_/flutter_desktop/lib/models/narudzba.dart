@@ -8,11 +8,11 @@ part 'narudzba.g.dart';
 
 @JsonSerializable()
 class Narudzba {
-  final int narudzbaId;  // Promijenjeno 'id' u 'narudzbaId'
-  final DateTime? datumNarudzbe;  // Nullable DateTime
-  final DateTime? datumIsporuke;  // Nullable DateTime
-  final bool zavrsenaNarudzba;  // Ne nullable, default false
-  final double? ukupnaCijenaNarudzbe;  // Nullable decimal type
+  final int narudzbaId;  
+  final DateTime? datumNarudzbe;  
+  final DateTime? datumIsporuke; 
+  final bool zavrsenaNarudzba; 
+  final double? ukupnaCijenaNarudzbe;  
 bool? vidljivo;
   int? klijentId;
   Klijent? klijent;
@@ -25,10 +25,10 @@ bool? vidljivo;
   Narudzba({
     required this.narudzbaId,
     this.vidljivo,
-    this.datumNarudzbe,  // Može biti null
-    this.datumIsporuke,  // Može biti null
-    this.zavrsenaNarudzba = false,  // Default value
-    this.ukupnaCijenaNarudzbe,  // Može biti null
+    this.datumNarudzbe,  
+    this.datumIsporuke,  
+    this.zavrsenaNarudzba = false,  
+    this.ukupnaCijenaNarudzbe,  
     this.adresa
   });
 

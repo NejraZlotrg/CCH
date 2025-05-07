@@ -13,7 +13,6 @@ class chatKlijentZaposlenik {
   String? poruka;
   bool poslanoOdKlijenta;
   DateTime vrijemeSlanja;
-//bool? vidljivo;
 
 
 

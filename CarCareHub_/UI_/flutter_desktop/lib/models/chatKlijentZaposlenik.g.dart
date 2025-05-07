@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'chatKlijentZaposlenik.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 chatKlijentZaposlenik _$chatKlijentZaposlenikFromJson(
         Map<String, dynamic> json) =>

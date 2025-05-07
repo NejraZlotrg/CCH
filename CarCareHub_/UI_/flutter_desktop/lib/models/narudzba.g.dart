@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'narudzba.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Narudzba _$NarudzbaFromJson(Map<String, dynamic> json) => Narudzba(
       narudzbaId: (json['narudzbaId'] as num).toInt(),

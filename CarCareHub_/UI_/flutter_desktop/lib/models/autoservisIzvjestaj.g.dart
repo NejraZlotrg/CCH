@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'autoservisIzvjestaj.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 AutoservisIzvjestaj _$AutoservisIzvjestajFromJson(Map<String, dynamic> json) =>
     AutoservisIzvjestaj(

@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'vozilo.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Vozilo _$VoziloFromJson(Map<String, dynamic> json) => Vozilo(
       (json['voziloId'] as num?)?.toInt(),

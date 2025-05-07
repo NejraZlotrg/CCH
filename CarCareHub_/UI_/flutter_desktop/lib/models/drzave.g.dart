@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'drzave.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Drzave _$DrzaveFromJson(Map<String, dynamic> json) => Drzave(
       (json['drzavaId'] as num?)?.toInt(),

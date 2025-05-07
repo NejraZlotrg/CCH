@@ -1,10 +1,5 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'klijent.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Klijent _$KlijentFromJson(Map<String, dynamic> json) => Klijent(
       (json['klijentId'] as num).toInt(),

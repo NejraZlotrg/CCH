@@ -22,7 +22,7 @@ class Korpa {
   bool? vidljivo;
 
 
-  // Konstruktor
+
   Korpa({
     this.korpaId,
     this.vidljivo,
@@ -34,9 +34,7 @@ class Korpa {
     this.ukupnaCijenaProizvoda,
   });
 
-  // Factory metoda za deserializaciju JSON-a u Korpa objekt
   factory Korpa.fromJson(Map<String, dynamic> json) => _$KorpaFromJson(json);
 
-  // Metoda za serializaciju Korpa objekta u JSON
   Map<String, dynamic> toJson() => _$KorpaToJson(this);
 }

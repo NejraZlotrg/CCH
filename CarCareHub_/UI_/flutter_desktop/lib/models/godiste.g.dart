@@ -1,10 +1,5 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'godiste.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Godiste _$GodisteFromJson(Map<String, dynamic> json) => Godiste(
       (json['godisteId'] as num?)?.toInt(),

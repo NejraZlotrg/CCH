@@ -1,10 +1,5 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'usluge.dart';
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 Usluge _$UslugeFromJson(Map<String, dynamic> json) => Usluge(
       (json['uslugeId'] as num).toInt(),

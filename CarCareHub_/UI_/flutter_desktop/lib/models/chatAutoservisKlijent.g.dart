@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'chatAutoservisKlijent.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 chatAutoservisKlijent _$chatAutoservisKlijentFromJson(
         Map<String, dynamic> json) =>
