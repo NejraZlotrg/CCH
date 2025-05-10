@@ -1,0 +1,82 @@
+services:
+  # rabbitMQ:
+  #   image: rabbitmq:3-management
+  #   container_name: 'rabbitmq_container'
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=guest
+  #     - RABBITMQ_DEFAULT_PASS=guest
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   expose:
+  #     - 5672
+  #   networks: 
+  #     - carcarehub_network
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+
+  carcarehub_sql:
+    container_name: carcarehub_db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - ASPNETCORE_ENVIRONMENT=Development
+      - SA_PASSWORD=Test12345!
+      - MSSQL_PID=Developer
+    ports:
+      - 1405:1433
+    expose:
+      - 1433
+    networks:
+      - carcarehub_network
+
+  carcarehub_api:
+    image: carecarhub_api
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:DefaultConnection=Server=carcarehub_db,1433;Database=200055;User=sa;Password=Test12345!;ConnectRetryCount=0;TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - RABBITMQ_HOST=rabbitMQ
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      # - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    ports:
+      - 5269:5269
+    networks:
+      - carcarehub_network
+    links:
+      - carcarehub_sql
+    depends_on:
+      - carcarehub_sql
+      # - rabbitMQ
+
+  # rabbitmq-consumer:
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./RabbitMQConsumer
+  #   environment:
+  #     - RABBITMQ_HOST=rabbitMQ
+  #     - RABBITMQ_PORT=5672
+  #     - RABBITMQ_USERNAME=guest
+  #     - RABBITMQ_PASSWORD=guest
+  #     - SMTP_SERVER=smtp.gmail.com
+  #     - SMTP_PORT=465
+  #     - SMTP_USERNAME=kenancopelj@gmail.com
+  #     - SMTP_PASSWORD=zvjq jzmd bmmc lhxk
+  #   depends_on:
+  #     - carcarehub_sql
+  #     - carcarehub_api
+  #     - rabbitMQ
+  #   networks:
+  #     - carcarehub_network
+
+# volumes:
+#   rabbitmq_data:
+
+networks:
+  carcarehub_network:
+    driver: bridge

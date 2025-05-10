@@ -81,170 +81,185 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     _role = _userProvider.role;
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: const Color.fromARGB(255, 134, 134, 134),
-      toolbarHeight: 80.0,
-      automaticallyImplyLeading: true, // prikazuje Drawer menu ikonicu
-      centerTitle: true,
-      title: Text(
-        widget.title ?? "",
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 134, 134, 134),
+        toolbarHeight: 80.0,
+        automaticallyImplyLeading: true, 
+        centerTitle: true,
+        title: Text(
+          widget.title ?? "",
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back, size: 30),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+         actions: [
+        if (Navigator.canPop(context)) 
+          IconButton(
+            icon: const Icon(Icons.arrow_back, size: 30),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_role == "Klijent" || _role == "Zaposlenik" || _role == "Autoservis") ...[
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                tooltip: "Korpa",
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const KorpaScreen()),
-                  );
-                  setState(() {});
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.account_balance_wallet_outlined),
-                tooltip: "Moje narudžbe",
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const NarudzbaScreen()),
-                  );
-                },
-              ),
-            ],
-            if (_role == "Firma autodijelova") ...[
-              IconButton(
-                icon: const Icon(Icons.bar_chart),
-                tooltip: "Moji izvještaji",
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const IzvjestajNarudzbiScreen()),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.assignment),
-                tooltip: "Moje narudžbe",
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const NarudzbaScreen()),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.inventory),
-                tooltip: "Moji artikli",
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const MojProizvodScreen()),
-                  );
-                },
-              ),
-            ],
-            if (_role == "Admin") ...[
-              IconButton(
-                icon: const Icon(Icons.assignment),
-                tooltip: "Narudžbe",
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const NarudzbaScreen()),
-                  );
-                },
-              ),
-            ],
-            if (_role != "Admin") ...[
-              IconButton(
-                icon: const Icon(Icons.person),
-                tooltip: "Moj profil",
-                onPressed: () async {
-                  if (_role == "Klijent") {
-                    try {
-                      Klijent? klijent =
-                          await _klijentProvider.getSingleById(userId);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => KlijentDetailsScreen(klijent: klijent),
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Greška: $e')),
-                      );
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_role == "Klijent" ||
+                  _role == "Zaposlenik" ||
+                  _role == "Autoservis") ...[
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  tooltip: "Korpa",
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const KorpaScreen()),
+                    );
+                    setState(() {});
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.account_balance_wallet_outlined),
+                  tooltip: "Moje narudžbe",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const NarudzbaScreen()),
+                    );
+                  },
+                ),
+              ],
+              if (_role == "Firma autodijelova") ...[
+                IconButton(
+                  icon: const Icon(Icons.bar_chart),
+                  tooltip: "Moji izvještaji",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const IzvjestajNarudzbiScreen()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.assignment),
+                  tooltip: "Moje narudžbe",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const NarudzbaScreen()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.inventory),
+                  tooltip: "Moji artikli",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const MojProizvodScreen()),
+                    );
+                  },
+                ),
+              ],
+              if (_role == "Admin") ...[
+                IconButton(
+                  icon: const Icon(Icons.assignment),
+                  tooltip: "Narudžbe",
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const NarudzbaScreen()),
+                    );
+                  },
+                ),
+              ],
+              if (_role != "Admin") ...[
+                IconButton(
+                  icon: const Icon(Icons.person),
+                  tooltip: "Moj profil",
+                  onPressed: () async {
+                    if (_role == "Klijent") {
+                      try {
+                        Klijent? klijent =
+                            await _klijentProvider.getSingleById(userId);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                KlijentDetailsScreen(klijent: klijent),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Greška: $e')),
+                        );
+                      }
                     }
-                  }
 
-                  if (_role == "Zaposlenik") {
-                    try {
-                      Zaposlenik? zaposlenik =
-                          await _zaposlenikProvider.getSingleById(userId);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Greška: $e')),
-                      );
+                    if (_role == "Zaposlenik") {
+                      try {
+                        Zaposlenik? zaposlenik =
+                            await _zaposlenikProvider.getSingleById(userId);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ZaposlenikDetailsScreen(zaposlenik: zaposlenik),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Greška: $e')),
+                        );
+                      }
                     }
-                  }
 
-                  if (_role == "Autoservis") {
-                    try {
-                      Autoservis? autoservis =
-                          await _autoservisProvider.getSingleById(userId);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AutoservisDetailsScreen(autoservis: autoservis),
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Greška: $e')),
-                      );
+                    if (_role == "Autoservis") {
+                      try {
+                        Autoservis? autoservis =
+                            await _autoservisProvider.getSingleById(userId);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AutoservisDetailsScreen(autoservis: autoservis),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Greška: $e')),
+                        );
+                      }
                     }
-                  }
 
-                  if (_role == "Firma autodijelova") {
-                    try {
-                      FirmaAutodijelova? firmaAutodijelova =
-                          await _firmaAutodijelovaProvider.getSingleById(userId);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => FirmaAutodijelovaDetailScreen(firmaAutodijelova: firmaAutodijelova),
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Greška: $e')),
-                      );
+                    if (_role == "Firma autodijelova") {
+                      try {
+                        FirmaAutodijelova? firmaAutodijelova =
+                            await _firmaAutodijelovaProvider
+                                .getSingleById(userId);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => FirmaAutodijelovaDetailScreen(
+                                firmaAutodijelova: firmaAutodijelova),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Greška: $e')),
+                        );
+                      }
                     }
-                  }
-                },
-              ),
+                  },
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
-    ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -381,7 +396,7 @@ Widget build(BuildContext context) {
             ),
             ListTile(
               leading: const Icon(Icons.car_repair),
-              title: const Text('FirmaAutodijelova'),
+              title: const Text('Firma Autodijelova'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -436,7 +451,6 @@ Widget build(BuildContext context) {
                   if (_role == 'Autoservis') {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        // builder: (context) => ChatAutoservisKlijentScreen(klijentId: 1, autoservisId:userId,),
                         builder: (context) => const ChatListScreen(),
                       ),
                     );
@@ -444,7 +458,6 @@ Widget build(BuildContext context) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const ChatListScreen(),
-                        // builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
                       ),
                     );
                   }
@@ -460,7 +473,6 @@ Widget build(BuildContext context) {
                   if (_role == 'Zaposlenik') {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        // builder: (context) => ChatAutoservisKlijentScreen(klijentId: 1, autoservisId:userId,),
                         builder: (context) => const ChatListScreen2(),
                       ),
                     );
@@ -468,22 +480,27 @@ Widget build(BuildContext context) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const ChatListScreen2(),
-                        // builder: (context) => ChatAutoservisKlijentScreen(klijentId: userId, autoservisId: 1,),
                       ),
                     );
                   }
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text('Odjava'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LogInPage(),
-                  ),
-                );
-              },
+            Container(
+              color: Colors.red,
+              child: ListTile(
+                leading: const Icon(Icons.exit_to_app, color: Colors.white),
+                title: const Text(
+                  'Odjava',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const LogInPage(),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),

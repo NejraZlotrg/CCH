@@ -129,7 +129,7 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Proizvodi",
+      title: "Moji proizvodi",
       child: Container(
         color: const Color.fromARGB(255, 204, 204, 204),
         child: SingleChildScrollView(
@@ -448,217 +448,214 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
   }
 
   Widget _buildDataListView() {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.75,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-        ),
-        itemCount: result?.result.length ?? 0,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          Product e = result!.result[index];
-          bool hasDiscount =
-              e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
-          double originalPrice = e.cijena ?? 0.0;
-          double discountPrice =
-              hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
-          bool isHidden = e.vidljivo == false;
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    child: GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+      ),
+      itemCount: result?.result.length ?? 0,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        Product e = result!.result[index];
+        bool hasDiscount = e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
+        double originalPrice = e.cijena ?? 0.0;
+        double discountPrice = hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
+        bool isHidden = e.vidljivo == false;
 
-          return GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ProductReadScreen(product: e),
-                ),
-              );
-              await _loadData();
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: isHidden ? Colors.red : Colors.transparent,
-                  width: 2.0,
-                ),
+        return GestureDetector(
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ProductReadScreen(product: e),
               ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: e.slika != null && e.slika!.isNotEmpty
-                            ? Image.memory(
-                                base64Decode(e.slika!),
-                                fit: BoxFit.contain,
-                                width: double.infinity,
-                              )
-                            : const Center(child: Text("Nema slike")),
-                      ),
+            );
+            await _loadData();
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(
+                color: isHidden ? Colors.red : Colors.transparent,
+                width: 2.0,
+              ),
+            ),
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: e.slika != null && e.slika!.isNotEmpty
+                          ? Image.memory(
+                              base64Decode(e.slika!),
+                              fit: BoxFit.contain,
+                              width: double.infinity,
+                            )
+                          : const Center(child: Text("Nema slike")),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      e.naziv ?? "",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: isHidden ? Colors.red : Colors.black,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    e.naziv ?? "",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: isHidden ? Colors.red : Colors.black,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      e.opis != null && e.opis!.length > 20
-                          ? "${e.opis!.substring(0, 20)}..."
-                          : e.opis ?? "",
-                      style: TextStyle(
-                        color: isHidden ? Colors.red : Colors.blueGrey,
-                        fontSize: 12,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    e.opis != null && e.opis!.length > 20
+                        ? "${e.opis!.substring(0, 20)}..."
+                        : e.opis ?? "",
+                    style: TextStyle(
+                      color: isHidden ? Colors.red : Colors.blueGrey,
+                      fontSize: 12,
                     ),
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if ((context.read<UserProvider>().role == "Admin" ||
-                                (context.read<UserProvider>().role ==
-                                        "Firma autodijelova" &&
-                                    context.read<UserProvider>().userId ==
-                                        e.firmaAutodijelovaID)) &&
-                            e.vidljivo == true)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (e.stateMachine == "draft")
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    try {
-                                      await _productProvider
-                                          .activateProduct(e.proizvodId!);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                "Proizvod uspješno prikazan na profilu")),
-                                      );
-                                      await _loadData();
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                "Greška prilikom aktivacije: $e")),
-                                      );
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    minimumSize: const Size(0, 30),
-                                  ),
-                                  child: const Text(
-                                    "Prikazi",
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                              if (e.stateMachine == "active")
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    try {
-                                      await _productProvider
-                                          .hideProduct(e.proizvodId!);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text("Proizvod sakriven")),
-                                      );
-                                      await _loadData();
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text("Greška: $e")),
-                                      );
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    minimumSize: const Size(0, 30),
-                                  ),
-                                  child: const Text(
-                                    "Sakrij",
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            if (hasDiscount)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.redAccent.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Text(
-                                  "${formatNumber(discountPrice)} KM",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            const SizedBox(height: 4),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (hasDiscount)
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.blueGrey.withOpacity(0.7),
+                                color: Colors.redAccent.withOpacity(0.7),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                "${formatNumber(originalPrice)} KM",
-                                style: TextStyle(
-                                  color: hasDiscount
-                                      ? Colors.white70
-                                      : Colors.white,
+                                "${formatNumber(discountPrice)} KM",
+                                style: const TextStyle(
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
-                                  decoration: hasDiscount
-                                      ? TextDecoration.lineThrough
-                                      : null,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              "${formatNumber(originalPrice)} KM",
+                              style: TextStyle(
+                                color:
+                                    hasDiscount ? Colors.white70 : Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                decoration: hasDiscount
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  if ((context.read<UserProvider>().role == "Admin" ||
+                          (context.read<UserProvider>().role ==
+                                  "Firma autodijelova" &&
+                              context.read<UserProvider>().userId ==
+                                  e.firmaAutodijelovaID)) &&
+                      e.vidljivo == true)
+                    Column(
+                      children: [
+                        if (e.stateMachine == "draft")
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                try {
+                                  await _productProvider
+                                      .activateProduct(e.proizvodId!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            "Proizvod uspješno prikazan na profilu")),
+                                  );
+                                  await _loadData();
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            "Greška prilikom aktivacije: $e")),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                              child: const Text(
+                                "Prikazi",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        if (e.stateMachine == "active")
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                try {
+                                  await _productProvider
+                                      .hideProduct(e.proizvodId!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Proizvod sakriven")),
+                                  );
+                                  await _loadData();
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Greška: $e")),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                              child: const Text(
+                                "Sakrij",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                  ],
-                ),
+                ],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 }

@@ -161,6 +161,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<CchV2AliContext>();
+
+    dbContext.Database.Migrate();
+}
+
 app.UseCors("AllowAll");
 
 app.MapControllers();
@@ -281,8 +288,7 @@ static async Task SeedbpAsync(IBPAutodijeloviAutoservisService BPService)
     await BPService.AddBPAutodijeloviAutoservisAsync();
 }
 
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -308,4 +314,4 @@ if (app.Environment.IsDevelopment())
         }
     }
     app.Run();
-}
+

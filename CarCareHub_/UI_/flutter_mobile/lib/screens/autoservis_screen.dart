@@ -184,53 +184,58 @@ class _AutoservisScreenState extends State<AutoservisScreen> {
                 ),
                 const SizedBox(height: 5),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (context.read<UserProvider>().role == "Admin")
-                      ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AutoservisDetailsScreen(autoservis: null),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AutoservisDetailsScreen(autoservis: null),
+                              ),
+                            );
+                            await _fetchInitialData();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
-                          );
-                          await _fetchInitialData();
-                        },
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add, color: Colors.white),
+                              SizedBox(width: 8.0),
+                              Text('Dodaj',
+                                  style: TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (context.read<UserProvider>().role == "Admin")
+                      const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _onSearchPressed,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add, color: Colors.white),
+                            Icon(Icons.search, color: Colors.white),
                             SizedBox(width: 8.0),
-                            Text('Dodaj',
+                            Text('Pretraga',
                                 style: TextStyle(color: Colors.white)),
                           ],
                         ),
-                      ),
-                    ElevatedButton(
-                      onPressed: _onSearchPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.search, color: Colors.white),
-                          SizedBox(width: 8.0),
-                          Text('Pretraga',
-                              style: TextStyle(color: Colors.white)),
-                        ],
                       ),
                     ),
                   ],

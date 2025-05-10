@@ -55,24 +55,27 @@ class _NarudzbaScreenState extends State<NarudzbaScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      title: "Narudžbe",
-      child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204),
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildMobileListView(),
-                  ],
-                ),
+@override
+Widget build(BuildContext context) {
+  return MasterScreenWidget(
+    title: "Narudžbe",
+    child: Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height,
+      color: const Color.fromARGB(255, 204, 204, 204),
+      child: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildMobileListView(),
+                ],
               ),
-      ),
-    );
-  }
+            ),
+    ),
+  );
+}
+
 
   Widget _buildMobileListView() {
     final userRole = context.read<UserProvider>().role;

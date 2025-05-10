@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile/models/bp_autodijelovi_autoservis.dart';
 import 'package:flutter_mobile/provider/bpautodijelovi_autoservis_provider.dart';
 import 'package:flutter_mobile/provider/user_provider.dart';
 import 'package:flutter_mobile/provider/autoservis_provider.dart';
