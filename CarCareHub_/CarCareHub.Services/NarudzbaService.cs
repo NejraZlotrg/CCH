@@ -33,7 +33,9 @@ namespace CarCareHub.Services
                             (!insert.AutoservisId.HasValue || x.AutoservisId == insert.AutoservisId) &&
                             (!insert.ZaposlenikId.HasValue || x.ZaposlenikId == insert.ZaposlenikId))
                 .ToListAsync();
+
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+
             var narudzba = new CarCareHub.Services.Database.Narudzba
             {
                 DatumNarudzbe = DateTime.Now,
@@ -42,28 +44,44 @@ namespace CarCareHub.Services
                 Adresa = insert.Adresa,
                 UkupnaCijenaNarudzbe = 0
             };
+
+            string email = "";
+            string imePrezime = "";
+
             if (insert.KlijentId.HasValue && userRole == "Klijent")
             {
                 var k = await _dbContext.Klijents.FirstOrDefaultAsync(x => x.KlijentId == insert.KlijentId);
                 narudzba.KlijentId = insert.KlijentId.Value;
                 narudzba.Adresa = k?.Adresa ?? insert.Adresa;
+
+                email = k?.Email ?? "";
+                imePrezime = $"{k?.Ime} {k?.Prezime}";
             }
             else if (insert.ZaposlenikId.HasValue && userRole == "Zaposlenik")
             {
                 var z = await _dbContext.Zaposleniks.FirstOrDefaultAsync(x => x.ZaposlenikId == insert.ZaposlenikId);
                 narudzba.ZaposlenikId = insert.ZaposlenikId.Value;
                 narudzba.Adresa = z?.Adresa ?? insert.Adresa;
+
+                email = z?.Email ?? "";
+                imePrezime = $"{z?.Ime} {z?.Prezime}";
             }
             else if (insert.AutoservisId.HasValue && userRole == "Autoservis")
             {
                 var a = await _dbContext.Autoservis.FirstOrDefaultAsync(x => x.AutoservisId == insert.AutoservisId);
                 narudzba.AutoservisId = insert.AutoservisId.Value;
                 narudzba.Adresa = a?.Adresa ?? insert.Adresa;
+
+                email = a?.Email ?? "";
+                imePrezime = $"{a?.Naziv}";
             }
+
             await _dbContext.AddAsync(narudzba);
             await _dbContext.SaveChangesAsync();
+
             decimal ukupnaCijena = 0;
             List<int> firmaAutodijelovaIds = null;
+
             if (userRole == "Autoservis" && insert.AutoservisId.HasValue)
             {
                 firmaAutodijelovaIds = await _dbContext.FirmaAutodijelovas
@@ -71,14 +89,18 @@ namespace CarCareHub.Services
                     .Select(f => f.FirmaAutodijelovaID)
                     .ToListAsync();
             }
+
             foreach (var item in korpe)
             {
                 var proizvod = await _dbContext.Proizvods
                     .Include(p => p.FirmaAutodijelova)
                     .FirstOrDefaultAsync(p => p.ProizvodId == item.ProizvodId);
+
                 if (proizvod == null) continue;
+
                 decimal cijenaProizvoda;
                 int kolicina = item.Kolicina ?? 1;
+
                 switch (userRole)
                 {
                     case "Autoservis":
@@ -100,8 +122,10 @@ namespace CarCareHub.Services
                         cijenaProizvoda = proizvod.Cijena ?? 0;
                         break;
                 }
+
                 decimal ukupnaStavka = cijenaProizvoda * kolicina;
                 ukupnaCijena += ukupnaStavka;
+
                 var stavkaNarudzbe = new CarCareHub.Services.Database.NarudzbaStavka
                 {
                     ProizvodId = item.ProizvodId,
@@ -109,14 +133,29 @@ namespace CarCareHub.Services
                     Kolicina = kolicina,
                     Vidljivo = true
                 };
+
                 narudzba.NarudzbaStavkas.Add(stavkaNarudzbe);
             }
+
             narudzba.UkupnaCijenaNarudzbe = ukupnaCijena;
             narudzba.DatumNarudzbe = DateTime.UtcNow;
             narudzba.DatumIsporuke = DateTime.Now.AddDays(7);
+
             await _dbContext.SaveChangesAsync();
+
+            // ✅ Slanje email poruke putem RabbitMQ
+            var messageProducer = new MessageProducer();
+            messageProducer.SendMessage(new NarudzbaMessage
+            {
+                Email = email,
+                ImePrezime = imePrezime,
+                BrojNarudzbe = narudzba.NarudzbaId.ToString(), // koristi ID ako nemaš BrojNarudzbe
+                DatumNarudzbe = narudzba.DatumNarudzbe ?? DateTime.Now
+            });
+
             return _mapper.Map<Model.Narudzba>(narudzba);
         }
+
         public override async Task<Model.Narudzba> Update(int id, Model.NarudzbaUpdate update)
         {
             return await base.Update(id, update);
