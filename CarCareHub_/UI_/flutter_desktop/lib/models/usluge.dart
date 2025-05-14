@@ -3,18 +3,16 @@ part 'usluge.g.dart';
 
 @JsonSerializable()
 class Usluge {
-   final int uslugeId;
-   String? nazivUsluge;
-   String? opis;
-   double? cijena;
-bool? vidljivo;
+  final int uslugeId;
+  String? nazivUsluge;
+  String? opis;
+  double? cijena;
+  bool? vidljivo;
 
+  Usluge(
+      this.uslugeId, this.vidljivo, this.nazivUsluge, this.opis, this.cijena);
 
-  Usluge(this.uslugeId, this.vidljivo, this.nazivUsluge, this.opis,this.cijena);
+  factory Usluge.fromJson(Map<String, dynamic> json) => _$UslugeFromJson(json);
 
-  
-  factory Usluge.fromJson(Map<String,dynamic> json) => _$UslugeFromJson(json);
-
-
-  Map<String,dynamic> toJson() => _$UslugeToJson(this);
+  Map<String, dynamic> toJson() => _$UslugeToJson(this);
 }

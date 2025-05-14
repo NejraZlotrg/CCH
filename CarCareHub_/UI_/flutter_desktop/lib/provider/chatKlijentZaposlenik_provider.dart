@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print, file_names
-
 import 'dart:convert';
 import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:http/http.dart' as http;
@@ -7,24 +5,24 @@ import 'package:flutter_mobile/provider/base_provider.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 
-class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> {
+class ChatKlijentZaposlenikProvider
+    extends BaseProvider<chatKlijentZaposlenik> {
   ChatKlijentZaposlenikProvider() : super("api/chatKlijentZaposlenik");
 
   @override
   chatKlijentZaposlenik fromJson(data) {
     return chatKlijentZaposlenik.fromJson(data);
   }
-  
+
   late HubConnection connection;
   late bool isConnected = false;
 
   Future<void> runSignalR(Function onMessageReceived) async {
     connection = HubConnectionBuilder()
-        .withUrl('http://localhost:7209/chatKlijentZaposlenik')
+        .withUrl(buildUrl('chatKlijentZaposlenik'))
         .build();
 
     connection.onclose(({Exception? error}) {
-      print('Connection closed: $error');
       isConnected = false;
     });
 
@@ -35,9 +33,8 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
             var chatMessage = chatKlijentZaposlenik
                 .fromJson(arguments[0] as Map<String, dynamic>);
             onMessageReceived(chatMessage);
-          } catch (e) {
-            print("Error parsing message from SignalR: $e");
-          }
+            // ignore: empty_catches
+          } catch (e) {}
         }
       }
     });
@@ -45,16 +42,13 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
     try {
       await connection.start();
       isConnected = true;
-      print("SignalR connection established.");
     } catch (e) {
       isConnected = false;
-      print('Error starting SignalR connection: $e');
     }
   }
 
-
-
-  Future<List<chatKlijentZaposlenik>> getMessages(int klijentId, int zaposlenikId) async {
+  Future<List<chatKlijentZaposlenik>> getMessages(
+      int klijentId, int zaposlenikId) async {
     try {
       final url = Uri.parse(buildUrl("/$klijentId/$zaposlenikId"));
       final response = await http.get(url);
@@ -65,16 +59,15 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
             .map((msg) => chatKlijentZaposlenik.fromJson(msg))
             .toList();
       } else {
-        print('Error fetching messages: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to load messages');
       }
     } catch (e) {
-      print('Error fetching messages: $e');
       rethrow;
     }
   }
 
-  Future<void> sendMessage(int klijentId, int zaposlenikId, String message) async {
+  Future<void> sendMessage(
+      int klijentId, int zaposlenikId, String message) async {
     try {
       final url = Uri.parse(buildUrl("/posalji"));
       final response = await http.post(
@@ -88,25 +81,21 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
       );
 
       if (response.statusCode == 200) {
-        print('Message sent successfully');
       } else {
-        print('Error sending message: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Failed to send message');
       }
     } catch (e) {
-      print('Error sending message: $e');
       rethrow;
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<List<chatKlijentZaposlenik>> getById__(int userId) async {
     final url = Uri.parse(buildUrl("/byLoggedUser?klijent_id=$userId"));
     final headers = createHeaders();
 
     try {
       final response = await http.get(url, headers: headers);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
@@ -115,7 +104,6 @@ class ChatKlijentZaposlenikProvider extends BaseProvider<chatKlijentZaposlenik> 
         throw Exception('Failed to load chats: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching chats: $e');
       rethrow;
     }
   }

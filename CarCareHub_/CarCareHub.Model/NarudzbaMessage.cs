@@ -13,4 +13,5 @@ namespace CarCareHub.Model
         public string BrojNarudzbe { get; set; }
         public DateTime DatumNarudzbe { get; set; }
     }
+
 }

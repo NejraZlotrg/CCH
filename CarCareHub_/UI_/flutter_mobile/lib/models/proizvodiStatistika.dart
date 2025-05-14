@@ -11,7 +11,6 @@ class ProizvodStatistika {
     required this.ukupnaVrijednost,
   });
 
-  // Manual JSON serialization
   factory ProizvodStatistika.fromJson(Map<String, dynamic> json) {
     return ProizvodStatistika(
       proizvodId: json['proizvodId'] as int,
@@ -21,7 +20,6 @@ class ProizvodStatistika {
     );
   }
 
-  // Manual JSON deserialization
   Map<String, dynamic> toJson() {
     return {
       'proizvodId': proizvodId,
@@ -40,7 +38,6 @@ class ProizvodStatistika {
         'ukupnaVrijednost: $ukupnaVrijednost}';
   }
 
-  // Optional: Implement equality comparison
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

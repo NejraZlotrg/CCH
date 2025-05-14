@@ -19,6 +19,10 @@ class ChatAutoservisKlijentMessagesScreen extends StatefulWidget {
   _ChatMessagesScreenState createState() => _ChatMessagesScreenState();
 }
 
+
+const String apiHost = String.fromEnvironment('API_HOST', defaultValue: 'localhost');
+const String apiPort = String.fromEnvironment('API_PORT', defaultValue: '5269');
+
 class _ChatMessagesScreenState
     extends State<ChatAutoservisKlijentMessagesScreen> {
   late HubConnection connection;
@@ -35,9 +39,10 @@ class _ChatMessagesScreenState
   }
 
   Future<void> runSignalR() async {
-    connection = HubConnectionBuilder()
-        .withUrl('http://192.168.0.131:7209/chat-hub')
-        .build();
+ const signalRUrl = 'http://$apiHost:$apiPort/chat-hub';
+connection = HubConnectionBuilder()
+    .withUrl(signalRUrl)
+    .build();
 
     connection.onclose(({Exception? error}) {
       isConnected = false;

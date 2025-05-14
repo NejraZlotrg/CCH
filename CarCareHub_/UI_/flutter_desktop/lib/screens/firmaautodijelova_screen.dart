@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/firmaautodijelova.dart';
@@ -14,7 +16,8 @@ class FirmaAutodijelovaScreen extends StatefulWidget {
   const FirmaAutodijelovaScreen({super.key});
 
   @override
-  State<FirmaAutodijelovaScreen> createState() => _FirmaAutodijelovaScreenState();
+  State<FirmaAutodijelovaScreen> createState() =>
+      _FirmaAutodijelovaScreenState();
 }
 
 class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
@@ -32,9 +35,11 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
   Future<void> _loadData() async {
     SearchResult<FirmaAutodijelova> data;
     if (context.read<UserProvider>().role == "Admin") {
-      data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+      data = await _firmaAutodijelovaProvider
+          .getAdmin(filter: {'IsAllncluded': 'true'});
     } else {
-      data = await _firmaAutodijelovaProvider.get(filter: {'IsAllncluded': 'true'});
+      data = await _firmaAutodijelovaProvider
+          .get(filter: {'IsAllncluded': 'true'});
     }
     if (mounted) {
       setState(() {
@@ -136,7 +141,8 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            const FirmaAutodijelovaDetailScreen(firmaAutodijelova: null),
+                            const FirmaAutodijelovaDetailScreen(
+                                firmaAutodijelova: null),
                       ),
                     );
                     await _loadData();
@@ -165,7 +171,7 @@ class _FirmaAutodijelovaScreenState extends State<FirmaAutodijelovaScreen> {
     );
   }
 
-Widget _buildCompanyCards() {
+  Widget _buildCompanyCards() {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(10.0),
@@ -181,7 +187,9 @@ Widget _buildCompanyCards() {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       side: BorderSide(
-                        color: company.vidljivo == false ? Colors.red : Colors.grey,
+                        color: company.vidljivo == false
+                            ? Colors.red
+                            : Colors.grey,
                         width: 1.0,
                       ),
                     ),
@@ -199,11 +207,10 @@ Widget _buildCompanyCards() {
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: SizedBox(
-                          height: 90, // Shorter card height
+                          height: 90,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Profile picture
                               Container(
                                 width: 70,
                                 height: 70,
@@ -213,15 +220,17 @@ Widget _buildCompanyCards() {
                                 ),
                                 child: company.slikaProfila != null
                                     ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        child: imageFromBase64String(company.slikaProfila!),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: imageFromBase64String(
+                                            company.slikaProfila!),
                                       )
-                                    : const Icon(Icons.business, size: 30, color: Colors.grey),
+                                    : const Icon(Icons.business,
+                                        size: 30, color: Colors.grey),
                               ),
                               const SizedBox(width: 50),
-                              // Company name and phone
                               Expanded(
-                                flex: 3, // Wider column
+                                flex: 3,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,18 +240,24 @@ Widget _buildCompanyCards() {
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: company.vidljivo == false ? Colors.red : Colors.black,
+                                        color: company.vidljivo == false
+                                            ? Colors.red
+                                            : Colors.black,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    if (company.telefon != null && company.telefon!.isNotEmpty)
+                                    if (company.telefon != null &&
+                                        company.telefon!.isNotEmpty)
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 4.0),
+                                        padding:
+                                            const EdgeInsets.only(top: 4.0),
                                         child: Text(
                                           "Tel: ${company.telefon}",
                                           style: TextStyle(
-                                            color: company.vidljivo == false ? Colors.red : Colors.grey[700],
+                                            color: company.vidljivo == false
+                                                ? Colors.red
+                                                : Colors.grey[700],
                                             fontSize: 14,
                                           ),
                                         ),
@@ -250,9 +265,8 @@ Widget _buildCompanyCards() {
                                   ],
                                 ),
                               ),
-                              // City and address combined
                               Expanded(
-                                flex: 3, // Wider column
+                                flex: 3,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +274,9 @@ Widget _buildCompanyCards() {
                                     Text(
                                       '${company.grad?.nazivGrada ?? "Nepoznat grad"}${company.adresa != null && company.adresa!.isNotEmpty ? ", ${company.adresa!}" : ""}',
                                       style: TextStyle(
-                                        color: company.vidljivo == false ? Colors.red : Colors.grey[700],
+                                        color: company.vidljivo == false
+                                            ? Colors.red
+                                            : Colors.grey[700],
                                         fontSize: 14,
                                       ),
                                       maxLines: 2,
@@ -269,9 +285,10 @@ Widget _buildCompanyCards() {
                                   ],
                                 ),
                               ),
-                              // Hidden indicator for admin
-                              if (company.vidljivo == false && context.read<UserProvider>().role == "Admin")
-                                const Icon(Icons.visibility_off, size: 20, color: Colors.red),
+                              if (company.vidljivo == false &&
+                                  context.read<UserProvider>().role == "Admin")
+                                const Icon(Icons.visibility_off,
+                                    size: 20, color: Colors.red),
                             ],
                           ),
                         ),

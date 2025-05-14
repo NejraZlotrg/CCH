@@ -11,7 +11,6 @@ part 'zaposlenik.g.dart';
 
 @JsonSerializable()
 class Zaposlenik {
-
   int? zaposlenikId;
   String? ime;
   String? prezime;
@@ -24,7 +23,7 @@ class Zaposlenik {
   String? username;
   String? password;
   String? PasswordAgain;
-bool? vidljivo;
+  bool? vidljivo;
   String? lozinkaSalt;
   String? lozinkaHash;
   int? autoservisId;
@@ -37,32 +36,29 @@ bool? vidljivo;
 
   String? adresa;
 
- 
-  Zaposlenik({
-    this.zaposlenikId,
-    this.vidljivo,
-    this.ime,
-    this.prezime,
-   this.mb, 
-    this.brojTelefona,
-    this.gradId,
-    this.datumRodjenja,
-    this.email,
-    this.username,
-    this.lozinkaSalt,
-    this.lozinkaHash,
-    this.password,
-    this.ulogaId,
-    this.autoservisId,
-    this.firmaAutodijelovaId,
-    this.grad,
-    this.autoservis,
-    this.firmaAutodijelova,
-    this.uloga,
-    this.passwordAgain,
-    this.adresa
-    
-  });
+  Zaposlenik(
+      {this.zaposlenikId,
+      this.vidljivo,
+      this.ime,
+      this.prezime,
+      this.mb,
+      this.brojTelefona,
+      this.gradId,
+      this.datumRodjenja,
+      this.email,
+      this.username,
+      this.lozinkaSalt,
+      this.lozinkaHash,
+      this.password,
+      this.ulogaId,
+      this.autoservisId,
+      this.firmaAutodijelovaId,
+      this.grad,
+      this.autoservis,
+      this.firmaAutodijelova,
+      this.uloga,
+      this.passwordAgain,
+      this.adresa});
 
   factory Zaposlenik.fromJson(Map<String, dynamic> json) =>
       _$ZaposlenikFromJson(json);

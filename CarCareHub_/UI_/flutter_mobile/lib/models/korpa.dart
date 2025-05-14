@@ -21,7 +21,6 @@ class Korpa {
   double? ukupnaCijenaProizvoda;
   bool? vidljivo;
 
-  // Konstruktor
   Korpa(
       {this.korpaId,
       this.proizvodId,

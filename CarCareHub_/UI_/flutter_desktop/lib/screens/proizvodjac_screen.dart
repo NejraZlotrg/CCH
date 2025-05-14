@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/proizvodjac.dart';
@@ -9,33 +11,39 @@ import 'package:flutter_mobile/screens/drzave_details_screen.dart';
 import 'package:flutter_mobile/screens/proizvodjac_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
- 
+
 class ProizvodjacScreen extends StatefulWidget {
   const ProizvodjacScreen({super.key});
- 
+
   @override
   State<ProizvodjacScreen> createState() => _ProizvodjacScreenState();
 }
- 
+
 class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
   late ProizvodjacProvider _proizvodjacProvider;
   SearchResult<Proizvodjac>? result;
-  final TextEditingController _nazivProizvodjacaController = TextEditingController();
- 
+  final TextEditingController _nazivProizvodjacaController =
+      TextEditingController();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
-   _fetchInitialData();
+    _fetchInitialData();
   }
+
   Future<void> _fetchInitialData() async {
     try {
       SearchResult<Proizvodjac> data;
-       if (context.read<UserProvider>().role == "Admin") {
-         data = await _proizvodjacProvider.getAdmin(filter: {'IsAllncluded': 'true',});
-       } else {
-         data = await _proizvodjacProvider.get(filter: {'IsAllncluded': 'true',});
-       }
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _proizvodjacProvider.getAdmin(filter: {
+          'IsAllncluded': 'true',
+        });
+      } else {
+        data = await _proizvodjacProvider.get(filter: {
+          'IsAllncluded': 'true',
+        });
+      }
 
       if (mounted) {
         setState(() {
@@ -52,7 +60,7 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
     return MasterScreenWidget(
       title: "Proizvodjac",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -63,165 +71,167 @@ class _ProizvodjacScreenState extends State<ProizvodjacScreen> {
     );
   }
 
- 
   Widget _buildSearch() {
-  return Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(
-      top: 20.0, // Razmak od vrha
-    ),
-    child: Card(
-      elevation: 4.0, // Dodaje malo sjene za karticu
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
-        side: const BorderSide(
-          color: Colors.black, // Crni okvir
-          width: 1.0, // Debljina okvira (1px)
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        margin: const EdgeInsets.only(
+          top: 20.0,
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Naziv proizvodjaca',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _nazivProizvodjacaController,
+        child: Card(
+          elevation: 4.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1.0),
+            side: const BorderSide(
+              color: Colors.black,
+              width: 1.0,
             ),
           ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () async {
-              print("podaci proceed");
-              SearchResult<Proizvodjac> data;
-              if (context.read<UserProvider>().role == "Admin") {
-                data = await _proizvodjacProvider.getAdmin(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
-              } else {
-                data = await _proizvodjacProvider.get(filter: {'nazivProizvodjaca': _nazivProizvodjacaController.text,});
-              }
-
- 
-              setState(() {
-                result = data;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
-                ),
-              ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
               children: [
-                Icon(Icons.search),
-                SizedBox(width: 8.0),
-                Text('Pretraga'),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-         ElevatedButton(
+                Expanded(
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Naziv proizvodjaca',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    controller: _nazivProizvodjacaController,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProizvodjacDetailsScreen(proizvodjac: null),
-                              ),
-                            );
-                    await _fetchInitialData();
-            },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Crvena boja dugmeta
-                foregroundColor: Colors.white, // Bijela boja teksta
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                    print("podaci proceed");
+                    SearchResult<Proizvodjac> data;
+                    if (context.read<UserProvider>().role == "Admin") {
+                      data = await _proizvodjacProvider.getAdmin(filter: {
+                        'nazivProizvodjaca': _nazivProizvodjacaController.text,
+                      });
+                    } else {
+                      data = await _proizvodjacProvider.get(filter: {
+                        'nazivProizvodjaca': _nazivProizvodjacaController.text,
+                      });
+                    }
+
+                    setState(() {
+                      result = data;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.search),
+                      SizedBox(width: 8.0),
+                      Text('Pretraga'),
+                    ],
+                  ),
                 ),
-              ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add),
-                SizedBox(width: 8.0),
-                Text('Dodaj'),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProizvodjacDetailsScreen(proizvodjac: null),
+                      ),
+                    );
+                    await _fetchInitialData();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 8.0),
+                      Text('Dodaj'),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
-      ),)
-    );
+        ));
   }
 
- Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(color: Colors.black, width: 1.0),
-      ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv proizvođača',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontSize: 16, // Veći font za naslov kolone
+  Widget _buildDataListView() {
+    return Expanded(
+        child: SingleChildScrollView(
+            child: Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
+        ),
+        child: SingleChildScrollView(
+          child: DataTable(
+            showCheckboxColumn: false,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Naziv proizvođača',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-            ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Proizvodjac e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProizvodjacDetailsScreen(proizvodjac: e),
-                            ),
-                          );
-                          await _fetchInitialData();
-                        }
-                      },
-                      cells: [
-                        DataCell(
-                          Text(
-                            e.nazivProizvodjaca.toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
-                              fontWeight:
-                                  e.vidljivo == false ? FontWeight.bold : FontWeight.normal,
+            ],
+            rows: result?.result
+                    .map(
+                      (Proizvodjac e) => DataRow(
+                        onSelectChanged: (selected) async {
+                          if (selected == true) {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProizvodjacDetailsScreen(proizvodjac: e),
+                              ),
+                            );
+                            await _fetchInitialData();
+                          }
+                        },
+                        cells: [
+                          DataCell(
+                            Text(
+                              e.nazivProizvodjaca.toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                                fontWeight: e.vidljivo == false
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
+                        ],
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-    ),))
-  );
+    )));
+  }
 }
-
-}
-
- 

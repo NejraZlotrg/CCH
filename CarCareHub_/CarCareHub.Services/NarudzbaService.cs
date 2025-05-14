@@ -20,11 +20,14 @@ namespace CarCareHub.Services
         CarCareHub.Services.Database.CchV2AliContext _dbContext;
         IMapper _mapper { get; set; }
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public NarudzbaService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(dbContext, mapper, httpContextAccessor)
+        private readonly IRabbitMQProducer _rabbitMQProducer;
+
+        public NarudzbaService(CchV2AliContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor, IRabbitMQProducer rabbitMQProducer) : base(dbContext, mapper, httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _rabbitMQProducer = rabbitMQProducer;
         }
         public override async Task<Model.Narudzba> Insert(Model.NarudzbaInsert insert)
         {
@@ -143,15 +146,14 @@ namespace CarCareHub.Services
 
             await _dbContext.SaveChangesAsync();
 
-            // ✅ Slanje email poruke putem RabbitMQ
-            var messageProducer = new MessageProducer();
-            messageProducer.SendMessage(new NarudzbaMessage
+            _rabbitMQProducer.SendMessage(new NarudzbaMessage
             {
                 Email = email,
                 ImePrezime = imePrezime,
-                BrojNarudzbe = narudzba.NarudzbaId.ToString(), // koristi ID ako nemaš BrojNarudzbe
+                BrojNarudzbe = narudzba.NarudzbaId.ToString(),
                 DatumNarudzbe = narudzba.DatumNarudzbe ?? DateTime.Now
             });
+
 
             return _mapper.Map<Model.Narudzba>(narudzba);
         }
@@ -185,7 +187,7 @@ namespace CarCareHub.Services
             var query = _dbContext.Narudzbas.AsQueryable();
             var userRole = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
             query = query.Include(x => x.Klijent)
-                         .Include(x => x.Zaposlenik) 
+                         .Include(x => x.Zaposlenik)
                          .Include(x => x.Autoservis);
             if (userRole != null)
             {
@@ -219,8 +221,8 @@ namespace CarCareHub.Services
         public async Task<List<IzvjestajNarudzbi>> GetIzvjestajNarudzbi(DateTime? odDatuma, DateTime? doDatuma, int? kupacId, int? zaposlenikId, int? autoservisId)
         {
             var query = _dbContext.Narudzbas
-                .Include(n => n.Klijent) 
-                .Include(n => n.Zaposlenik) 
+                .Include(n => n.Klijent)
+                .Include(n => n.Zaposlenik)
                 .Include(n => n.Autoservis)
                 .Where(x => x.ZavrsenaNarudzba == true)
                 .AsQueryable();
@@ -239,18 +241,18 @@ namespace CarCareHub.Services
             {
                 NarudzbaId = n.NarudzbaId,
                 DatumNarudzbe = n.DatumNarudzbe,
-                Klijent = n.Klijent != null ? new Model.Klijent 
+                Klijent = n.Klijent != null ? new Model.Klijent
                 {
                     KlijentId = n.Klijent.KlijentId,
                     Ime = n.Klijent.Ime,
                     Prezime = n.Klijent.Prezime
                 } : null,
-                Autoservis = n.Autoservis != null ? new Model.Autoservis 
+                Autoservis = n.Autoservis != null ? new Model.Autoservis
                 {
                     AutoservisId = n.Autoservis.AutoservisId,
                     Naziv = n.Autoservis.Naziv
                 } : null,
-                Zaposlenik = n.Zaposlenik != null ? new Model.Zaposlenik 
+                Zaposlenik = n.Zaposlenik != null ? new Model.Zaposlenik
                 {
                     ZaposlenikId = n.Zaposlenik.ZaposlenikId,
                     Ime = n.Zaposlenik.Ime,
@@ -279,7 +281,8 @@ namespace CarCareHub.Services
                     .ToListAsync();
                 var report = orders
                     .GroupBy(n => n.AutoservisId)
-                    .Select(g => {
+                    .Select(g =>
+                    {
                         var firstOrder = g.First();
                         return new AutoservisIzvjestaj
                         {
@@ -353,8 +356,9 @@ namespace CarCareHub.Services
                 }
                 var report = orders
                     .GroupBy(n => n.KlijentId)
-                    .Where(g => g.Key.HasValue) 
-                    .Select(g => {
+                    .Where(g => g.Key.HasValue)
+                    .Select(g =>
+                    {
                         var firstOrder = g.FirstOrDefault();
                         if (firstOrder == null || firstOrder.Klijent == null)
                         {
@@ -396,7 +400,7 @@ namespace CarCareHub.Services
                 throw;
             }
         }
-    public async Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike()
+        public async Task<List<ZaposlenikIzvjestaj>> GetNarudzbeZaSveZaposlenike()
         {
             try
             {
@@ -419,7 +423,8 @@ namespace CarCareHub.Services
                 var report = orders
                     .GroupBy(n => n.ZaposlenikId)
                     .Where(g => g.Key.HasValue)
-                    .Select(g => {
+                    .Select(g =>
+                    {
                         var firstOrder = g.FirstOrDefault();
                         if (firstOrder == null || firstOrder.Zaposlenik == null)
                         {
@@ -469,13 +474,11 @@ namespace CarCareHub.Services
         {
             if (!_dbContext.Narudzbas.Any())
             {
-                // Koristimo samo 5 artikala (ID 1-5)
                 var klijentId = 1;
                 var zaposlenikId = 1;
                 var autoservisId = 1;
-                var proizvodIds = Enumerable.Range(1, 5).ToList(); // Samo ID 1-5
+                var proizvodIds = Enumerable.Range(1, 5).ToList();
 
-                // Provjera postojanja podataka
                 var klijentExists = await _dbContext.Klijents.AnyAsync(k => k.KlijentId == klijentId);
                 var zaposlenikExists = await _dbContext.Zaposleniks.AnyAsync(z => z.ZaposlenikId == zaposlenikId);
                 var autoservisExists = await _dbContext.Autoservis.AnyAsync(a => a.AutoservisId == autoservisId);
@@ -488,7 +491,6 @@ namespace CarCareHub.Services
                     throw new Exception("Nedostaju potrebni podaci u bazi (klijent, zaposlenik, autoservis ili proizvodi sa ID 1-5)");
                 }
 
-                // Dohvat adresa
                 var klijentAdresa = await _dbContext.Klijents
                     .Where(k => k.KlijentId == klijentId)
                     .Select(k => k.Adresa)
@@ -506,7 +508,6 @@ namespace CarCareHub.Services
 
                 var narudzbe = new List<Database.Narudzba>
         {
-            // Narudžba 1 - Klijent (3 artikla)
             new Database.Narudzba
             {
                 KlijentId = klijentId,
@@ -523,7 +524,6 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 3, Vidljivo = true }
                 }
             },
-            // Narudžba 2 - Klijent (2 artikla)
             new Database.Narudzba
             {
                 KlijentId = klijentId,
@@ -539,7 +539,6 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 4, Kolicina = 1, Vidljivo = true }
                 }
             },
-            // Narudžba 3 - Zaposlenik (4 artikla)
             new Database.Narudzba
             {
                 ZaposlenikId = zaposlenikId,
@@ -557,7 +556,6 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
                 }
             },
-            // Narudžba 4 - Zaposlenik (1 artikal)
             new Database.Narudzba
             {
                 ZaposlenikId = zaposlenikId,
@@ -572,7 +570,6 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 3, Kolicina = 4, Vidljivo = true }
                 }
             },
-            // Narudžba 5 - Autoservis (3 artikla)
             new Database.Narudzba
             {
                 AutoservisId = autoservisId,
@@ -589,7 +586,6 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
                 }
             },
-            // Narudžba 6 - Autoservis (2 artikla)
             new Database.Narudzba
             {
                 AutoservisId = autoservisId,
@@ -605,7 +601,6 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 4, Kolicina = 2, Vidljivo = true }
                 }
             },
-            // Narudžba 7 - Klijent (5 artikala - svi dostupni proizvodi)
             new Database.Narudzba
             {
                 KlijentId = klijentId,
@@ -624,10 +619,9 @@ namespace CarCareHub.Services
                     new Database.NarudzbaStavka { ProizvodId = 5, Kolicina = 1, Vidljivo = true }
                 }
             },
-            // Narudžba 8 - Autoservis ID 2 (4 artikla)
 new Database.Narudzba
 {
-    AutoservisId = 2,  // Novi autoservis
+    AutoservisId = 2,
     DatumNarudzbe = DateTime.Now.AddDays(-3),
     DatumIsporuke = DateTime.Now.AddDays(2),
     Adresa = await _dbContext.Autoservis

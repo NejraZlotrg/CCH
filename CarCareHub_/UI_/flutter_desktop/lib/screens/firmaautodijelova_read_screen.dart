@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -23,8 +25,8 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class FirmaAutodijelovaReadScreen extends StatefulWidget {
-   FirmaAutodijelova? firmaAutodijelova;
-   FirmaAutodijelovaReadScreen({super.key, this.firmaAutodijelova});
+  FirmaAutodijelova? firmaAutodijelova;
+  FirmaAutodijelovaReadScreen({super.key, this.firmaAutodijelova});
 
   @override
   State<FirmaAutodijelovaReadScreen> createState() =>
@@ -41,15 +43,14 @@ class _FirmaAutodijelovaDetailScreenState
 
   SearchResult<Grad>? gradResult;
   SearchResult<Uloge>? ulogaResult;
-SearchResult<BPAutodijeloviAutoservis>? bpResult;
-List<BPAutodijeloviAutoservis>? temp;
+  SearchResult<BPAutodijeloviAutoservis>? bpResult;
+  List<BPAutodijeloviAutoservis>? temp;
   File? _imageFile;
 
   bool isLoading = true;
 
-    final validator = CreateValidator();
+  final validator = CreateValidator();
 
-  
   get firmaAutodijelova => null;
 
   @override
@@ -67,30 +68,25 @@ List<BPAutodijeloviAutoservis>? temp;
       'password': widget.firmaAutodijelova?.password ?? '',
       'passwordAgain': widget.firmaAutodijelova?.passwordAgain ?? '',
       'ulogaId': widget.firmaAutodijelova?.ulogaId ?? '',
-      
     };
 
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _gradProvider = context.read<GradProvider>();
 
-
     fetchGrad();
     initForm();
   }
 
-  
   Future<void> fetchGrad() async {
-   
-      grad = await _gradProvider.getById(widget.firmaAutodijelova?.gradId);
-      if (grad.isNotEmpty && grad.first.vidljivo == false) {
-      grad = []; // Postavi na praznu listu ako grad nije vidljiv
-      _initialValues['gradId']; // Resetuj vrednost za dropdown
-  
+    grad = await _gradProvider.getById(widget.firmaAutodijelova?.gradId);
+    if (grad.isNotEmpty && grad.first.vidljivo == false) {
+      grad = [];
+      _initialValues['gradId'];
+
       if (mounted) {
         setState(() {});
       }
     }
-   
   }
 
   Future<File> _getImageFileFromBase64(String base64String) async {
@@ -101,284 +97,279 @@ List<BPAutodijeloviAutoservis>? temp;
     return file;
   }
 
-
-
   Future initForm() async {
-     if (context.read<UserProvider>().role == "Admin" || (context.read<UserProvider>().role == "Firma autodijelova" && context.read<UserProvider>().userId==widget.firmaAutodijelova?.firmaAutodijelovaID)) {
-       gradResult = await _gradProvider.getAdmin();
-     } else {
-       gradResult = await _gradProvider.get();
-     }
-    if (widget.firmaAutodijelova != null && widget.firmaAutodijelova!.slikaProfila != null) {
-      _imageFile =
-          await _getImageFileFromBase64(widget.firmaAutodijelova!.slikaProfila!);
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-
-
-  
-  Future<void> _fetchInitialData() async {
-  setState(() {
-    isLoading = true;
-  });
-
-  try {
-    SearchResult<FirmaAutodijelova> data;
-    if (context.read<UserProvider>().role == "Admin") {
-      data = await _firmaAutodijelovaProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-       gradResult = await _gradProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-
+    if (context.read<UserProvider>().role == "Admin" ||
+        (context.read<UserProvider>().role == "Firma autodijelova" &&
+            context.read<UserProvider>().userId ==
+                widget.firmaAutodijelova?.firmaAutodijelovaID)) {
+      gradResult = await _gradProvider.getAdmin();
     } else {
-      data = await _firmaAutodijelovaProvider.get(filter: {'IsAllIncluded': 'true'});
-       gradResult = await _gradProvider.get(filter: {'IsAllIncluded': 'true'});
-
+      gradResult = await _gradProvider.get();
     }
-
-    setState(() {
-      result = data;
-      // Pronađi i ažuriraj trenutni autoservis
-      widget.firmaAutodijelova = data.result.firstWhere(
-        (a) => a.firmaAutodijelovaID == widget.firmaAutodijelova?.firmaAutodijelovaID,
-        orElse: () => widget.firmaAutodijelova!,
-      );
-    });
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Greška pri učitavanju podataka: $e')),
-    );
-  } finally {
+    if (widget.firmaAutodijelova != null &&
+        widget.firmaAutodijelova!.slikaProfila != null) {
+      _imageFile = await _getImageFileFromBase64(
+          widget.firmaAutodijelova!.slikaProfila!);
+    }
     setState(() {
       isLoading = false;
     });
   }
-}
 
+  Future<void> _fetchInitialData() async {
+    setState(() {
+      isLoading = true;
+    });
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+    try {
+      SearchResult<FirmaAutodijelova> data;
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _firmaAutodijelovaProvider
+            .getAdmin(filter: {'IsAllIncluded': 'true'});
+        gradResult =
+            await _gradProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+      } else {
+        data = await _firmaAutodijelovaProvider
+            .get(filter: {'IsAllIncluded': 'true'});
+        gradResult = await _gradProvider.get(filter: {'IsAllIncluded': 'true'});
+      }
 
-    appBar: AppBar(
-      title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme"),
-    ),
-    body: isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      _buildFirmaDetails(),
-                    ],
+      setState(() {
+        result = data;
+        widget.firmaAutodijelova = data.result.firstWhere(
+          (a) =>
+              a.firmaAutodijelovaID ==
+              widget.firmaAutodijelova?.firmaAutodijelovaID,
+          orElse: () => widget.firmaAutodijelova!,
+        );
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška pri učitavanju podataka: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 204, 204, 204),
+      appBar: AppBar(
+        title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Detalji firme"),
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        _buildFirmaDetails(),
+                      ],
+                    ),
                   ),
                 ),
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    if (userProvider.role == "Admin") {
+                      return Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FirmaAutodijelovaDetailScreen(
+                                        firmaAutodijelova:
+                                            widget.firmaAutodijelova!,
+                                      ),
+                                    ),
+                                  ).then((_) async {
+                                    await _fetchInitialData();
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 245, 19, 3),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                ),
+                                child: const Text(
+                                  "Uredi",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          BPAutodijeloviAutoservisScreen(
+                                        firmaAutodijelova:
+                                            widget.firmaAutodijelova,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 248, 26, 10),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.storage),
+                                    SizedBox(width: 8.0),
+                                    Text('Baza autoservisa'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildFirmaDetails() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Center(
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.grey[200],
+                border: Border.all(color: Colors.grey, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                  ),
+                ],
               ),
-              // Dugme "Uredi" na dnu, vidljivo samo adminima
-              Consumer<UserProvider>(
-                builder: (context, userProvider, child) {
-                  if (userProvider.role == "Admin") {
-                    return Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity, // Dugme preko cele širine
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Navigacija na ekran za uređivanje
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FirmaAutodijelovaDetailScreen(
-                                      firmaAutodijelova: widget.firmaAutodijelova!,
-                                    ),
-                                  ),
-                                ).then((_) async {
-                                  await _fetchInitialData();
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 245, 19, 3),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 15), // Veće dugme
-                              ),
-                              child: const Text(
-                                "Uredi",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Navigacija na BPAutodijeloviAutoservisScreen i prosleđivanje objekta
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BPAutodijeloviAutoservisScreen(
-                                      firmaAutodijelova: widget.firmaAutodijelova, // Prosleđivanje objekta
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 248, 26, 10), // Crvena boja dugmeta
-                                foregroundColor: Colors.white, // Bijela boja teksta
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                   padding: const EdgeInsets.symmetric(vertical: 15), // Veće dugme
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                
-                                children: [
-                                  Icon(Icons.storage),
-                                  SizedBox(width: 8.0),
-                                  Text('Baza autoservisa'),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+              child: _imageFile != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.file(
+                        _imageFile!,
+                        width: 300,
+                        height: 300,
+                        fit: BoxFit.cover,
                       ),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                },
+                    )
+                  : const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.camera_alt, size: 70, color: Colors.black),
+                        SizedBox(height: 15),
+                        Text('Nema slike',
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 18)),
+                      ],
+                    ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 40),
+        Expanded(
+          flex: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (widget.firmaAutodijelova?.nazivFirme != null)
+                Text(
+                  widget.firmaAutodijelova!.nazivFirme!,
+                  style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              const SizedBox(height: 25),
+              DataTable(
+                columnSpacing: 220,
+                horizontalMargin: 10,
+                headingRowHeight: 0,
+                dataRowHeight: 55,
+                columns: const [
+                  DataColumn(label: SizedBox()),
+                  DataColumn(label: SizedBox()),
+                ],
+                rows: [
+                  _buildDataRow(
+                      "Grad", widget.firmaAutodijelova?.grad?.nazivGrada),
+                  _buildDataRow("Adresa", widget.firmaAutodijelova?.adresa),
+                  _buildDataRow("Telefon", widget.firmaAutodijelova?.telefon),
+                  _buildDataRow("Email", widget.firmaAutodijelova?.email),
+                  _buildDataRow("JIB", widget.firmaAutodijelova?.jib),
+                  _buildDataRow("MBS", widget.firmaAutodijelova?.mbs),
+                ],
               ),
             ],
           ),
-  );
-}
+        ),
+      ],
+    );
+  }
 
-
-
-Widget _buildFirmaDetails() {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.center, // Centriranje slike i podataka
-    children: [
-      // Prva trećina - Povećana slika firme centrirana
-      Expanded(
-        flex: 1,
-        child: Center(
-          child: Container(
-            width: 300, // Povećana širina slike
-            height: 300, // Povećana visina slike
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.grey[200],
-              border: Border.all(color: Colors.grey, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: _imageFile != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.file(
-                      _imageFile!,
-                      width: 300,
-                      height: 300,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.camera_alt, size: 70, color: Colors.black), // Veća ikona
-                      SizedBox(height: 15),
-                      Text('Nema slike',
-                          style: TextStyle(color: Colors.black, fontSize: 18)), // Veći tekst
-                    ],
-                  ),
+  DataRow _buildDataRow(String label, String? value) {
+    return DataRow(
+      cells: [
+        DataCell(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(label,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           ),
         ),
-      ),
-
-      // Razmak između slike i podataka
-      const SizedBox(width: 40), // Malo veći razmak za bolji balans
-
-      // Druge dvije trećine - Podaci firme centrirani
-      Expanded(
-        flex: 2,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (widget.firmaAutodijelova?.nazivFirme != null)
-              Text(
-                widget.firmaAutodijelova!.nazivFirme!,
-                style: const TextStyle(
-                    fontSize: 28, // Malo veći naslov
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-
-            const SizedBox(height: 25), // Veći razmak ispod naslova
-
-            DataTable(
-              columnSpacing: 220, // Veći razmak između stupaca
-              horizontalMargin: 10, // Horizontalni margine
-              headingRowHeight: 0, // Sakrij zaglavlje
-              dataRowHeight: 55, // Veći razmak između redova
-              columns: const [
-                DataColumn(label: SizedBox()), // Prazan zaglavni red
-                DataColumn(label: SizedBox()),
-              ],
-              rows: [
-                _buildDataRow("Grad", widget.firmaAutodijelova?.grad?.nazivGrada),
-                _buildDataRow("Adresa", widget.firmaAutodijelova?.adresa),
-                _buildDataRow("Telefon", widget.firmaAutodijelova?.telefon),
-                _buildDataRow("Email", widget.firmaAutodijelova?.email),
-                _buildDataRow("JIB", widget.firmaAutodijelova?.jib),
-                _buildDataRow("MBS", widget.firmaAutodijelova?.mbs),
-              ],
-            ),
-          ],
+        DataCell(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(value ?? 'Nema podataka',
+                style: const TextStyle(fontSize: 16)),
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }
-
-// Funkcija za kreiranje jednog reda u tabeli s dodatnim razmakom
-DataRow _buildDataRow(String label, String? value) {
-  return DataRow(
-    cells: [
-      DataCell(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12), // Još veći razmak unutar ćelije
-          child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        ),
-      ),
-      DataCell(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12), // Još veći razmak unutar ćelije
-          child: Text(value ?? 'Nema podataka', style: const TextStyle(fontSize: 16)),
-        ),
-      ),
-    ],
-  );
-}
-
-
-}
-

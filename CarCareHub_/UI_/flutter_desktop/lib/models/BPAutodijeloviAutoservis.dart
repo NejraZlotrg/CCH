@@ -9,23 +9,24 @@ part 'BPAutodijeloviAutoservis.g.dart';
 
 @JsonSerializable()
 class BPAutodijeloviAutoservis {
-  int? bpAutodijeloviAutoservisId; // Glavni ID
-  FirmaAutodijelova? firmaAutodijelova; // Veza prema firmi autodijelova
-  Autoservis? autoservis; // Veza prema autoservisu
-  int? firmaAutodijelovaId; // ID firme autodijelova
+  int? bpAutodijeloviAutoservisId;
+  FirmaAutodijelova? firmaAutodijelova;
+  Autoservis? autoservis;
+  int? firmaAutodijelovaId;
   bool? vidljivo;
-  int? autoservisId; // ID autoservisa
+  int? autoservisId;
 
+  BPAutodijeloviAutoservis(
+    this.bpAutodijeloviAutoservisId,
+    this.vidljivo,
+    this.firmaAutodijelova,
+    this.firmaAutodijelovaId,
+    this.autoservis,
+    this.autoservisId,
+  );
 
-  BPAutodijeloviAutoservis(this.bpAutodijeloviAutoservisId, this.vidljivo, this.firmaAutodijelova,this.firmaAutodijelovaId,
-  this.autoservis, this.autoservisId,);
+  factory BPAutodijeloviAutoservis.fromJson(Map<String, dynamic> json) =>
+      _$BPAutodijeloviAutoservisFromJson(json);
 
-  
-  factory BPAutodijeloviAutoservis.fromJson(Map<String,dynamic> json) => _$BPAutodijeloviAutoservisFromJson(json);
-
-
-  Map<String,dynamic> toJson() => _$BPAutodijeloviAutoservisToJson(this);
+  Map<String, dynamic> toJson() => _$BPAutodijeloviAutoservisToJson(this);
 }
-
-
-

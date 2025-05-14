@@ -34,10 +34,10 @@ class ProizvodStatistika {
   @override
   String toString() {
     return 'ProizvodStatistika{'
-           'proizvodId: $proizvodId, '
-           'naziv: $naziv, '
-           'ukupnaKolicina: $ukupnaKolicina, '
-           'ukupnaVrijednost: $ukupnaVrijednost}';
+        'proizvodId: $proizvodId, '
+        'naziv: $naziv, '
+        'ukupnaKolicina: $ukupnaKolicina, '
+        'ukupnaVrijednost: $ukupnaVrijednost}';
   }
 
   @override

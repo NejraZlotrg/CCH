@@ -357,8 +357,9 @@ class _IzvjestajNarudzbiScreenState extends State<IzvjestajNarudzbiScreen> {
   Future<void> _savePdfLocally(pw.Document pdf, String fileName) async {
     try {
       final directory = await getDownloadsDirectory();
-      if (directory == null)
+      if (directory == null) {
         throw Exception("Couldn't access downloads directory");
+      }
 
       final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(await pdf.save());

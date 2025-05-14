@@ -1,4 +1,4 @@
-// ignore_for_file: sort_child_properties_last
+// ignore_for_file: sort_child_properties_last, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -46,8 +46,7 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor:
-            const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        backgroundColor: const Color.fromARGB(255, 204, 204, 204),
         appBar: AppBar(
           title: Text(widget.drzava?.nazivDrzave ?? "Detalji drzave"),
         ),
@@ -70,7 +69,6 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                                 padding: const EdgeInsets.only(right: 10),
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    // Potvrda brisanja
                                     bool confirmDelete = await showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
@@ -92,13 +90,11 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                                       ),
                                     );
 
-                                    // Ako korisnik potvrdi brisanje
                                     if (confirmDelete == true) {
                                       try {
                                         await _drzaveProvider
                                             .delete(widget.drzava!.drzavaId!);
-                                        Navigator.pop(
-                                            context); // Vrati se na prethodni ekran
+                                        Navigator.pop(context);
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
@@ -119,8 +115,7 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
-                                    backgroundColor: Colors
-                                        .red[700], // Crvena boja za brisanje
+                                    backgroundColor: Colors.red[700],
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10),
                                     textStyle: const TextStyle(fontSize: 16),
@@ -135,7 +130,6 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                               padding: const EdgeInsets.all(10),
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  // Provjera validacije forme
                                   if (!(_formKey.currentState?.validate() ??
                                       false)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -145,7 +139,7 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                                         duration: Duration(seconds: 2),
                                       ),
                                     );
-                                    return; // Zaustavi obradu ako validacija nije prošla
+                                    return;
                                   }
                                   _formKey.currentState?.saveAndValidate();
 
@@ -223,8 +217,8 @@ class _DrzaveDetailsScreenState extends State<DrzaveDetailsScreen> {
                   decoration: const InputDecoration(
                     labelText: "Naziv drzave",
                     border: OutlineInputBorder(),
-                    fillColor: Colors.white, // Bela pozadina
-                    filled: true, // Da pozadina bude ispunjena
+                    fillColor: Colors.white,
+                    filled: true,
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   ),

@@ -8,12 +8,12 @@ part 'narudzba.g.dart';
 
 @JsonSerializable()
 class Narudzba {
-  final int narudzbaId;  
-  final DateTime? datumNarudzbe;  
-  final DateTime? datumIsporuke; 
-  final bool zavrsenaNarudzba; 
-  final double? ukupnaCijenaNarudzbe;  
-bool? vidljivo;
+  final int narudzbaId;
+  final DateTime? datumNarudzbe;
+  final DateTime? datumIsporuke;
+  final bool zavrsenaNarudzba;
+  final double? ukupnaCijenaNarudzbe;
+  bool? vidljivo;
   int? klijentId;
   Klijent? klijent;
   int? autoservisId;
@@ -22,17 +22,17 @@ bool? vidljivo;
   Zaposlenik? zaposlenik;
   String? adresa;
 
-  Narudzba({
-    required this.narudzbaId,
-    this.vidljivo,
-    this.datumNarudzbe,  
-    this.datumIsporuke,  
-    this.zavrsenaNarudzba = false,  
-    this.ukupnaCijenaNarudzbe,  
-    this.adresa
-  });
+  Narudzba(
+      {required this.narudzbaId,
+      this.vidljivo,
+      this.datumNarudzbe,
+      this.datumIsporuke,
+      this.zavrsenaNarudzba = false,
+      this.ukupnaCijenaNarudzbe,
+      this.adresa});
 
-  factory Narudzba.fromJson(Map<String, dynamic> json) => _$NarudzbaFromJson(json);
+  factory Narudzba.fromJson(Map<String, dynamic> json) =>
+      _$NarudzbaFromJson(json);
 
   Map<String, dynamic> toJson() => _$NarudzbaToJson(this);
 }

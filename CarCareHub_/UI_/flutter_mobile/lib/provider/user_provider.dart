@@ -10,6 +10,7 @@ class UserProvider with ChangeNotifier {
   String get role => _role;
   String get username => _username;
 
+
   void setUser(int userId, String role, String username) {
     _userId = userId;
     _role = role;

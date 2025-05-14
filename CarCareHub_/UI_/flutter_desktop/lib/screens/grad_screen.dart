@@ -45,7 +45,7 @@ class _GradScreenState extends State<GradScreen> {
     return MasterScreenWidget(
       title: "Grad",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -58,17 +58,17 @@ class _GradScreenState extends State<GradScreen> {
 
   Widget _buildSearch() {
     return Container(
-      width: MediaQuery.of(context).size.width, // Širina 100% ekrana
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(
-        top: 20.0, // Razmak od vrha
+        top: 20.0,
       ),
       child: Card(
-        elevation: 4.0, // Dodaje malo sjene za karticu
+        elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(1.0), // Zaobljeni uglovi kartice
+          borderRadius: BorderRadius.circular(1.0),
           side: const BorderSide(
-            color: Colors.black, // Crni okvir
-            width: 1.0, // Debljina okvira (1px)
+            color: Colors.black,
+            width: 1.0,
           ),
         ),
         child: Padding(
@@ -90,10 +90,9 @@ class _GradScreenState extends State<GradScreen> {
               ElevatedButton(
                 onPressed: () async {
                   var filterParams = {
-                    'IsDrzavaIncluded': 'true', // Ovaj parametar ostaje
+                    'IsDrzavaIncluded': 'true',
                   };
 
-                  // Dodavanje filtera samo ako je naziv unesen
                   if (_nazivGradaController.text.isNotEmpty) {
                     filterParams['nazivGrada'] = _nazivGradaController.text;
                   }
@@ -103,17 +102,17 @@ class _GradScreenState extends State<GradScreen> {
                   } else {
                     data = await _gradProvider.get(filter: filterParams);
                   }
-                  if (!mounted) return; // Dodaj ovu proveru
+                  if (!mounted) return;
 
                   setState(() {
                     result = data;
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Crvena boja dugmeta
-                  foregroundColor: Colors.white, // Bijela boja teksta
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
                 child: const Row(
@@ -127,28 +126,26 @@ class _GradScreenState extends State<GradScreen> {
               ),
               const SizedBox(width: 10),
               if (context.read<UserProvider>().role == "Admin")
-                 ElevatedButton(
+                ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GradDetailsScreen(grad: null),
-                              ),
-                            );
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => GradDetailsScreen(grad: null),
+                      ),
+                    );
                     await _loadData();
-
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Crvena boja dugmeta
-                    foregroundColor: Colors.white, // Bijela boja teksta
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Zaobljeni uglovi
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.add), // Ikonica plus
+                      Icon(Icons.add),
                       SizedBox(width: 8.0),
                       Text('Dodaj'),
                     ],
@@ -161,79 +158,79 @@ class _GradScreenState extends State<GradScreen> {
       ),
     );
   }
-  
-Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(
-          color: Colors.black,
-          width: 1.0,
-        ),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv grada',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Naziv drzave',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
-          rows: (result?.result ?? []).map(
-            (Grad e) {
-              bool isRed = (e.vidljivo ?? true) == false;
 
-              return DataRow(
-                onSelectChanged: (selected) async {
-                  if (selected == true) {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => GradDetailsScreen(grad: e),
-                      ),
-                    );
-                    await _loadData();
-                  }
-                },
-                cells: [
-                  DataCell(
-                    Text(
-                      e.nazivGrada ?? "",
-                      style: TextStyle(
-                        color: isRed ? Colors.red : Colors.black,
+  Widget _buildDataListView() {
+    return Expanded(
+        child: SingleChildScrollView(
+            child: Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(
+            color: Colors.black,
+            width: 1.0,
+          ),
+        ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: DataTable(
+            showCheckboxColumn: false,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Naziv grada',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Naziv drzave',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
+            rows: (result?.result ?? []).map(
+              (Grad e) {
+                bool isRed = (e.vidljivo ?? true) == false;
+
+                return DataRow(
+                  onSelectChanged: (selected) async {
+                    if (selected == true) {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => GradDetailsScreen(grad: e),
+                        ),
+                      );
+                      await _loadData();
+                    }
+                  },
+                  cells: [
+                    DataCell(
+                      Text(
+                        e.nazivGrada ?? "",
+                        style: TextStyle(
+                          color: isRed ? Colors.red : Colors.black,
+                        ),
                       ),
                     ),
-                  ),
-                  DataCell(
-                    Text(
-                      e.drzava?.nazivDrzave ?? "",
-                      style: TextStyle(
-                        color: isRed ? Colors.red : Colors.black,
+                    DataCell(
+                      Text(
+                        e.drzava?.nazivDrzave ?? "",
+                        style: TextStyle(
+                          color: isRed ? Colors.red : Colors.black,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
-          ).toList(),
+                  ],
+                );
+              },
+            ).toList(),
+          ),
         ),
       ),
-    ),))
-  );
-}
+    )));
+  }
 }

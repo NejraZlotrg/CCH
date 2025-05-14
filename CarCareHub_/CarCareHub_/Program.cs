@@ -78,6 +78,7 @@ builder.Services.AddTransient<IKorpaService, KorpaService>();
 builder.Services.AddScoped<IChatAutoservisKlijentService, CarCareHub.Services.ChatAutoservisKlijentService>();
 builder.Services.AddScoped<IRecommenderService, RecommenderService>();
 builder.Services.AddTransient<IProizvodiService, ProizvodiService>();
+builder.Services.AddScoped<IRabbitMQProducer, RabbitMQProducer>();
 
 
 builder.Services.AddTransient<BaseState>();

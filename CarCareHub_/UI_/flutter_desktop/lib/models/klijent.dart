@@ -16,15 +16,27 @@ class Klijent {
   String? brojTelefona;
   int? gradId;
   int? ulogaId;
-bool? vidljivo;
-String? adresa;
+  bool? vidljivo;
+  String? adresa;
 
+  Klijent(
+      this.klijentId,
+      this.vidljivo,
+      this.adresa,
+      this.ime,
+      this.prezime,
+      this.username,
+      this.email,
+      this.password,
+      this.lozinkaSalt,
+      this.lozinkaHash,
+      this.spol,
+      this.brojTelefona,
+      this.gradId,
+      this.passwordAgain);
 
-  Klijent(this.klijentId, this.vidljivo, this.adresa, this.ime,this.prezime,this.username,this.email,this.password,this.lozinkaSalt,this.lozinkaHash,this.spol,this.brojTelefona,this.gradId,this.passwordAgain);
+  factory Klijent.fromJson(Map<String, dynamic> json) =>
+      _$KlijentFromJson(json);
 
-  
-  factory Klijent.fromJson(Map<String,dynamic> json) => _$KlijentFromJson(json);
-
-
-  Map<String,dynamic> toJson() => _$KlijentToJson(this);
+  Map<String, dynamic> toJson() => _$KlijentToJson(this);
 }

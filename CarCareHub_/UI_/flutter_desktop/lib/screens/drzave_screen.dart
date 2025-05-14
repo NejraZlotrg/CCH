@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/drzave.dart';
 import 'package:flutter_mobile/models/search_result.dart';
@@ -24,7 +26,7 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
     super.didChangeDependencies();
     _drzaveProvider = context.read<DrzaveProvider>();
     _loadData();
-    _fetchInitialData(); // Initial fetch
+    _fetchInitialData();
   }
 
   Future<void> _loadData() async {
@@ -39,11 +41,11 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Future<void> _fetchInitialData() async {
     try {
       SearchResult<Drzave> data;
-       if (context.read<UserProvider>().role == "Admin") {
-         data = await _drzaveProvider.getAdmin(filter: {'IsAllncluded': 'true'});
-       } else {
-         data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
-       }
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _drzaveProvider.getAdmin(filter: {'IsAllncluded': 'true'});
+      } else {
+        data = await _drzaveProvider.get(filter: {'IsAllncluded': 'true'});
+      }
       if (mounted) {
         setState(() {
           result = data;
@@ -58,15 +60,15 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Drzava",
-        child: Container(
-          color: const Color.fromARGB(255, 204, 204, 204),
-          child: Column(
-            children: [
-              _buildSearch(),
-              _buildDataListView(),
-            ],
-          ),
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204),
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
         ),
+      ),
     );
   }
 
@@ -106,11 +108,12 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
 
                   try {
                     SearchResult<Drzave> data;
-                     if (context.read<UserProvider>().role == "Admin") {
-                       data = await _drzaveProvider.getAdmin(filter: filterParams);
-                     } else {
-                       data = await _drzaveProvider.get(filter: filterParams);
-                     }
+                    if (context.read<UserProvider>().role == "Admin") {
+                      data =
+                          await _drzaveProvider.getAdmin(filter: filterParams);
+                    } else {
+                      data = await _drzaveProvider.get(filter: filterParams);
+                    }
                     if (mounted) {
                       setState(() {
                         result = data;
@@ -145,7 +148,6 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
                         builder: (context) => DrzaveDetailsScreen(drzava: null),
                       ),
                     );
-                    // Reload data after returning from DrzaveDetailsScreen
                     await _loadData();
                   },
                   style: ElevatedButton.styleFrom(
@@ -171,61 +173,62 @@ class _DrzaveScreenState extends State<DrzaveScreen> {
     );
   }
 
-
-Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(color: Colors.black, width: 1.0),
-      ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv drzave',
-                style: TextStyle(fontStyle: FontStyle.italic),
+  Widget _buildDataListView() {
+    return Expanded(
+        child: SingleChildScrollView(
+            child: Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
+        ),
+        child: SingleChildScrollView(
+          child: DataTable(
+            showCheckboxColumn: false,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Naziv drzave',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Drzave e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => DrzaveDetailsScreen(drzava: e),
-                            ),
-                          );
-                          await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(
-                          Text(
-                            e.nazivDrzave ?? "",
-                            style: TextStyle(
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
+            ],
+            rows: result?.result
+                    .map(
+                      (Drzave e) => DataRow(
+                        onSelectChanged: (selected) async {
+                          if (selected == true) {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DrzaveDetailsScreen(drzava: e),
+                              ),
+                            );
+                            await _loadData();
+                          }
+                        },
+                        cells: [
+                          DataCell(
+                            Text(
+                              e.nazivDrzave ?? "",
+                              style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
+                        ],
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-    ),))
-  );
-}
-
+    )));
+  }
 }

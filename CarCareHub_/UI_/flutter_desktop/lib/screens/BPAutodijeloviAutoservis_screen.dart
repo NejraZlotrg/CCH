@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
 import 'package:flutter_mobile/models/autoservis.dart';
@@ -10,7 +12,7 @@ import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class BPAutodijeloviAutoservisScreen extends StatefulWidget {
-  final FirmaAutodijelova? firmaAutodijelova; // Primanje objekta FirmaAutodijelova
+  final FirmaAutodijelova? firmaAutodijelova;
 
   const BPAutodijeloviAutoservisScreen({super.key, this.firmaAutodijelova});
 
@@ -19,7 +21,8 @@ class BPAutodijeloviAutoservisScreen extends StatefulWidget {
       _BPAutodijeloviAutoservisScreenState();
 }
 
-class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservisScreen> {
+class _BPAutodijeloviAutoservisScreenState
+    extends State<BPAutodijeloviAutoservisScreen> {
   SearchResult<BPAutodijeloviAutoservis>? result;
   late BPAutodijeloviAutoservisProvider _provider;
   bool isLoading = true;
@@ -33,7 +36,6 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Ako je firmaAutodijelova prosleđena, pozivamo pretragu odmah prilikom učitavanja ekrana
     if (widget.firmaAutodijelova != null && isLoading) {
       _fetchData();
     }
@@ -80,89 +82,90 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
         color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
-          _buildSearch(),  // Ako želiš da zadržiš dugme za pretragu, zadrži ovo
-          _buildDataListView(),
-        ],
-      ),
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSearch() {
-  return Padding(
-    padding: const EdgeInsets.only( left: 50, right: 50, top: 20, bottom: 20), // 50px sa obe strane
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center, // Centriraj vertikalno
-      children: [
-        ElevatedButton(
-          onPressed: () async {
-            setState(() {
-              isLoading = true;
-            });
-            await _fetchData();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+    return Padding(
+      padding: const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                isLoading = true;
+              });
+              await _fetchData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              minimumSize: const Size(double.infinity, 50),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            minimumSize: const Size(double.infinity, 50), // Puna širina
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.search, color: Colors.white),
-              SizedBox(width: 8.0),
-              Text('Pretraga', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10), // Razmak između dugmadi
-        ElevatedButton(
-          onPressed: () {
-            _showAutoservisDialog(context); // Open the dialog
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.search, color: Colors.white),
+                SizedBox(width: 8.0),
+                Text('Pretraga', style: TextStyle(color: Colors.white)),
+              ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            minimumSize: const Size(double.infinity, 50), // Puna širina
           ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add, color: Colors.white),
-              SizedBox(width: 8.0),
-              Text('Dodaj Autoservis', style: TextStyle(color: Colors.white)),
-            ],
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              _showAutoservisDialog(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.add, color: Colors.white),
+                SizedBox(width: 8.0),
+                Text('Dodaj Autoservis', style: TextStyle(color: Colors.white)),
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Future<void> _showAutoservisDialog(BuildContext context) async {
-    // Fetch all Autoservis records
     var autoservisiResult = await context.read<AutoservisProvider>().get();
 
     if (!mounted) return;
 
     Autoservis? selectedAutoservis;
-    String searchQuery = ""; // Track the search query
+    String searchQuery = "";
 
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            // Filter Autoservis records based on the search query
             List<Autoservis> filteredAutoservisi = autoservisiResult.result
                 .where((autoservis) =>
-                    autoservis.naziv?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false)
+                    autoservis.naziv
+                        ?.toLowerCase()
+                        .contains(searchQuery.toLowerCase()) ??
+                    false)
                 .toList();
 
             return AlertDialog(
@@ -170,7 +173,6 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
               content: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Search Field
                     TextField(
                       decoration: const InputDecoration(
                         labelText: 'Pretraži po nazivu',
@@ -179,12 +181,11 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                       ),
                       onChanged: (value) {
                         setState(() {
-                          searchQuery = value; // Update the search query
+                          searchQuery = value;
                         });
                       },
                     ),
                     const SizedBox(height: 20),
-                    // DataTable with filtered Autoservis records
                     DataTable(
                       columns: const [
                         DataColumn(label: Text('Naziv Autoservisa')),
@@ -196,8 +197,8 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                                 DataCell(
                                   Text(e.naziv ?? ""),
                                   onTap: () {
-                                    selectedAutoservis = e; // Set the selected Autoservis
-                                    Navigator.of(context).pop(); // Close the dialog
+                                    selectedAutoservis = e;
+                                    Navigator.of(context).pop();
                                   },
                                 ),
                               ],
@@ -211,7 +212,7 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Otkaži'),
                 ),
@@ -222,76 +223,70 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
       },
     );
 
-    // If an Autoservis is selected, call the insert method
     if (selectedAutoservis != null) {
       await _insertBPAutodijeloviAutoservis(selectedAutoservis!.autoservisId!);
     }
   }
 
   Future<void> _insertBPAutodijeloviAutoservis(int autoservisId) async {
-    // Ensure firmaAutodijelovaId is available
     if (widget.firmaAutodijelova == null) {
       print("FirmaAutodijelova ID nije dostupan!");
       return;
     }
 
-    // Prepare the request body
     var request = {
       "firmaAutodijelovaId": widget.firmaAutodijelova!.firmaAutodijelovaID,
       "autoservisId": autoservisId,
     };
 
-    // Call the insert method from the provider
     try {
       await context.read<BPAutodijeloviAutoservisProvider>().insert(request);
-      _fetchData(); // Refresh the data after insertion
+      _fetchData();
     } catch (e) {
       print("Greška pri dodavanju: $e");
     }
   }
 
- Widget _buildDataListView() {
-  if (isLoading) {
-    return const Center(child: CircularProgressIndicator());
-  }
+  Widget _buildDataListView() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-  return Expanded(
-    child: SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white, // Bijela pozadina
-          borderRadius: BorderRadius.circular(12), // Zaobljeni uglovi
-          border: Border.all(
-            color: Colors.black, // Crni border
-            width: 1, // Debljina bordera
+    return Expanded(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            ),
           ),
-        ),
-        child: DataTable(
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv firme autodijelova',
-                style: TextStyle(fontStyle: FontStyle.italic),
+          child: DataTable(
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Naziv firme autodijelova',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Naziv autoservisa',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Naziv autoservisa',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Akcija',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Akcija',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-          ],
-          rows: result?.result
-                .map(
+            ],
+            rows: result?.result.map(
                   (BPAutodijeloviAutoservis e) {
-                    // Debagovanje
                     print("Autoservis vidljivo: ${e.autoservis?.vidljivo}");
                     print("Firma vidljivo: ${e.firmaAutodijelova?.vidljivo}");
 
@@ -301,8 +296,9 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                           Text(
                             e.firmaAutodijelova?.nazivFirme ?? "",
                             style: TextStyle(
-                              color: (e.firmaAutodijelova?.vidljivo == null || e.vidljivo == false)
-                                  ? Colors.red 
+                              color: (e.firmaAutodijelova?.vidljivo == null ||
+                                      e.vidljivo == false)
+                                  ? Colors.red
                                   : Colors.black,
                             ),
                           ),
@@ -311,8 +307,9 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                           Text(
                             e.autoservis?.naziv ?? "",
                             style: TextStyle(
-                              color: (e.autoservis?.vidljivo == null || e.vidljivo == false)
-                                  ? Colors.red 
+                              color: (e.autoservis?.vidljivo == null ||
+                                      e.vidljivo == false)
+                                  ? Colors.red
                                   : Colors.black,
                             ),
                           ),
@@ -321,26 +318,27 @@ class _BPAutodijeloviAutoservisScreenState extends State<BPAutodijeloviAutoservi
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
-                              _deleteBPAutodijeloviAutoservis(e.bpAutodijeloviAutoservisId);
+                              _deleteBPAutodijeloviAutoservis(
+                                  e.bpAutodijeloviAutoservisId);
                             },
                           ),
                         ),
                       ],
                     );
                   },
-                )
-                .toList() ?? [],
+                ).toList() ??
+                [],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   void _deleteBPAutodijeloviAutoservis(int? id) async {
     if (id != null) {
       try {
-        await _provider.delete(id); // Pozovi delete metodu iz providera
-        _fetchData(); // Osvježi podatke nakon brisanja
+        await _provider.delete(id);
+        _fetchData();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Zapis uspješno obrisan')),
         );

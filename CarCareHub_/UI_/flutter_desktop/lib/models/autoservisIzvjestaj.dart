@@ -27,11 +27,8 @@ class AutoservisIzvjestaj {
     required this.periodDo,
   });
 
-  factory AutoservisIzvjestaj.fromJson(Map<String,dynamic> json) => _$AutoservisIzvjestajFromJson(json);
+  factory AutoservisIzvjestaj.fromJson(Map<String, dynamic> json) =>
+      _$AutoservisIzvjestajFromJson(json);
 
-
-  Map<String,dynamic> toJson() => _$AutoservisIzvjestajToJson(this);
+  Map<String, dynamic> toJson() => _$AutoservisIzvjestajToJson(this);
 }
-
-
-

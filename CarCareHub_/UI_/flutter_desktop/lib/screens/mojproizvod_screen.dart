@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, deprecated_member_use, avoid_print, use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
@@ -38,7 +40,7 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
   late GradProvider _gradProvider;
 
   List<Model>? model;
-  List<Vozilo>? vozila; //----- Dodano za vozila
+  List<Vozilo>? vozila;
   List<Godiste>? godiste;
   List<Grad>? grad;
 
@@ -62,65 +64,60 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
     _gradProvider = context.read<GradProvider>();
 
     _loadData();
-    _loadInitialData(); //----- Promijenjeno ime funkcije
-
-
-   // _loadModel(); ova funkcija zamijenjena sa _loadInitialData
+    _loadInitialData();
   }
 
+  Future<void> _loadData() async {
+    try {
+      String? userRole = context.read<UserProvider>().role;
+      int? userId = context.read<UserProvider>().userId;
+      print("Korisnička uloga: $userRole");
+      print(", korisnicki id: $userId");
 
-Future<void> _loadData() async {
-  try {
-    String? userRole = context.read<UserProvider>().role;
-    int? userId = context.read<UserProvider>().userId;
-    print("Korisnička uloga: $userRole");
-    print(", korisnicki id: $userId");
+      SearchResult<Product> data;
 
-    SearchResult<Product> data;
+      switch (userRole) {
+        case "Admin":
+          data = await _productProvider
+              .getAdmin(filter: {'IsAllIncluded': 'true'});
+          break;
+        case "Firma autodijelova":
+          List<Product> products =
+              await _productProvider.getByFirmaAutodijelovaID(userId);
+          data = SearchResult<Product>()
+            ..result = products
+            ..count = products.length;
+          break;
+        default:
+          data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+      }
 
-    switch (userRole) {
-      case "Admin":
-        data = await _productProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-        break;
-      case "Firma autodijelova":
-        // Call getByFirmaAutodijelovaID and wrap the result in a SearchResult object
-        List<Product> products = await _productProvider.getByFirmaAutodijelovaID(userId);
-        data = SearchResult<Product>()
-          ..result = products // Assign the list of products to the `result` field
-          ..count = products.length; // Set the count to the length of the list
-        break;
-      default:
-        data = await _productProvider.get(filter: {'IsAllIncluded': 'true'});
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Došlo je do greške prilikom učitavanja podataka: $e");
     }
-
-    if (mounted) {
-      setState(() {
-        result = data; // Assign the fetched data to the `result` variable
-      });
-    }
-  } catch (e) {
-    print("Došlo je do greške prilikom učitavanja podataka: $e");
   }
-}
 
   Future<void> _loadInitialData() async {
-
     SearchResult<Model> modelResult;
     SearchResult<Vozilo> vozilaResult;
     SearchResult<Godiste> godistaResult;
     SearchResult<Grad> gradResult;
-     if (context.read<UserProvider>().role == "Admin"){
-    modelResult = await _modelProvider.getAdmin();
-    vozilaResult = await _voziloProvider.getAdmin(); //----- Učitavanje vozila
-    godistaResult = await _godisteProvider.getAdmin(); //----- Učitavanje godista
-    gradResult = await _gradProvider.getAdmin(); //----- Učitavanje godista
-}
-else {
-    modelResult = await _modelProvider.get();
-    vozilaResult = await _voziloProvider.get(); //----- Učitavanje vozila
-    godistaResult = await _godisteProvider.get(); //----- Učitavanje godista
-    gradResult = await _gradProvider.get(); //----- Učitavanje godista
-}
+    if (context.read<UserProvider>().role == "Admin") {
+      modelResult = await _modelProvider.getAdmin();
+      vozilaResult = await _voziloProvider.getAdmin();
+      godistaResult = await _godisteProvider.getAdmin();
+      gradResult = await _gradProvider.getAdmin();
+    } else {
+      modelResult = await _modelProvider.get();
+      vozilaResult = await _voziloProvider.get();
+      godistaResult = await _godisteProvider.get();
+      gradResult = await _gradProvider.get();
+    }
     setState(() {
       model = modelResult.result;
       vozila = vozilaResult.result;
@@ -128,22 +125,20 @@ else {
       grad = gradResult.result;
     });
   }
-  
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      title: "Proizvodi",
-     child: Container(
-      color: const Color.fromARGB(255, 204, 204, 204), // Dodana siva pozadina
-      child: Column(
-        children: [
-          _buildSearch(),
-          _buildDataListView(),
-        ],
-      ),
-      )
-    );
+        title: "Proizvodi",
+        child: Container(
+          color: const Color.fromARGB(255, 204, 204, 204),
+          child: Column(
+            children: [
+              _buildSearch(),
+              _buildDataListView(),
+            ],
+          ),
+        ));
   }
 
   Widget _buildSearch() {
@@ -186,51 +181,53 @@ else {
                     onChanged: (String? value) async {
                       SearchResult<Product> data;
                       if (value == 'Rastuća') {
-                         if (context.read<UserProvider>().role == "Admin"){
-                        data = await _productProvider.getAdmin(filter: {
-                          'naziv': _nazivController.text,
-                          'model': _modelController.text,
-                          'nazivFirme': _nazivFirmeController.text,
-                          'nazivGrada': _gradController.text,
-                          'jib': _JIBMBScontroller.text,
-                          'mbs': _JIBMBScontroller.text,
-                          'cijenaRastuca': true,
-                        });} 
-                        else {
-                        data = await _productProvider.get(filter: {
-                          'naziv': _nazivController.text,
-                          'model': _modelController.text,
-                          'nazivFirme': _nazivFirmeController.text,
-                          'nazivGrada': _gradController.text,
-                          'jib': _JIBMBScontroller.text,
-                          'mbs': _JIBMBScontroller.text,
-                          'cijenaRastuca': true,
-                        });} 
+                        if (context.read<UserProvider>().role == "Admin") {
+                          data = await _productProvider.getAdmin(filter: {
+                            'naziv': _nazivController.text,
+                            'model': _modelController.text,
+                            'nazivFirme': _nazivFirmeController.text,
+                            'nazivGrada': _gradController.text,
+                            'jib': _JIBMBScontroller.text,
+                            'mbs': _JIBMBScontroller.text,
+                            'cijenaRastuca': true,
+                          });
+                        } else {
+                          data = await _productProvider.get(filter: {
+                            'naziv': _nazivController.text,
+                            'model': _modelController.text,
+                            'nazivFirme': _nazivFirmeController.text,
+                            'nazivGrada': _gradController.text,
+                            'jib': _JIBMBScontroller.text,
+                            'mbs': _JIBMBScontroller.text,
+                            'cijenaRastuca': true,
+                          });
+                        }
                         setState(() {
                           result = data;
-                        }); 
+                        });
                       } else if (value == 'Opadajuća') {
                         SearchResult<Product> data;
-                        if (context.read<UserProvider>().role == "Admin"){
-                        data = await _productProvider.getAdmin(filter: {
-                          'naziv': _nazivController.text,
-                          'model': _modelController.text,
-                          'nazivFirme': _nazivFirmeController.text,
-                          'nazivGrada': _gradController.text,
-                          'jib': _JIBMBScontroller.text,
-                          'mbs': _JIBMBScontroller.text,
-                          'cijenaOpadajuca': true,
-                        });}
-                        else {
-                        data = await _productProvider.get(filter: {
-                          'naziv': _nazivController.text,
-                          'model': _modelController.text,
-                          'nazivFirme': _nazivFirmeController.text,
-                          'nazivGrada': _gradController.text,
-                          'jib': _JIBMBScontroller.text,
-                          'mbs': _JIBMBScontroller.text,
-                          'cijenaOpadajuca': true,
-                        });}
+                        if (context.read<UserProvider>().role == "Admin") {
+                          data = await _productProvider.getAdmin(filter: {
+                            'naziv': _nazivController.text,
+                            'model': _modelController.text,
+                            'nazivFirme': _nazivFirmeController.text,
+                            'nazivGrada': _gradController.text,
+                            'jib': _JIBMBScontroller.text,
+                            'mbs': _JIBMBScontroller.text,
+                            'cijenaOpadajuca': true,
+                          });
+                        } else {
+                          data = await _productProvider.get(filter: {
+                            'naziv': _nazivController.text,
+                            'model': _modelController.text,
+                            'nazivFirme': _nazivFirmeController.text,
+                            'nazivGrada': _gradController.text,
+                            'jib': _JIBMBScontroller.text,
+                            'mbs': _JIBMBScontroller.text,
+                            'cijenaOpadajuca': true,
+                          });
+                        }
                         setState(() {
                           result = data;
                         });
@@ -268,38 +265,39 @@ else {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-          child: FormBuilderDropdown<Grad>(
-  name: 'gradId',
-  decoration: InputDecoration(
-    labelText: 'Lokacija',
-    suffixIcon: const Icon(Icons.directions_car),
-    hintText: 'Odaberite grad',
-    hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-    border: const OutlineInputBorder(),
-    filled: true,
-    fillColor: const Color.fromARGB(255, 255, 255, 255),
-  ),
-  items: [
-    const DropdownMenuItem<Grad>(
-      value: null,
-      child: Text('Odaberite grad'),
-    ),
-  ] +
-      (grad
-              ?.map((grad) => DropdownMenuItem(
-                    value: grad,
-                    child: Text(
-                      grad.nazivGrada ?? "",
-                      style: TextStyle(
-                        color: grad.vidljivo == false ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  ))
-              .toList() ??
-          []),
-)
-
-        ),
+                    child: FormBuilderDropdown<Grad>(
+                  name: 'gradId',
+                  decoration: InputDecoration(
+                    labelText: 'Lokacija',
+                    suffixIcon: const Icon(Icons.directions_car),
+                    hintText: 'Odaberite grad',
+                    hintStyle:
+                        TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
+                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: const Color.fromARGB(255, 255, 255, 255),
+                  ),
+                  items: [
+                        const DropdownMenuItem<Grad>(
+                          value: null,
+                          child: Text('Odaberite grad'),
+                        ),
+                      ] +
+                      (grad
+                              ?.map((grad) => DropdownMenuItem(
+                                    value: grad,
+                                    child: Text(
+                                      grad.nazivGrada ?? "",
+                                      style: TextStyle(
+                                        color: grad.vidljivo == false
+                                            ? Colors.red
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ))
+                              .toList() ??
+                          []),
+                )),
               ],
             ),
             const SizedBox(height: 10),
@@ -317,452 +315,453 @@ else {
               ),
               children: [
                 Column(
-  children: [
-    Row(
-      children: [
-        Expanded(
-          child: FormBuilderDropdown<Vozilo>(
-  name: 'voziloId',
-  decoration: InputDecoration(
-    labelText: 'Marka vozila',
-    suffixIcon: const Icon(Icons.directions_car),
-    hintText: 'Odaberite marku vozila',
-    hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-    border: const OutlineInputBorder(),
-    filled: true,
-    fillColor: const Color.fromARGB(255, 255, 255, 255),
-  ),
-  items: [
-    const DropdownMenuItem<Vozilo>(
-      value: null,
-      child: Text('Odaberite marku vozila'),
-    ),
-  ] +
-      (vozila
-              ?.map((vozilo) => DropdownMenuItem(
-                    value: vozilo,
-                    child: Text(
-                      vozilo.markaVozila ?? "",
-                      style: TextStyle(
-                        color: vozilo.vidljivo == false ? Colors.red : Colors.black,
-                      ),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                            child: FormBuilderDropdown<Vozilo>(
+                          name: 'voziloId',
+                          decoration: InputDecoration(
+                            labelText: 'Marka vozila',
+                            suffixIcon: const Icon(Icons.directions_car),
+                            hintText: 'Odaberite marku vozila',
+                            hintStyle: TextStyle(
+                                color: Colors.blueGrey.withOpacity(0.6)),
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          items: [
+                                const DropdownMenuItem<Vozilo>(
+                                  value: null,
+                                  child: Text('Odaberite marku vozila'),
+                                ),
+                              ] +
+                              (vozila
+                                      ?.map((vozilo) => DropdownMenuItem(
+                                            value: vozilo,
+                                            child: Text(
+                                              vozilo.markaVozila ?? "",
+                                              style: TextStyle(
+                                                color: vozilo.vidljivo == false
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList() ??
+                                  []),
+                        )),
+                        const SizedBox(width: 16),
+                        Expanded(
+                            child: FormBuilderDropdown<Godiste>(
+                          name: 'godisteId',
+                          decoration: InputDecoration(
+                            labelText: 'Godiste',
+                            suffixIcon: const Icon(Icons.date_range),
+                            hintText: 'Odaberite godiste',
+                            hintStyle: TextStyle(
+                                color: Colors.blueGrey.withOpacity(0.6)),
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          items: [
+                                const DropdownMenuItem<Godiste>(
+                                  value: null,
+                                  child: Text('Odaberite godiste'),
+                                ),
+                              ] +
+                              (godiste
+                                      ?.map((god) => DropdownMenuItem(
+                                            value: god,
+                                            child: Text(
+                                              god.godiste_?.toString() ?? "",
+                                              style: TextStyle(
+                                                color: god.vidljivo == false
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList() ??
+                                  []),
+                        )),
+                      ],
                     ),
-                  ))
-              .toList() ??
-          []),
-)
-
-        ),
-        const SizedBox(width: 16), // Razmak između dropdown-ova
-        Expanded(
-          child: FormBuilderDropdown<Godiste>(
-  name: 'godisteId',
-  decoration: InputDecoration(
-    labelText: 'Godiste',
-    suffixIcon: const Icon(Icons.date_range),
-    hintText: 'Odaberite godiste',
-    hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-    border: const OutlineInputBorder(),
-    filled: true,
-    fillColor: const Color.fromARGB(255, 255, 255, 255),
-  ),
-  items: [
-    const DropdownMenuItem<Godiste>(
-      value: null,
-      child: Text('Odaberite godiste'),
-    ),
-  ] +
-      (godiste
-              ?.map((god) => DropdownMenuItem(
-                    value: god,
-                    child: Text(
-                      god.godiste_?.toString() ?? "",
-                      style: TextStyle(
-                        color: god.vidljivo == false ? Colors.red : Colors.black,
-                      ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: FormBuilderDropdown<Model>(
+                          name: 'modelId',
+                          decoration: InputDecoration(
+                            labelText: 'Model',
+                            suffixIcon: const Icon(Icons.dashboard_customize),
+                            hintText: 'Odaberite model',
+                            hintStyle: TextStyle(
+                                color: Colors.blueGrey.withOpacity(0.6)),
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          items: [
+                                const DropdownMenuItem<Model>(
+                                  value: null,
+                                  child: Text('Odaberite model'),
+                                ),
+                              ] +
+                              (model
+                                      ?.map((model) => DropdownMenuItem(
+                                            value: model,
+                                            child: Text(
+                                              model.nazivModela ?? "",
+                                              style: TextStyle(
+                                                color: model.vidljivo == false
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList() ??
+                                  []),
+                        )),
+                      ],
                     ),
-                  ))
-              .toList() ??
-          []),
-)
-
-        ),
-      ],
-    ),
-    const SizedBox(height: 16), // Razmak između redova
-    Row(
-      children: [
-        Expanded(
-  child: FormBuilderDropdown<Model>(
-  name: 'modelId',
-  decoration: InputDecoration(
-    labelText: 'Model',
-    suffixIcon: const Icon(Icons.dashboard_customize),
-    hintText: 'Odaberite model',
-    hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-    border: const OutlineInputBorder(),
-    filled: true,
-    fillColor: const Color.fromARGB(255, 255, 255, 255),
-  ),
-  items: [
-    const DropdownMenuItem<Model>(
-      value: null,
-      child: Text('Odaberite model'),
-    ),
-  ] +
-      (model
-              ?.map((model) => DropdownMenuItem(
-                    value: model,
-                    child: Text(
-                      model.nazivModela ?? "",
-                      style: TextStyle(
-                        color: model.vidljivo == false ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  ))
-              .toList() ??
-          []),
-)
-
-),
-
-      ],
-    ),
-  ],
-)
-
+                  ],
+                )
               ],
             ),
             Row(
-  mainAxisAlignment: MainAxisAlignment.end, // Elemente poravnaj desno
-  children: [
-    if (context.read<UserProvider>().role == "Admin" || context.read<UserProvider>().role == "Firma autodijelova")
-      ElevatedButton(
-        onPressed: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const ProductDetailScreen(product: null),
-            ),
-          );
-          await _loadData();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red, // Crvena boja za dugme
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
-          children: [
-            Icon(Icons.add, color: Colors.white),
-            SizedBox(width: 8.0), // Razmak između ikone i teksta
-            Text('Dodaj', style: TextStyle(color: Colors.white)),
-          ],
-        ),
-      ),
-    const SizedBox(width: 10), // Razmak između dva dugmeta
-    ElevatedButton(
-      onPressed: _onSearchPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red, // Crvena boja za dugme
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min, // Minimalna veličina dugmeta
-        children: [
-          Icon(Icons.search, color: Colors.white),
-          SizedBox(width: 8.0), // Razmak između ikone i teksta
-          Text('Pretraga', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    ),
-  ],
-)
-
-
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (context.read<UserProvider>().role == "Admin" ||
+                    context.read<UserProvider>().role == "Firma autodijelova")
+                  ElevatedButton(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const ProductDetailScreen(product: null),
+                        ),
+                      );
+                      await _loadData();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add, color: Colors.white),
+                        SizedBox(width: 8.0),
+                        Text('Dodaj', style: TextStyle(color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _onSearchPressed,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.search, color: Colors.white),
+                      SizedBox(width: 8.0),
+                      Text('Pretraga', style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
 
-Future<void> _onSearchPressed() async {
-  print("Pokretanje pretrage: ${_nazivController.text}");
-  
-Map<dynamic, dynamic> filterParams = {};
+  Future<void> _onSearchPressed() async {
+    print("Pokretanje pretrage: ${_nazivController.text}");
+
+    Map<dynamic, dynamic> filterParams = {};
 
     filterParams = {
-    'IsAllIncluded': 'true',  // Ovdje navodimo da želimo sve proizvode ako nema specifičnih filtera
+      'IsAllIncluded': 'true',
+    };
 
-  };
-
-
-
-  // Dodavanje naziva proizvoda u filter ako je unesen
-  if (_nazivController.text.isNotEmpty) {
-    filterParams['naziv'] = _nazivController.text;
-  }
-
-
-  // Dodavanje naziva proizvoda u filter ako je unesen
-  if (_JIBMBScontroller.text.isNotEmpty) {
-    filterParams['JIB_MBS'] = _JIBMBScontroller.text;
-  }
-
-
-
-// Dodavanje naziva proizvoda u filter ako je unesen
-  if (_nazivFirmeController.text.isNotEmpty) {
-    filterParams['nazivFirme'] = _nazivFirmeController.text;
-  }
-  // Dodavanje filtera za vozilo, ako je odabrano
-  var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
-  if (selectedVozilo != null && selectedVozilo is Vozilo) {
-    filterParams['markaVozila'] = selectedVozilo.markaVozila!;
-  }
-
-
-  // Dodavanje filtera za grad, ako je odabran
-  var selectedGrad = _formKey.currentState?.fields['gradId']?.value;
-  if (selectedGrad != null && selectedGrad is Grad) {
-    filterParams['nazivGrada'] = selectedGrad.nazivGrada!;
-  }
-
-  // Dodavanje filtera za godiste, ako je odabrano
- var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
-if (selectedGodiste != null && selectedGodiste is Godiste) {
-  filterParams['GodisteVozila'] = int.parse(selectedGodiste.godiste_!.toString());
-}
-
-
-  // Dodavanje modela, ako je odabran 
-  var modelValue = _formKey.currentState?.fields['modelId']?.value;
-  if (modelValue != null && modelValue is Model) {
-    filterParams['nazivModela'] = modelValue.nazivModela!;
-  }
-
-   
-  
-
-  // Pozivanje API-ja sa filterima
-  try {
-    SearchResult<Product> data;
-    if (context.read<UserProvider>().role == "Admin") {
-      data = await _productProvider.getAdmin(filter: filterParams);
-    } else {
-      data = await _productProvider.get(filter: filterParams);
+    if (_nazivController.text.isNotEmpty) {
+      filterParams['naziv'] = _nazivController.text;
+    }
+    if (_JIBMBScontroller.text.isNotEmpty) {
+      filterParams['JIB_MBS'] = _JIBMBScontroller.text;
     }
 
-
-    if (mounted) {
-      setState(() {
-        result = data;  // Ažuriraj rezultate sa podacima dobijenim iz backend-a
-      });
+    if (_nazivFirmeController.text.isNotEmpty) {
+      filterParams['nazivFirme'] = _nazivFirmeController.text;
     }
-  } catch (e) {
-    print("Error during fetching data: $e");
-    // Prikazivanje greške ako dođe do problema pri dohvaćanju podataka
+    var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
+    if (selectedVozilo != null && selectedVozilo is Vozilo) {
+      filterParams['markaVozila'] = selectedVozilo.markaVozila!;
+    }
+
+    var selectedGrad = _formKey.currentState?.fields['gradId']?.value;
+    if (selectedGrad != null && selectedGrad is Grad) {
+      filterParams['nazivGrada'] = selectedGrad.nazivGrada!;
+    }
+    var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
+    if (selectedGodiste != null && selectedGodiste is Godiste) {
+      filterParams['GodisteVozila'] =
+          int.parse(selectedGodiste.godiste_!.toString());
+    }
+
+    var modelValue = _formKey.currentState?.fields['modelId']?.value;
+    if (modelValue != null && modelValue is Model) {
+      filterParams['nazivModela'] = modelValue.nazivModela!;
+    }
+
+    try {
+      SearchResult<Product> data;
+      if (context.read<UserProvider>().role == "Admin") {
+        data = await _productProvider.getAdmin(filter: filterParams);
+      } else {
+        data = await _productProvider.get(filter: filterParams);
+      }
+
+      if (mounted) {
+        setState(() {
+          result = data;
+        });
+      }
+    } catch (e) {
+      print("Error during fetching data: $e");
+    }
   }
-}
 
-Widget _buildDataListView() {
-  return Expanded(
-    child: SingleChildScrollView(
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, // Tri kolone
-          childAspectRatio: 0.75, // Omjer za kartice da se ne preklapaju
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-        ),
-        itemCount: result?.result.length ?? 0,
-        itemBuilder: (context, index) {
-          Product e = result!.result[index];
-          bool hasDiscount = e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
-          double originalPrice = e.cijena ?? 0.0;
-          double discountPrice = hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
-          bool isHidden = e.vidljivo == false;
+  Widget _buildDataListView() {
+    return Expanded(
+      child: SingleChildScrollView(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+          ),
+          itemCount: result?.result.length ?? 0,
+          itemBuilder: (context, index) {
+            Product e = result!.result[index];
+            bool hasDiscount =
+                e.cijenaSaPopustom != null && e.cijenaSaPopustom! > 0;
+            double originalPrice = e.cijena ?? 0.0;
+            double discountPrice =
+                hasDiscount ? e.cijenaSaPopustom! : e.cijena ?? 0.0;
+            bool isHidden = e.vidljivo == false;
 
-          return GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ProductReadScreen(product: e),
-                ),
-              );
-              await _loadData(); // Osvježi podatke nakon povratka
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: isHidden ? Colors.red : Colors.transparent,
-                  width: 2.0,
-                ),
-              ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Slika proizvoda
-                    Expanded(
-                      flex: 5,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: e.slika != null && e.slika!.isNotEmpty
-                            ? Image.memory(
-                                base64Decode(e.slika!),
-                                fit: BoxFit.contain,
-                                width: double.infinity,
-                              )
-                            : const Center(child: Text("Nema slike")),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Naziv proizvoda
-                    Text(
-                      e.naziv ?? "",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: isHidden ? Colors.red : Colors.black,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    // Kratak opis proizvoda
-                    Text(
-                      e.opis != null && e.opis!.length > 30
-                          ? "${e.opis!.substring(0, 30)}..."
-                          : e.opis ?? "",
-                      style: TextStyle(
-                        color: isHidden ? Colors.red : Colors.blueGrey,
-                        fontSize: 14,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    // Cena i dugmad za admina ili firmu
-             Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    // Admin ili firma može videti dugmad, samo ako je proizvod vidljiv
-    if ((context.read<UserProvider>().role == "Admin" ||
-        (context.read<UserProvider>().role == "Firma autodijelova" &&
-            context.read<UserProvider>().userId == e.firmaAutodijelovaID)) &&
-        e.vidljivo == true)
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (e.stateMachine == "draft")
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _productProvider.activateProduct(e.proizvodId!);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Proizvod uspješno prikazan na profilu")),
-                  );
-                  await _loadData(); // Osvježavanje podataka nakon aktivacije
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Greška prilikom aktivacije: $e")),
-                  );
-                }
+            return GestureDetector(
+              onTap: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProductReadScreen(product: e),
+                  ),
+                );
+                await _loadData();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              ),
-              child: const Text(
-                "Prikazi na profilu",
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-          if (e.stateMachine == "active")
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _productProvider.hideProduct(e.proizvodId!);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Proizvod uspješno sakriven sa profila")),
-                  );
-                  await _loadData(); // Osvježavanje podataka nakon aktivacije
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Greška prilikom aktivacije: $e")),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              ),
-              child: const Text(
-                "Sakrij proizvod",
-                style: TextStyle(fontSize: 12),
-              ),
-            ),
-        ],
-      ),
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (hasDiscount)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.redAccent.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text(
-              "${formatNumber(discountPrice)} KM",
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.withOpacity(0.7),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Text(
-            "${formatNumber(originalPrice)} KM",
-            style: TextStyle(
-              color: hasDiscount ? Colors.white70 : Colors.white,
-              fontWeight: FontWeight.bold,
-              decoration: hasDiscount ? TextDecoration.lineThrough : null,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ],
-),
-                  ],
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: isHidden ? Colors.red : Colors.transparent,
+                    width: 2.0,
+                  ),
+                ),
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: e.slika != null && e.slika!.isNotEmpty
+                              ? Image.memory(
+                                  base64Decode(e.slika!),
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                )
+                              : const Center(child: Text("Nema slike")),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        e.naziv ?? "",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: isHidden ? Colors.red : Colors.black,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        e.opis != null && e.opis!.length > 30
+                            ? "${e.opis!.substring(0, 30)}..."
+                            : e.opis ?? "",
+                        style: TextStyle(
+                          color: isHidden ? Colors.red : Colors.blueGrey,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if ((context.read<UserProvider>().role == "Admin" ||
+                                  (context.read<UserProvider>().role ==
+                                          "Firma autodijelova" &&
+                                      context.read<UserProvider>().userId ==
+                                          e.firmaAutodijelovaID)) &&
+                              e.vidljivo == true)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (e.stateMachine == "draft")
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      try {
+                                        await _productProvider
+                                            .activateProduct(e.proizvodId!);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  "Proizvod uspješno prikazan na profilu")),
+                                        );
+                                        await _loadData();
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  "Greška prilikom aktivacije: $e")),
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                    ),
+                                    child: const Text(
+                                      "Prikazi na profilu",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                if (e.stateMachine == "active")
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      try {
+                                        await _productProvider
+                                            .hideProduct(e.proizvodId!);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  "Proizvod uspješno sakriven sa profila")),
+                                        );
+                                        await _loadData();
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  "Greška prilikom aktivacije: $e")),
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                    ),
+                                    child: const Text(
+                                      "Sakrij proizvod",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              if (hasDiscount)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.redAccent.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Text(
+                                    "${formatNumber(discountPrice)} KM",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  "${formatNumber(originalPrice)} KM",
+                                  style: TextStyle(
+                                    color: hasDiscount
+                                        ? Colors.white70
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: hasDiscount
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16.0),
+            );
+          },
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

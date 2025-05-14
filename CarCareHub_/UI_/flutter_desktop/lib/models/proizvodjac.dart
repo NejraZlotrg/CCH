@@ -6,13 +6,12 @@ part 'proizvodjac.g.dart';
 class Proizvodjac {
   int? proizvodjacId;
   String? nazivProizvodjaca;
-bool? vidljivo;
+  bool? vidljivo;
 
-  Proizvodjac(this.proizvodjacId,this.vidljivo, this.nazivProizvodjaca);
+  Proizvodjac(this.proizvodjacId, this.vidljivo, this.nazivProizvodjaca);
 
-  
-  factory Proizvodjac.fromJson(Map<String,dynamic> json) => _$ProizvodjacFromJson(json);
+  factory Proizvodjac.fromJson(Map<String, dynamic> json) =>
+      _$ProizvodjacFromJson(json);
 
-
-  Map<String,dynamic> toJson() => _$ProizvodjacToJson(this);
+  Map<String, dynamic> toJson() => _$ProizvodjacToJson(this);
 }

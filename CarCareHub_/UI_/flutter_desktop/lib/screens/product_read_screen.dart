@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -49,10 +51,9 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
   late ProizvodjacProvider _proizvodjacProvider;
   SearchResult<Proizvodjac>? proizvodjacResult;
   SearchResult<Product>? result;
-SearchResult<Product>? dataWithDiscount;
+  SearchResult<Product>? dataWithDiscount;
   SearchResult<Product>? result2;
 
-  
   List<Product> recommendedProducts = [];
   bool isRecommendationsLoading = false;
 
@@ -68,7 +69,6 @@ SearchResult<Product>? dataWithDiscount;
     _kategorijaProvider = context.read<KategorijaProvider>();
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
     _proizvodjacProvider = context.read<ProizvodjacProvider>();
-   
 
     initForm();
     _loadRecommendations();
@@ -76,16 +76,16 @@ SearchResult<Product>? dataWithDiscount;
 
   Future<void> _loadRecommendations() async {
     if (widget.product?.proizvodId == null) return;
-    
+
     setState(() {
       isRecommendationsLoading = true;
     });
 
     try {
-      var products = await _productProvider.getRecommendations(widget.product!.proizvodId!);
+      var products = await _productProvider
+          .getRecommendations(widget.product!.proizvodId!);
       setState(() {
         recommendedProducts = products;
-        
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -104,9 +104,11 @@ SearchResult<Product>? dataWithDiscount;
       kategorijaResult = await _kategorijaProvider.getAdmin();
       firmaAutodijelovaResult = await _firmaAutodijelovaProvider.getAdmin();
       proizvodjacResult = await _proizvodjacProvider.getAdmin();
-    } 
-    if(context.read<UserProvider>().role == "Autoservis") {
-      dataWithDiscount = await _productProvider.getForAutoservis( context.read<UserProvider>().userId, filter: {'IsAllIncluded': 'true'});
+    }
+    if (context.read<UserProvider>().role == "Autoservis") {
+      dataWithDiscount = await _productProvider.getForAutoservis(
+          context.read<UserProvider>().userId,
+          filter: {'IsAllIncluded': 'true'});
     } else {
       modelResult = await _modelProvider.get();
       kategorijaResult = await _kategorijaProvider.get();
@@ -182,9 +184,10 @@ SearchResult<Product>? dataWithDiscount;
                 ),
                 Consumer<UserProvider>(
                   builder: (context, userProvider, child) {
-                    if (userProvider.role == "Admin" || 
-                        (userProvider.role == "Firma autodijelova" && 
-                         userProvider.userId == widget.product?.firmaAutodijelovaID)) {
+                    if (userProvider.role == "Admin" ||
+                        (userProvider.role == "Firma autodijelova" &&
+                            userProvider.userId ==
+                                widget.product?.firmaAutodijelovaID)) {
                       return Padding(
                         padding: const EdgeInsets.all(15),
                         child: Column(
@@ -202,16 +205,17 @@ SearchResult<Product>? dataWithDiscount;
                                     ),
                                   ).then((_) async {
                                     await _fetchInitialData();
-                                  
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromARGB(255, 245, 19, 3),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 245, 19, 3),
                                   foregroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
                                 ),
                                 child: const Text(
                                   "Uredi",
@@ -224,10 +228,12 @@ SearchResult<Product>? dataWithDiscount;
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed: () async {
-                                  if (widget.product?.stateMachine == "active") {
+                                  if (widget.product?.stateMachine ==
+                                      "active") {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Proizvod mora biti sakriven."),
+                                        content: Text(
+                                            "Proizvod mora biti sakriven."),
                                         duration: Duration(seconds: 2),
                                       ),
                                     );
@@ -238,14 +244,17 @@ SearchResult<Product>? dataWithDiscount;
                                     context: context,
                                     builder: (context) => AlertDialog(
                                       title: const Text("Potvrdite brisanje"),
-                                      content: const Text("Da li ste sigurni da želite izbrisati ovaj proizvod?"),
+                                      content: const Text(
+                                          "Da li ste sigurni da želite izbrisati ovaj proizvod?"),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context, false),
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
                                           child: const Text("Otkaži"),
                                         ),
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context, true),
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
                                           child: const Text("Izbriši"),
                                         ),
                                       ],
@@ -254,21 +263,27 @@ SearchResult<Product>? dataWithDiscount;
 
                                   if (confirmDelete == true) {
                                     try {
-                                      await Provider.of<ProductProvider>(context, listen: false)
+                                      await Provider.of<ProductProvider>(
+                                              context,
+                                              listen: false)
                                           .delete(widget.product!.proizvodId!);
 
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text("Proizvod je uspješno izbrisan."),
+                                          content: Text(
+                                              "Proizvod je uspješno izbrisan."),
                                           duration: Duration(seconds: 2),
                                         ),
                                       );
 
                                       Navigator.pop(context);
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
-                                          content: Text("Greška pri brisanju proizvoda: $e"),
+                                          content: Text(
+                                              "Greška pri brisanju proizvoda: $e"),
                                           duration: const Duration(seconds: 2),
                                         ),
                                       );
@@ -281,7 +296,8 @@ SearchResult<Product>? dataWithDiscount;
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
                                 ),
                                 icon: const Icon(Icons.delete),
                                 label: const Text(
@@ -303,81 +319,79 @@ SearchResult<Product>? dataWithDiscount;
     );
   }
 
- 
-  
   Widget _buildFirmaDetails() {
     return Column(
       children: [
         Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: widget.product!.slika != null
-                          ? Image.memory(
-                              base64Decode(widget.product!.slika!),
-                              fit: BoxFit.contain,
-                              width: double.infinity,
-                            )
-                          : const Center(child: Text("Nema slike")),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      height: 300,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: widget.product!.slika != null
+                            ? Image.memory(
+                                base64Decode(widget.product!.slika!),
+                                fit: BoxFit.contain,
+                                width: double.infinity,
+                              )
+                            : const Center(child: Text("Nema slike")),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 50),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Opis",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (widget.product?.opis != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Container(
-                        width: 300,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Text(
-                            widget.product!.opis!,
-                            style: const TextStyle(
-                              fontSize: 18,
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Opis",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black,
+                            ),
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (widget.product?.opis != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Container(
+                          width: 300,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Text(
+                              widget.product!.opis!,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
             const SizedBox(width: 40),
             Expanded(
               flex: 2,
@@ -407,8 +421,8 @@ SearchResult<Product>? dataWithDiscount;
                         ],
                         rows: [
                           _buildDataRow("Sifra", widget.product?.sifra),
-                          _buildDataRow(
-                              "Originalni broj", widget.product?.originalniBroj),
+                          _buildDataRow("Originalni broj",
+                              widget.product?.originalniBroj),
                           _buildDataRow(
                               "Kategorija",
                               widget.product?.kategorija?.nazivKategorije ??
@@ -434,7 +448,8 @@ SearchResult<Product>? dataWithDiscount;
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
                                         Container(
                                           width: 220,
@@ -442,58 +457,95 @@ SearchResult<Product>? dataWithDiscount;
                                           color: Colors.black,
                                         ),
                                         const SizedBox(height: 3),
-                                   
-  Column(
-  children: [
-    // 1. Prikaz regularne cijene
-    Text(
-      "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijena!)} KM",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-        decoration: (widget.product?.popust != null && widget.product!.popust! > 0) || 
-                   (widget.product?.cijenaSaPopustomZaAutoservis != null &&
-                    (context.read<UserProvider>().role == "Admin" || 
-                     (context.read<UserProvider>().role == "Autoservis" && 
-                      (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
-            ? TextDecoration.lineThrough 
-            : TextDecoration.none,
-        color: (widget.product?.popust != null && widget.product!.popust! > 0) || 
-               (widget.product?.cijenaSaPopustomZaAutoservis != null &&
-                (context.read<UserProvider>().role == "Admin" || 
-                 (context.read<UserProvider>().role == "Autoservis" && 
-                  (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
-            ? Colors.grey 
-            : Colors.black,
-      ),
-    ),
-
-    // 2. Prikaz cijene sa popustom (crvena) ako postoji
-    if (widget.product?.popust != null && widget.product!.popust! > 0)
-      Text(
-        "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijena! * (1 - widget.product!.popust! / 100))} KM",
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.red,
-          fontSize: 16,
-        ),
-      ),
-
-    // 3. Prikaz cijene za autoservise (narandžasta)
-    if (widget.product?.cijenaSaPopustomZaAutoservis != null &&
-        (context.read<UserProvider>().role == "Admin" || 
-         (context.read<UserProvider>().role == "Autoservis" && 
-          (dataWithDiscount?.result.any((p) => p.proizvodId == widget.product?.proizvodId) ?? false))))
-      Text(
-        "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijenaSaPopustomZaAutoservis!)} KM",
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.orange,
-          fontSize: 16,
-        ),
-      ),
-  ],
-),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijena!)} KM",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                decoration: (widget.product
+                                                                    ?.popust !=
+                                                                null &&
+                                                            widget.product!
+                                                                    .popust! >
+                                                                0) ||
+                                                        (widget.product
+                                                                    ?.cijenaSaPopustomZaAutoservis !=
+                                                                null &&
+                                                            (context.read<UserProvider>().role ==
+                                                                    "Admin" ||
+                                                                (context.read<UserProvider>().role ==
+                                                                        "Autoservis" &&
+                                                                    (dataWithDiscount
+                                                                            ?.result
+                                                                            .any((p) => p.proizvodId == widget.product?.proizvodId) ??
+                                                                        false))))
+                                                    ? TextDecoration.lineThrough
+                                                    : TextDecoration.none,
+                                                color: (widget.product
+                                                                    ?.popust !=
+                                                                null &&
+                                                            widget.product!
+                                                                    .popust! >
+                                                                0) ||
+                                                        (widget.product
+                                                                    ?.cijenaSaPopustomZaAutoservis !=
+                                                                null &&
+                                                            (context.read<UserProvider>().role ==
+                                                                    "Admin" ||
+                                                                (context.read<UserProvider>().role ==
+                                                                        "Autoservis" &&
+                                                                    (dataWithDiscount
+                                                                            ?.result
+                                                                            .any((p) => p.proizvodId == widget.product?.proizvodId) ??
+                                                                        false))))
+                                                    ? Colors.grey
+                                                    : Colors.black,
+                                              ),
+                                            ),
+                                            if (widget.product?.popust !=
+                                                    null &&
+                                                widget.product!.popust! > 0)
+                                              Text(
+                                                "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijena! * (1 - widget.product!.popust! / 100))} KM",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            if (widget.product
+                                                        ?.cijenaSaPopustomZaAutoservis !=
+                                                    null &&
+                                                (context
+                                                            .read<
+                                                                UserProvider>()
+                                                            .role ==
+                                                        "Admin" ||
+                                                    (context
+                                                                .read<
+                                                                    UserProvider>()
+                                                                .role ==
+                                                            "Autoservis" &&
+                                                        (dataWithDiscount
+                                                                ?.result
+                                                                .any((p) =>
+                                                                    p.proizvodId ==
+                                                                    widget
+                                                                        .product
+                                                                        ?.proizvodId) ??
+                                                            false))))
+                                              Text(
+                                                "${NumberFormat.currency(locale: 'bs_BA', symbol: '', decimalDigits: 2).format(widget.product!.cijenaSaPopustomZaAutoservis!)} KM",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.orange,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                         const SizedBox(height: 3),
                                         Container(
                                           width: 220,
@@ -509,7 +561,9 @@ SearchResult<Product>? dataWithDiscount;
                           ]),
                         ],
                       ),
-                      const SizedBox(height: 20,),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(right: 150),
                         child: Row(
@@ -537,7 +591,8 @@ SearchResult<Product>? dataWithDiscount;
                             ElevatedButton(
                               onPressed: () async {
                                 if (widget.product?.proizvodId != null) {
-                                  final int productId = widget.product!.proizvodId!;
+                                  final int productId =
+                                      widget.product!.proizvodId!;
                                   final quantity = _quantity;
 
                                   try {
@@ -550,18 +605,21 @@ SearchResult<Product>? dataWithDiscount;
 
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                          content: Text("Proizvod dodan u korpu.")),
+                                          content:
+                                              Text("Proizvod dodan u korpu.")),
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content: Text("Greška: ${e.toString()}")),
+                                          content:
+                                              Text("Greška: ${e.toString()}")),
                                     );
                                   }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text("Proizvod nije validan.")),
+                                        content:
+                                            Text("Proizvod nije validan.")),
                                   );
                                 }
                               },
@@ -587,161 +645,154 @@ SearchResult<Product>? dataWithDiscount;
             ),
           ],
         ),
-        
-        // Preporučeni proizvodi sekcija
-     const SizedBox(height: 40),
-Container(
-  color: const Color.fromARGB(41, 143, 143, 143),  // Red background for the whole section
-  padding: const EdgeInsets.all(12),  // Optional padding
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Center(  // Centering the title
-        child: Text(
-          "Preporučeni proizvodi",
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-      ),
-      const SizedBox(height: 10),
-      
-      if (isRecommendationsLoading)
-        const Center(child: CircularProgressIndicator())
-      else if (recommendedProducts.isEmpty)
-        const Center(  // Centering the empty message
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Text("Nema preporučenih proizvoda"),
+        const SizedBox(height: 40),
+        Container(
+          color: const Color.fromARGB(41, 143, 143, 143),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                child: Text(
+                  "Preporučeni proizvodi",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              if (isRecommendationsLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (recommendedProducts.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text("Nema preporučenih proizvoda"),
+                  ),
+                )
+              else
+                SizedBox(
+                  height: 250,
+                  child: Center(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: recommendedProducts.length,
+                      itemBuilder: (context, index) {
+                        return _buildProductCard(recommendedProducts[index]);
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 50),
+                      padding: const EdgeInsets.only(bottom: 16),
+                    ),
+                  ),
+                ),
+            ],
           ),
         )
-      else
-        SizedBox(
-          height: 250,
-          child: Center(  // Centering the ListView
-            child: ListView.separated(  // Using ListView.separated for spacing
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: recommendedProducts.length,
-              itemBuilder: (context, index) {
-                return _buildProductCard(recommendedProducts[index]);
-              },
-              separatorBuilder: (context, index) => const SizedBox(width: 50),  // Space between cards
-              padding: const EdgeInsets.only(bottom: 16),  // Padding on sides
-            ),
-          ),
-        ),
-    ],
-  ),
-)
-
       ],
     );
   }
 
-Widget _buildProductCard(Product product) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProductReadScreen(product: product),
-        ),
-      );
-    },
-    child: Container(
-      width: 200, // Povećana širina
-      margin: const EdgeInsets.all(12), // Veći razmak između kartica
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12), // Veći zaobljeni uglovi
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.9),
-            spreadRadius: 3,
-            blurRadius: 6,
-            offset: const Offset(0, 4), // Povećana sjena
+  Widget _buildProductCard(Product product) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductReadScreen(product: product),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Slika proizvoda
-          Container(
-            height: 120, // Povećana visina slike
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              image: product.slika != null
-                  ? DecorationImage(
-                      image: MemoryImage(base64Decode(product.slika!)),
-                      fit: BoxFit.cover, // Bolje pokrivanje
-                    )
+        );
+      },
+      child: Container(
+        width: 200,
+        margin: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.9),
+              spreadRadius: 3,
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 120,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
+                image: product.slika != null
+                    ? DecorationImage(
+                        image: MemoryImage(base64Decode(product.slika!)),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: product.slika == null
+                  ? const Center(child: Icon(Icons.image, size: 60))
                   : null,
             ),
-            child: product.slika == null
-                ? const Center(child: Icon(Icons.image, size: 60)) // Veća ikona
-                : null,
-          ),
-          
-          // Informacije o proizvodu
-          Padding(
-            padding: const EdgeInsets.all(12), // Veći padding
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.naziv ?? 'Nema naziva',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15, // Veći font
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                
-                if (product.popust != null && product.popust! > 0)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${product.cijena} KM",
-                        style: const TextStyle(
-                          decoration: TextDecoration.lineThrough,
-                          color: Colors.grey,
-                          fontSize: 15, // Veći font
-                        ),
-                      ),
-                      Text(
-                        "${product.cijena! * (1 - product.popust! / 100)} KM",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                          fontSize: 15, // Veći font
-                        ),
-                      ),
-                    ],
-                  )
-                else
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    "${product.cijena} KM",
+                    product.naziv ?? 'Nema naziva',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15, // Veći font
+                      fontSize: 15,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-              ],
+                  if (product.popust != null && product.popust! > 0)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${product.cijena} KM",
+                          style: const TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.grey,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          "${product.cijena! * (1 - product.popust! / 100)} KM",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      "${product.cijena} KM",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   DataRow _buildDataRow(String label, String? value) {
     return DataRow(
@@ -750,8 +801,8 @@ Widget _buildProductCard(Product product) {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Text(label,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 16)),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           ),
         ),
         DataCell(

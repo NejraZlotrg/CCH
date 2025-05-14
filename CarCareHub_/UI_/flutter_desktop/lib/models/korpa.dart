@@ -21,8 +21,6 @@ class Korpa {
   double? ukupnaCijenaProizvoda;
   bool? vidljivo;
 
-
-
   Korpa({
     this.korpaId,
     this.vidljivo,

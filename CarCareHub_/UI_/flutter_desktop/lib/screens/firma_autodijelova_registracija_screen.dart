@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'dart:convert';
 import 'dart:io';
@@ -44,11 +44,9 @@ class _FirmaAutodijelovaRegistracijaScreenState
   List<Usluge> usluge = [];
   bool isLoading = true;
 
-  
-  bool usernameExists = false; // Dodajte ovo stanje
+  bool usernameExists = false;
 
-
-    final validator = CreateValidator();
+  final validator = CreateValidator();
 
   @override
   void initState() {
@@ -65,7 +63,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
       'password': widget.firmaAutodijelova?.password ?? '',
       'passwordAgain': widget.firmaAutodijelova?.passwordAgain ?? '',
       'ulogaId': widget.firmaAutodijelova?.ulogaId ?? '',
-      
     };
 
     _firmaAutodijelovaProvider = context.read<FirmaAutodijelovaProvider>();
@@ -76,16 +73,16 @@ class _FirmaAutodijelovaRegistracijaScreenState
 
   Future initForm() async {
     gradResult = await _gradProvider.get();
-    if (widget.firmaAutodijelova != null && widget.firmaAutodijelova!.slikaProfila != null) {
-      _imageFile =
-          await _getImageFileFromBase64(widget.firmaAutodijelova!.slikaProfila!);
+    if (widget.firmaAutodijelova != null &&
+        widget.firmaAutodijelova!.slikaProfila != null) {
+      _imageFile = await _getImageFileFromBase64(
+          widget.firmaAutodijelova!.slikaProfila!);
     }
     setState(() {
       isLoading = false;
     });
   }
 
-  // Function to convert base64 image to File
   Future<File> _getImageFileFromBase64(String base64String) async {
     final bytes = base64Decode(base64String);
     final tempDir = await Directory.systemTemp.createTemp();
@@ -103,71 +100,74 @@ class _FirmaAutodijelovaRegistracijaScreenState
     }
   }
 
-
   Future<bool> _saveForm() async {
-  _formKey.currentState?.saveAndValidate();
-  var request = Map.from(_formKey.currentState!.value);
-  request['ulogaId'] = 3;
+    _formKey.currentState?.saveAndValidate();
+    var request = Map.from(_formKey.currentState!.value);
+    request['ulogaId'] = 3;
 
-  if (_imageFile != null) {
-    final imageBytes = await _imageFile!.readAsBytes();
-    request['slikaProfila'] = base64Encode(imageBytes);
-  } else {
-    const assetImagePath = 'assets/images/firma_prazna_slika.jpg';
-    var imageFile = await rootBundle.load(assetImagePath);
-    final imageBytes = imageFile.buffer.asUint8List();
-    request['slikaProfila'] = base64Encode(imageBytes);
-  }
+    if (_imageFile != null) {
+      final imageBytes = await _imageFile!.readAsBytes();
+      request['slikaProfila'] = base64Encode(imageBytes);
+    } else {
+      const assetImagePath = 'assets/images/firma_prazna_slika.jpg';
+      var imageFile = await rootBundle.load(assetImagePath);
+      final imageBytes = imageFile.buffer.asUint8List();
+      request['slikaProfila'] = base64Encode(imageBytes);
+    }
 
-  try {
-    final exists = await _firmaAutodijelovaProvider.checkUsernameExists(request['username']);
-    if (exists) {
-      _formKey.currentState?.fields['username']?.invalidate("Username već postoji");
+    try {
+      final exists = await _firmaAutodijelovaProvider
+          .checkUsernameExists(request['username']);
+      if (exists) {
+        _formKey.currentState?.fields['username']
+            ?.invalidate("Username već postoji");
+        return false;
+      }
+
+      if (widget.firmaAutodijelova == null) {
+        await _firmaAutodijelovaProvider.insert(request);
+      } else {
+        await _firmaAutodijelovaProvider.update(
+          widget.firmaAutodijelova!.firmaAutodijelovaID,
+          request,
+        );
+      }
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LogInPage()),
+        (Route<dynamic> route) => false,
+      );
+      return true;
+    } catch (e) {
+      String errorMessage = e.toString();
+      if (errorMessage.startsWith('Exception: ')) {
+        errorMessage = errorMessage.substring('Exception: '.length);
+      }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Greška"),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
       return false;
     }
-
-    if (widget.firmaAutodijelova == null) {
-      await _firmaAutodijelovaProvider.insert(request);
-    } else {
-      await _firmaAutodijelovaProvider.update(
-        widget.firmaAutodijelova!.firmaAutodijelovaID,
-        request,
-      );
-    }
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LogInPage()),
-      (Route<dynamic> route) => false,
-    );
-    return true;
-  } catch (e) {
-    String errorMessage = e.toString();
-    if (errorMessage.startsWith('Exception: ')) {
-      errorMessage = errorMessage.substring('Exception: '.length);
-    }
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text("Greška"),
-        content: Text(errorMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-    return false;
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 204, 204, 204),
       appBar: AppBar(
-        title: Text(widget.firmaAutodijelova?.nazivFirme ?? "Registracija firme autodijelova"),
+        title: Text(widget.firmaAutodijelova?.nazivFirme ??
+            "Registracija firme autodijelova"),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -183,30 +183,33 @@ class _FirmaAutodijelovaRegistracijaScreenState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                         ElevatedButton(
-  onPressed: () async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final success = await _saveForm();
-      if (!success) {
-        setState(() {});
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Molimo popunite obavezna polja")),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.white,
-    backgroundColor: Colors.red,
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    textStyle: const TextStyle(fontSize: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-  ),
-  child: const Text("Spasi"),
-)
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                final success = await _saveForm();
+                                if (!success) {
+                                  setState(() {});
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Molimo popunite obavezna polja")),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              textStyle: const TextStyle(fontSize: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("Spasi"),
+                          )
                         ],
                       ),
                     )
@@ -236,7 +239,6 @@ class _FirmaAutodijelovaRegistracijaScreenState
                   border: Border.all(color: Colors.grey, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
@@ -252,15 +254,17 @@ class _FirmaAutodijelovaRegistracijaScreenState
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      ): const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.camera_alt, size: 60, color: Colors.black),
-              SizedBox(height: 10),
-              Text('Odaberite sliku',
-                  style: TextStyle(color: Colors.black, fontSize: 16)),
-            ],
-          ),
+                      )
+                    : const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt, size: 60, color: Colors.black),
+                          SizedBox(height: 10),
+                          Text('Odaberite sliku',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16)),
+                        ],
+                      ),
               ),
             ),
           ),
@@ -271,279 +275,267 @@ class _FirmaAutodijelovaRegistracijaScreenState
     );
   }
 
-List<Widget> _buildFormFields() {
-  return [
-    // Red 1: Naziv i adresa
-    Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Naziv firme autodijelova:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+  List<Widget> _buildFormFields() {
+    return [
+      Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Naziv firme autodijelova:",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                validator: validator.nazivFirme,
-                name: "nazivFirme",
-                
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Adresa:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  validator: validator.nazivFirme,
+                  name: "nazivFirme",
                 ),
-                name: "adresa",
-                validator: validator.adresa,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-
-  Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    const Text(
-      "Korisničko ime",
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    ),
-    FormBuilderTextField(
-  decoration: const InputDecoration(
-    border: OutlineInputBorder(),
-    fillColor: Colors.white,
-    filled: true,
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-  ),
-  name: "username",
-  validator: (value) {
-    return validator.username3char(value);
-  },
-),
-
-  ],
-),
-    const SizedBox(height: 10),
-
-    // Red 3: Lozinka
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Lozinka",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Adresa:",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "adresa",
+                  validator: validator.adresa,
+                ),
+              ],
+            ),
           ),
-          name: "password",
-          validator: validator.password,
-          obscureText: true,
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-    // Red 4: Ponovljena Lozinka
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Ponovite lozinku",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        FormBuilderTextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          ),
-          name: "passwordAgain",
-          validator: validator.lozinkaAgain,
-          obscureText: true,
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-
-    // Red 5: Adresa i Grad
-    Row(
-      children: [
-        Expanded(
-          child: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    const Text(
-      "Grad",
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    ),
-    FormBuilderDropdown(
-      name: 'gradId',
-      validator: validator.required,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        fillColor: Colors.white,
-        filled: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-        hintText: 'Izaberite grad',
+        ],
       ),
-      items: gradResult?.result
-              .map((item) => DropdownMenuItem(
-                    alignment: AlignmentDirectional.center,
-                    value: item.gradId.toString(),
-                    child: Text(
-                      item.nazivGrada ?? "",
-                      style: TextStyle(
-                        color: item.vidljivo == false ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  ))
-              .toList() ??
-          [],
-    ),
-  ],
-)
-
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-
-    // Red 6: Email i Broj telefona
-    Row(
-      children: [
-        Expanded(
-          child: Column(
+      const SizedBox(height: 10),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Korisničko ime",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          FormBuilderTextField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            ),
+            name: "username",
+            validator: (value) {
+              return validator.username3char(value);
+            },
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Lozinka",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          FormBuilderTextField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            ),
+            name: "password",
+            validator: validator.password,
+            obscureText: true,
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Ponovite lozinku",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          FormBuilderTextField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            ),
+            name: "passwordAgain",
+            validator: validator.lozinkaAgain,
+            obscureText: true,
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          Expanded(
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Email",
+                "Grad",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              FormBuilderTextField(
+              FormBuilderDropdown(
+                name: 'gradId',
+                validator: validator.required,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   fillColor: Colors.white,
                   filled: true,
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  hintText: 'Izaberite grad',
                 ),
-                name: "email",
-                validator: validator.email,
+                items: gradResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.gradId.toString(),
+                              child: Text(
+                                item.nazivGrada ?? "",
+                                style: TextStyle(
+                                  color: item.vidljivo == false
+                                      ? Colors.red
+                                      : Colors.black,
+                                ),
+                              ),
+                            ))
+                        .toList() ??
+                    [],
               ),
             ],
-          ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Broj telefona",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          )),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Email",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                name: "telefon",
-                validator: validator.phoneNumber,
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-
-    // Red 7: JIB i MBS
-    Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "JIB",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "email",
+                  validator: validator.email,
                 ),
-                name: "jib",
-                validator: validator.jib,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "MBS",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              FormBuilderTextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Broj telefona",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                name: "mbs",
-                validator: validator.mbs,
-              ),
-            ],
+                FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "telefon",
+                  validator: validator.phoneNumber,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-  ];
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "JIB",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "jib",
+                  validator: validator.jib,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "MBS",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                FormBuilderTextField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  ),
+                  name: "mbs",
+                  validator: validator.mbs,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+    ];
+  }
 }
-
-    }

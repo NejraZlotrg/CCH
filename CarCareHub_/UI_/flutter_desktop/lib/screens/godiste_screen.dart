@@ -44,14 +44,14 @@ class _GodisteScreenState extends State<GodisteScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Godiste",
-        child: Container(
-          color: const Color.fromARGB(255, 204, 204, 204),
-          child: Column(
-            children: [
-              _buildSearch(),
-              _buildDataListView(),
-            ],
-          ),
+      child: Container(
+        color: const Color.fromARGB(255, 204, 204, 204),
+        child: Column(
+          children: [
+            _buildSearch(),
+            _buildDataListView(),
+          ],
+        ),
       ),
     );
   }
@@ -98,7 +98,8 @@ class _GodisteScreenState extends State<GodisteScreen> {
                   }
                   SearchResult<Godiste> data;
                   if (context.read<UserProvider>().role == "Admin") {
-                    data = await _godisteProvider.getAdmin(filter: filterParams);
+                    data =
+                        await _godisteProvider.getAdmin(filter: filterParams);
                   } else {
                     data = await _godisteProvider.get(filter: filterParams);
                   }
@@ -128,14 +129,13 @@ class _GodisteScreenState extends State<GodisteScreen> {
               if (context.read<UserProvider>().role == "Admin")
                 ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    GodisteDetailsScreen(godiste: null),
-                              ),
-                            );
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            GodisteDetailsScreen(godiste: null),
+                      ),
+                    );
                     await _loadData();
-
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -161,65 +161,66 @@ class _GodisteScreenState extends State<GodisteScreen> {
     );
   }
 
-Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(
-          color: Colors.black,
-          width: 1.0,
+  Widget _buildDataListView() {
+    return Expanded(
+        child: SingleChildScrollView(
+            child: Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(
+            color: Colors.black,
+            width: 1.0,
+          ),
         ),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Godiste:',
-                style: TextStyle(fontStyle: FontStyle.italic),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: DataTable(
+            showCheckboxColumn: false,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Godiste:',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Godiste e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  GodisteDetailsScreen(godiste: e),
-                            ),
-                          );
-                          await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(
-                          Text(
-                            e.godiste_.toString(),
-                            style: TextStyle(
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
+            ],
+            rows: result?.result
+                    .map(
+                      (Godiste e) => DataRow(
+                        onSelectChanged: (selected) async {
+                          if (selected == true) {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    GodisteDetailsScreen(godiste: e),
+                              ),
+                            );
+                            await _loadData();
+                          }
+                        },
+                        cells: [
+                          DataCell(
+                            Text(
+                              e.godiste_.toString(),
+                              style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
+                        ],
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-    ),))
-  );
-}
-
+    )));
+  }
 }

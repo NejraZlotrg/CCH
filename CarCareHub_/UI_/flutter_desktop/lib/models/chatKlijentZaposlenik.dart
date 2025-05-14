@@ -16,14 +16,18 @@ class chatKlijentZaposlenik {
   bool poslanoOdKlijenta;
   DateTime vrijemeSlanja;
 
+  chatKlijentZaposlenik(
+      this.id,
+      this.klijentId,
+      this.zaposlenikId,
+      this.zaposlenikIme,
+      this.klijentIme,
+      this.poruka,
+      this.poslanoOdKlijenta,
+      this.vrijemeSlanja);
 
+  factory chatKlijentZaposlenik.fromJson(Map<String, dynamic> json) =>
+      _$chatKlijentZaposlenikFromJson(json);
 
-  chatKlijentZaposlenik(this.id, this.klijentId,this.zaposlenikId, this.zaposlenikIme,this.klijentIme,
-  this.poruka,this.poslanoOdKlijenta,this.vrijemeSlanja);
-
-  
-  factory chatKlijentZaposlenik.fromJson(Map<String,dynamic> json) => _$chatKlijentZaposlenikFromJson(json);
-
-
-  Map<String,dynamic> toJson() => _$chatKlijentZaposlenikToJson(this);
+  Map<String, dynamic> toJson() => _$chatKlijentZaposlenikToJson(this);
 }

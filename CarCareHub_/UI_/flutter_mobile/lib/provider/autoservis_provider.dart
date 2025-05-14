@@ -12,8 +12,7 @@ class AutoservisProvider extends BaseProvider<Autoservis> {
   }
 
   Future<List<Autoservis>> getAutoservisById(int id) async {
-    return await getById(
-        id); 
+    return await getById(id); 
   }
 
   Future<int?> getIdByUsernameAndPassword(

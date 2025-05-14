@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobile/models/BPAutodijeloviAutoservis.dart';
@@ -39,7 +39,6 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
 
   Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY',
       defaultValue:
@@ -70,7 +69,6 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ChatAutoservisKlijentProvider()),
         ChangeNotifierProvider(create: (_) => ChatKlijentZaposlenikProvider()),
-
       ],
       child: const MyApp(),
     ),
@@ -99,15 +97,13 @@ class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LogInPageState createState() => _LogInPageState();
 }
 
 class _LogInPageState extends State<LogInPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  String?
-      errorMessage; // Poruka greške koja će se prikazati ako login ne uspije
+  String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +130,6 @@ class _LogInPageState extends State<LogInPage> {
             ),
             child: Row(
               children: [
-                // Left two-thirds with login form
                 Expanded(
                   flex: 2,
                   child: Padding(
@@ -165,7 +160,7 @@ class _LogInPageState extends State<LogInPage> {
                         _buildTextField(passwordController, 'Lozinka',
                             obscureText: true),
                         const SizedBox(height: 10.0),
-                        if (errorMessage != null) // Prikaz poruke o grešci
+                        if (errorMessage != null)
                           Text(
                             errorMessage!,
                             style: const TextStyle(
@@ -181,128 +176,160 @@ class _LogInPageState extends State<LogInPage> {
                                 var username = usernameController.text;
                                 var password = passwordController.text;
 
-                                // Pohranjujemo korisničke podatke u Authorization
                                 Authorization.username = username;
                                 Authorization.password = password;
 
-                              try {
-  // Inicijalizacija providera
-  final autoservisProvider = AutoservisProvider();
-  final zaposlenikProvider = ZaposlenikProvider();
-  final klijentProvider = KlijentProvider();
-  final firmaAutodijelovaProvider = FirmaAutodijelovaProvider();
+                                try {
+                                  final autoservisProvider =
+                                      AutoservisProvider();
+                                  final zaposlenikProvider =
+                                      ZaposlenikProvider();
+                                  final klijentProvider = KlijentProvider();
+                                  final firmaAutodijelovaProvider =
+                                      FirmaAutodijelovaProvider();
 
-  // Provjera userId kroz sve providere
-  final userIdA = await autoservisProvider.getIdByUsernameAndPassword(username, password);
-  final vidljivoA = await autoservisProvider.getVidljivoByUsernameAndPassword(username, password);
+                                  final userIdA = await autoservisProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
+                                  final vidljivoA = await autoservisProvider
+                                      .getVidljivoByUsernameAndPassword(
+                                          username, password);
 
-  final userIdZ = await zaposlenikProvider.getIdByUsernameAndPassword(username, password);
-  final vidljivoZ= await zaposlenikProvider.getVidljivoByUsernameAndPassword(username, password);
+                                  final userIdZ = await zaposlenikProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
+                                  final vidljivoZ = await zaposlenikProvider
+                                      .getVidljivoByUsernameAndPassword(
+                                          username, password);
 
-  final userIdK = await klijentProvider.getIdByUsernameAndPassword(username, password);
-  final vidljivoK = await klijentProvider.getVidljivoByUsernameAndPassword(username, password);
+                                  final userIdK = await klijentProvider
+                                      .getIdByUsernameAndPassword(
+                                          username, password);
+                                  final vidljivoK = await klijentProvider
+                                      .getVidljivoByUsernameAndPassword(
+                                          username, password);
 
-  final userIdF = await firmaAutodijelovaProvider.getIdByUsernameAndPassword(username, password);
-  final vidljivoF = await firmaAutodijelovaProvider.getVidljivoByUsernameAndPassword(username, password);
+                                  final userIdF =
+                                      await firmaAutodijelovaProvider
+                                          .getIdByUsernameAndPassword(
+                                              username, password);
+                                  final vidljivoF =
+                                      await firmaAutodijelovaProvider
+                                          .getVidljivoByUsernameAndPassword(
+                                              username, password);
 
+                                  if (userIdA != null) {
+                                    if (vidljivoA == false) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Greška: Autoservis je obrisan ili deaktiviran.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                      return;
+                                    }
 
-  // Provjera svih korisnika
-  if (userIdA != null) {
-  if (vidljivoA == false) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Greška: Autoservis je obrisan ili deaktiviran.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return; // prekida dalje izvršavanje
-  }
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(
+                                        userIdA, 'Autoservis', username);
 
-  final userProvider = context.read<UserProvider>();
-  userProvider.setUser(userIdA, 'Autoservis', username);
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  } else if (userIdZ != null) {
+                                    if (vidljivoZ == false) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Greška: Zaposlenik je obrisan ili deaktiviran.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(
+                                        userIdZ, 'Zaposlenik', username);
 
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => const ProductScreen(),
-    ),
-  );
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  } else if (userIdK != null) {
+                                    if (vidljivoK == false) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Greška: Klijent je obrisan ili deaktiviran.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    if (userIdK == 2) {
+                                      userProvider.setUser(
+                                          userIdK, 'Admin', username);
+                                    } else {
+                                      userProvider.setUser(
+                                          userIdK, 'Klijent', username);
+                                    }
 
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  } else if (userIdF != null) {
+                                    if (vidljivoF == false) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Greška: Firma autodijelova je obrisana ili deaktivirana.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                      return;
+                                    }
 
-  } else if (userIdZ != null) {
-    if (vidljivoZ == false) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Greška: Zaposlenik je obrisan ili deaktiviran.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return; // prekida dalje izvršavanje
-  }
-    final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userIdZ, 'Zaposlenik', username);
+                                    final userProvider =
+                                        context.read<UserProvider>();
+                                    userProvider.setUser(userIdF,
+                                        'Firma autodijelova', username);
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  } else if (userIdK != null) {
-     if (vidljivoK == false) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Greška: Klijent je obrisan ili deaktiviran.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return; // prekida dalje izvršavanje
-  }
-    final userProvider = context.read<UserProvider>();
-    if (userIdK == 2) {
-      userProvider.setUser(userIdK, 'Admin', username);
-    } 
-    else {
-      userProvider.setUser(userIdK, 'Klijent', username);
-    }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  } else if (userIdF != null) {
-    if (vidljivoF == false) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Greška: Firma autodijelova je obrisana ili deaktivirana.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return; // prekida dalje izvršavanje
-  }
-
-    final userProvider = context.read<UserProvider>();
-    userProvider.setUser(userIdF, 'Firma autodijelova', username );
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductScreen(),
-      ),
-    );
-  }
-else {
-    // Ako userId nije pronađen, prikazujemo grešku
-    setState(() {
-      errorMessage = "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
-    });
-  }}
-catch (e) {
-  // Obrada grešaka
-  setState(() {
-    errorMessage = "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
-  });
-}
-},
-
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductScreen(),
+                                      ),
+                                    );
+                                  } else {
+                                    setState(() {
+                                      errorMessage =
+                                          "Korisnik nije pronađen. Provjerite svoje podatke i pokušajte ponovo.";
+                                    });
+                                  }
+                                } catch (e) {
+                                  setState(() {
+                                    errorMessage =
+                                        "Došlo je do greške prilikom prijave. Pokušajte ponovo.";
+                                  });
+                                }
+                              },
                               child: const Text("Prijavi se"),
                             ),
                             OutlinedButton(
@@ -320,16 +347,14 @@ catch (e) {
                                             title: const Text(
                                                 "Firma autodijelova"),
                                             onTap: () {
-                                              Navigator.pop(
-                                                  context); // Zatvaranje dijaloga
+                                              Navigator.pop(context);
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         FirmaAutodijelovaRegistracijaScreen(
                                                           firmaAutodijelova:
                                                               null,
-                                                        ) // poziv na drugi screen
-                                                    ),
+                                                        )),
                                               );
                                             },
                                           ),
@@ -337,15 +362,13 @@ catch (e) {
                                             leading: const Icon(Icons.store),
                                             title: const Text("Autoservis"),
                                             onTap: () {
-                                              Navigator.pop(
-                                                  context); // Zatvaranje dijaloga
+                                              Navigator.pop(context);
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         AutoservisRegistracijaScreen(
                                                           autoservis: null,
-                                                        ) // poziv na drugi screen
-                                                    ),
+                                                        )),
                                               );
                                             },
                                           ),
@@ -353,15 +376,13 @@ catch (e) {
                                             leading: const Icon(Icons.store),
                                             title: const Text("Klijent"),
                                             onTap: () {
-                                              Navigator.pop(
-                                                  context); // Zatvaranje dijaloga
+                                              Navigator.pop(context);
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         KlijentRegistracijaScreen(
                                                           klijent: null,
-                                                        ) // poziv na drugi screen
-                                                    ),
+                                                        )),
                                               );
                                             },
                                           ),
@@ -393,7 +414,6 @@ catch (e) {
                     ),
                   ),
                 ),
-                // Right one-third with logo and details
                 Expanded(
                   flex: 1,
                   child: Container(
@@ -451,7 +471,7 @@ catch (e) {
   Widget _buildTextField(TextEditingController controller, String label,
       {bool obscureText = false}) {
     return SizedBox(
-      width: 370, // Narrower input field
+      width: 370,
       child: TextField(
         controller: controller,
         decoration: InputDecoration(

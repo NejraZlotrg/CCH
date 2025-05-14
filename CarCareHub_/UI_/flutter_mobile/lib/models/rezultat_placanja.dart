@@ -6,9 +6,8 @@ class RezultatPlacanja {
 
   factory RezultatPlacanja.fromJson(Map<String, dynamic> json) {
     return RezultatPlacanja(
-      id: json['id'], // Ensure this matches the JSON response
-      clientSecret:
-          json['clientSecret'], // Ensure this matches the JSON response
+      id: json['id'],
+      clientSecret: json['clientSecret'],
     );
   }
 }

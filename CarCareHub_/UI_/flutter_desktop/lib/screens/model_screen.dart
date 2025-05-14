@@ -6,45 +6,47 @@ import 'package:flutter_mobile/provider/model_provider.dart';
 import 'package:flutter_mobile/screens/model_details_screen.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
 import 'package:provider/provider.dart';
- 
+
 class ModelScreen extends StatefulWidget {
   const ModelScreen({super.key});
- 
+
   @override
   State<ModelScreen> createState() => _ModelScreenState();
 }
- 
+
 class _ModelScreenState extends State<ModelScreen> {
   late ModelProvider _modelProvider;
   SearchResult<Model>? result;
   final TextEditingController _nazivModelaController = TextEditingController();
   final TextEditingController _markaVozilaController = TextEditingController();
- 
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _modelProvider = context.read<ModelProvider>();
     _loadData();
   }
- Future<void> _loadData() async {
-  SearchResult<Model> data;
-  if (context.read<UserProvider>().role == "Admin") {
-    data = await _modelProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
-  } else {
-    data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
+
+  Future<void> _loadData() async {
+    SearchResult<Model> data;
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _modelProvider.getAdmin(filter: {'IsAllIncluded': 'true'});
+    } else {
+      data = await _modelProvider.get(filter: {'IsAllIncluded': 'true'});
+    }
+    if (mounted) {
+      setState(() {
+        result = data;
+      });
+    }
   }
-  if (mounted) {
-    setState(() {
-      result = data;
-    });
-  }
-}
+
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       title: "Model",
       child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+        color: const Color.fromARGB(255, 204, 204, 204),
         child: Column(
           children: [
             _buildSearch(),
@@ -54,7 +56,7 @@ class _ModelScreenState extends State<ModelScreen> {
       ),
     );
   }
- 
+
   Widget _buildSearch() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -112,44 +114,43 @@ class _ModelScreenState extends State<ModelScreen> {
                 ),
               ),
               const SizedBox(width: 10),
-                     if (context.read<UserProvider>().role == "Admin")
-               ElevatedButton(
+              if (context.read<UserProvider>().role == "Admin")
+                ElevatedButton(
                   onPressed: () async {
-                    await  Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ModelDetailsScreen(model: null),
-                              ),
-                            );
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ModelDetailsScreen(model: null),
+                      ),
+                    );
                     await _loadData();
-
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 8.0),
+                      Text('Dodaj'),
+                    ],
                   ),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add),
-                    SizedBox(width: 8.0),
-                    Text('Dodaj'),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
       ),
     );
   }
- 
+
   Future<void> _onSearchPressed() async {
     var filterParams = {'IsAllIncluded': 'true'};
-    if (_nazivModelaController.text.isNotEmpty || _markaVozilaController.text.isNotEmpty) {
+    if (_nazivModelaController.text.isNotEmpty ||
+        _markaVozilaController.text.isNotEmpty) {
       filterParams['nazivModela'] = _nazivModelaController.text;
       filterParams['markaVozila'] = _markaVozilaController.text;
     }
@@ -160,98 +161,101 @@ class _ModelScreenState extends State<ModelScreen> {
       data = await _modelProvider.get(filter: filterParams);
     }
 
- 
     if (!mounted) return;
- 
+
     setState(() {
       result = data;
     });
   }
- 
- 
- Widget _buildDataListView() {
-  return Expanded( // Koristimo Expanded kako bi popunili preostali prostor
-      child: SingleChildScrollView( // Omogućavamo skrolovanje za ceo sadržaj
-        child: Container(
-    width: MediaQuery.of(context).size.width, // Širina 100% ekrana
-    margin: const EdgeInsets.only(top: 20.0), // Razmak od vrha
-    child: Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(1.0),
-        side: const BorderSide(color: Colors.black, width: 1.0),
-      ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          showCheckboxColumn: false,
-          columns: const [
-            DataColumn(
-              label: Text(
-                'Naziv modela',
-                style: TextStyle(fontStyle: FontStyle.italic),
+
+  Widget _buildDataListView() {
+    return Expanded(
+        child: SingleChildScrollView(
+            child: Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(top: 20.0),
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          side: const BorderSide(color: Colors.black, width: 1.0),
+        ),
+        child: SingleChildScrollView(
+          child: DataTable(
+            showCheckboxColumn: false,
+            columns: const [
+              DataColumn(
+                label: Text(
+                  'Naziv modela',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Marka vozila',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Marka vozila',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-            DataColumn(
-              label: Text(
-                'Godiste',
-                style: TextStyle(fontStyle: FontStyle.italic),
+              DataColumn(
+                label: Text(
+                  'Godiste',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
               ),
-            ),
-          ],
-          rows: result?.result
-                  .map(
-                    (Model e) => DataRow(
-                      onSelectChanged: (selected) async {
-                        if (selected == true) {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ModelDetailsScreen(model: e),
-                            ),
-                          );
-                          await _loadData();
-                        }
-                      },
-                      cells: [
-                        DataCell(
-                          Text(
-                            e.nazivModela ?? "",
-                            style: TextStyle(
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
+            ],
+            rows: result?.result
+                    .map(
+                      (Model e) => DataRow(
+                        onSelectChanged: (selected) async {
+                          if (selected == true) {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ModelDetailsScreen(model: e),
+                              ),
+                            );
+                            await _loadData();
+                          }
+                        },
+                        cells: [
+                          DataCell(
+                            Text(
+                              e.nazivModela ?? "",
+                              style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                        DataCell(
-                          Text(
-                            e.vozilo?.markaVozila ?? "",
-                            style: TextStyle(
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                          DataCell(
+                            Text(
+                              e.vozilo?.markaVozila ?? "",
+                              style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                        DataCell(
-                          Text(
-                            e.godiste?.godiste_?.toString() ?? "",
-                            style: TextStyle(
-                              color: e.vidljivo == false ? Colors.red : Colors.black,
+                          DataCell(
+                            Text(
+                              e.godiste?.godiste_?.toString() ?? "",
+                              style: TextStyle(
+                                color: e.vidljivo == false
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList() ??
-              [],
+                        ],
+                      ),
+                    )
+                    .toList() ??
+                [],
+          ),
         ),
       ),
-    ),))
-  );
-}
-
+    )));
+  }
 }

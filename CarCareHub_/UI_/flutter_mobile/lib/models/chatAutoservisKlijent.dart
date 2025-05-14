@@ -13,7 +13,6 @@ class chatAutoservisKlijent {
   String? poruka;
   bool poslanoOdKlijenta;
   DateTime vrijemeSlanja;
-//bool? vidljivo;
 
   chatAutoservisKlijent(
       this.id,

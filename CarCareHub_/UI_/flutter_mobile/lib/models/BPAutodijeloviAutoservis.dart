@@ -7,12 +7,12 @@ part 'BPAutodijeloviAutoservis.g.dart';
 
 @JsonSerializable()
 class BPAutodijeloviAutoservis {
-  int? bpAutodijeloviAutoservisId; // Glavni ID
-  FirmaAutodijelova? firmaAutodijelova; // Veza prema firmi autodijelova
-  Autoservis? autoservis; // Veza prema autoservisu
-  int? firmaAutodijelovaId; // ID firme autodijelova
+  int? bpAutodijeloviAutoservisId;
+  FirmaAutodijelova? firmaAutodijelova;
+  Autoservis? autoservis;
+  int? firmaAutodijelovaId;
   bool? vidljivo;
-  int? autoservisId; // ID autoservisa
+  int? autoservisId;
 
   BPAutodijeloviAutoservis(
     this.bpAutodijeloviAutoservisId,

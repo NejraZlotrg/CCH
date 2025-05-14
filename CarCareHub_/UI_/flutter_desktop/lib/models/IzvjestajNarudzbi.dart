@@ -29,7 +29,8 @@ class IzvjestajNarudzbi {
     this.status,
   );
 
-  factory IzvjestajNarudzbi.fromJson(Map<String, dynamic> json) => _$IzvjestajNarudzbiFromJson(json);
+  factory IzvjestajNarudzbi.fromJson(Map<String, dynamic> json) =>
+      _$IzvjestajNarudzbiFromJson(json);
 
   Map<String, dynamic> toJson() => _$IzvjestajNarudzbiToJson(this);
 }

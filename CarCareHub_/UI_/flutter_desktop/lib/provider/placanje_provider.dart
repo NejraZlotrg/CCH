@@ -14,8 +14,12 @@ class PlacanjeProvider extends BaseProvider<PlacanjeInsert> {
   }
 
   Future<RezultatPlacanja> create(PlacanjeInsert request) async {
+    // final response = await http.post(
+    //   Uri.parse('http://localhost:7209/api/placanjeAutoservisDijelovi/plati'),  
+     String url = buildUrl('/plati');
+    final uri = Uri.parse(url);
     final response = await http.post(
-      Uri.parse('http://localhost:7209/api/placanjeAutoservisDijelovi/plati'),  
+      uri,
       headers: createHeaders(),
       body: jsonEncode({
         'ukupno': request.ukupno
@@ -27,7 +31,7 @@ class PlacanjeProvider extends BaseProvider<PlacanjeInsert> {
       return data;
       } 
 
-    throw response;
+    throw Exception("Greška prilikom plaćanja: ${response.body}");
   }
 
 }

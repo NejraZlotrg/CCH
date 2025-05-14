@@ -11,8 +11,8 @@ import 'package:flutter_mobile/models/autoservis.dart';
 import 'package:flutter_mobile/models/chatAutoservisKlijent.dart';
 import 'package:flutter_mobile/models/chatKlijentZaposlenik.dart';
 import 'package:flutter_mobile/models/uloge.dart';
-import 'package:flutter_mobile/models/usluge.dart'; 
-import 'package:flutter_mobile/models/zaposlenik.dart'; 
+import 'package:flutter_mobile/models/usluge.dart';
+import 'package:flutter_mobile/models/zaposlenik.dart';
 import 'package:flutter_mobile/models/grad.dart';
 import 'package:flutter_mobile/models/search_result.dart';
 import 'package:flutter_mobile/provider/UserProvider.dart';
@@ -33,6 +33,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class AutoservisDetailsScreen extends StatefulWidget {
   Autoservis? autoservis;
 
@@ -173,8 +174,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 204, 204, 204), 
+      backgroundColor: const Color.fromARGB(255, 204, 204, 204),
       appBar: AppBar(
         title: Text(widget.autoservis?.naziv ?? "Detalji autoservisa"),
       ),
@@ -187,7 +187,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   children: [
                     const SizedBox(height: 20),
                     _buildForm(),
-
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: usluge.isNotEmpty
@@ -245,9 +244,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         child: ElevatedButton(
                           onPressed: () => _showAddUslugaDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                                255, 251, 26, 10), 
-                            foregroundColor: Colors.white, 
+                            backgroundColor:
+                                const Color.fromARGB(255, 251, 26, 10),
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
@@ -261,10 +260,9 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           ? Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                border: Border.all(
-                                    color: Colors.grey, width: 1), 
-                                borderRadius: BorderRadius.circular(
-                                    10), 
+                                border:
+                                    Border.all(color: Colors.grey, width: 1),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Column(
                                 children: [
@@ -279,9 +277,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                       const DataColumn(label: Text("Obriši")),
                                       if (context.read<UserProvider>().role ==
                                           "Klijent")
-                                        const DataColumn(
-                                            label: Text(
-                                                "")), 
+                                        const DataColumn(label: Text("")),
                                     ],
                                     rows: zaposlenik.map((zap) {
                                       return DataRow(
@@ -360,15 +356,14 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     if (context.read<UserProvider>().role == "Admin" ||
                         (context.read<UserProvider>().role == "Autoservis" &&
                             context.read<UserProvider>().userId ==
-                                widget.autoservis
-                                    ?.autoservisId)) 
+                                widget.autoservis?.autoservisId))
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
                           onPressed: () => _showAddZaposlenikDialog(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                                255, 253, 27, 11), 
+                            backgroundColor:
+                                const Color.fromARGB(255, 253, 27, 11),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -387,12 +382,14 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                     widget.autoservis?.autoservisId))
                           Padding(
                             padding: const EdgeInsets.only(right: 10),
-                           
                             child: ElevatedButton(
                               onPressed: () async {
-                              final userProvider = context.read<UserProvider>();
-      final isOwnAccount = userProvider.role == "Autoservis" &&
-          userProvider.userId == widget.autoservis?.autoservisId;
+                                final userProvider =
+                                    context.read<UserProvider>();
+                                final isOwnAccount =
+                                    userProvider.role == "Autoservis" &&
+                                        userProvider.userId ==
+                                            widget.autoservis?.autoservisId;
                                 bool confirmDelete = await showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -407,7 +404,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                       ),
                                       TextButton(
                                         onPressed: () =>
-                                        
                                             Navigator.pop(context, true),
                                         child: const Text("Izbriši"),
                                       ),
@@ -415,24 +411,25 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                                   ),
                                 );
 
-                                  if (confirmDelete == true) {
-        try {
-          await _autoservisProvider.delete(widget.autoservis!.autoservisId!);
+                                if (confirmDelete == true) {
+                                  try {
+                                    await _autoservisProvider.delete(
+                                        widget.autoservis!.autoservisId!);
 
-          if (isOwnAccount) {
-         
-         Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LogInPage(),
-                  ),
-                );
-          } else {
-            Navigator.pop(context);
-          }
+                                    if (isOwnAccount) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LogInPage(),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.pop(context);
+                                    }
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content:
-                                            Text("Autoservis uspješno izbrisan."),
+                                        content: Text(
+                                            "Autoservis uspješno izbrisan."),
                                       ),
                                     );
                                   } catch (e) {
@@ -447,8 +444,8 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
-                                backgroundColor: const Color.fromARGB(255, 249,
-                                    11, 11),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 249, 11, 11),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(fontSize: 16),
@@ -463,65 +460,84 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           padding: const EdgeInsets.all(10),
                           child: ElevatedButton(
                             onPressed: () async {
-      if (!(_formKey.currentState?.validate() ?? false)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Molimo popunite obavezna polja."),
-            duration: Duration(seconds: 2),
-          ),
-        );
-        return;
-      }
+                              if (!(_formKey.currentState?.validate() ??
+                                  false)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text("Molimo popunite obavezna polja."),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-      final username = _formKey.currentState?.fields['username']?.value;
-      if (username != null && username.toString().isNotEmpty) {
-        final exists = await _autoservisProvider.checkUsernameExists(username);
-        if (exists && (widget.autoservis == null || 
-            widget.autoservis?.username?.toLowerCase() != username.toLowerCase())) {
-          setState(() {
-            _usernameExists = true;
-          });
-          _formKey.currentState?.fields['username']?.validate();
-          return;
-        }
-      }
+                              final username = _formKey
+                                  .currentState?.fields['username']?.value;
+                              if (username != null &&
+                                  username.toString().isNotEmpty) {
+                                final exists = await _autoservisProvider
+                                    .checkUsernameExists(username);
+                                if (exists &&
+                                    (widget.autoservis == null ||
+                                        widget.autoservis?.username
+                                                ?.toLowerCase() !=
+                                            username.toLowerCase())) {
+                                  setState(() {
+                                    _usernameExists = true;
+                                  });
+                                  _formKey.currentState?.fields['username']
+                                      ?.validate();
+                                  return;
+                                }
+                              }
 
-      if (_formKey.currentState?.saveAndValidate() ?? false) {
-        var request = Map.from(_formKey.currentState!.value);
-        request['ulogaId'] = 2;
-        request['voziloId'] = 1;
+                              if (_formKey.currentState?.saveAndValidate() ??
+                                  false) {
+                                var request =
+                                    Map.from(_formKey.currentState!.value);
+                                request['ulogaId'] = 2;
+                                request['voziloId'] = 1;
 
-        if (_imageFile != null) {
-          final imageBytes = await _imageFile!.readAsBytes();
-          request['slikaProfila'] = base64Encode(imageBytes);
-        } else {
-          const assetImagePath = 'assets/images/autoservis_prazna_slika.jpg';
-          var imageFile = await rootBundle.load(assetImagePath);
-          final imageBytes = imageFile.buffer.asUint8List();
-          request['slikaProfila'] = base64Encode(imageBytes);
-        }
+                                if (_imageFile != null) {
+                                  final imageBytes =
+                                      await _imageFile!.readAsBytes();
+                                  request['slikaProfila'] =
+                                      base64Encode(imageBytes);
+                                } else {
+                                  const assetImagePath =
+                                      'assets/images/autoservis_prazna_slika.jpg';
+                                  var imageFile =
+                                      await rootBundle.load(assetImagePath);
+                                  final imageBytes =
+                                      imageFile.buffer.asUint8List();
+                                  request['slikaProfila'] =
+                                      base64Encode(imageBytes);
+                                }
 
-        try {
-          if (widget.autoservis == null) {
-            await _autoservisProvider.insert(request);
-          } else {
-            await _autoservisProvider.update(
-                widget.autoservis!.autoservisId!,
-                request);
-          }
-          Navigator.pop(context);
-        } on Exception {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => const AlertDialog(
-              title: Text("Greška"),
-              content: Text("Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
-              actions: [],
-            ),
-          );
-        }
-      }
-    },
+                                try {
+                                  if (widget.autoservis == null) {
+                                    await _autoservisProvider.insert(request);
+                                  } else {
+                                    await _autoservisProvider.update(
+                                        widget.autoservis!.autoservisId!,
+                                        request);
+                                  }
+                                  Navigator.pop(context);
+                                } on Exception {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        const AlertDialog(
+                                      title: Text("Greška"),
+                                      content: Text(
+                                          "Lozinke se ne podudaraju. Molimo unesite ispravne podatke"),
+                                      actions: [],
+                                    ),
+                                  );
+                                }
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor:
@@ -655,7 +671,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
         children: [
           const SizedBox(height: 20),
           Align(
-            alignment: Alignment.centerRight, 
+            alignment: Alignment.centerRight,
             child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Consumer<UserProvider>(
@@ -663,8 +679,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     if (userProvider.role == "Klijent") {
                       return ElevatedButton(
                         onPressed: () {
-                          final klijentId = userProvider
-                              .userId; 
+                          final klijentId = userProvider.userId;
                           final autoservisId = widget.autoservis!.autoservisId!;
 
                           _showSendMessageDialog(
@@ -682,7 +697,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.chat, size: 20),
-                            SizedBox(width: 5), 
+                            SizedBox(width: 5),
                             Text("Pošalji poruku"),
                           ],
                         ),
@@ -745,8 +760,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     final isAdmin = context.read<UserProvider>().role == "Admin" ||
         (context.read<UserProvider>().role == "Autoservis" &&
             context.read<UserProvider>().userId ==
-                widget.autoservis
-                    ?.autoservisId); 
+                widget.autoservis?.autoservisId);
 
     return [
       Row(
@@ -757,26 +771,23 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 labelText: "Naziv autoservisa",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white,
-                filled: true, 
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black), 
-                hintStyle: TextStyle(color: Colors.black), 
+                labelStyle: TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "naziv",
-              enabled: isAdmin, 
-              style: const TextStyle(
-                  color: Colors.black),
+              enabled: isAdmin,
+              style: const TextStyle(color: Colors.black),
               initialValue: widget.autoservis?.naziv ?? "",
-              validator: validator.required, 
+              validator: validator.required,
             ),
           ),
           const SizedBox(width: 20),
@@ -786,24 +797,21 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 labelText: "Vlasnik autoservisa",
                 border: OutlineInputBorder(),
                 fillColor: Colors.white,
-                filled: true, 
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black),
-                hintStyle: TextStyle(color: Colors.black), 
+                labelStyle: TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "vlasnikFirme",
-              enabled: isAdmin, 
-              style: const TextStyle(
-                  color: Colors.black),
+              enabled: isAdmin,
+              style: const TextStyle(color: Colors.black),
               initialValue: widget.autoservis?.vlasnikFirme ?? "",
               validator: validator.required,
             ),
@@ -811,7 +819,6 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
         ],
       ),
       const SizedBox(height: 20),
-
       Row(
         children: [
           Expanded(
@@ -819,27 +826,23 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Adresa",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, 
+                fillColor: Colors.white,
                 filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black),
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black), 
-                hintStyle: TextStyle(color: Colors.black), 
+                labelStyle: TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "adresa",
-              enabled: isAdmin, 
-              style: const TextStyle(
-                  color: Colors.black),
-              initialValue:
-                  widget.autoservis?.adresa ?? "",
+              enabled: isAdmin,
+              style: const TextStyle(color: Colors.black),
+              initialValue: widget.autoservis?.adresa ?? "",
               validator: validator.required,
             ),
           ),
@@ -883,13 +886,12 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               enabled: context.read<UserProvider>().role == "Admin" ||
                   (context.read<UserProvider>().role == "Autoservis" &&
                       context.read<UserProvider>().userId ==
-                          widget.autoservis!.autoservisId), 
+                          widget.autoservis!.autoservisId),
             ),
           ),
         ],
       ),
       const SizedBox(height: 20),
-
       Row(
         children: [
           Expanded(
@@ -897,25 +899,22 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "Telefon",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, 
-                filled: true, 
+                fillColor: Colors.white,
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black), 
-                hintStyle: TextStyle(color: Colors.black), 
+                labelStyle: TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "telefon",
-              enabled: isAdmin, 
-              style: const TextStyle(
-                  color: Colors.black), 
+              enabled: isAdmin,
+              style: const TextStyle(color: Colors.black),
               initialValue: widget.autoservis?.telefon ?? "",
               validator: validator.phoneNumber,
             ),
@@ -934,26 +933,21 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                   borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black),
+                labelStyle: TextStyle(color: Colors.black),
                 hintStyle: TextStyle(color: Colors.black),
               ),
               name: "email",
-              enabled: isAdmin, 
-              style: const TextStyle(
-                  color: Colors.black),
-              initialValue:
-                  widget.autoservis?.email ?? "", 
+              enabled: isAdmin,
+              style: const TextStyle(color: Colors.black),
+              initialValue: widget.autoservis?.email ?? "",
               validator: validator.email,
             ),
           ),
         ],
       ),
       const SizedBox(height: 20),
-
       Row(
         children: [
           Expanded(
@@ -961,27 +955,23 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "JIB",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, 
+                fillColor: Colors.white,
                 filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black),
-                hintStyle: TextStyle(color: Colors.black), 
+                labelStyle: TextStyle(color: Colors.black),
+                hintStyle: TextStyle(color: Colors.black),
               ),
               name: "jib",
-              enabled: isAdmin, 
-              style: const TextStyle(
-                  color: Colors.black),
-              initialValue:
-                  widget.autoservis?.jib ?? "", 
+              enabled: isAdmin,
+              style: const TextStyle(color: Colors.black),
+              initialValue: widget.autoservis?.jib ?? "",
               validator: validator.jib,
             ),
           ),
@@ -991,34 +981,29 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               decoration: const InputDecoration(
                 labelText: "MBS",
                 border: OutlineInputBorder(),
-                fillColor: Colors.white, 
-                filled: true, 
+                fillColor: Colors.white,
+                filled: true,
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), 
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black),
+                  borderSide: BorderSide(color: Colors.black),
                 ),
-                labelStyle:
-                    TextStyle(color: Colors.black),
+                labelStyle: TextStyle(color: Colors.black),
                 hintStyle: TextStyle(color: Colors.black),
               ),
               name: "mbs",
               enabled: isAdmin,
-              style: const TextStyle(
-                  color: Colors.black),
-              initialValue:
-                  widget.autoservis?.mbs ?? "", 
+              style: const TextStyle(color: Colors.black),
+              initialValue: widget.autoservis?.mbs ?? "",
               validator: validator.mbs,
             ),
           ),
         ],
       ),
       const SizedBox(height: 20),
-
       isAdmin
           ? Row(
               children: [
@@ -1029,24 +1014,22 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       labelText: "Korisničko ime",
                       border: OutlineInputBorder(),
                       fillColor: Colors.white,
-                      filled: true, 
+                      filled: true,
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                       enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black), 
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.black),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
-                      labelStyle: TextStyle(
-                          color: Colors.black),
-                      hintStyle:
-                          TextStyle(color: Colors.black), 
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty || (value.length<3 || value.length>50)) {
+                      if (value == null ||
+                          value.isEmpty ||
+                          (value.length < 3 || value.length > 50)) {
                         return 'Unesite korisničko ime';
                       }
                       if (_usernameExists) {
@@ -1061,48 +1044,43 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                         });
                       }
                     },
-                    style: const TextStyle(
-                        color: Colors.black), 
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
               ],
             )
-          : const SizedBox.shrink(), 
-
+          : const SizedBox.shrink(),
       const SizedBox(height: 20),
-
       isAdmin
           ? Row(
               children: [
                 Expanded(
-                  child:  FormBuilderTextField(
-          decoration: const InputDecoration(
-            labelStyle: TextStyle(color: Colors.black),
-            hintText: 'Unesite lozinku',
-            hintStyle: TextStyle(color: Colors.black),
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-          ),
-          name: "password",
-          validator: validator.password,
-          obscureText: true,
-        ),
+                  child: FormBuilderTextField(
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintText: 'Unesite lozinku',
+                      hintStyle: TextStyle(color: Colors.black),
+                      border: OutlineInputBorder(),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                    ),
+                    name: "password",
+                    validator: validator.password,
+                    obscureText: true,
+                  ),
                 ),
               ],
             )
-          : const SizedBox.shrink(), 
-
+          : const SizedBox.shrink(),
       const SizedBox(height: 20),
-
       isAdmin
           ? Row(
               children: [
@@ -1112,33 +1090,28 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       labelText: "Ponovite lozinku",
                       border: OutlineInputBorder(),
                       fillColor: Colors.white,
-                      filled: true, 
+                      filled: true,
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                       enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black), 
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.black), 
+                        borderSide: BorderSide(color: Colors.black),
                       ),
-                      labelStyle: TextStyle(
-                          color: Colors.black),
-                      hintStyle:
-                          TextStyle(color: Colors.black), 
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintStyle: TextStyle(color: Colors.black),
                     ),
                     name: "passwordAgain",
                     initialValue: "",
                     validator: validator.lozinkaAgain,
                     obscureText: true,
-                    style: const TextStyle(
-                        color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
               ],
             )
-          : const SizedBox.shrink(), 
+          : const SizedBox.shrink(),
     ];
   }
 
@@ -1155,7 +1128,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
               content: TextField(
                 onChanged: (value) {
                   setState(() {
-                    message = value; 
+                    message = value;
                   });
                 },
                 decoration: const InputDecoration(hintText: "Unesite poruku"),
@@ -1164,7 +1137,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                 TextButton(
                   onPressed: () {
                     if (Navigator.canPop(context)) {
-                      Navigator.pop(context); 
+                      Navigator.pop(context);
                     }
                   },
                   child: const Text("Otkaži"),
@@ -1256,7 +1229,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                       duration: Duration(seconds: 2),
                     ),
                   );
-                  return; 
+                  return;
                 }
 
                 uslugaFormKey.currentState?.saveAndValidate();
@@ -1374,99 +1347,98 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
                     name: "username",
                     decoration: const InputDecoration(
                       labelText: "Korisničko ime",
-                      
-                    
                       errorStyle: TextStyle(color: Colors.red),
                     ),
-                  validator: (value) {
-    final error = validator.username3char(value); 
-    if (error != null) return error;
+                    validator: (value) {
+                      final error = validator.username3char(value);
+                      if (error != null) return error;
 
-    if (_usernameExists) {
-      return 'Korisničko ime već postoji';
-    }
+                      if (_usernameExists) {
+                        return 'Korisničko ime već postoji';
+                      }
 
-    return null;
-  },
- 
+                      return null;
+                    },
                     onChanged: (value) {
-    if (value != null && value.isNotEmpty) {
-      setState(() {
-        _usernameExists = false;
-      });
-      _formKey.currentState?.fields['username']?.validate();
-    }
-  },
+                      if (value != null && value.isNotEmpty) {
+                        setState(() {
+                          _usernameExists = false;
+                        });
+                        _formKey.currentState?.fields['username']?.validate();
+                      }
+                    },
                   ),
-                 FormBuilderTextField(
-  name: "password",
-  decoration: const InputDecoration(labelText: "Lozinka"),
-  obscureText: true,
-  validator: validator.password,
-),
-
-FormBuilderTextField(
-  name: "passwordAgain",
-  decoration: const InputDecoration(labelText: "Ponovi lozinku"),
-  obscureText: true,
-  validator: (value) {
-    final password = zaposlenikFormKey.currentState?.fields['password']?.value;
-    if (value == null || value.isEmpty) {
-      return 'Potvrda lozinke je obavezna';
-    }
-    if (value != password) {
-      return 'Lozinke se ne podudaraju.';
-    }
-    return null;
-  },
-),
-
+                  FormBuilderTextField(
+                    name: "password",
+                    decoration: const InputDecoration(labelText: "Lozinka"),
+                    obscureText: true,
+                    validator: validator.password,
+                  ),
+                  FormBuilderTextField(
+                    name: "passwordAgain",
+                    decoration:
+                        const InputDecoration(labelText: "Ponovi lozinku"),
+                    obscureText: true,
+                    validator: (value) {
+                      final password = zaposlenikFormKey
+                          .currentState?.fields['password']?.value;
+                      if (value == null || value.isEmpty) {
+                        return 'Potvrda lozinke je obavezna';
+                      }
+                      if (value != password) {
+                        return 'Lozinke se ne podudaraju.';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
             ),
           ),
           actions: [
             TextButton(
-  onPressed: () async {
-  final isValid = zaposlenikFormKey.currentState?.validate() ?? false;
+              onPressed: () async {
+                final isValid =
+                    zaposlenikFormKey.currentState?.validate() ?? false;
 
-  if (!isValid) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Molimo popunite obavezna polja."),
-        duration: Duration(seconds: 2),
-      ),
-    );
-    return;
-  }
+                if (!isValid) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Molimo popunite obavezna polja."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
 
-  final password = zaposlenikFormKey.currentState?.fields['password']?.value;
-  final passwordAgain = zaposlenikFormKey.currentState?.fields['passwordAgain']?.value;
+                final password =
+                    zaposlenikFormKey.currentState?.fields['password']?.value;
+                final passwordAgain = zaposlenikFormKey
+                    .currentState?.fields['passwordAgain']?.value;
 
-  if (password != passwordAgain) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Greška"),
-        content: const Text("Lozinke se ne podudaraju."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("U redu"),
-          ),
-        ],
-      ),
-    );
-    return;
-  }
+                if (password != passwordAgain) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Greška"),
+                      content: const Text("Lozinke se ne podudaraju."),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("U redu"),
+                        ),
+                      ],
+                    ),
+                  );
+                  return;
+                }
 
-  zaposlenikFormKey.currentState?.saveAndValidate();
-  var zaposlenikRequest = Map<String, dynamic>.from(
-      zaposlenikFormKey.currentState!.value);
+                zaposlenikFormKey.currentState?.saveAndValidate();
+                var zaposlenikRequest = Map<String, dynamic>.from(
+                    zaposlenikFormKey.currentState!.value);
                 if (zaposlenikRequest['mb'] == null ||
                     zaposlenikRequest['mb'].toString().trim().isEmpty) {
-                  zaposlenikRequest['mb'] =
-                      ""; 
+                  zaposlenikRequest['mb'] = "";
                 }
 
                 if (zaposlenikRequest['datumRodjenja'] != null) {
@@ -1573,153 +1545,153 @@ FormBuilderTextField(
     );
   }
 
-Future<void> _editZaposlenik(Zaposlenik zap) async {
-  final editedZap = await showDialog<Zaposlenik>(
-    context: context,
-    builder: (context) {
-      String? passwordError;
+  Future<void> _editZaposlenik(Zaposlenik zap) async {
+    final editedZap = await showDialog<Zaposlenik>(
+      context: context,
+      builder: (context) {
+        String? passwordError;
 
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Uredi zaposlenika'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: TextEditingController(text: zap.ime),
-                    validator: validator.prezime,
-                    decoration: const InputDecoration(labelText: 'Ime'),
-                    onChanged: (value) => zap.ime = value,
-                    
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: zap.prezime),
-                    validator: validator.prezime,
-                    decoration: const InputDecoration(labelText: 'Prezime'),
-                    onChanged: (value) => zap.prezime = value,
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: zap.mb),
-                    validator : validator.numberWith12DigitsOnly,
-                    decoration:
-                        const InputDecoration(labelText: 'Matični broj'),
-                    onChanged: (value) => zap.mb = value,
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: zap.brojTelefona),
-                    validator: validator.phoneNumber,
-                    decoration:
-                        const InputDecoration(labelText: 'Broj telefona'),
-                    onChanged: (value) => zap.brojTelefona = value,
-                  ),
-                  FormBuilderDateTimePicker(
-                    name: "datumRodjenja",
-                    inputType: InputType.date,
-                    validator: validator.required,
-                    decoration:
-                        const InputDecoration(labelText: "Datum Rođenja"),
-                    format: DateFormat("dd.MM.yyyy"),
-                    initialValue: zap.datumRodjenja,
-                    onChanged: (DateTime? value) {
-                      if (value != null) {
-                        zap.datumRodjenja = value;
-                      }
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: zap.email),
-                    validator: validator.email,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    onChanged: (value) => zap.email = value,
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: zap.username),
-                    validator: validator.username3char,
-                    decoration:
-                        const InputDecoration(labelText: 'Korisničko ime'),
-                    onChanged: (value) => zap.username = value,
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: zap.password),
-                    validator: validator.password,
-                    decoration: const InputDecoration(labelText: 'Lozinka'),
-                    onChanged: (value) => zap.password = value,
-                    obscureText: true,
-                  ),
-                  TextFormField(
-                    controller:
-                        TextEditingController(),
-                        validator: validator.lozinkaAgain,
-                    decoration: const InputDecoration(labelText: 'Lozinka ponovo'),
-                    onChanged: (value) {
-                      zap.passwordAgain = value;
-                      if (passwordError != null) {
-                        setState(() {
-                          passwordError = null;
-                        });
-                      }
-                    },
-                    obscureText: true,
-                  ),
-                  if (passwordError != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        passwordError!,
-                        style: const TextStyle(color: Colors.red, fontSize: 12),
-                      ),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Uredi zaposlenika'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: TextEditingController(text: zap.ime),
+                      validator: validator.prezime,
+                      decoration: const InputDecoration(labelText: 'Ime'),
+                      onChanged: (value) => zap.ime = value,
                     ),
-                ],
+                    TextFormField(
+                      controller: TextEditingController(text: zap.prezime),
+                      validator: validator.prezime,
+                      decoration: const InputDecoration(labelText: 'Prezime'),
+                      onChanged: (value) => zap.prezime = value,
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: zap.mb),
+                      validator: validator.numberWith12DigitsOnly,
+                      decoration:
+                          const InputDecoration(labelText: 'Matični broj'),
+                      onChanged: (value) => zap.mb = value,
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: zap.brojTelefona),
+                      validator: validator.phoneNumber,
+                      decoration:
+                          const InputDecoration(labelText: 'Broj telefona'),
+                      onChanged: (value) => zap.brojTelefona = value,
+                    ),
+                    FormBuilderDateTimePicker(
+                      name: "datumRodjenja",
+                      inputType: InputType.date,
+                      validator: validator.required,
+                      decoration:
+                          const InputDecoration(labelText: "Datum Rođenja"),
+                      format: DateFormat("dd.MM.yyyy"),
+                      initialValue: zap.datumRodjenja,
+                      onChanged: (DateTime? value) {
+                        if (value != null) {
+                          zap.datumRodjenja = value;
+                        }
+                      },
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: zap.email),
+                      validator: validator.email,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      onChanged: (value) => zap.email = value,
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: zap.username),
+                      validator: validator.username3char,
+                      decoration:
+                          const InputDecoration(labelText: 'Korisničko ime'),
+                      onChanged: (value) => zap.username = value,
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: zap.password),
+                      validator: validator.password,
+                      decoration: const InputDecoration(labelText: 'Lozinka'),
+                      onChanged: (value) => zap.password = value,
+                      obscureText: true,
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(),
+                      validator: validator.lozinkaAgain,
+                      decoration:
+                          const InputDecoration(labelText: 'Lozinka ponovo'),
+                      onChanged: (value) {
+                        zap.passwordAgain = value;
+                        if (passwordError != null) {
+                          setState(() {
+                            passwordError = null;
+                          });
+                        }
+                      },
+                      obscureText: true,
+                    ),
+                    if (passwordError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          passwordError!,
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Otkaži'),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (zap.password != zap.passwordAgain) {
-                    setState(() {
-                      passwordError = 'Lozinke se ne podudaraju.';
-                    });
-                  } else {
-                    Navigator.pop(context, zap);
-                  }
-                },
-                child: const Text('Spremi'),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Otkaži'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (zap.password != zap.passwordAgain) {
+                      setState(() {
+                        passwordError = 'Lozinke se ne podudaraju.';
+                      });
+                    } else {
+                      Navigator.pop(context, zap);
+                    }
+                  },
+                  child: const Text('Spremi'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
 
-  if (editedZap != null) {
-    try {
-      final provider =
-          Provider.of<ZaposlenikProvider>(context, listen: false);
-      await provider.update(editedZap.zaposlenikId!, editedZap);
-      setState(() {
-        final index = zaposlenik
-            .indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
-        if (index != -1) {
-          zaposlenik[index] = editedZap;
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška pri ažuriranju: $e')),
-      );
+    if (editedZap != null) {
+      try {
+        final provider =
+            Provider.of<ZaposlenikProvider>(context, listen: false);
+        await provider.update(editedZap.zaposlenikId!, editedZap);
+        setState(() {
+          final index = zaposlenik
+              .indexWhere((u) => u.zaposlenikId == editedZap.zaposlenikId);
+          if (index != -1) {
+            zaposlenik[index] = editedZap;
+          }
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Zaposlenik uspješno ažuriran')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Greška pri ažuriranju: $e')),
+        );
+      }
     }
   }
-}
 
   Future<void> _deleteZaposlenik(Zaposlenik zap) async {
     final confirmed = await showDialog<bool>(

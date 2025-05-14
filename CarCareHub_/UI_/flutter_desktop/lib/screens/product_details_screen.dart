@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -47,8 +49,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   late ProizvodjacProvider _proizvodjacProvider;
   SearchResult<Proizvodjac>? proizvodjacResult;
 
-      final validator = CreateValidator();
-
+  final validator = CreateValidator();
 
   @override
   void initState() {
@@ -64,22 +65,18 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   }
 
   Future<void> initForm() async {
-    
-  if (context.read<UserProvider>().role == "Admin"){
-    modelResult = await _modelProvider.getAdmin();
-    kategorijaResult = await _kategorijaProvider.getAdmin();
-    firmaAutodijelovaResult = await _firmaAutodijelovaProvider.getAdmin();
-    proizvodjacResult = await _proizvodjacProvider.getAdmin();
- }
- else {
-    modelResult = await _modelProvider.get();
-    kategorijaResult = await _kategorijaProvider.get();
-    firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
-    proizvodjacResult = await _proizvodjacProvider.get();
- }
-    // Check if product exists and slika is not null
+    if (context.read<UserProvider>().role == "Admin") {
+      modelResult = await _modelProvider.getAdmin();
+      kategorijaResult = await _kategorijaProvider.getAdmin();
+      firmaAutodijelovaResult = await _firmaAutodijelovaProvider.getAdmin();
+      proizvodjacResult = await _proizvodjacProvider.getAdmin();
+    } else {
+      modelResult = await _modelProvider.get();
+      kategorijaResult = await _kategorijaProvider.get();
+      firmaAutodijelovaResult = await _firmaAutodijelovaProvider.get();
+      proizvodjacResult = await _proizvodjacProvider.get();
+    }
     if (widget.product != null && widget.product!.slika != null) {
-      // Use the null assertion operator (!) to treat slika as non-null
       _imageFile = await _getImageFileFromBase64(widget.product!.slika!);
     }
 
@@ -88,7 +85,6 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
     });
   }
 
-// Function to convert base64 image to File
   Future<File> _getImageFileFromBase64(String base64String) async {
     final bytes = base64Decode(base64String);
     final tempDir = await Directory.systemTemp.createTemp();
@@ -109,8 +105,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 204, 204, 204), // Siva pozadina
+      backgroundColor: const Color.fromARGB(255, 204, 204, 204),
       appBar: AppBar(
         title: Text(widget.product?.naziv ?? "Detalji proizvoda"),
       ),
@@ -122,89 +117,92 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    _buildForm(), // Call the form builder function
+                    _buildForm(),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (!(_formKey.currentState?.validate() ??
+                                  false)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text("Molimo popunite obavezna polja."),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (widget.product?.stateMachine == "active") {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text("Proizvod mora biti sakriven."),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-                          // Dugme za spašavanje
-                         ElevatedButton(
-  onPressed: () async {
-    // Check if the form is valid
-    if (!(_formKey.currentState?.validate() ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Molimo popunite obavezna polja."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Stop processing if validation fails
-    }
+                              if (_formKey.currentState?.saveAndValidate() ??
+                                  false) {
+                                var request =
+                                    Map.from(_formKey.currentState!.value);
 
-    // Check the stateMachine value
-    if (widget.product?.stateMachine == "active") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Proizvod mora biti sakriven."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return; // Stop processing if stateMachine is "active"
-    }
+                                if (_imageFile != null) {
+                                  final imageBytes =
+                                      await _imageFile!.readAsBytes();
+                                  request['slika'] = base64Encode(imageBytes);
+                                } else {
+                                  const assetImagePath =
+                                      'assets/images/proizvod_prazna_slika.jpg';
+                                  var imageFile =
+                                      await rootBundle.load(assetImagePath);
+                                  final imageBytes =
+                                      imageFile.buffer.asUint8List();
+                                  request['slika'] = base64Encode(imageBytes);
+                                }
 
-    // Proceed only if stateMachine is "draft"
-      if (_formKey.currentState?.saveAndValidate() ?? false) {
-        var request = Map.from(_formKey.currentState!.value);
+                                request['vidljivo'] = true;
 
-        // Add image to the request
-        if (_imageFile != null) {
-          final imageBytes = await _imageFile!.readAsBytes();
-          request['slika'] = base64Encode(imageBytes);
-        } else {
-          // If no image is provided, load from assets
-          const assetImagePath = 'assets/images/proizvod_prazna_slika.jpg';
-          var imageFile = await rootBundle.load(assetImagePath);
-          final imageBytes = imageFile.buffer.asUint8List();
-          request['slika'] = base64Encode(imageBytes);
-        }
-
-        request['vidljivo'] = true;
-
-        try {
-          if (widget.product == null) {
-            await _productProvider.insert(request);
-          } else {
-            await _productProvider.update(
-              widget.product!.proizvodId!,
-              request,
-            );
-          }
-          Navigator.pop(context);
-        } on Exception catch (e) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text("Greška"),
-              content: Text(e.toString()),
-              actions: const [],
-            ),
-          );
-        }
-      }
-  },
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.white,
-    backgroundColor: Colors.red,
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    textStyle: const TextStyle(fontSize: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-  ),
-  child: const Text("Spasi"),
-),
+                                try {
+                                  if (widget.product == null) {
+                                    await _productProvider.insert(request);
+                                  } else {
+                                    await _productProvider.update(
+                                      widget.product!.proizvodId!,
+                                      request,
+                                    );
+                                  }
+                                  Navigator.pop(context);
+                                } on Exception catch (e) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text("Greška"),
+                                      content: Text(e.toString()),
+                                      actions: const [],
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              textStyle: const TextStyle(fontSize: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("Spasi"),
+                          ),
                         ],
                       ),
                     ),
@@ -219,8 +217,7 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
     return FormBuilder(
       key: _formKey,
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align elements to the left
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
           Center(
@@ -250,22 +247,23 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
                           height: 250,
                           fit: BoxFit.contain,
                         ),
-                      ): const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.camera_alt, size: 60, color: Colors.black),
-              SizedBox(height: 10),
-              Text('Odaberite sliku',
-                  style: TextStyle(color: Colors.black, fontSize: 16)),
-            ],
-          ),
+                      )
+                    : const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt, size: 60, color: Colors.black),
+                          SizedBox(height: 10),
+                          Text('Odaberite sliku',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16)),
+                        ],
+                      ),
               ),
             ),
           ),
           const SizedBox(height: 20),
-          ..._buildFormFields(), // Adding the form fields here
+          ..._buildFormFields(),
           const SizedBox(height: 10),
-
         ],
       ),
     );
@@ -277,8 +275,8 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
           labelText: "Šifra",
           border: OutlineInputBorder(),
-          fillColor: Colors.white, // Bela pozadina
-          filled: true, // Da pozadina bude ispunjena
+          fillColor: Colors.white,
+          filled: true,
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "sifra",
@@ -288,9 +286,10 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
       const SizedBox(height: 10),
       FormBuilderTextField(
         decoration: const InputDecoration(
-          labelText: "Naziv", border: OutlineInputBorder(),
-          fillColor: Colors.white, // Bela pozadina
-          filled: true, // Da pozadina bude ispunjena
+          labelText: "Naziv",
+          border: OutlineInputBorder(),
+          fillColor: Colors.white,
+          filled: true,
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
         name: "naziv",
@@ -302,147 +301,154 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         decoration: const InputDecoration(
             labelText: "Originalni broj",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white,
+            filled: true,
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "originalniBroj",
         validator: validator.required,
         initialValue: widget.product?.originalniBroj ?? '',
       ),
-     
       const SizedBox(height: 10),
       Row(
         children: [
-          Expanded(child:
-         FormBuilderDropdown(
-  name: 'kategorijaId',
-  validator: validator.required,
-  decoration: const InputDecoration(
-    labelText: 'Kategorija',
-    border: OutlineInputBorder(),
-    fillColor: Colors.white, // Bela pozadina
-    filled: true, // Da pozadina bude ispunjena
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    hintText: 'Kategorija',
-  ),
-  initialValue: widget.product?.kategorijaId?.toString(),
-  items: kategorijaResult?.result.map((item) {
-        return DropdownMenuItem(
-          value: item.kategorijaId.toString(),
-          child: Text(
-            item.nazivKategorije ?? "",
-            style: TextStyle(
-              color: item.vidljivo == false ? Colors.red : Colors.black,
+          Expanded(
+              child: FormBuilderDropdown(
+            name: 'kategorijaId',
+            validator: validator.required,
+            decoration: const InputDecoration(
+              labelText: 'Kategorija',
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              hintText: 'Kategorija',
             ),
-          ),
-        );
-      }).toList() ?? [],
-)
-
-          ),
+            initialValue: widget.product?.kategorijaId?.toString(),
+            items: kategorijaResult?.result.map((item) {
+                  return DropdownMenuItem(
+                    value: item.kategorijaId.toString(),
+                    child: Text(
+                      item.nazivKategorije ?? "",
+                      style: TextStyle(
+                        color:
+                            item.vidljivo == false ? Colors.red : Colors.black,
+                      ),
+                    ),
+                  );
+                }).toList() ??
+                [],
+          )),
         ],
       ),
       const SizedBox(height: 10),
       Row(
         children: [
-          Expanded(child:
-          FormBuilderDropdown(
-  name: 'proizvodjacId',
-  validator: validator.required,
-  decoration: const InputDecoration(
-    labelText: 'Proizvođač',
-    border: OutlineInputBorder(),
-    fillColor: Colors.white, // Bela pozadina
-    filled: true, // Da pozadina bude ispunjena
-    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    hintText: 'Proizvođač',
-  ),
-  initialValue: widget.product?.proizvodjacId?.toString(),
-  items: proizvodjacResult?.result.map((item) {
-        return DropdownMenuItem(
-          value: item.proizvodjacId.toString(),
-          child: Text(
-            item.nazivProizvodjaca ?? "",
-            style: TextStyle(
-              color: item.vidljivo == false ? Colors.red : Colors.black,
+          Expanded(
+              child: FormBuilderDropdown(
+            name: 'proizvodjacId',
+            validator: validator.required,
+            decoration: const InputDecoration(
+              labelText: 'Proizvođač',
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              hintText: 'Proizvođač',
             ),
-          ),
-        );
-      }).toList() ?? [],
-)
-
+            initialValue: widget.product?.proizvodjacId?.toString(),
+            items: proizvodjacResult?.result.map((item) {
+                  return DropdownMenuItem(
+                    value: item.proizvodjacId.toString(),
+                    child: Text(
+                      item.nazivProizvodjaca ?? "",
+                      style: TextStyle(
+                        color:
+                            item.vidljivo == false ? Colors.red : Colors.black,
+                      ),
+                    ),
+                  );
+                }).toList() ??
+                [],
+          )),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          Expanded(
+              child: FormBuilderDropdown(
+            name: 'firmaAutodijelovaID',
+            validator: validator.required,
+            decoration: const InputDecoration(
+              labelText: 'Firma Auto Dijelova',
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              hintText: 'Firma Auto Dijelova',
+            ),
+            initialValue: widget.product?.firmaAutodijelovaID?.toString(),
+            items: firmaAutodijelovaResult?.result.map((item) {
+                  return DropdownMenuItem(
+                    value: item.firmaAutodijelovaID.toString(),
+                    child: Text(
+                      item.nazivFirme ?? "",
+                      style: TextStyle(
+                        color:
+                            item.vidljivo == false ? Colors.red : Colors.black,
+                      ),
+                    ),
+                  );
+                }).toList() ??
+                [],
+          )),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          Expanded(
+            child: FormBuilderDropdown(
+              name: 'modelId',
+              validator: validator.required,
+              decoration: const InputDecoration(
+                labelText: 'Model',
+                border: OutlineInputBorder(),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                hintText: 'Odaberite Model',
+              ),
+              initialValue: widget.product?.modelId?.toString(),
+              items: modelResult?.result.map((item) {
+                    return DropdownMenuItem(
+                      value: item.modelId.toString(),
+                      child: Text(
+                        item.nazivModela ?? "",
+                        style: TextStyle(
+                          color: item.vidljivo == false
+                              ? Colors.red
+                              : Colors.black,
+                        ),
+                      ),
+                    );
+                  }).toList() ??
+                  [],
+            ),
           ),
         ],
       ),
-    const SizedBox(height: 10),
-Row(
-  children: [
-    Expanded(child:
-      FormBuilderDropdown(
-        name: 'firmaAutodijelovaID',
-        validator: validator.required,
-        decoration: const InputDecoration(
-          labelText: 'Firma Auto Dijelova',
-          border: OutlineInputBorder(),
-          fillColor: Colors.white,
-          filled: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          hintText: 'Firma Auto Dijelova',
-        ),
-        initialValue: widget.product?.firmaAutodijelovaID?.toString(),
-        items: firmaAutodijelovaResult?.result.map((item) {
-          return DropdownMenuItem(
-            value: item.firmaAutodijelovaID.toString(),
-            child: Text(
-              item.nazivFirme ?? "",
-              style: TextStyle(
-                color: item.vidljivo == false ? Colors.red : Colors.black,
-              ),
-            ),
-          );
-        }).toList() ?? [],
-      )
-    ),
-  ],
-),
-const SizedBox(height: 10),
-Row(
-  children: [
-    Expanded(
-      child: FormBuilderDropdown(
-        name: 'modelId',
-        validator: validator.required,
-        decoration: const InputDecoration(
-          labelText: 'Model',
-          border: OutlineInputBorder(),
-          fillColor: Colors.white,
-          filled: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          hintText: 'Odaberite Model',
-        ),
-        initialValue: widget.product?.modelId?.toString(),
-        items: modelResult?.result.map((item) {
-          return DropdownMenuItem(
-            value: item.modelId.toString(),
-            child: Text(
-              item.nazivModela ?? "",
-              style: TextStyle(
-                color: item.vidljivo == false ? Colors.red : Colors.black,
-              ),
-            ),
-          );
-        }).toList() ?? [],
-      ),
-    ),
-  ],
-),
       const SizedBox(height: 10),
       FormBuilderTextField(
         decoration: const InputDecoration(
             labelText: "Cijena",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, 
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white,
+            filled: true,
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "cijena",
         validator: validator.required,
@@ -453,8 +459,8 @@ Row(
         decoration: const InputDecoration(
             labelText: "Popust",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white,
+            filled: true,
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "popust",
         initialValue: widget.product?.popust.toString() ?? "",
@@ -464,11 +470,10 @@ Row(
         decoration: const InputDecoration(
             labelText: "Opis",
             border: OutlineInputBorder(),
-            fillColor: Colors.white, // Bela pozadina
-            filled: true, // Da pozadina bude ispunjena
+            fillColor: Colors.white,
+            filled: true,
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
         name: "opis",
-
         initialValue: widget.product?.opis ?? '',
       ),
     ];
