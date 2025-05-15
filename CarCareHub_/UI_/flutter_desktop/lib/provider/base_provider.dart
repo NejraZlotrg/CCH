@@ -12,7 +12,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) : _endpoint = endpoint {
     const apiHost =
-        String.fromEnvironment("API_HOST", defaultValue: "192.168.0.142");
+        String.fromEnvironment("API_HOST", defaultValue: "localhost");
     const apiPort = String.fromEnvironment("API_PORT", defaultValue: "5269");
     _baseURL = "http://$apiHost:$apiPort/";
   }

@@ -52,6 +52,17 @@ namespace CarCareHub_.Controllers
             return Ok(new { exists });
         }
 
+
+        [HttpGet("getVidljivo/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByID_(int id)
+        {
+            var exists = await _zaposlenikService.GetByID_(id);
+            return Ok(new { exists });
+        }
+
+
+
         [HttpPost("get-vidljivo")]
         [AllowAnonymous]
         public IActionResult GetVidljivoByUsernameAndPassword(string username, string password)

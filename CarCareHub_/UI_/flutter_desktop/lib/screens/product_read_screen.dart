@@ -564,6 +564,7 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
                       const SizedBox(
                         height: 20,
                       ),
+                       if (context.read<UserProvider>().role != "Admin")
                       Padding(
                         padding: const EdgeInsets.only(right: 150),
                         child: Row(
@@ -588,6 +589,7 @@ class _ProductReadsScreenState extends State<ProductReadScreen> {
                               },
                             ),
                             const SizedBox(width: 10),
+
                             ElevatedButton(
                               onPressed: () async {
                                 if (widget.product?.proizvodId != null) {

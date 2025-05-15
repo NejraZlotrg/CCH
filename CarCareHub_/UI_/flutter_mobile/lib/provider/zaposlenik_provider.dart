@@ -15,6 +15,18 @@ class ZaposlenikProvider extends BaseProvider<Zaposlenik> {
     return await getById(id);
   }
 
+Future<List<Zaposlenik>> getVidljiviZaposleniciByAutoservisId(int id) async {
+  var response = await http.get(Uri.parse(buildUrl("getVidljivo/$id")));
+
+  if (response.statusCode == 200) {
+    final jsonData = jsonDecode(response.body);
+    final List<dynamic> list = jsonData['exists'];
+    return list.map((e) => Zaposlenik.fromJson(e)).toList();
+  } else {
+    throw Exception("Greška pri dohvaćanju zaposlenika");
+  }
+}
+
   Future<int?> getIdByUsernameAndPassword(
       String username, String password) async {
     try {

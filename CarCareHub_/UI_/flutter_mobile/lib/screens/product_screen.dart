@@ -38,6 +38,7 @@ class _ProductScreenState extends State<ProductScreen> {
   late VoziloProvider _voziloProvider;
   late GodisteProvider _godisteProvider;
   late GradProvider _gradProvider;
+  String _currentSortOption = '--';
 
   List<Model>? model;
   List<Vozilo>? vozila;
@@ -51,9 +52,7 @@ class _ProductScreenState extends State<ProductScreen> {
   List<Model>? filtriraniModeli;
 
   final TextEditingController _nazivController = TextEditingController();
-  final TextEditingController _modelController = TextEditingController();
   final TextEditingController _nazivFirmeController = TextEditingController();
-  final TextEditingController _gradController = TextEditingController();
   final TextEditingController _JIBMBScontroller = TextEditingController();
 
   @override
@@ -182,21 +181,22 @@ class _ProductScreenState extends State<ProductScreen> {
               controller: _nazivController,
             ),
             const SizedBox(height: 10),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: "Poredaj po cijeni",
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              items: ['--', 'Rastuća', 'Opadajuća'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: _handleSortChange,
-            ),
+DropdownButtonFormField<String>(
+  decoration: const InputDecoration(
+    labelText: "Poredaj po cijeni",
+    border: OutlineInputBorder(),
+    filled: true,
+    fillColor: Colors.white,
+  ),
+  value: _currentSortOption,
+  items: ['--', 'Opadajuća', 'Rastuća'].map((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList(),
+  onChanged: _handleSortChange,
+),
             const SizedBox(height: 10),
             TextField(
               decoration: const InputDecoration(
@@ -666,92 +666,88 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  void _handleSortChange(String? value) async {
-    if (value == null || value == '--') return;
+void _handleSortChange(String? value) async {
+  if (value == null) return;
+  
+  setState(() {
+    _currentSortOption = value;
+  });
+  
+  await _applySortAndSearch();
+}
 
-    final isAdmin = context.read<UserProvider>().role == "Admin";
-    final filter = {
-      'naziv': _nazivController.text,
-      'model': _modelController.text,
-      'nazivFirme': _nazivFirmeController.text,
-      'nazivGrada': _gradController.text,
-      'jib': _JIBMBScontroller.text,
-      'mbs': _JIBMBScontroller.text,
-      if (value == 'Rastuća') 'cijenaRastuca': true,
-      if (value == 'Opadajuća') 'cijenaOpadajuca': true,
-    };
+Future<void> _applySortAndSearch() async {
+  Map<dynamic, dynamic> filterParams = {'IsAllIncluded': 'true'};
 
-    final data = isAdmin
-        ? await _productProvider.getAdmin(filter: filter)
-        : await _productProvider.get(filter: filter);
-
-    setState(() {
-      result = data;
-    });
+  // Add search filters
+  if (_nazivController.text.isNotEmpty) {
+    filterParams['naziv'] = _nazivController.text;
   }
 
-  Future<void> _onSearchPressed() async {
-    print("Pokretanje pretrage: ${_nazivController.text}");
-
-    Map<dynamic, dynamic> filterParams = {'IsAllIncluded': 'true'};
-
-    if (_nazivController.text.isNotEmpty) {
-      filterParams['naziv'] = _nazivController.text;
-    }
-
-    if (_JIBMBScontroller.text.isNotEmpty) {
-      filterParams['JIB_MBS'] = _JIBMBScontroller.text;
-    }
-
-    if (_nazivFirmeController.text.isNotEmpty) {
-      filterParams['nazivFirme'] = _nazivFirmeController.text;
-    }
-
-    var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
-    if (selectedVozilo != null && selectedVozilo is Vozilo) {
-      filterParams['markaVozila'] = selectedVozilo.markaVozila!;
-    }
-
-    var selectedGrad = _formKey.currentState?.fields['gradId']?.value;
-    if (selectedGrad != null && selectedGrad is Grad) {
-      filterParams['nazivGrada'] = selectedGrad.nazivGrada!;
-    }
-
-    var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
-    if (selectedGodiste != null && selectedGodiste is Godiste) {
-      filterParams['GodisteVozila'] =
-          int.parse(selectedGodiste.godiste_!.toString());
-    }
-
-    var modelValue = _formKey.currentState?.fields['modelId']?.value;
-    if (modelValue != null && modelValue is Model) {
-      filterParams['nazivModela'] = modelValue.nazivModela!;
-    }
-
-    try {
-      SearchResult<Product> data;
-      SearchResult<Product>? data2;
-
-      if (context.read<UserProvider>().role == "Admin") {
-        data = await _productProvider.getAdmin(filter: filterParams);
-      } else if (context.read<UserProvider>().role == "Autoservis") {
-        var idAutos = context.read<UserProvider>().userId;
-        data2 = await _productProvider.getForAutoservis(idAutos,
-            filter: filterParams);
-        data = await _productProvider.getForAutoservis(idAutos,
-            filter: filterParams);
-      } else {
-        data = await _productProvider.get(filter: filterParams);
-      }
-
-      if (mounted) {
-        setState(() {
-          result = data;
-          result2 = data2;
-        });
-      }
-    } catch (e) {
-      print("Error during fetching data: $e");
-    }
+  if (_JIBMBScontroller.text.isNotEmpty) {
+    filterParams['JIB_MBS'] = _JIBMBScontroller.text;
   }
+
+  if (_nazivFirmeController.text.isNotEmpty) {
+    filterParams['nazivFirme'] = _nazivFirmeController.text;
+  }
+
+  var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
+  if (selectedVozilo != null && selectedVozilo is Vozilo) {
+    filterParams['markaVozila'] = selectedVozilo.markaVozila!;
+  }
+
+  var selectedGrad = _formKey.currentState?.fields['gradId']?.value;
+  if (selectedGrad != null && selectedGrad is Grad) {
+    filterParams['nazivGrada'] = selectedGrad.nazivGrada!;
+  }
+
+  var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
+  if (selectedGodiste != null && selectedGodiste is Godiste) {
+    filterParams['GodisteVozila'] =
+        int.parse(selectedGodiste.godiste_!.toString());
+  }
+
+  var modelValue = _formKey.currentState?.fields['modelId']?.value;
+  if (modelValue != null && modelValue is Model) {
+    filterParams['nazivModela'] = modelValue.nazivModela!;
+  }
+
+  // Add sorting
+  if (_currentSortOption == 'Opadajuća') {
+    filterParams['cijenaOpadajuca'] = true;
+  } else if (_currentSortOption == 'Rastuća') {
+    filterParams['cijenaRastuca'] = true;
+  }
+
+  try {
+    SearchResult<Product> data;
+    SearchResult<Product>? data2;
+
+    if (context.read<UserProvider>().role == "Admin") {
+      data = await _productProvider.getAdmin(filter: filterParams);
+    } else if (context.read<UserProvider>().role == "Autoservis") {
+      var idAutos = context.read<UserProvider>().userId;
+      data2 = await _productProvider.getForAutoservis(idAutos,
+          filter: filterParams);
+      data = await _productProvider.getForAutoservis(idAutos,
+          filter: filterParams);
+    } else {
+      data = await _productProvider.get(filter: filterParams);
+    }
+
+    if (mounted) {
+      setState(() {
+        result = data;
+        result2 = data2;
+      });
+    }
+  } catch (e) {
+    print("Error during fetching data: $e");
+  }
+}
+
+ Future<void> _onSearchPressed() async {
+  await _applySortAndSearch();
+}
 }

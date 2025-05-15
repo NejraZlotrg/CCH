@@ -384,7 +384,7 @@ SearchResult<Product>? dataWithDiscount;
 
         const SizedBox(height: 20),
 
-       
+       if (context.read<UserProvider>().role != "Admin")
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

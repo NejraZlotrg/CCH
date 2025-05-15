@@ -147,7 +147,7 @@ class _AutoservisDetailsScreenState extends State<AutoservisDetailsScreen> {
     try {
       if (widget.autoservis?.autoservisId != null) {
         zaposlenik = await _zaposlenikProvider
-            .getzaposlenikById(widget.autoservis!.autoservisId!);
+            .getVidljiviZaposleniciByAutoservisId(widget.autoservis!.autoservisId!);
       }
       if (mounted) {
         setState(() {});

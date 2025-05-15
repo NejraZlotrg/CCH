@@ -31,7 +31,6 @@ class MojProizvodScreen extends StatefulWidget {
 
 class _MojProizvodScreenState extends State<MojProizvodScreen> {
   late ProductProvider _productProvider;
-  final _formKey = GlobalKey<FormBuilderState>();
   late ModelProvider _modelProvider;
   late VoziloProvider _voziloProvider;
   late GodisteProvider _godisteProvider;
@@ -44,11 +43,7 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
 
   SearchResult<Product>? result;
 
-  final TextEditingController _nazivController = TextEditingController();
-  final TextEditingController _modelController = TextEditingController();
-  final TextEditingController _nazivFirmeController = TextEditingController();
-  final TextEditingController _gradController = TextEditingController();
-  final TextEditingController _JIBMBScontroller = TextEditingController();
+
 
   @override
   void didChangeDependencies() {
@@ -127,327 +122,25 @@ class _MojProizvodScreenState extends State<MojProizvodScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MasterScreenWidget(
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 204, 204, 204), // Siva pozadina za cijeli ekran
+    body: MasterScreenWidget(
       title: "Moji proizvodi",
-      child: Container(
-        color: const Color.fromARGB(255, 204, 204, 204),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildSearch(),
-              _buildDataListView(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: FormBuilder(
-        key: _formKey,
+      child: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Naziv proizvoda',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _nazivController,
-            ),
-            const SizedBox(height: 10),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: "Poredaj po cijeni",
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              items: ['--', 'Rastuća', 'Opadajuća'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: _handleSortChange,
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: "Naziv firme",
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _nazivFirmeController,
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: "JIB ili MBS",
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              controller: _JIBMBScontroller,
-            ),
-            const SizedBox(height: 10),
-            FormBuilderDropdown<Grad>(
-              name: 'gradId',
-              decoration: InputDecoration(
-                labelText: 'Lokacija',
-                suffixIcon: const Icon(Icons.location_city),
-                hintText: 'Odaberite grad',
-                hintStyle: TextStyle(color: Colors.blueGrey.withOpacity(0.6)),
-                border: const OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              items: [
-                const DropdownMenuItem<Grad>(
-                    value: null, child: Text('Odaberite grad')),
-                ...?grad?.map((g) => DropdownMenuItem(
-                      value: g,
-                      child: Text(
-                        g.nazivGrada ?? "",
-                        style: TextStyle(
-                          color:
-                              g.vidljivo == false ? Colors.red : Colors.black,
-                        ),
-                      ),
-                    ))
-              ],
-            ),
-            const SizedBox(height: 10),
-            ExpansionTile(
-              title: const Center(
-                child: Text("Dodatne opcije pretrage",
-                    style: TextStyle(color: Colors.red)),
-              ),
-              children: [
-                const SizedBox(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    FormBuilderDropdown<Vozilo>(
-                      name: 'voziloId',
-                      decoration: const InputDecoration(
-                        labelText: 'Marka vozila',
-                        suffixIcon: Icon(Icons.directions_car),
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      items: [
-                        const DropdownMenuItem<Vozilo>(
-                            value: null, child: Text('Odaberite marku vozila')),
-                        ...?vozila?.map((v) => DropdownMenuItem(
-                              value: v,
-                              child: Text(
-                                v.markaVozila ?? "",
-                                style: TextStyle(
-                                  color: v.vidljivo == false
-                                      ? Colors.red
-                                      : Colors.black,
-                                ),
-                              ),
-                            ))
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    FormBuilderDropdown<Godiste>(
-                      name: 'godisteId',
-                      decoration: const InputDecoration(
-                        labelText: 'Godište',
-                        suffixIcon: Icon(Icons.date_range),
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      items: [
-                        const DropdownMenuItem<Godiste>(
-                            value: null, child: Text('Odaberite godište')),
-                        ...?godiste?.map((g) => DropdownMenuItem(
-                              value: g,
-                              child: Text(
-                                g.godiste_?.toString() ?? "",
-                                style: TextStyle(
-                                  color: g.vidljivo == false
-                                      ? Colors.red
-                                      : Colors.black,
-                                ),
-                              ),
-                            ))
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    FormBuilderDropdown<Model>(
-                      name: 'modelId',
-                      decoration: const InputDecoration(
-                        labelText: 'Model',
-                        suffixIcon: Icon(Icons.dashboard_customize),
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      items: [
-                        const DropdownMenuItem<Model>(
-                            value: null, child: Text('Odaberite model')),
-                        ...?model?.map((m) => DropdownMenuItem(
-                              value: m,
-                              child: Text(
-                                m.nazivModela ?? "",
-                                style: TextStyle(
-                                  color: m.vidljivo == false
-                                      ? Colors.red
-                                      : Colors.black,
-                                ),
-                              ),
-                            ))
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (context.read<UserProvider>().role == "Admin" ||
-                    context.read<UserProvider>().role == "Firma autodijelova")
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const ProductDetailScreen(product: null),
-                        ),
-                      );
-                      await _loadData();
-                    },
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    label: const Text('Dodaj',
-                        style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0)),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                    ),
-                  ),
-                const SizedBox(width: 10),
-                ElevatedButton.icon(
-                  onPressed: _onSearchPressed,
-                  icon: const Icon(Icons.search, color: Colors.white),
-                  label: const Text('Pretraga',
-                      style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                  ),
-                ),
-              ],
-            ),
+            _buildDataListView(),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+ 
 
-  void _handleSortChange(String? value) async {
-    if (value == null || value == '--') return;
 
-    final isAdmin = context.read<UserProvider>().role == "Admin";
-    final filter = {
-      'naziv': _nazivController.text,
-      'model': _modelController.text,
-      'nazivFirme': _nazivFirmeController.text,
-      'nazivGrada': _gradController.text,
-      'jib': _JIBMBScontroller.text,
-      'mbs': _JIBMBScontroller.text,
-      if (value == 'Rastuća') 'cijenaRastuca': true,
-      if (value == 'Opadajuća') 'cijenaOpadajuca': true,
-    };
-
-    final data = isAdmin
-        ? await _productProvider.getAdmin(filter: filter)
-        : await _productProvider.get(filter: filter);
-
-    setState(() {
-      result = data;
-    });
-  }
-
-  Future<void> _onSearchPressed() async {
-    print("Pokretanje pretrage: ${_nazivController.text}");
-
-    Map<dynamic, dynamic> filterParams = {
-      'IsAllIncluded': 'true',
-    };
-
-    if (_nazivController.text.isNotEmpty) {
-      filterParams['naziv'] = _nazivController.text;
-    }
-
-    if (_JIBMBScontroller.text.isNotEmpty) {
-      filterParams['JIB_MBS'] = _JIBMBScontroller.text;
-    }
-
-    if (_nazivFirmeController.text.isNotEmpty) {
-      filterParams['nazivFirme'] = _nazivFirmeController.text;
-    }
-
-    var selectedVozilo = _formKey.currentState?.fields['voziloId']?.value;
-    if (selectedVozilo != null && selectedVozilo is Vozilo) {
-      filterParams['markaVozila'] = selectedVozilo.markaVozila!;
-    }
-
-    var selectedGrad = _formKey.currentState?.fields['gradId']?.value;
-    if (selectedGrad != null && selectedGrad is Grad) {
-      filterParams['nazivGrada'] = selectedGrad.nazivGrada!;
-    }
-
-    var selectedGodiste = _formKey.currentState?.fields['godisteId']?.value;
-    if (selectedGodiste != null && selectedGodiste is Godiste) {
-      filterParams['GodisteVozila'] =
-          int.parse(selectedGodiste.godiste_!.toString());
-    }
-
-    var modelValue = _formKey.currentState?.fields['modelId']?.value;
-    if (modelValue != null && modelValue is Model) {
-      filterParams['nazivModela'] = modelValue.nazivModela!;
-    }
-
-    try {
-      SearchResult<Product> data;
-      if (context.read<UserProvider>().role == "Admin") {
-        data = await _productProvider.getAdmin(filter: filterParams);
-      } else {
-        data = await _productProvider.get(filter: filterParams);
-      }
-
-      if (mounted) {
-        setState(() {
-          result = data;
-        });
-      }
-    } catch (e) {
-      print("Error during fetching data: $e");
-    }
-  }
-
-  Widget _buildDataListView() {
+Widget _buildDataListView() {
   return Container(
     padding: const EdgeInsets.all(8.0),
     child: GridView.builder(

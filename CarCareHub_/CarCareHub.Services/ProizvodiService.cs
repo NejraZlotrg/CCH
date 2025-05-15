@@ -58,6 +58,7 @@ namespace CarCareHub.Services
                     update.CijenaSaPopustomZaAutoservis = Math.Round((decimal)(update.Cijena * 0.95m), 2);
                 }
             }
+            update.Vidljivo = true;
             return await state.Update(id, update);
         }
         public virtual async Task<PagedResult<CarCareHub.Model.Proizvod>> GetForUsers([FromQuery] ProizvodiSearchObject search = null)
@@ -190,12 +191,13 @@ namespace CarCareHub.Services
             }
             if (search.CijenaOpadajuca == true)
             {
-                query = query.OrderByDescending(h => h.CijenaSaPopustom);
+                query = query.OrderByDescending(h => h.CijenaSaPopustom ?? h.Cijena);
             }
             if (search.CijenaRastuca == true)
             {
-                query = query.OrderBy(h => h.CijenaSaPopustom);
+                query = query.OrderBy(h => h.CijenaSaPopustom ?? h.Cijena);
             }
+
             return query;
         }
         public virtual async Task<PagedResult<CarCareHub.Model.Proizvod>> GetByFirmaAutodijelovaID(int firmaautodijelovaid)

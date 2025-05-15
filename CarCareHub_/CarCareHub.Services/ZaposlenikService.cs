@@ -86,11 +86,11 @@ namespace CarCareHub.Services
         public async Task<CarCareHub.Model.Zaposlenik> GetByGrad(int id)
         {
             var temp = await _dbContext.Set<CarCareHub.Services.Database.Grad>()
-                                        .Include(g => g.Zaposleniks) 
+                                        .Include(g => g.Zaposleniks)
                                         .FirstOrDefaultAsync(g => g.GradId == id);
             if (temp == null || temp.Zaposleniks == null || !temp.Zaposleniks.Any())
             {
-                return null; 
+                return null;
             }
             var mappedZaposlenici = temp.Zaposleniks.Select(z => _mapper.Map<CarCareHub.Model.Zaposlenik>(z)).ToList();
             return mappedZaposlenici.FirstOrDefault();
@@ -111,7 +111,7 @@ namespace CarCareHub.Services
         }
         public override async Task<List<Model.Zaposlenik>> GetByID_(int id)
         {
-            var temp = _dbContext.Zaposleniks.Where(x => x.autoservisId == id).ToList().AsQueryable();
+            var temp = _dbContext.Zaposleniks.Where(x => x.autoservisId == id && x.Vidljivo == true).ToList().AsQueryable();
             temp = temp.Include(x => x.Autoservis);
             return _mapper.Map<List<Model.Zaposlenik>>(temp);
         }
@@ -137,16 +137,16 @@ namespace CarCareHub.Services
                     Ime = "Zaposlenik",
                     Prezime = "Test",
                     DatumRodjenja = new DateTime(1990, 5, 15),
-                    mb = "637454647484", 
-                    BrojTelefona = "060000000", 
-                    GradId = 1, 
-                    Email = "zaposlenik@test.com", 
-                    Username = "zaposlenik", 
-                    Password = "zaposlenik", 
-                    PasswordAgain = "zaposlenik", 
-                    UlogaId = 1, 
-                    AutoservisId = 1, 
-                    FirmaAutodijelovaId = 1, 
+                    mb = "637454647484",
+                    BrojTelefona = "060000000",
+                    GradId = 1,
+                    Email = "zaposlenik@test.com",
+                    Username = "zaposlenik",
+                    Password = "zaposlenik",
+                    PasswordAgain = "zaposlenik",
+                    UlogaId = 1,
+                    AutoservisId = 1,
+                    FirmaAutodijelovaId = 1,
                     Vidljivo = true,
                     Adresa = "Donje Putićevo bb"
                 };
@@ -187,7 +187,7 @@ namespace CarCareHub.Services
                 entity.Username = update.Username;
 
             if (update.Password != null)
-                entity.Password = update.Password; 
+                entity.Password = update.Password;
 
             if (update.UlogaId.HasValue)
                 entity.UlogaId = update.UlogaId.Value;
@@ -200,5 +200,6 @@ namespace CarCareHub.Services
 
             return _mapper.Map<Model.Zaposlenik>(entity);
         }
+
     }
 }

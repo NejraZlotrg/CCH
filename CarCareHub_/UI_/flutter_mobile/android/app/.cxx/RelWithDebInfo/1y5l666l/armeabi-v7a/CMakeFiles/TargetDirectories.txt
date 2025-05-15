@@ -1,0 +1,2 @@
+C:/Users/Ali/Desktop/New folder/CCH/CarCareHub_/UI_/flutter_mobile/android/app/.cxx/RelWithDebInfo/1y5l666l/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Ali/Desktop/New folder/CCH/CarCareHub_/UI_/flutter_mobile/android/app/.cxx/RelWithDebInfo/1y5l666l/armeabi-v7a/CMakeFiles/rebuild_cache.dir
