@@ -192,7 +192,7 @@ class _KorpaScreenState extends State<KorpaScreen> {
     } catch (e) {
       print('Greška prilikom plaćanja: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Greška prilikom plaćanja: ${e.toString()}')),
+        SnackBar(content: Text('Prekinuli ste proces plaćanja karticom.')),
       );
     }
   }

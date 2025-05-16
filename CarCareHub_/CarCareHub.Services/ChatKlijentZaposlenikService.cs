@@ -30,7 +30,6 @@ namespace CarCareHub.Services
             _httpContextAccessor = httpContextAccessor;
             _hubContext = hubContext;
         }
-        // Snimanje poruke u bazu
         public async Task SendMessageAsync(ChatKlijentZaposlenikInsert request)
         {
             var user = _httpContextAccessor.HttpContext.User;
@@ -44,11 +43,8 @@ namespace CarCareHub.Services
             {
                 throw new Exception("Uloga korisnika nije dostupna.");
             }
-            // Postavljanje trenutnog vremena slanja
             request.VrijemeSlanja = DateTime.UtcNow;
-            // Postavljanje vrijednosti PoslanoOdKlijenta na osnovu korisničke uloge
             bool poslanoOdKlijenta = userRole == "Klijent";
-            // Prilagođavanje ID-jeva prema ulozi korisnika
             var chatPoruka = new Database.ChatKlijentZaposlenik
             {
                 KlijentId = userRole == "Klijent" ? parsedUserId : request.KlijentId,

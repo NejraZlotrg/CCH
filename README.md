@@ -14,8 +14,8 @@ CarCareHub
    **USERNAME:** autoservis
    **PASSWORD:** autoservis
 3. Firma autodijelova
-   **USERNAME:** firma
-   **PASSWORD:** firma
+   **USERNAME:** MoParts
+   **PASSWORD:** MoParts
 4. Klijent
    **USERNAME:** klijent
    **PASSWORD:** klijent   
@@ -32,7 +32,12 @@ CarCareHub
 1. Prilikom pokretanja API-a kroz Swagger u url potrebno dodati "/swagger/index.html"
 2. API_HOST i API_PORT su postavljeni na defaultne vrijednosti prilikom build-a, 
 ukoliko je potrebna promjena vrijednosti API_HOST ili API_PORT, potrebno je izvršiti komande:
+
+Desktop
      flutter clean
-     flutter run -d windows --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT (desktop)
-     flutter run --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT (mobile)
+     flutter build windows --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT
+
+Mobile
+     flutter clean
+     flutter build apk --debug --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT
 

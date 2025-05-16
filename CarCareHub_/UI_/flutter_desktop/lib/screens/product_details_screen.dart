@@ -22,8 +22,8 @@ import 'package:flutter_mobile/validation/create_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_mobile/models/product.dart';
 import 'package:flutter_mobile/provider/product_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_mobile/widgets/master_screen.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product? product;
@@ -270,6 +270,15 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
   }
 
   List<Widget> _buildFormFields() {
+     final userId = context.read<UserProvider>().userId;
+  final isAdmin = context.read<UserProvider>().role == "Admin";
+
+  final filteredFirme = isAdmin
+      ? firmaAutodijelovaResult?.result
+      : firmaAutodijelovaResult?.result
+          .where((item) => item.firmaAutodijelovaID == userId)
+          .toList();
+
     return [
       FormBuilderTextField(
         decoration: const InputDecoration(
@@ -375,36 +384,32 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         ],
       ),
       const SizedBox(height: 10),
-      Row(
+     Row(
         children: [
-          Expanded(
-              child: FormBuilderDropdown(
-            name: 'firmaAutodijelovaID',
-            validator: validator.required,
-            decoration: const InputDecoration(
-              labelText: 'Firma Auto Dijelova',
-              border: OutlineInputBorder(),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              hintText: 'Firma Auto Dijelova',
-            ),
-            initialValue: widget.product?.firmaAutodijelovaID?.toString(),
-            items: firmaAutodijelovaResult?.result.map((item) {
-                  return DropdownMenuItem(
-                    value: item.firmaAutodijelovaID.toString(),
-                    child: Text(
-                      item.nazivFirme ?? "",
-                      style: TextStyle(
-                        color:
-                            item.vidljivo == false ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  );
-                }).toList() ??
-                [],
-          )),
+
+Expanded(
+  child: FormBuilderDropdown(
+    name: 'firmaAutodijelovaID',
+    validator: validator.required,
+    decoration: const InputDecoration(
+      labelText: 'FirmaAutoDijelova',
+      border: OutlineInputBorder(),
+      fillColor: Colors.white,
+      filled: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      hintText: 'firmaAutoDijelova',
+    ),
+    initialValue: widget.product?.firmaAutodijelovaID?.toString() ??
+        (!isAdmin ? userId.toString() : null),
+    items: filteredFirme?.map((item) {
+          return DropdownMenuItem(
+            value: item.firmaAutodijelovaID.toString(),
+            child: Text(item.nazivFirme ?? ""),
+          );
+        }).toList() ?? [],
+  ),
+),
+
         ],
       ),
       const SizedBox(height: 10),
@@ -455,16 +460,24 @@ class _ProductDetailsScreenState extends State<ProductDetailScreen> {
         initialValue: widget.product?.cijena.toString(),
       ),
       const SizedBox(height: 10),
-      FormBuilderTextField(
-        decoration: const InputDecoration(
-            labelText: "Popust",
-            border: OutlineInputBorder(),
-            fillColor: Colors.white,
-            filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10)),
-        name: "popust",
-        initialValue: widget.product?.popust.toString() ?? "",
-      ),
+FormBuilderTextField(
+  decoration: const InputDecoration(
+    labelText: "Popust",
+    border: OutlineInputBorder(),
+    fillColor: Colors.white,
+    filled: true,
+    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+  ),
+  name: "popust",
+  initialValue: (widget.product?.popust ?? 0).toString(),
+  valueTransformer: (value) {
+    if (value == null || value.toString().trim().isEmpty) {
+      return 0;
+    }
+    return int.tryParse(value.toString()) ?? 0;
+  },
+  keyboardType: TextInputType.number,
+),
       const SizedBox(height: 10),
       FormBuilderTextField(
         decoration: const InputDecoration(

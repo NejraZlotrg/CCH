@@ -112,20 +112,41 @@ namespace CarCareHub.Services
                 NazivFirme = "Auto Parts Sarajevo",
                 Adresa = "Ulica bb, Sarajevo",
                 GradId = 1, 
-                JIB = "123456789",
+                JIB = "1234567891234",
                 MBS = "987654321",
                 UlogaId = 3, 
-                Telefon = "38733123456",
+                Telefon = "063121121",
                 Email = "kontakt@autoparts.ba",
-                Username = "firma",
-                Password = "firma",
-                PasswordAgain = "firma",
+                Username = "firma1",
+                Password = "firma1",
+                PasswordAgain = "firma1",   
                 Vidljivo = true,
                 SlikaProfila = sample 
             };
+
+                var firmaAutodijelovaInsert2 =
+             new FirmaAutodijelovaInsert
+             {
+                 NazivFirme = "Auto Parts Mostar",
+                 Adresa = "Ulica bb",
+                 GradId = 1,
+                 JIB = "1231231231231",
+                 MBS = "987654321",
+                 UlogaId = 3,
+                 Telefon = "063122121",
+                 Email = "kontakt@autoparts.ba",
+                 Username = "MoParts",
+                 Password = "MoParts",
+                 PasswordAgain = "MoParts",
+                 Vidljivo = true,
+                 SlikaProfila = sample
+             };
                 var firmaAutodijelovaEntities = _mapper.Map<Database.FirmaAutodijelova>(firmaAutodijelovaInsert);
+                var firmaAutodijelovaEntities2 = _mapper.Map<Database.FirmaAutodijelova>(firmaAutodijelovaInsert2);
+
                 BeforeInsert(firmaAutodijelovaEntities, firmaAutodijelovaInsert);
-                await _dbContext.FirmaAutodijelovas.AddRangeAsync(firmaAutodijelovaEntities);
+                BeforeInsert(firmaAutodijelovaEntities2, firmaAutodijelovaInsert2);
+                await _dbContext.FirmaAutodijelovas.AddRangeAsync(firmaAutodijelovaEntities, firmaAutodijelovaEntities2);
                 await _dbContext.SaveChangesAsync();
             }
         }

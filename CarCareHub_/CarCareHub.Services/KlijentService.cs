@@ -140,7 +140,7 @@ namespace CarCareHub.Services
            {
                Ime = "Admin",
                Prezime = "Admin",
-               Email = "marko@example.com",
+               Email = "admin@example.com",
                Username = "Admin",
                Password = "Admin",
                PasswordAgain = "Admin",
