@@ -33,6 +33,6 @@ CarCareHub
 2. API_HOST i API_PORT su postavljeni na defaultne vrijednosti prilikom build-a, 
 ukoliko je potrebna promjena vrijednosti API_HOST ili API_PORT, potrebno je izvršiti komande:
      flutter clean
-     flutter build windows --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT (desktop)
-     flutter build apk --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT (mobile)
+     flutter run -d windows --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT (desktop)
+     flutter run --dart-define=API_HOST=NOVI_HOST --dart-define=API_PORT=NOVI_PORT (mobile)
 
